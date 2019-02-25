@@ -4,23 +4,25 @@ import java.util.Objects;
 
 public abstract class TextChange extends TextEdit {
 
-	private final int endPos;
-	private final String changedText;
+	private final long length;
+	private final Text changedText;
 
-	public TextChange(int startPos, int endPos, String changedText) {
+	public TextChange(long startPos, long length, Text changedText) {
 		super(startPos);
 		
 		Objects.requireNonNull(changedText);
 	
-		this.endPos = endPos;
+		this.length = length;
 		this.changedText = changedText;
 	}
 
-	public final int getEndPos() {
-		return endPos;
+	@Override
+	public final long getOldLength() {
+		return length;
 	}
 
-	public final String getChangedText() {
+	@Override
+	public Text getOldText() {
 		return changedText;
 	}
 }

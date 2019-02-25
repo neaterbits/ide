@@ -4,32 +4,33 @@ import java.util.Objects;
 
 public abstract class BaseTextModel {
 
-	private final String lineDelimiter;
+	private final LineDelimiter lineDelimiter;
 	
-	public BaseTextModel(String lineDelimiter) {
+	public BaseTextModel(LineDelimiter lineDelimiter) {
 		
 		Objects.requireNonNull(lineDelimiter);
 		
 		this.lineDelimiter = lineDelimiter;
 	}
 
-	public abstract String getText();
+	public abstract Text getText();
 	
-	public abstract void replaceTextRange(int start, int replaceLength, String text);
+	public abstract void replaceTextRange(long start, long replaceLength, Text text);
 	
-	public abstract String getTextRange(int start, int length);
+	public abstract Text getTextRange(long start, long length);
 
-	public abstract int getOffsetAtLine(int lineIndex);
+	public abstract long getOffsetAtLine(long lineIndex);
 	
-	public final String getLineDelimiter() {
+	public final LineDelimiter getLineDelimiter() {
 		return lineDelimiter;
 	}
 	
-	public abstract int getLineCount();
+	public abstract long getLineCount();
 	
-	public abstract int getLineAtOffset(int offset);
+	public abstract long getLineAtOffset(long offset);
 
-	public abstract String getLine(int lineIndex);
+	public abstract Text getLineWithoutAnyNewline(long lineIndex);
+	public abstract Text getLineIncludingAnyNewline(long lineIndex);
 
-	public abstract int getCharCount();
+	public abstract long getCharCount();
 }

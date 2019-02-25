@@ -1,26 +1,28 @@
 package com.neaterbits.ide.swt;
 
+import com.neaterbits.ide.common.ui.model.text.Text;
+
 class ReplaceTextRange {
 
-	private final int start;
-	private final int length;
-	private final String text;
+	private final long start;
+	private final long length;
+	private final Text text;
 
-	ReplaceTextRange(int start, int length, String text) {
+	ReplaceTextRange(long start, long length, Text text) {
 		this.start = start;
 		this.length = length;
 		this.text = text;
 	}
 
-	int getStart() {
+	long getStart() {
 		return start;
 	}
 	
-	int getLength() {
+	long getLength() {
 		return length;
 	}
 	
-	String getText() {
+	Text getText() {
 		return text;
 	}
 

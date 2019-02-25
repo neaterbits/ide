@@ -19,6 +19,7 @@ import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.common.ui.model.dialogs.SuggestionType;
 import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
 import com.neaterbits.ide.common.ui.model.text.StringTextModel;
+import com.neaterbits.ide.common.ui.model.text.UnixLineDelimiter;
 import com.neaterbits.ide.common.ui.view.NewableSelection;
 import com.neaterbits.ide.common.ui.view.UIView;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
@@ -71,7 +72,7 @@ final class UIController<WINDOW> {
 		}
 		
 		if (text != null) {
-			final StringTextModel textModel = new StringTextModel("\n", text);
+			final StringTextModel textModel = new StringTextModel(UnixLineDelimiter.INSTANCE, text);
 			
 			this.currentEditedFile = sourceFile;
 			

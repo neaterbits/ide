@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Text;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.model.text.util.StringText;
 
 final class SWTTextEditorView extends SWTEditorView {
 
@@ -22,7 +23,7 @@ final class SWTTextEditorView extends SWTEditorView {
 	private BaseTextModel textModel;
 	private TextDiffer textDiffer;
 
-	private String currentText;
+	private com.neaterbits.ide.common.ui.model.text.Text currentText;
 	
 	SWTTextEditorView(Composite composite, TextEditorConfig config) {
 		
@@ -229,17 +230,19 @@ final class SWTTextEditorView extends SWTEditorView {
 		
 		this.textModel = textModel;
 		
-		final String text = textModel.getText();
+		final com.neaterbits.ide.common.ui.model.text.Text text = textModel.getText();
 		
 		this.currentText = text;
 		this.textDiffer = new TextDiffer(currentText);
 		
-		textWidget.setText(text);
+		textWidget.setText(text.asString());
 	}
 	
 	private void onTextChange(String updatedText) {
 		
-		final ReplaceTextRange replaceTextRange = textDiffer.computeReplaceTextRange(updatedText);
+		final StringText stringText = new StringText(updatedText);
+		
+		final ReplaceTextRange replaceTextRange = textDiffer.computeReplaceTextRange(stringText);
 
 		if (replaceTextRange != null) {
 
