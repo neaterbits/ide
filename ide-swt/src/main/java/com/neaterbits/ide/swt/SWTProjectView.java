@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -80,6 +81,8 @@ final class SWTProjectView implements ProjectView {
 		treeViewer.setLabelProvider(new ProjectViewLabelProvider());
 		
 		treeViewer.setInput(projectModel);
+		
+		treeViewer.setSorter(new TreePathViewerSorter());
 		
 		treeViewer.setExpandedElements(new Object [] { projectModel.getRoot() });
 	}
