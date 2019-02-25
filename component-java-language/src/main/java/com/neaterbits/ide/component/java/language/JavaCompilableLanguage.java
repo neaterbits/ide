@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.ide.common.language.CompilableLanguage;
 import com.neaterbits.ide.common.resource.NamespaceResource;
@@ -39,11 +39,11 @@ public final class JavaCompilableLanguage implements CompilableLanguage {
 				classNameFromFile(sourceFile.getFile()));
 	}
 	
-	private static TypeName classNameFromFile(File file) {
+	private static ClassName classNameFromFile(File file) {
 		
 		final String name = file.getName();
 		
-		return new TypeName(name.substring(0, name.length() - ".java".length()));
+		return new ClassName(name.substring(0, name.length() - ".java".length()));
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public final class JavaCompilableLanguage implements CompilableLanguage {
 				.map(parts -> new CompleteName(
 						new NamespaceReference(Arrays.copyOf(parts, parts.length - 1)),
 						null,
-						new TypeName(parts[parts.length - 1])))
+						new ClassName(parts[parts.length - 1])))
 				.collect(Collectors.toSet());
 		
 		}
