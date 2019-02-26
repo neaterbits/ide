@@ -35,8 +35,6 @@ final class UIController<WINDOW> {
 	private final IDEComponents<WINDOW> ideComponents;
 	private final ComponentIDEAccess componentIDEAccess;
 	
-	private SourceFileResourcePath currentEditedFile;
-	
 	public UIController(UIView<WINDOW> uiView, BuildRoot buildRoot, IDEComponents<WINDOW> ideComponents) {
 		
 		Objects.requireNonNull(uiView);
@@ -79,8 +77,6 @@ final class UIController<WINDOW> {
 		
 		if (text != null) {
 			final StringTextModel textModel = new StringTextModel("\n", text);
-			
-			this.currentEditedFile = sourceFile;
 			
 			uiView.setWindowTitle(makeTitle(sourceFile));
 			
@@ -187,8 +183,6 @@ final class UIController<WINDOW> {
 		uiView.getEditorsView().closeFile(sourceFile);
 		
 		uiView.setWindowTitle("");
-		
-		this.currentEditedFile = null;
 	}
 	
 	private static Collection<TypeSuggestion> findSuggestions(String searchText, BuildRoot buildRoot) {
