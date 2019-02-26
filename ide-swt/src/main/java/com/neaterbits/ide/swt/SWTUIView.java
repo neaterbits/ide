@@ -40,7 +40,8 @@ public final class SWTUIView implements UIView<Shell> {
 	
 	private final Composite composite;
 	
-	private final Composite overviewComposite;
+	// private final Composite overviewComposite;
+	private final TabFolder overviewTabFolder;
 	private final GridData overviewGridData;
 	private final GridData detailsGridData;
 	private final TabFolder detailsTabFolder;
@@ -63,9 +64,9 @@ public final class SWTUIView implements UIView<Shell> {
 		
 		composite.setLayout(new GridLayout(4, false));
 
-		// final TabFolder overviewTabFolder = new TabFolder(composite, SWT.NONE);
+		this.overviewTabFolder = new TabFolder(composite, SWT.NONE);
 
-		this.overviewComposite = new Composite(composite, SWT.NONE);
+		// this.overviewComposite = new Composite(composite, SWT.NONE);
 		
 		this.overviewGridData = new GridData();
 		
@@ -83,13 +84,13 @@ public final class SWTUIView implements UIView<Shell> {
 		overviewGridData.grabExcessVerticalSpace = true;
 		overviewGridData.verticalAlignment = SWT.FILL;
 
-		// overviewTabFolder.setLayoutData(overviewGridData);
+		overviewTabFolder.setLayoutData(overviewGridData);
 		
-		overviewComposite.setLayoutData(overviewGridData);
-		overviewComposite.setLayout(new FillLayout());
+		// overviewComposite.setLayoutData(overviewGridData);
+		// overviewComposite.setLayout(new FillLayout());
 		
 		this.projectView = new SWTProjectView(
-				overviewComposite/* overviewTabFolder */,
+				overviewTabFolder,
 				projectModel);
 		
 		final GridData editorsGridData = new GridData();
@@ -104,7 +105,7 @@ public final class SWTUIView implements UIView<Shell> {
 		
 		this.editorsView = new SWTEditorsView(composite, textEditorConfig);
 		
-		editorsView.getComposite().setLayoutData(editorsGridData);
+		editorsView.getTabFolder().setLayoutData(editorsGridData);
 
 		this.detailsGridData = new GridData();
 
@@ -204,7 +205,7 @@ public final class SWTUIView implements UIView<Shell> {
 	@Override
 	public void minMaxEditors() {
 		
-		overviewComposite.setVisible(editorsMaximized);
+		// overviewComposite.setVisible(editorsMaximized);
 		overviewGridData.exclude = !editorsMaximized;
 
 		detailsTabFolder.setVisible(editorsMaximized);

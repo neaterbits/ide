@@ -14,6 +14,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
@@ -33,13 +35,15 @@ final class SWTProjectView implements ProjectView {
 	
 	private final ProjectModel projectModel;
 	
-	SWTProjectView(Composite composite, /*TabFolder tabFolder, */ ProjectModel projectModel) {
+	SWTProjectView(TabFolder tabFolder, ProjectModel projectModel) {
 
-//		final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+		final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		
-//		tabItem.setText("Tabitem");
+		tabItem.setText("Projects");
 
-		this.composite = new Composite(composite /* tabFolder */ , SWT.NONE);
+		this.composite = new Composite(tabFolder, SWT.NONE);
+		
+		tabItem.setControl(composite);
 		
 		this.composite.setLayout(new FillLayout());
 		

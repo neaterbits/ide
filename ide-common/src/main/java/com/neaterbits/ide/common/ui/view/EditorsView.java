@@ -1,10 +1,13 @@
 package com.neaterbits.ide.common.ui.view;
 
+import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 
 public interface EditorsView {
 
-	EditorView displayFile(String fileName, BaseTextModel textModel);
+	EditorView displayFile(SourceFileResourcePath sourceFile, BaseTextModel textModel);
 
-	void closeFile();
+	void closeFile(SourceFileResourcePath sourceFile);
+	
+	SourceFileResourcePath getCurrentEditedFile();
 }

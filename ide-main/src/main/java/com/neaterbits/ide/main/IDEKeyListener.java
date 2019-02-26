@@ -39,5 +39,9 @@ final class IDEKeyListener implements KeyEventListener {
 			
 			uiController.showCurrentEditedInProjectView();
 		}
+		else if (key.getKeyCode() == 119 && mask.isSetOnly(QualifierKey.CTRL)) {
+			
+			uiController.closeCurrentEditedFile();
+		}
 	}
 }

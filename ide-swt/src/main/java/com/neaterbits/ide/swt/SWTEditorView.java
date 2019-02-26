@@ -1,32 +1,14 @@
 package com.neaterbits.ide.swt;
 
+import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.EditorView;
 
 abstract class SWTEditorView implements EditorView {
 
-	
 	SWTEditorView() {
 		
-		// final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		
-		// tabItem.setText(fileName);
-
-		/*
-		final Label label = new Label(composite, SWT.NONE);
-		
-		label.setText("Text123");
-		*/
-		
-		
-		// this.textWidget = new StyledText(composite, SWT.NONE);
-		
-//		textWidget.setEditable(true);
-		
-		
-		// tabItem.setControl(textWidget);
-
 	}
 
 	abstract void setFocused();
@@ -35,6 +17,8 @@ abstract class SWTEditorView implements EditorView {
 	
 	abstract void configure(TextEditorConfig config);
 
+	abstract SourceFileResourcePath getSourceFile();
+	
 	void setTextModel(BaseTextModel textModel) {
 		/*
 		textWidget.setContent(new StyledTextContent() {

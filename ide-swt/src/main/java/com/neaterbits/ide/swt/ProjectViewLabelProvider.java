@@ -15,7 +15,8 @@ import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 
 final class ProjectViewLabelProvider extends LabelProvider {
 
-	private final Image projectImage = new Image(null, new File("icons/if_project_59298.png").getPath());
+	private final Image projectImage = new Image(null, new Image(null, new File("icons/if_project_59298.png").getPath())
+			.getImageData().scaledTo(16, 16));
 	private final Image sourceFolderImage = new Image(null, new File("icons/if_Noun_Project_100Icon_10px_grid-26_296917.png").getPath());
 	private final Image namespaceImage = new Image(null, new File("icons/if_icon-139-package_314837.png").getPath());
 	private final Image sourceFileImage = new Image(null, new File("icons/if_icon-78-document-file-java_315699.png").getPath());

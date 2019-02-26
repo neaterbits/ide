@@ -7,16 +7,24 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 
 final class SWTTextEditorView extends SWTEditorView {
 
+	private final TabFolder composite;
+	
 	private TextEditorConfig config;
+	
+	private final SourceFileResourcePath sourceFile;
+	
+	private final TabItem tabItem;
 	
 	private final Text textWidget;
 	private BaseTextModel textModel;
@@ -24,13 +32,26 @@ final class SWTTextEditorView extends SWTEditorView {
 
 	private String currentText;
 	
-	SWTTextEditorView(Composite composite, TextEditorConfig config) {
+	SWTTextEditorView(TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
+
+		this.composite = composite;
+		
+		this.sourceFile = sourceFile;
+		
+		this.tabItem = new TabItem(composite, SWT.NONE);
+
+		tabItem.setText(sourceFile.getName());
+		
 		
 		Objects.requireNonNull(config);
 		
 		this.config = config;
 		
 		this.textWidget = new Text(composite, SWT.MULTI|SWT.BORDER);
+		
+		tabItem.setControl(textWidget);
+		
+		composite.setSelection(tabItem);
 		
 		configure(config);
 
@@ -200,17 +221,20 @@ final class SWTTextEditorView extends SWTEditorView {
 		
 		textWidget.setSelection(caretPosition + newline.length());
 	}
-	
+
+	@Override
+	SourceFileResourcePath getSourceFile() {
+		return sourceFile;
+	}
 
 	@Override
 	void setFocused() {
 		textWidget.setFocus();
 	}
 
-
 	@Override
 	void close() {
-		textWidget.setText("");
+		tabItem.dispose();
 	}
 
 	@Override

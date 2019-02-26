@@ -32,4 +32,12 @@ public abstract class EnumMask<T extends Enum<T>> {
 
 		return (mask & (1 << value.ordinal())) != 0;
 	}
+
+	public final boolean isSetOnly(T value) {
+		Objects.requireNonNull(value);
+
+		final int expected = 1 << value.ordinal();
+		
+		return (mask & expected) == expected;
+	}
 }

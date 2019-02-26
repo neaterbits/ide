@@ -50,9 +50,16 @@ final class UIController<WINDOW> {
 		this.componentIDEAccess = new ComponentIDEAccessImpl(buildRoot, this);
 	}
 
+	private SourceFileResourcePath getCurrentEditedFile() {
+		return uiView.getEditorsView().getCurrentEditedFile();
+	}
+	
 	void refreshProjectView() {
+		
+		final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
+		
 		if (!currentEditedFile.getFile().exists()) {
-			closeFile();
+			closeFile(currentEditedFile);
 		}
 		
 		uiView.getProjectView().refresh();
@@ -77,7 +84,7 @@ final class UIController<WINDOW> {
 			
 			uiView.setWindowTitle(makeTitle(sourceFile));
 			
-			uiView.getEditorsView().displayFile(sourceFile.getFile().getName(), textModel);
+			uiView.getEditorsView().displayFile(sourceFile, textModel);
 		}
 	}
 	
@@ -122,6 +129,8 @@ final class UIController<WINDOW> {
 					newableSelection.getCategory(),
 					newableSelection.getNewable());
 			
+			final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
+			
 			uiView.openNewableDialog(
 					uiComponentProvider,
 					newableSelection.getCategory(),
@@ -135,8 +144,19 @@ final class UIController<WINDOW> {
 	
 	void showCurrentEditedInProjectView() {
 		
+		final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
+
 		if (currentEditedFile != null) {
 			uiView.getProjectView().showSourceFile(currentEditedFile);
+		}
+	}
+	
+	void closeCurrentEditedFile() {
+		
+		final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
+
+		if (currentEditedFile != null) {
+			uiView.getEditorsView().closeFile(currentEditedFile);
 		}
 	}
 	
@@ -153,16 +173,18 @@ final class UIController<WINDOW> {
 		
 			sourceFile.getFile().delete();
 			
+			final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
+
 			if (sourceFile.equals(currentEditedFile)) {
-				closeFile();
+				closeFile(sourceFile);
 			}
 		}
 		
 		uiView.getProjectView().refresh();
 	}
 
-	private void closeFile() {
-		uiView.getEditorsView().closeFile();
+	private void closeFile(SourceFileResourcePath sourceFile) {
+		uiView.getEditorsView().closeFile(sourceFile);
 		
 		uiView.setWindowTitle("");
 		

@@ -20,10 +20,8 @@
 			
 			<artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
 
-			<!-- <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId> -->
-			<version>4.6.1</version>
+			<version>v20181204-1801</version>
 
-			<!-- <classifier>debug</classifier> -->
 		</dependency>
 		
 		<dependency>
