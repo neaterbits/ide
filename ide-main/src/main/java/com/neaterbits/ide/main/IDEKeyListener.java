@@ -22,20 +22,18 @@ final class IDEKeyListener implements KeyEventListener {
 	public void onKeyPress(Key key, KeyMask mask) {
 		
 		if (   key.getKeyCode() == 116 // key.getCharacter() == 't'
-			&& mask.isSet(QualifierKey.CTRL)
-			&& mask.isSet(QualifierKey.SHIFT)) {
+			&& mask.isSetOnly(QualifierKey.CTRL, QualifierKey.SHIFT)) {
 
 			uiController.askOpenType();
 		}
-		else if (key.getKeyCode() == 109 && mask.isSet(QualifierKey.CTRL)) {
+		else if (key.getKeyCode() == 109 && mask.isSetOnly(QualifierKey.CTRL)) {
 			uiController.minMaxEditors();
 		}
-		else if (key.getKeyCode() == 110 && mask.isSet(QualifierKey.CTRL)) {
+		else if (key.getKeyCode() == 110 && mask.isSetOnly(QualifierKey.CTRL)) {
 			uiController.askCreateNewable();
 		}
 		else if (   key.getKeyCode() == 119
-			      && mask.isSet(QualifierKey.SHIFT)
-			      && mask.isSet(QualifierKey.ALT)) {
+			      && mask.isSetOnly(QualifierKey.SHIFT, QualifierKey.ALT)) {
 			
 			uiController.showCurrentEditedInProjectView();
 		}

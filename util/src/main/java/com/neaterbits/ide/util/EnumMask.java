@@ -33,10 +33,20 @@ public abstract class EnumMask<T extends Enum<T>> {
 		return (mask & (1 << value.ordinal())) != 0;
 	}
 
-	public final boolean isSetOnly(T value) {
-		Objects.requireNonNull(value);
+	
+	@SafeVarargs
+	public final boolean isSetOnly(T ... values) {
+		Objects.requireNonNull(values);
+		
+		if (values.length == 0) {
+			throw new IllegalArgumentException();
+		}
 
-		final int expected = 1 << value.ordinal();
+		int expected = 0;
+		
+		for (T value : values) {
+			expected |= 1 << value.ordinal();
+		}
 		
 		return (mask & expected) == expected;
 	}
