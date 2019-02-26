@@ -11,7 +11,7 @@ abstract class SWTEditorView implements EditorView {
 		
 	}
 
-	abstract void setFocused();
+	abstract void setSelectedAndFocused();
 
 	abstract void close();
 	

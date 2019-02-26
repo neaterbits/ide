@@ -41,7 +41,7 @@ final class SWTTextEditorView extends SWTEditorView {
 		this.tabItem = new TabItem(composite, SWT.NONE);
 
 		tabItem.setText(sourceFile.getName());
-		
+		tabItem.setData(sourceFile);
 		
 		Objects.requireNonNull(config);
 		
@@ -228,7 +228,8 @@ final class SWTTextEditorView extends SWTEditorView {
 	}
 
 	@Override
-	void setFocused() {
+	void setSelectedAndFocused() {
+		composite.setSelection(tabItem);
 		textWidget.setFocus();
 	}
 

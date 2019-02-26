@@ -1,9 +1,8 @@
 package com.neaterbits.ide.swt;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -14,7 +13,6 @@ import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.common.ui.view.EditorsView;
-import com.neaterbits.ide.common.ui.view.KeyEventListener;
 
 public final class SWTEditorsView implements EditorsView {
 
@@ -23,7 +21,7 @@ public final class SWTEditorsView implements EditorsView {
 	
 	// private final Composite composite;
 	
-	private final List<SWTEditorView> editorViews;
+	private final Map<SourceFileResourcePath, SWTEditorView> editorViews;
 	
 	public SWTEditorsView(Composite composite, TextEditorConfig config) {
 		
@@ -34,7 +32,7 @@ public final class SWTEditorsView implements EditorsView {
 		
 		// this.composite.setLayout(new FillLayout());
 
-		this.editorViews = new ArrayList<>();
+		this.editorViews = new HashMap<>();
 	}
 	
 	public TabFolder getTabFolder() {
@@ -50,22 +48,44 @@ public final class SWTEditorsView implements EditorsView {
 	@Override
 	public EditorView displayFile(SourceFileResourcePath sourceFile, BaseTextModel textModel) {
 
-		final SWTEditorView editorView = new SWTTextEditorView(this.tabFolder, config, sourceFile);
-
-		editorView.setTextModel(textModel);
-
-		editorView.setFocused();
+		Objects.requireNonNull(sourceFile);
+		Objects.requireNonNull(textModel);
 		
-		editorViews.add(editorView);
+		SWTEditorView editorView = editorViews.get(sourceFile);
+		
+		if (editorView == null) {
+				
+			editorView = new SWTTextEditorView(this.tabFolder, config, sourceFile);
+	
+			editorView.setTextModel(textModel);
+			
+			editorViews.put(sourceFile, editorView);
+		}
+		
+		editorView.setSelectedAndFocused();
 		
 		return editorView;
 	}
 	
 	@Override
 	public SourceFileResourcePath getCurrentEditedFile() {
+		
 		final int selectionIndex = tabFolder.getSelectionIndex();
 		
-		return selectionIndex < 0 ? null : editorViews.get(selectionIndex).getSourceFile();
+		final SourceFileResourcePath file;
+		
+		if (selectionIndex < 0) {
+			file = null;
+		}
+		else {
+			file = (SourceFileResourcePath)tabFolder.getItem(selectionIndex).getData();
+			
+			if (file == null) {
+				throw new IllegalStateException();
+			}
+		}
+
+		return file;
 	}
 
 	@Override
@@ -73,16 +93,15 @@ public final class SWTEditorsView implements EditorsView {
 		
 		Objects.requireNonNull(sourceFile);
 		
-		final SWTEditorView editorView = editorViews.stream()
-			.filter(view -> view.getSourceFile().equals(sourceFile))
-			.findFirst()
-			.orElse(null);
+		final SWTEditorView editorView = editorViews.get(sourceFile);
 
 		if (editorView != null) {
-			editorView.close();
 			
-			if (!editorViews.remove(editorView)) {
-				throw new IllegalStateException();
+			try {
+				editorView.close();
+			}
+			finally {
+				editorViews.remove(editorView);
 			}
 		}
 	}
