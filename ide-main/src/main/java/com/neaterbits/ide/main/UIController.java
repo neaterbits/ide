@@ -84,11 +84,11 @@ final class UIController<WINDOW> {
 		}
 	}
 	
-	void showInProjectView(SourceFileResourcePath sourceFile) {
+	void showInProjectView(SourceFileResourcePath sourceFile, boolean setFocusInProjectView) {
 		
 		Objects.requireNonNull(sourceFile);
 		
-		uiView.getProjectView().showSourceFile(sourceFile);
+		uiView.getProjectView().showSourceFile(sourceFile, setFocusInProjectView);
 	}
 	
 	private static String makeTitle(SourceFileResourcePath sourceFile) {
@@ -143,7 +143,7 @@ final class UIController<WINDOW> {
 		final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
 
 		if (currentEditedFile != null) {
-			uiView.getProjectView().showSourceFile(currentEditedFile);
+			uiView.getProjectView().showSourceFile(currentEditedFile, true);
 		}
 	}
 	

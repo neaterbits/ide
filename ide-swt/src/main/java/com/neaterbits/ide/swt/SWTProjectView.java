@@ -124,7 +124,7 @@ final class SWTProjectView implements ProjectView {
 	
 
 	@Override
-	public void showSourceFile(SourceFileResourcePath sourceFile) {
+	public void showSourceFile(SourceFileResourcePath sourceFile, boolean setFocus) {
 
 		Objects.requireNonNull(sourceFile);
 		
@@ -133,6 +133,10 @@ final class SWTProjectView implements ProjectView {
 		treeViewer.setSelection(new StructuredSelection(sourceFile), true);
 		
 		treeViewer.setExpandedState(sourceFile, true);
+		
+		if (setFocus) {
+			treeViewer.getTree().setFocus();
+		}
 	}
 
 	@Override

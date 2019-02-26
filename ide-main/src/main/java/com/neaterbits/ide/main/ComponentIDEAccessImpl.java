@@ -75,7 +75,7 @@ final class ComponentIDEAccessImpl implements ComponentIDEAccess {
 		
 		uiController.openSourceFileForEditing(sourceFile);
 		
-		uiController.showInProjectView(sourceFile);
+		uiController.showInProjectView(sourceFile, false);
 	}
 
 	

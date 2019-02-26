@@ -11,7 +11,7 @@ public interface ProjectView {
 
 	void addKeyEventListener(KeyEventListener keyEventListener);
 
-	void showSourceFile(SourceFileResourcePath sourceFile);
+	void showSourceFile(SourceFileResourcePath sourceFile, boolean setFocus);
 
 	ResourcePath getSelected();
 }
