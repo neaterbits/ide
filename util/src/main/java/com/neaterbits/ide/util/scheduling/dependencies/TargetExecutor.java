@@ -285,6 +285,11 @@ public class TargetExecutor extends TargetAsyncExecutor {
 						
 						return Status.INCOMPLETE;
 					}
+					
+				}
+
+				if (prerequisites.isRecursiveBuild()) {
+					System.out.println("################### recursive build for " + prerequisite + "/" + prerequisite.getSubTarget());
 				}
 			}
 		}
@@ -342,7 +347,6 @@ public class TargetExecutor extends TargetAsyncExecutor {
 		}
 	}
 	
-	
 	private <TARGET> void getSubTargets(Target<TARGET> target, Set<Target<?>> toExecuteTargets) {
 		
 		for (Prerequisites prerequisites : target.getPrerequisites()) {
@@ -352,12 +356,15 @@ public class TargetExecutor extends TargetAsyncExecutor {
 				if (prerequisite.getSubTarget() != null) {
 
 					if (toExecuteTargets.contains(prerequisite.getSubTarget())) {
-						throw new IllegalStateException("Already contains " + prerequisite.getSubTarget());
+						// eg external modules are prerequisites via multiple paths
+						// throw new IllegalStateException("Already contains " + prerequisite.getSubTarget());
 					}
+					else {
 					
-					toExecuteTargets.add(prerequisite.getSubTarget());
-					
-					getSubTargets(prerequisite.getSubTarget(), toExecuteTargets);
+						toExecuteTargets.add(prerequisite.getSubTarget());
+						
+						getSubTargets(prerequisite.getSubTarget(), toExecuteTargets);
+					}
 				}
 			}
 		}

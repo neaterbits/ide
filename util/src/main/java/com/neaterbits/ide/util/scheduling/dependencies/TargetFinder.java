@@ -91,8 +91,15 @@ public final class TargetFinder extends TargetAsyncExecutor {
 		else {
 			for (PrerequisiteSpec<CONTEXT, TARGET, ?> prerequisiteSpec : prerequisiteSpecs) {
 	
-				getPrerequisites(context, targetSpec, target, prerequisiteSpec, logger, indent, prerequisites -> {
-					list.add(new Prerequisites(prerequisites, prerequisiteSpec.getCollect()));
+				getPrerequisites(context, targetSpec, target, prerequisiteSpec, logger, indent, prerequisitesList -> {
+					
+					final Prerequisites prerequisites = new Prerequisites(
+							prerequisitesList,
+							prerequisiteSpec.getTargetFromPrerequisite(),
+							prerequisiteSpec.isRecursiveBuild(),
+							prerequisiteSpec.getCollect());
+					
+					list.add(prerequisites);
 	
 					if (list.size() == prerequisiteSpecs.size()) {
 						onResult.accept(list);

@@ -36,7 +36,7 @@ class TargetIteratingBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TARGE
 		
 		targetBuilderState.addPrerequisiteBuilder(prerequisiteBuilderState);
 		
-		return new PrerequisiteActionBuilderImpl<>(targetBuilderState);
+		return new PrerequisiteActionBuilderImpl<>(targetBuilderState, prerequisiteBuilderState);
 	}
 
 	@Override
@@ -51,6 +51,8 @@ class TargetIteratingBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TARGE
 		
 		prerequisiteBuilderState.setIteratingAndBuildingRecursively(constraint, getPrerequisites, getDependencyFromPrerequisite);
 
-		return new PrerequisiteActionBuilderImpl<>(targetBuilderState);
+		targetBuilderState.addPrerequisiteBuilder(prerequisiteBuilderState);
+
+		return new PrerequisiteActionBuilderImpl<>(targetBuilderState, prerequisiteBuilderState);
 	}
 }

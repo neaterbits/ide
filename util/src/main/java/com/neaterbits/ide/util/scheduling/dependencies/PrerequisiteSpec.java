@@ -34,6 +34,11 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 
 		Objects.requireNonNull(getPrerequisites);
 		
+		if (recursiveBuild) {
+			Objects.requireNonNull(getDependencyFromPrerequisite);
+			Objects.requireNonNull(action);
+		}
+		
 		this.description = description;
 		
 		this.productType = productType;
@@ -73,11 +78,9 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		return getPrerequisites.apply(context, target);
 	}
 	
-	TARGET getTargetFromPrerequisite(PREREQUISITE prerequisite) {
+	Function<PREREQUISITE, TARGET> getTargetFromPrerequisite() {
 		
-		Objects.requireNonNull(prerequisite);
-	
-		return getDependencyFromPrerequisite.apply(prerequisite);
+		return getDependencyFromPrerequisite;
 	}
 
 	boolean isRecursiveBuild() {
