@@ -55,7 +55,7 @@ public final class SWTEditorsView implements EditorsView {
 		
 		if (editorView == null) {
 				
-			editorView = new SWTTextEditorView(this.tabFolder, config, sourceFile);
+			editorView = new SWTStyledTextEditorView(this.tabFolder, config, sourceFile);
 	
 			editorView.setTextModel(textModel);
 			
