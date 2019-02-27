@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
@@ -15,6 +16,8 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 	private final Class<?> itemType;
 	private final Constraint constraint;
 	private final BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites;
+	private final Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite;
+	private final boolean recursiveBuild;
 	private final BuildSpec<CONTEXT, PREREQUISITE> action;
 	private final BiFunction<TARGET, List<?>, ?> collect;
 
@@ -24,6 +27,8 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 			Class<?> itemType,
 			Constraint constraint,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
+			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite,
+			boolean recursiveBuild,
 			BuildSpec<CONTEXT, PREREQUISITE> action,
 			BiFunction<TARGET, List<?>, ?> collect) {
 
@@ -37,6 +42,9 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		this.constraint = constraint;
 		this.getPrerequisites = getPrerequisites;
 
+		this.getDependencyFromPrerequisite = getDependencyFromPrerequisite;
+		this.recursiveBuild = recursiveBuild;
+		
 		this.action = action;
 		
 		this.collect = collect;
@@ -63,6 +71,17 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		Objects.requireNonNull(context);
 		
 		return getPrerequisites.apply(context, target);
+	}
+	
+	TARGET getTargetFromPrerequisite(PREREQUISITE prerequisite) {
+		
+		Objects.requireNonNull(prerequisite);
+	
+		return getDependencyFromPrerequisite.apply(prerequisite);
+	}
+
+	boolean isRecursiveBuild() {
+		return recursiveBuild;
 	}
 
 	BuildSpec<CONTEXT, PREREQUISITE> getAction() {

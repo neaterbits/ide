@@ -68,11 +68,16 @@ public class TargetBuilderModules {
 
 					// for downloading external dependencies
 					.withPrerequisites("External dependencies")
-						.fromIterating(null, (context, module) -> transitiveProjectDependencies(context, module).stream()
-								.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
-								.collect(Collectors.toList()))
+					
+						.fromIteratingAndBuildingRecursively(
+								Constraint.NETWORK,
+								(context, module) -> transitiveProjectDependencies(context, module).stream()
+									.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
+									.collect(Collectors.toList()),
+								Dependency::getModule)
 						
 						.buildBy(st -> {
+							
 							st.addFileSubTarget(
 									Dependency.class,
 									LibraryResourcePath.class,
@@ -80,20 +85,9 @@ public class TargetBuilderModules {
 									LibraryResourcePath::getFile,
 									dependency -> "External dependency " + dependency.getResourcePath().getLast().getName())
 
-							.withPrerequisites("Transitive external dependencies")
-							
-							//.iterating(Constraint.IO, (context, dependency) -> context.buildRoot.getTransitiveExternalDependencies(dependency))
-
-							//.buildReferSame()
-							
-							/*
 							.action(Constraint.NETWORK, (context, target, actionParams) -> {
-								
 								context.buildRoot.downloadExternalDependency(target);
-								
-								//actionParams.
-							})
-							*/;
+							});
 						})
 
 					// must collect info on classes to compile into a list

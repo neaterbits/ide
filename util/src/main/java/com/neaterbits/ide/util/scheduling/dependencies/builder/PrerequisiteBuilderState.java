@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.dependencies.BuildSpec;
@@ -17,7 +18,10 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 
 	private Constraint constraint;
 	private BiFunction<CONTEXT, TARGET, Collection<?>> getPrerequisites;
-
+	private Function<?, TARGET> getDependencyFromPrerequisite;
+	
+	private boolean recursiveBuild;
+	
 	private BiFunction<TARGET, List<ITEM>, PRODUCT> collect;
 
 	private BuildSpec<CONTEXT, ?> build;
@@ -38,10 +42,33 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 		
 		Objects.requireNonNull(getPrerequisites);
 
+		if (this.getPrerequisites != null) {
+			throw new IllegalStateException();
+		}
+		
 		this.constraint = constraint;
 		this.getPrerequisites = (BiFunction)getPrerequisites;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	final <PREREQUISITE> void setIteratingAndBuildingRecursively(
+			Constraint constraint,
+			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
+			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite) {
+		
+		Objects.requireNonNull(getPrerequisites);
+		Objects.requireNonNull(getDependencyFromPrerequisite);
+
+		if (this.getPrerequisites != null) {
+			throw new IllegalStateException();
+		}
+
+		this.constraint = constraint;
+		this.getPrerequisites = (BiFunction)getPrerequisites;
+		this.getDependencyFromPrerequisite = getDependencyFromPrerequisite;
+		this.recursiveBuild = true;
+	}
+	
 	final void setCollect(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
 
 		Objects.requireNonNull(collect);
@@ -69,6 +96,8 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 				itemType,
 				constraint,
 				(BiFunction)getPrerequisites,
+				(Function)getDependencyFromPrerequisite,
+				recursiveBuild,
 				build,
 				(BiFunction)collect);
 	}
