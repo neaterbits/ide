@@ -108,57 +108,16 @@ public class TargetExecutor extends TargetAsyncExecutor {
 					final ActionWithResult<?> actionWithResult = target.getActionWithResult();
 					
 					if (action != null) {
-						if (action.getConstraint() == null) {
-							final Exception exception = performAction(action, context, target, state, logger);
-							
-							completedTarget(context, target, state, exception, false, logger);
-						}
-						else {
-							scheduler.schedule(
-									action.getConstraint(),
-									null,
-									param -> {
-										return performAction(action, context, target, state, logger);
-									},
-									(param, exception) -> {
-										completedTarget(context, target, state, exception, true, logger);
-									} );
-						}
+						runOrScheduleAction(action, context, target, state, logger);
 					}
 					else if (actionWithResult != null) {
 						
 						System.out.println("### actionWithResult");
 						
-						if (actionWithResult.getConstraint() == null) {
-							
-							final Result result = performAction(actionWithResult, context, target, state, logger);
-							
-							@SuppressWarnings({ "unchecked", "rawtypes" })
-							final ProcessResult<CONTEXT, Object, Object> processResult = (ProcessResult)actionWithResult.getOnResult();
-							
-							processResult.process(context, target.getTargetObject(), result.result);
-							
-							completedTarget(context, target, state, result.exception, false, logger);
-						}
-						else {
-							scheduler.schedule(
-									actionWithResult.getConstraint(),
-									null,
-									param -> {
-										return performAction(actionWithResult, context, target, state, logger);
-									},
-									(param, result) -> {
-										@SuppressWarnings({ "unchecked", "rawtypes" })
-										final ProcessResult<CONTEXT, Object, Object> processResult = (ProcessResult)actionWithResult.getOnResult();
-										
-										processResult.process(context, target.getTargetObject(), result.result);
-										
-										completedTarget(context, target, state, result.exception, true, logger);
-									} );
-						}
+						runOrScheduleActionWithResult(actionWithResult, context, target, state, logger);
 					}
 					else {
-						completedTarget(context, target, state, null, false, logger);
+						onCompletedTarget(context, target, state, null, false, logger);
 					}
 				}
 			}
@@ -166,6 +125,56 @@ public class TargetExecutor extends TargetAsyncExecutor {
 			if (targetsLeft == state.toExecuteTargets.size()) {
 				break;
 			}
+		}
+	}
+
+	private <CONTEXT extends TaskContext> void runOrScheduleAction(Action<?> action, CONTEXT context, Target<?> target, TargetState state, TargetExecutorLogger logger) {
+		if (action.getConstraint() == null) {
+			final Exception exception = performAction(action, context, target, state, logger);
+			
+			onCompletedTarget(context, target, state, exception, false, logger);
+		}
+		else {
+			scheduler.schedule(
+					action.getConstraint(),
+					null,
+					param -> {
+						return performAction(action, context, target, state, logger);
+					},
+					(param, exception) -> {
+						onCompletedTarget(context, target, state, exception, true, logger);
+					} );
+		}
+	}
+	
+	private <CONTEXT extends TaskContext> void runOrScheduleActionWithResult(ActionWithResult<?> actionWithResult, CONTEXT context, Target<?> target, TargetState state, TargetExecutorLogger logger) {
+		
+		if (actionWithResult.getConstraint() == null) {
+			
+			final Result result = performAction(actionWithResult, context, target, state, logger);
+			
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			final ProcessResult<CONTEXT, Object, Object> processResult = (ProcessResult)actionWithResult.getOnResult();
+			
+			processResult.process(context, target.getTargetObject(), result.result);
+			
+			onCompletedTarget(context, target, state, result.exception, false, logger);
+		}
+		else {
+			scheduler.schedule(
+					actionWithResult.getConstraint(),
+					null,
+					param -> {
+						return performAction(actionWithResult, context, target, state, logger);
+					},
+					(param, result) -> {
+						@SuppressWarnings({ "unchecked", "rawtypes" })
+						final ProcessResult<CONTEXT, Object, Object> processResult = (ProcessResult)actionWithResult.getOnResult();
+						
+						processResult.process(context, target.getTargetObject(), result.result);
+						
+						onCompletedTarget(context, target, state, result.exception, true, logger);
+					} );
 		}
 	}
 	
@@ -220,7 +229,7 @@ public class TargetExecutor extends TargetAsyncExecutor {
 
 	
 	private <CONTEXT extends TaskContext>
-	void completedTarget(CONTEXT context, Target<?> target, TargetState targetState, Exception exception, boolean async, TargetExecutorLogger logger) {
+	void onCompletedTarget(CONTEXT context, Target<?> target, TargetState targetState, Exception exception, boolean async, TargetExecutorLogger logger) {
 
 		
 		if (logger != null) {
