@@ -8,6 +8,8 @@ import com.neaterbits.ide.component.common.Newable;
 import com.neaterbits.ide.component.common.NewableCategory;
 import com.neaterbits.ide.component.common.NewableType;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
+import com.neaterbits.ide.component.common.language.LanguageName;
+import com.neaterbits.ide.component.common.language.LanguageStyling;
 
 public class JavaLanguageComponent
 	implements ComponentProvider, LanguageComponent {
@@ -15,6 +17,12 @@ public class JavaLanguageComponent
 	public static final Newable CLASS 		= new Newable(NewableType.FILE, "Class", null);
 	public static final Newable INTERFACE 	= new Newable(NewableType.FILE, "Interface", null);
 	public static final Newable ENUM		= new Newable(NewableType.FILE, "Enum", null);
+
+	private static final LanguageName NAME = new LanguageName("java");
+	
+	private static final List<String> FILE_SUFFIXES = Arrays.asList("java");
+	
+	private static final LanguageStyling STYLING = new JavaLanguageStyling();
 	
 	@Override
 	public List<NewableCategory> getNewables() {
@@ -25,5 +33,20 @@ public class JavaLanguageComponent
 				ENUM
 			))
 		);
+	}
+
+	@Override
+	public LanguageName getLanguageName() {
+		return NAME;
+	}
+
+	@Override
+	public Iterable<String> getFileSuffixes() {
+		return FILE_SUFFIXES;
+	}
+
+	@Override
+	public LanguageStyling getStyling() {
+		return STYLING;
 	}
 }

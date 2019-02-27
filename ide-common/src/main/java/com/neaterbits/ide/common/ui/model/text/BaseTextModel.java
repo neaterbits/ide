@@ -32,4 +32,8 @@ public abstract class BaseTextModel {
 	public abstract String getLine(int lineIndex);
 
 	public abstract int getCharCount();
+
+	public final int getLineLength(int lineIndex) {
+		return getLine(lineIndex).length();
+	}
 }

@@ -1,7 +1,7 @@
 package com.neaterbits.ide.swt;
 
-import java.util.function.Consumer;
-
+import java.util.Collection;
+import java.util.Objects;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -10,8 +10,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Text;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.view.TextChangeListener;
+import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
 
 final class SWTTextEditorView extends SWTBaseTextEditorView {
 
@@ -30,10 +31,9 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
-	void setTextModel(BaseTextModel textModel) {
-		super.setTextModel(textModel);
-
-		final String text = textModel.getText();
+	public void setCurrentText(String text) {
+		
+		Objects.requireNonNull(text);
 		
 		this.currentText = text;
 		this.textDiffer = new TextDiffer(currentText);
@@ -47,7 +47,7 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
-	void setText(String text) {
+	void setWidgetText(String text) {
 		textWidget.setText(text);
 	}
 
@@ -67,9 +67,10 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	
+	
 	@Override
-	void addTextChangeListener(Consumer<ReplaceTextRange> listener) {
-
+	public void addTextChangeListener(TextChangeListener listener) {
+		
 		textWidget.addModifyListener(new ModifyListener() {
 			
 			@Override
@@ -77,7 +78,7 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 				final ReplaceTextRange replaceTextRange = textDiffer.computeReplaceTextRange(textWidget.getText());
 
 				if (replaceTextRange != null) {
-					listener.accept(replaceTextRange);
+					listener.onTextChange(replaceTextRange.getStart(), replaceTextRange.getStart(), replaceTextRange.getText());
 				}
 			}
 		});
@@ -92,5 +93,10 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	@Override
 	void setTabs(int tabs) {
 		textWidget.setTabs(tabs);
+	}
+
+	@Override
+	public void applyStyles(Collection<TextStyleOffset> styles) {
+		
 	}
 }

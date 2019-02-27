@@ -1,4 +1,4 @@
-package com.neaterbits.ide.common.ui.model.text.styling;
+package com.neaterbits.ide.util.ui.text.styling;
 
 public enum TextStyle {
 

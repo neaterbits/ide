@@ -1,7 +1,6 @@
 package com.neaterbits.ide.swt;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -12,7 +11,6 @@ import org.eclipse.swt.widgets.TabItem;
 
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 
 abstract class SWTBaseTextEditorView extends SWTEditorView {
@@ -24,15 +22,12 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	
 	private final SourceFileResourcePath sourceFile;
 
-	private BaseTextModel textModel;
-
-	abstract void setText(String text);
+	abstract void setWidgetText(String text);
 	abstract void setCursorPos(int pos);
 	abstract int getCursorPos();
 	abstract void setFocus();
 	abstract void setTabs(int tabs);
 	abstract void addKeyListener(KeyListener keyListener);
-	abstract void addTextChangeListener(Consumer<ReplaceTextRange> listener);
 	
 	SWTBaseTextEditorView(TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
 
@@ -92,7 +87,7 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 							0,
 							spaces);
 					
-					setText(updatedText);
+					setWidgetText(updatedText);
 					
 					setCursorPos(cursorPos + spaces.length());
 					
@@ -109,16 +104,6 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 					e.doit = false;
 				}
 			}
-		});
-		
-		addTextChangeListener(replaceTextRange -> {
-
-			System.out.println("### replace text range " + replaceTextRange);
-
-			textModel.replaceTextRange(
-					replaceTextRange.getStart(),
-					replaceTextRange.getLength(),
-					replaceTextRange.getText());
 		});
 	}
 
@@ -211,7 +196,7 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 				0,
 				newline);
 
-		setText(updatedText);
+		setWidgetText(updatedText);
 		
 		setCursorPos(caretPosition + newline.length());
 	}
@@ -241,12 +226,5 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		setTabs(config.getTabs());
 		
 		this.config = config;
-	}
-
-	@Override
-	void setTextModel(BaseTextModel textModel) {
-		// System.out.println("## setText: " + textModel.getText());
-		
-		this.textModel = textModel;
 	}
 }

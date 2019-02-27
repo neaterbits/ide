@@ -1,15 +1,18 @@
 package com.neaterbits.ide.swt;
 
-import java.util.function.Consumer;
+import java.util.Collection;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.view.TextChangeListener;
+import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
 
 final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 
@@ -22,16 +25,12 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		
 		configure(textWidget);
 	}
-
+	
 	
 	@Override
-	void setTextModel(BaseTextModel textModel) {
-		super.setTextModel(textModel);
-		
-		setText(textModel.getText());
+	public void setCurrentText(String text) {
+		setWidgetText(text);
 	}
-
-
 
 	@Override
 	public String getText() {
@@ -39,7 +38,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
-	void setText(String text) {
+	void setWidgetText(String text) {
 		this.textWidget.setText(text);
 	}
 
@@ -67,9 +66,29 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	void addKeyListener(KeyListener keyListener) {
 		textWidget.addKeyListener(keyListener);
 	}
+	
+	@Override
+	public void addTextChangeListener(TextChangeListener listener) {
+		textWidget.addExtendedModifyListener(event -> listener.onTextChange(event.start, event.length, event.replacedText));
+	}
 
 	@Override
-	void addTextChangeListener(Consumer<ReplaceTextRange> listener) {
-		textWidget.addExtendedModifyListener(event -> listener.accept(new ReplaceTextRange(event.start, event.length, event.replacedText)));
+	public void applyStyles(Collection<TextStyleOffset> styles) {
+
+		for (TextStyleOffset style : styles) {
+			final StyleRange styleRange = new StyleRange(
+					style.getStart(),
+					style.getLength(),
+					new Color(
+							null,
+							style.getColor().getR(),
+							style.getColor().getG(),
+							style.getColor().getB()),
+					null);
+			
+			System.out.println("## apply style range " + styleRange);
+			
+			textWidget.setStyleRange(styleRange);
+		}
 	}
 }
