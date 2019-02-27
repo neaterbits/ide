@@ -12,6 +12,10 @@ public abstract class Target<TARGET> {
 	private final List<Prerequisites> prerequisites;
 	private final Action<TARGET> action;
 	private final ActionWithResult<TARGET> actionWithResult;
+
+	public abstract String targetSimpleLogString();
+
+	public abstract String targetToLogString();
 	
 	Target(Class<TARGET> type, String description, TARGET targetObject, List<Prerequisites> prerequisites, Action<TARGET> action, ActionWithResult<TARGET> actionWithResult) {
 		

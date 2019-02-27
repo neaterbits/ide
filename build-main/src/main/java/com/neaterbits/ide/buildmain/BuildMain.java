@@ -30,7 +30,6 @@ public class BuildMain {
 		}
 		else {
 			final String projectDirString = args[0];
-			
 			final File projectDir = new File(projectDirString);
 			
 			if (!projectDir.isDirectory()) {
@@ -38,9 +37,7 @@ public class BuildMain {
 			}
 			else {
 				final BuildSystems buildSystems = new BuildSystems(); 
-
 				final BuildSystem buildSystem = buildSystems.findBuildSystem(projectDir);
-				
 				final BuildRoot buildRoot = new BuildRootImpl<>(projectDir, buildSystem.scan(projectDir));
 				
 				System.out.println("Modules to build:");
@@ -50,7 +47,6 @@ public class BuildMain {
 				}
 
 				final TargetSpec<ModulesBuildContext, ?, ?> targetSpec = TargetBuilderModules.makeTargetBuilderModules();
-				
 				final TargetFinder targetFinder = new TargetFinder();
 				
 				final ModulesBuildContext context = new ModulesBuildContext(

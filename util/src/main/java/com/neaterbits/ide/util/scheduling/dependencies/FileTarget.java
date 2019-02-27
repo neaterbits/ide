@@ -53,6 +53,16 @@ final class FileTarget<TARGET> extends Target<TARGET> {
 	}
 
 	@Override
+	public String targetSimpleLogString() {
+		return file.getName();
+	}
+
+	@Override
+	public String targetToLogString() {
+		return file.getPath();
+	}
+
+	@Override
 	public String toString() {
 		return "FileTarget [file=" + file + "]";
 	}

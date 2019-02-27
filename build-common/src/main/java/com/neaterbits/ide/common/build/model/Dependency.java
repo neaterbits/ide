@@ -46,4 +46,9 @@ public abstract class Dependency {
 	public final File getCompiledModuleFile() {
 		return compiledModuleFile;
 	}
+
+	@Override
+	public String toString() {
+		return module != null ? module.getName() : compiledModuleFile.getName();
+	}
 }

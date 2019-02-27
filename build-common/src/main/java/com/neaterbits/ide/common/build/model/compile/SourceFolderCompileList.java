@@ -27,4 +27,9 @@ public final class SourceFolderCompileList {
 	public List<FileCompilation> getFileCompilations() {
 		return fileCompilations;
 	}
+
+	@Override
+	public String toString() {
+		return sourceFolder.getFile().getPath() + "/" + fileCompilations;
+	}
 }

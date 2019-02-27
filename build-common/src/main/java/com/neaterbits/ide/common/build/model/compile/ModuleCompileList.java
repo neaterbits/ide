@@ -29,4 +29,9 @@ public final class ModuleCompileList {
 	public List<SourceFolderCompileList> getSourceFiles() {
 		return sourceFiles;
 	}
+
+	@Override
+	public String toString() {
+		return module.getName() + "/" + sourceFiles;
+	}
 }

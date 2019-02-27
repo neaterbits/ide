@@ -30,6 +30,7 @@ public final class JavaCompiler implements Compiler {
 		System.out.println("## compile to " + targetDirectory.getPath() + ": " + sourceFiles.stream()
 					.map(file -> file.getName())
 					.collect(Collectors.toList()));
+
 		*/
 
 		System.out.println("## dependencies: " + compiledDependencies);

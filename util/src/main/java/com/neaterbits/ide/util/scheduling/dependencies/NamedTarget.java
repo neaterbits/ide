@@ -50,6 +50,16 @@ final class NamedTarget<TARGET> extends Target<TARGET> {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String targetSimpleLogString() {
+		return name;
+	}
+
+	@Override
+	public String targetToLogString() {
+		return name;
+	}
 
 	@Override
 	public String toString() {

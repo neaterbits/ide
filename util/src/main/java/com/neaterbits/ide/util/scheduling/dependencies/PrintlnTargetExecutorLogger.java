@@ -7,14 +7,14 @@ public final class PrintlnTargetExecutorLogger implements TargetExecutorLogger {
 	@Override
 	public void onScheduleTarget(Target<?> target, Status status) {
 
-		System.out.println("Schedule target " + target + ", status=" + status);
+		System.out.println("Schedule target " + target.targetToLogString() + ", status=" + status);
 		
 	}
 
 	@Override
 	public void onCollect(Target<?> target, List<Object> targetObjects, Object collected) {
 
-		System.out.println("Collect " + collected + " to target " + target + " from " + targetObjects);
+		System.out.println("Collect " + collected + " to target " + target.targetToLogString() + " from " + targetObjects);
 		
 	}
 
@@ -29,10 +29,10 @@ public final class PrintlnTargetExecutorLogger implements TargetExecutorLogger {
 	public void onComplete(Target<?> target, Exception exception) {
 		
 		if (exception == null) {
-			System.out.println("Complete " + target);
+			System.out.println("Complete " + target.targetToLogString());
 		}
 		else {
-			System.out.println("Failed " + target);
+			System.out.println("Failed " + target.targetToLogString());
 			
 			exception.printStackTrace();
 		}
