@@ -25,7 +25,7 @@ class PrerequisiteCollectActionBuilderImpl<CONTEXT extends TaskContext, TARGET, 
 	}
 
 	@Override
-	public PrerequisitesOrCollectBuilder<CONTEXT, TARGET, PRODUCT, ITEM> build(
+	public PrerequisitesOrCollectBuilder<CONTEXT, TARGET, PRODUCT, ITEM> buildBy(
 			Consumer<TypedSubTargetBuilder<CONTEXT, PREREQUISITE>> prerequisiteTargets) {
 
 		final TypedSubTargetBuilderImpl<CONTEXT, PREREQUISITE> typedSubTargetBuilder = new TypedSubTargetBuilderImpl<>();
@@ -40,7 +40,7 @@ class PrerequisiteCollectActionBuilderImpl<CONTEXT extends TaskContext, TARGET, 
 	}
 
 	@Override
-	public PrerequisitesBuilder<CONTEXT, TARGET> collect(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
+	public PrerequisitesBuilder<CONTEXT, TARGET> collectToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
 
 		prerequisiteBuilderState.setCollect(collect);
 		

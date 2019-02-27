@@ -15,7 +15,7 @@ public class NoTargetPrerequisiteBuilderImpl<CONTEXT extends TaskContext, PREREQ
 	}
 
 	@Override
-	public void build(Consumer<TypedSubTargetBuilder<CONTEXT, PREREQUISITE>> prerequisiteTargets) {
+	public void buildBy(Consumer<TypedSubTargetBuilder<CONTEXT, PREREQUISITE>> prerequisiteTargets) {
 
 		final TypedSubTargetBuilderImpl<CONTEXT, PREREQUISITE> sub = new TypedSubTargetBuilderImpl<>(); 
 		

@@ -8,6 +8,6 @@ import com.neaterbits.ide.util.scheduling.Constraint;
 public interface TargetIteratingBuilder<CONTEXT extends TaskContext, TARGET> {
 
 	<PREREQUISITE>
-	PrerequisiteActionBuilder<CONTEXT, TARGET, PREREQUISITE> iterating(Constraint constraint, BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites);
+	PrerequisiteActionBuilder<CONTEXT, TARGET, PREREQUISITE> fromIterating(Constraint constraint, BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites);
 
 }

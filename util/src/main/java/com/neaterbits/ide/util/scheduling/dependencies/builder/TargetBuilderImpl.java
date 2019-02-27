@@ -7,7 +7,7 @@ public class TargetBuilderImpl<CONTEXT extends TaskContext> implements TargetBui
 	private NoTargetPrerequisitesBuilderImpl<CONTEXT> builder;
 	
 	@Override
-	public NoTargetPrerequisitesBuilder<CONTEXT> target(String targetName, String description) {
+	public NoTargetPrerequisitesBuilder<CONTEXT> addTarget(String targetName, String description) {
 		
 		if (this.builder != null) {
 			throw new IllegalStateException();

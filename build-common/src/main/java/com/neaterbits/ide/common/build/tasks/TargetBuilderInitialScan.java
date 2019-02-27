@@ -12,11 +12,11 @@ public class TargetBuilderInitialScan {
 
 		final TargetBuilder<InitialScanContext> targetBuilder = new TargetBuilderImpl<>();
 		
-		targetBuilder.target("sourcefolders", "Source folders for all modules")
-				.prerequisites("Source folders")
-				.iterating(InitialScanContext::getModules)
-				.build(subTarget -> subTarget
-						.target(ModuleResourcePath.class, "sourcefolders", module -> "Find source folders for " + module.getName())
+		targetBuilder.addTarget("sourcefolders", "Source folders for all modules")
+				.withPrerequisites("Source folders")
+				.fromIterating(InitialScanContext::getModules)
+				.buildBy(subTarget -> subTarget
+						.addInfoSubTarget(ModuleResourcePath.class, "sourcefolders", module -> "Find source folders for " + module.getName())
 						.actionWithResult(Constraint.IO, (context, module) -> context.buildRoot.getBuildSystemRootScan().findSourceFolders(module))
 						.processResult((context, module, sourceFolders) -> context.buildRoot.setSourceFolders(module, sourceFolders))
 				);

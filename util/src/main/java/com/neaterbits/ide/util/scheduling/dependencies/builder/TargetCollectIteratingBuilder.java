@@ -9,6 +9,6 @@ public interface TargetCollectIteratingBuilder<CONTEXT extends TaskContext, TARG
 
 	<PREREQUISITE>
 	PrerequisiteCollectActionBuilder<CONTEXT, TARGET, PREREQUISITE, PRODUCT, ITEM>
-		iterating(Constraint constraint, BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites);
+		fromIterating(Constraint constraint, BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites);
 
 }

@@ -11,6 +11,6 @@ public interface NoTargetIteratingBuilder<CONTEXT extends TaskContext> {
 	*/
 
 	<PREREQUISITE>
-	NoTargetPrerequisiteBuilder<CONTEXT, PREREQUISITE> iterating(Function<CONTEXT, Collection<PREREQUISITE>> getPrerequisites);
+	NoTargetPrerequisiteBuilder<CONTEXT, PREREQUISITE> fromIterating(Function<CONTEXT, Collection<PREREQUISITE>> getPrerequisites);
 
 }

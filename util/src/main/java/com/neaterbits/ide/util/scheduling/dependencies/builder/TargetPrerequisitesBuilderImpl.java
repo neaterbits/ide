@@ -18,7 +18,7 @@ final class TargetPrerequisitesBuilderImpl<CONTEXT extends TaskContext, TARGET, 
 	}
 
 	@Override
-	public <PRODUCT> PrerequisitesProductBuilder<CONTEXT, TARGET, PRODUCT> product(Class<PRODUCT> productType) {
+	public <PRODUCT> PrerequisitesProductBuilder<CONTEXT, TARGET, PRODUCT> makingProduct(Class<PRODUCT> productType) {
 		return new PrerequisitesProductBuilderImpl<>(getTargetBuilderState(), description, productType);
 	}
 }

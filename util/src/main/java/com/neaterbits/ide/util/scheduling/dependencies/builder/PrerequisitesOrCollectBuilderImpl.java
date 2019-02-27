@@ -21,7 +21,7 @@ final class PrerequisitesOrCollectBuilderImpl<CONTEXT extends TaskContext, TARGE
 
 	@Override
 	public PrerequisitesOrActionBuilder<CONTEXT, TARGET>
-		collect(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
+		collectToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
 
 		prerequisiteBuilderState.setCollect(collect);
 		

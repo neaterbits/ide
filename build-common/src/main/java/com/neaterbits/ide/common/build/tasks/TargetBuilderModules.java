@@ -32,31 +32,33 @@ public class TargetBuilderModules {
 		
 		final TargetBuilderImpl<ModulesBuildContext> targetBuilder = new TargetBuilderImpl<>();
 		
-		targetBuilder.target("compileall", "Compile all modules")
-			.prerequisites("Modules")
-			.iterating(context -> context.buildRoot.getModules())
-			.build(subTarget-> subTarget
+		targetBuilder.addTarget("compileall", "Compile all modules")
+			.withPrerequisites("Modules")
+			.fromIterating(context -> context.buildRoot.getModules())
+			.buildBy(subTarget-> subTarget
 					
-				.target(ModuleResourcePath.class,
+				.addFileSubTarget(ModuleResourcePath.class,
 						CompiledModuleFileResourcePath.class,
 						
 						(context, module) -> context.buildRoot.getCompiledModuleFile(module),
 						CompiledModuleFileResourcePath::getFile,
 						module -> "Compile module  " + module.getName())
 
-					.prerequisites("Module dependencies list")
-						.product(ModuleDependencyList.class)
-						.item(Dependency.class)
-						.iterating(null, TargetBuilderModules::transitiveProjectDependencies)
-						.collect((module, dependencyList) -> new ModuleDependencyList(module, dependencyList))
+					// collect dependencies in list for later
+					.withPrerequisites("Module dependencies list")
+						.makingProduct(ModuleDependencyList.class)
+						.fromItemType(Dependency.class)
+						.fromIterating(null, TargetBuilderModules::transitiveProjectDependencies)
+						.collectToProduct((module, dependencyList) -> new ModuleDependencyList(module, dependencyList))
 
-					.prerequisites("Project dependencies")
-						.iterating(null, (context, module) -> transitiveProjectDependencies(context, module).stream()
+					// add targets for local module dependencies
+					.withPrerequisites("Project dependencies")
+						.fromIterating(null, (context, module) -> transitiveProjectDependencies(context, module).stream()
 								.filter(dependency -> dependency.getType() == DependencyType.PROJECT)
 								.collect(Collectors.toList()))
 						
-						.build(st -> {
-							st.target(
+						.buildBy(st -> {
+							st.addFileSubTarget(
 									Dependency.class,
 									CompiledModuleFileResourcePath.class,
 									(context, dependency) -> (CompiledModuleFileResourcePath)dependency.getResourcePath(),
@@ -64,20 +66,22 @@ public class TargetBuilderModules {
 									dependency -> "Project dependency " + dependency.getResourcePath().getLast().getName());
 						})
 
-					.prerequisites("External dependencies")
-						.iterating(null, (context, module) -> transitiveProjectDependencies(context, module).stream()
+					// for downloading external dependencies
+					.withPrerequisites("External dependencies")
+						.fromIterating(null, (context, module) -> transitiveProjectDependencies(context, module).stream()
 								.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
 								.collect(Collectors.toList()))
 						
-						.build(st -> {
-							st.target(
+						.buildBy(st -> {
+							st.addFileSubTarget(
 									Dependency.class,
 									LibraryResourcePath.class,
 									(context, dependency) -> (LibraryResourcePath)dependency.getResourcePath(),
 									LibraryResourcePath::getFile,
-									dependency -> "Project dependency " + dependency.getResourcePath().getLast().getName())
+									dependency -> "External dependency " + dependency.getResourcePath().getLast().getName())
 
-							.prerequisites("Transitive external dependencies")
+							.withPrerequisites("Transitive external dependencies")
+							
 							//.iterating(Constraint.IO, (context, dependency) -> context.buildRoot.getTransitiveExternalDependencies(dependency))
 
 							//.buildReferSame()
@@ -92,30 +96,32 @@ public class TargetBuilderModules {
 							*/;
 						})
 
-					.prerequisites("Module class compile list")
-						.product(ModuleCompileList.class)
-						.item(SourceFolderCompileList.class)
+					// must collect info on classes to compile into a list
+					// so can run compiler onto multiple files
+					.withPrerequisites("Module class compile list")
+						.makingProduct(ModuleCompileList.class)
+						.fromItemType(SourceFolderCompileList.class)
 						
-						.iterating(Constraint.IO, (context, module) -> context.buildRoot.getBuildSystemRootScan().findSourceFolders(module))
+						.fromIterating(Constraint.IO, (context, module) -> context.buildRoot.getBuildSystemRootScan().findSourceFolders(module))
 
-						.build(st -> st
+						.buildBy(st -> st
 								
-							.target(SourceFolderResourcePath.class, "compilelist", sourceFolder -> "Class files for source folder " + sourceFolder.getName())
+							.addInfoSubTarget(SourceFolderResourcePath.class, "compilelist", sourceFolder -> "Class files for source folder " + sourceFolder.getName())
 							
-								.prerequisites("Source folder compilations")
-									.product(SourceFolderCompileList.class)
-									.item(FileCompilation.class)
-									.iterating(Constraint.IO, (ctx, sourceFolder) -> getSourceFiles(ctx, sourceFolder))
+								.withPrerequisites("Source folder compilations")
+									.makingProduct(SourceFolderCompileList.class)
+									.fromItemType(FileCompilation.class)
+									.fromIterating(Constraint.IO, (ctx, sourceFolder) -> getSourceFiles(ctx, sourceFolder))
 													
-									.build(sourceFileTarget -> sourceFileTarget
-										.target(FileCompilation.class, FileCompilation::getCompiledFile, classFile -> "Class file for source file " + classFile.getSourceFile().getName())
-											.prerequisite("Source file")
+									.buildBy(sourceFileTarget -> sourceFileTarget
+										.addFileSubTarget(FileCompilation.class, FileCompilation::getCompiledFile, classFile -> "Class file for source file " + classFile.getSourceFile().getName())
+											.withPrerequisite("Source file")
 											.from(FileCompilation::getSourcePath)
 											.withFile(FileCompilation::getSourceFile)
 									)
-									.collect((sourceFolder, fileCompilationList) -> new SourceFolderCompileList(sourceFolder, fileCompilationList))
+									.collectToProduct((sourceFolder, fileCompilationList) -> new SourceFolderCompileList(sourceFolder, fileCompilationList))
 						)
-						.collect((module, resultList) -> new ModuleCompileList(module, resultList))
+						.collectToProduct((module, resultList) -> new ModuleCompileList(module, resultList))
 					
 					.action(Constraint.CPU, (context, target, actionParameters) -> {
 						

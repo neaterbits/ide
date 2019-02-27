@@ -16,7 +16,7 @@ class PrerequisiteActionBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TA
 	}
 
 	@Override
-	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> build(
+	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> buildBy(
 			Consumer<TypedSubTargetBuilder<CONTEXT, PREREQUISITE>> prerequisiteTargets) {
 
 		final TypedSubTargetBuilderImpl<CONTEXT, PREREQUISITE> typedSubTargetBuilder = new TypedSubTargetBuilderImpl<>();

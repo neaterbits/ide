@@ -20,7 +20,7 @@ class TargetCollectIteratingBuilderImpl<CONTEXT extends TaskContext, TARGET, FIL
 	}
 	
 	@Override
-	public <PREREQUISITE> PrerequisiteCollectActionBuilder<CONTEXT, TARGET, PREREQUISITE, PRODUCT, ITEM> iterating(
+	public <PREREQUISITE> PrerequisiteCollectActionBuilder<CONTEXT, TARGET, PREREQUISITE, PRODUCT, ITEM> fromIterating(
 			Constraint constraint,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites) {
 		

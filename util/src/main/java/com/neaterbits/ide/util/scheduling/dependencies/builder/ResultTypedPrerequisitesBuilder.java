@@ -9,7 +9,7 @@ public interface ResultTypedPrerequisitesBuilder<CONTEXT extends TaskContext, TA
 	extends TargetPrerequisitesBuilder<TaskContext, TARGET> {
 
 	<PREREQUISITE, PREREQUISITE_RESULT, SUB_RESULT>
-	TypedPrerequisitesBuilder<CONTEXT, TARGET> prerequisites(
+	TypedPrerequisitesBuilder<CONTEXT, TARGET> withPrerequisites(
 			String description,
 			Class<SUB_RESULT> resultType,
 			Class<PREREQUISITE_RESULT> prerequisiteResultType,

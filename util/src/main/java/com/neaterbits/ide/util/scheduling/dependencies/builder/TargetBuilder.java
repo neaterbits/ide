@@ -4,7 +4,7 @@ import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
 
 public interface TargetBuilder<CONTEXT extends TaskContext> {
 
-	NoTargetPrerequisitesBuilder<CONTEXT> target(String targetName, String description);
+	NoTargetPrerequisitesBuilder<CONTEXT> addTarget(String targetName, String description);
 	
 	TargetSpec<CONTEXT, ?, ?> build();
 }

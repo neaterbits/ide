@@ -4,6 +4,6 @@ import java.util.function.Consumer;
 
 public interface NoTargetPrerequisiteBuilder<CONTEXT extends TaskContext, PREREQUISITE> {
 
-	void build(Consumer<TypedSubTargetBuilder<CONTEXT, PREREQUISITE>> prerequisiteTargets);
+	void buildBy(Consumer<TypedSubTargetBuilder<CONTEXT, PREREQUISITE>> prerequisiteTargets);
 
 }

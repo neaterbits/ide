@@ -25,31 +25,31 @@ final class TypedSubTargetBuilderImpl<CONTEXT extends TaskContext, TARGET>
 	}
 	
 	@Override
-	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> target(String name, Function<TARGET, String> description) {
+	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> addInfoSubTarget(String name, Function<TARGET, String> description) {
 		return set(new PrerequisitesOrActionBuilderImpl<>(null, name, description));
 	}
 
 	@Override
-	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> target(Class<TARGET> type, Function<TARGET, String> description) {
+	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> addInfoSubTarget(Class<TARGET> type, Function<TARGET, String> description) {
 		return set(new PrerequisitesOrActionBuilderImpl<>(type, (String)null, description));
 	}
 
 	@Override
-	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> target(Class<TARGET> type, Function<TARGET, File> file,
+	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> addFileSubTarget(Class<TARGET> type, Function<TARGET, File> file,
 			Function<TARGET, String> description) {
 
 		return set(new PrerequisitesOrActionBuilderImpl<>(type, type, (context, target) -> target, file, description));
 	}
 
 	@Override
-	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> target(Class<TARGET> type, String qualifiername,
+	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> addInfoSubTarget(Class<TARGET> type, String qualifiername,
 			Function<TARGET, String> description) {
 		
 		return set(new PrerequisitesOrActionBuilderImpl<>(type, qualifiername, description));
 	}
 
 	@Override
-	public <FILE_TARGET> PrerequisitesOrActionBuilder<CONTEXT, TARGET> target(
+	public <FILE_TARGET> PrerequisitesOrActionBuilder<CONTEXT, TARGET> addFileSubTarget(
 			Class<TARGET> type,
 			Class<FILE_TARGET> fileTargetType,
 			BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget,

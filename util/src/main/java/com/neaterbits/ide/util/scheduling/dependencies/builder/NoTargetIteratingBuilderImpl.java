@@ -14,7 +14,7 @@ final class NoTargetIteratingBuilderImpl<CONTEXT extends TaskContext> implements
 	}
 
 	@Override
-	public <PREREQUISITE> NoTargetPrerequisiteBuilder<CONTEXT, PREREQUISITE> iterating(
+	public <PREREQUISITE> NoTargetPrerequisiteBuilder<CONTEXT, PREREQUISITE> fromIterating(
 			Function<CONTEXT, Collection<PREREQUISITE>> getPrerequisites) {
 
 		final PrerequisiteBuilderState<CONTEXT, Object, Void, Void> prerequisiteBuilderState = new PrerequisiteBuilderState<>(prerequisiteDescription, null, null);

@@ -4,6 +4,6 @@ public interface TargetPrerequisitesBuilder<CONTEXT extends TaskContext, TARGET>
 	extends TargetIteratingBuilder<CONTEXT, TARGET> {
 
 	<PRODUCT>
-	PrerequisitesProductBuilder<CONTEXT, TARGET, PRODUCT> product(Class<PRODUCT> productType);
+	PrerequisitesProductBuilder<CONTEXT, TARGET, PRODUCT> makingProduct(Class<PRODUCT> productType);
 	
 }

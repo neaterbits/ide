@@ -25,7 +25,7 @@ class TargetIteratingBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TARGE
 	}
 
 	@Override
-	public final <PREREQUISITE> PrerequisiteActionBuilder<CONTEXT, TARGET, PREREQUISITE> iterating(
+	public final <PREREQUISITE> PrerequisiteActionBuilder<CONTEXT, TARGET, PREREQUISITE> fromIterating(
 			Constraint constraint,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites) {
 

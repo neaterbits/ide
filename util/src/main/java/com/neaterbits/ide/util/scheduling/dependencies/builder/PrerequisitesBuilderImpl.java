@@ -28,12 +28,12 @@ class PrerequisitesBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 	}
 
 	@Override
-	public final TargetPrerequisitesBuilder<CONTEXT, TARGET> prerequisites(String description) {
+	public final TargetPrerequisitesBuilder<CONTEXT, TARGET> withPrerequisites(String description) {
 		return new TargetPrerequisitesBuilderImpl<>(targetBuilderState, description);
 	}
 
 	@Override
-	public final TargetPrerequisiteBuilder<CONTEXT, TARGET> prerequisite(String description) {
+	public final TargetPrerequisiteBuilder<CONTEXT, TARGET> withPrerequisite(String description) {
 		return new TargetPrerequisiteBuilderImpl<>(targetBuilderState, description);
 	}
 
