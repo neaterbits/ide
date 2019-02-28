@@ -2,15 +2,63 @@ package com.neaterbits.ide.common.ui.model.text;
 
 public abstract class TextEdit {
 
-	private final int startPos;
+	private final long startPos;
 
-	public abstract int getChangeInNumberOfLines();
+	public abstract long getChangeInNumberOfLines(LineDelimiter lineDelimiter);
 
-	public TextEdit(int startPos) {
+	public abstract long getOldLength();
+
+	public abstract long getNewLength();
+	
+	public abstract Text getOldText();
+	
+	public abstract Text getNewText();
+	
+	public final TextEdit merge(TextEdit other) {
+		
+		if (startPos + getNewLength() < other.startPos) {
+			throw new IllegalArgumentException();
+		}
+		
+		final long totalOldLength = getOldLength() + other.getOldLength();
+		final long totalNewLength = getNewLength() + other.getNewLength();
+		
+		final TextEdit textEdit;
+		
+		if (totalOldLength == 0) {
+			if (totalNewLength == 0) {
+				textEdit = null;
+			}
+			else {
+				textEdit = new TextAdd(startPos, getNewText().merge(other.getNewText()));
+			}
+		}
+		else {
+			if (totalNewLength == 0) {
+				textEdit = new TextRemove(startPos, totalOldLength, getOldText().merge(other.getOldText()));
+			}
+			else {
+				textEdit = new TextReplace(
+						startPos,
+						totalOldLength,
+						getOldText().merge(other.getOldText()),
+						getNewText().merge(other.getNewText()));
+						
+			}
+		}
+		
+		return textEdit;
+	}
+	
+	public TextEdit(long startPos) {
 		this.startPos = startPos;
 	}
 
-	public final int getStartPos() {
+	public final long getStartPos() {
 		return startPos;
+	}
+
+	static long getChangeInNumberOfLines(Text text, LineDelimiter lineDelimiter) {
+		return text.getNumberOfNewlineChars(lineDelimiter);
 	}
 }

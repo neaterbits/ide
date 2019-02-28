@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.model.text.util.StringText;
 
 final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 
@@ -28,10 +29,8 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	void setTextModel(BaseTextModel textModel) {
 		super.setTextModel(textModel);
 		
-		setText(textModel.getText());
+		setText(textModel.getText().asString());
 	}
-
-
 
 	@Override
 	public String getText() {
@@ -70,6 +69,9 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 
 	@Override
 	void addTextChangeListener(Consumer<ReplaceTextRange> listener) {
-		textWidget.addExtendedModifyListener(event -> listener.accept(new ReplaceTextRange(event.start, event.length, event.replacedText)));
+		
+		textWidget.addExtendedModifyListener(event -> listener.accept(
+				new ReplaceTextRange(event.start, event.length, new StringText(event.replacedText)))
+		);
 	}
 }

@@ -1,29 +1,38 @@
 package com.neaterbits.ide.common.ui.model.text;
 
-import com.neaterbits.compiler.common.util.Strings;
+import java.util.Objects;
+
+import com.neaterbits.ide.common.ui.model.text.util.StringText;
 
 public final class StringTextModel extends BaseTextModel {
 
-	private String text;
+	private Text text;
 
-	public StringTextModel(String lineDelimiter, String text) {
+	public StringTextModel(LineDelimiter lineDelimiter, String text) {
+		this(lineDelimiter, new StringText(text));
+	}
+
+	public StringTextModel(LineDelimiter lineDelimiter, StringText text) {
 		super(lineDelimiter);
 
+		Objects.requireNonNull(text);
+		
 		this.text = text;
 	}
 
-	public String getText() {
+	@Override
+	public Text getText() {
 		return text;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	void setText(String text) {
+		this.text = new StringText(text);
 	}
 	
 	@Override
-	public void replaceTextRange(int start, int replaceLength, String text) {
+	public void replaceTextRange(long start, long replaceLength, Text text) {
 
-		this.text = Strings.replaceTextRange(this.text, start, replaceLength, text);
+		this.text = Text.replaceTextRange(this.text, start, replaceLength, text);
 		
 		/*
 		System.out.println("## textmodel replace text range: \"" + text + "\"");
@@ -32,37 +41,68 @@ public final class StringTextModel extends BaseTextModel {
 	}
 
 	@Override
-	public String getTextRange(int start, int length) {
+	public Text getTextRange(long start, long length) {
 		return text.substring(start, start + length);
 	}
 
 	@Override
-	public int getOffsetAtLine(int lineIndex) {
-		return LinesFinder.findPosOfLineNo(text, lineIndex);
+	public long getOffsetAtLine(long lineIndex) {
+		return text.findPosOfLineIndex(lineIndex,getLineDelimiter());
 	}
 
 	@Override
-	public int getLineCount() {
-		return LinesFinder.getNumberOfNewlineChars(text);
+	public long getLineCount() {
+		return text.getNumberOfLines(getLineDelimiter());
 	}
 
 	@Override
-	public int getLineAtOffset(int offset) {
-		return LinesFinder.findLineNoAtPos(text, offset);
+	public long getLineAtOffset(long offset) {
+		return text.findLineIndexAtPos(offset, getLineDelimiter());
 	}
 
 	@Override
-	public String getLine(int lineIndex) {
+	public Text getLineWithoutAnyNewline(long lineIndex) {
+		return getLine(lineIndex, false);
+	}
+
+	@Override
+	public Text getLineIncludingAnyNewline(long lineIndex) {
+		return getLine(lineIndex, true);
+	}
+
+	private Text getLine(long lineIndex, boolean includeAnyNewline) {
 		
-		final int pos = LinesFinder.findPosOfLineNo(text, lineIndex);
+		final long pos = text.findPosOfLineIndex(lineIndex, getLineDelimiter());
+
+		final Text result;
 		
-		final int eol = LinesFinder.findNewline(text, pos);
+		if (pos < 0) {
+			result = null;
+		}
+		else {
 		
-		return text.substring(pos, eol);
+			final long eol = text.findNewline(pos, getLineDelimiter());
+			
+			if (eol == -1) {
+				result = text.substring(pos);
+			}
+			else {
+				
+				final int lengthOfNewline = text.getNumberOfNewlineCharsForOneLineShift(eol, getLineDelimiter());
+				
+				result = text.substring(
+						pos,
+						includeAnyNewline
+							? eol + lengthOfNewline
+							: eol);
+			}
+		}
+		
+		return result;
 	}
 
 	@Override
-	public int getCharCount() {
+	public long getCharCount() {
 		return text.length();
 	}
 }

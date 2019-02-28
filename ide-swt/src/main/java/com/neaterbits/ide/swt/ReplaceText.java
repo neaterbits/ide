@@ -1,31 +1,33 @@
 package com.neaterbits.ide.swt;
 
+import com.neaterbits.ide.common.ui.model.text.Text;
+
 final class ReplaceText {
-	private final int start;
-	private final int length;
-	private final String removedText;
-	private final String addedText;
+	private final long start;
+	private final long length;
+	private final Text removedText;
+	private final Text addedText;
 	
-	ReplaceText(int start, int length, String removedText, String addedText) {
+	ReplaceText(long start, long length, Text removedText, Text addedText) {
 		this.start = start;
 		this.length = length;
 		this.removedText = removedText;
 		this.addedText = addedText;
 	}
 
-	int getStart() {
+	long getStart() {
 		return start;
 	}
 
-	int getLength() {
+	long getLength() {
 		return length;
 	}
 
-	String getRemovedText() {
+	Text getRemovedText() {
 		return removedText;
 	}
 
-	String getAddedText() {
+	Text getAddedText() {
 		return addedText;
 	}
 }

@@ -1,23 +1,37 @@
 package com.neaterbits.ide.common.ui.model.text;
 
+import java.util.Objects;
+
 public final class TextReplace extends TextChange {
 
-	private final String updatedText;
+	private final Text updatedText;
 	
-	public TextReplace(int startPos, int endPos, String changedText, String updatedText) {
-		super(startPos, endPos, changedText);
+	public TextReplace(long startPos, long replacedLength, Text changedText, Text updatedText) {
+		super(startPos, replacedLength, changedText);
+		
+		Objects.requireNonNull(updatedText);
+		
+		if (updatedText.isEmpty()) {
+			throw new IllegalArgumentException();
+		}
 		
 		this.updatedText = updatedText;
 	}
 
-	public String getUpdatedText() {
+	@Override
+	public Text getNewText() {
 		return updatedText;
 	}
 
 	@Override
-	public int getChangeInNumberOfLines() {
-		return    LinesFinder.getNumberOfNewlineChars(updatedText)
-				- LinesFinder.getNumberOfNewlineChars(getChangedText());
+	public long getNewLength() {
+		return updatedText.length();
+	}
+
+	@Override
+	public long getChangeInNumberOfLines(LineDelimiter lineDelimiter) {
+		return    updatedText.getNumberOfNewlineChars(lineDelimiter)
+				- getOldText().getNumberOfNewlineChars(lineDelimiter);
 	}
 }
 

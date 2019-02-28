@@ -1,16 +1,18 @@
 package com.neaterbits.ide.swt;
 
+import com.neaterbits.ide.common.ui.model.text.Text;
+
 final class TextDiffer {
 
-	private String currentText;
+	private Text currentText;
 	
-	TextDiffer(String currentText) {
+	TextDiffer(Text currentText) {
 		this.currentText = currentText;
 	}
 
-	ReplaceText computeReplaceText(String updatedText) {
+	ReplaceText computeReplaceText(Text updatedText) {
 		
-		final int length;
+		final long length;
 		
 		if (currentText.length() > updatedText.length()) {
 			length = updatedText.length();
@@ -19,9 +21,9 @@ final class TextDiffer {
 			length = currentText.length();
 		}
 		
-		int diffAt = -1;
+		long diffAt = -1;
 		
-		for (int i = 0; i < length; ++ i) {
+		for (long i = 0; i < length; ++ i) {
 			if (currentText.charAt(i) != updatedText.charAt(i)) {
 				diffAt = i;
 				break;
@@ -30,18 +32,18 @@ final class TextDiffer {
 		
 		// System.out.println("## found diff at " + diffAt);
 		
-		int replaceStart = -1;
-		int replaceLength = -1;
+		long replaceStart = -1;
+		long replaceLength = -1;
 
-		String removedText = null;
-		String addedText = null;
+		Text removedText = null;
+		Text addedText = null;
 		
 		if (diffAt != -1) {
 
 			for (int i = 0; i < length; ++ i) {
 				
-				final int currentPos = currentText.length() - i - 1;
-				final int updatedPos = updatedText.length() - i - 1;
+				final long currentPos = currentText.length() - i - 1;
+				final long updatedPos = updatedText.length() - i - 1;
 
 				// System.out.println("## comparing current " + currentPos + " to updated " + updatedPos);
 				
@@ -105,14 +107,14 @@ final class TextDiffer {
 	}
 	
 		
-	ReplaceTextRange computeReplaceTextRange(String updatedText) {
+	ReplaceTextRange computeReplaceTextRange(Text updatedText) {
 		
 		final ReplaceText replaceText = computeReplaceText(updatedText);
 		
 		final ReplaceTextRange replaceTextRange;
 		
-		final String removedText = replaceText.getRemovedText();
-		final String addedText = replaceText.getAddedText();
+		final Text removedText = replaceText.getRemovedText();
+		final Text addedText = replaceText.getAddedText();
 		
 		
 		if (   (removedText != null && !removedText.isEmpty() && containsWhitespace(removedText) && containsNonWhitespace(removedText))
@@ -135,7 +137,7 @@ final class TextDiffer {
 	}
 	
 	
-	private static boolean containsWhitespace(String s) {
+	private static boolean containsWhitespace(Text s) {
 		for (int i = 0; i < s.length(); ++ i) {
 			if (Character.isWhitespace(s.charAt(i))) {
 				return true;
@@ -145,7 +147,7 @@ final class TextDiffer {
 		return false;
 	}
 
-	private static boolean containsNonWhitespace(String s) {
+	private static boolean containsNonWhitespace(Text s) {
 		for (int i = 0; i < s.length(); ++ i) {
 			if (!Character.isWhitespace(s.charAt(i))) {
 				return true;

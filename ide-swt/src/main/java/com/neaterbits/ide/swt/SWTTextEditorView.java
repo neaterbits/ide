@@ -12,13 +12,14 @@ import org.eclipse.swt.widgets.Text;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.model.text.util.StringText;
 
 final class SWTTextEditorView extends SWTBaseTextEditorView {
 
 	private final Text textWidget;
 	private TextDiffer textDiffer;
 
-	private String currentText;
+	private com.neaterbits.ide.common.ui.model.text.Text currentText;
 	
 	SWTTextEditorView(TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
 
@@ -33,12 +34,12 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	void setTextModel(BaseTextModel textModel) {
 		super.setTextModel(textModel);
 
-		final String text = textModel.getText();
+		final com.neaterbits.ide.common.ui.model.text.Text text = textModel.getText();
 		
 		this.currentText = text;
 		this.textDiffer = new TextDiffer(currentText);
 		
-		textWidget.setText(text);
+		textWidget.setText(text.asString());
 	}
 
 	@Override
@@ -65,7 +66,6 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	void addKeyListener(KeyListener keyListener) {
 		textWidget.addKeyListener(keyListener);
 	}
-
 	
 	@Override
 	void addTextChangeListener(Consumer<ReplaceTextRange> listener) {
@@ -74,7 +74,7 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 			
 			@Override
 			public void modifyText(ModifyEvent e) {
-				final ReplaceTextRange replaceTextRange = textDiffer.computeReplaceTextRange(textWidget.getText());
+				final ReplaceTextRange replaceTextRange = textDiffer.computeReplaceTextRange(new StringText(textWidget.getText()));
 
 				if (replaceTextRange != null) {
 					listener.accept(replaceTextRange);
