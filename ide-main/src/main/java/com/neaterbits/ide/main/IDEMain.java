@@ -17,11 +17,6 @@ import com.neaterbits.ide.component.java.language.JavaCompileableLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
 import com.neaterbits.ide.swt.SWTUI;
-import com.neaterbits.ide.util.scheduling.dependencies.PrintlnTargetExecutorLogger;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetExecutor;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetFinder;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetFinderLogger;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
 
 public class IDEMain {
 
@@ -82,21 +77,11 @@ public class IDEMain {
 	
 
 	private static void startIDEScanJobs(BuildRoot buildRoot) {
-		
-		final TargetSpec<InitialScanContext, ?, ?> targetSpec = TargetBuilderInitialScan.makeTargetBuilder();
-		final TargetFinder targetFinder = new TargetFinder();
+	
+		final TargetBuilderInitialScan initialScan = new TargetBuilderInitialScan();
 		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaCompileableLanguage());
 		
-		final TargetFinderLogger targetFinderLogger = null; // new PrintlnTargetFinderLogger();
-		
-		targetFinder.computeTargets(targetSpec, context, targetFinderLogger, target -> {
-			
-			target.printTargets();
-			
-			final TargetExecutor targetExecutor = new TargetExecutor();
-			
-			targetExecutor.runTargets(context, target, new PrintlnTargetExecutorLogger());
-		});
+		initialScan.execute(context);
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {

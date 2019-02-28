@@ -22,15 +22,14 @@ import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
-import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilderImpl;
+import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 
-public class TargetBuilderModules {
+public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 
-	public static TargetSpec<ModulesBuildContext, ?, ?> makeTargetBuilderModules() {
-		
-		final TargetBuilderImpl<ModulesBuildContext> targetBuilder = new TargetBuilderImpl<>();
+	@Override
+	protected void buildSpec(TargetBuilder<ModulesBuildContext> targetBuilder) {
 		
 		targetBuilder.addTarget("compileall", "Compile all modules")
 			.withPrerequisites("Modules")
@@ -131,7 +130,6 @@ public class TargetBuilderModules {
 					})
 			);
 		
-		return targetBuilder.build();
 	}
 
 	private static List<Dependency> transitiveProjectDependencies(ModulesBuildContext context, ModuleResourcePath module) {

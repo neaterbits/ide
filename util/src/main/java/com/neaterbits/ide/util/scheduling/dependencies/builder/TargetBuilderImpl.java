@@ -2,7 +2,7 @@ package com.neaterbits.ide.util.scheduling.dependencies.builder;
 
 import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
 
-public class TargetBuilderImpl<CONTEXT extends TaskContext> implements TargetBuilder<CONTEXT> {
+public final class TargetBuilderImpl<CONTEXT extends TaskContext> implements TargetBuilder<CONTEXT> {
 
 	private NoTargetPrerequisitesBuilderImpl<CONTEXT> builder;
 	
@@ -18,7 +18,6 @@ public class TargetBuilderImpl<CONTEXT extends TaskContext> implements TargetBui
 		return builder;
 	}
 	
-	@Override
 	public TargetSpec<CONTEXT, ?, ?> build() {
 		return builder.build();
 	}

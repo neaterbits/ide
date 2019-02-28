@@ -11,11 +11,6 @@ import com.neaterbits.ide.common.build.tasks.TargetBuilderModules;
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
 import com.neaterbits.ide.component.java.language.JavaCompileableLanguage;
 import com.neaterbits.ide.component.java.language.JavaCompiler;
-import com.neaterbits.ide.util.scheduling.dependencies.PrintlnTargetExecutorLogger;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetExecutor;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetFinder;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetFinderLogger;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
 
 public class BuildMain {
 
@@ -46,25 +41,15 @@ public class BuildMain {
 					System.out.println(module.getName());
 				}
 
-				final TargetSpec<ModulesBuildContext, ?, ?> targetSpec = TargetBuilderModules.makeTargetBuilderModules();
-				final TargetFinder targetFinder = new TargetFinder();
+				final TargetBuilderModules targetBuilderModules = new TargetBuilderModules();
 				
 				final ModulesBuildContext context = new ModulesBuildContext(
 						buildRoot,
 						new JavaCompileableLanguage(),
 						new JavaCompiler(),
 						null);
-				
-				final TargetFinderLogger targetFinderLogger = null; // new PrintlnTargetFinderLogger();
-				
-				targetFinder.computeTargets(targetSpec, context, targetFinderLogger, target -> {
-					
-					target.printTargets();
-					
-					final TargetExecutor targetExecutor = new TargetExecutor();
-					
-					targetExecutor.runTargets(context, target, new PrintlnTargetExecutorLogger());
-				});
+
+				targetBuilderModules.execute(context);
 			}
 		}
 	}

@@ -7,9 +7,9 @@ import java.util.function.Consumer;
 
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 
-public final class TargetFinder extends TargetAsyncExecutor {
+final class TargetFinder extends TargetAsyncExecutor {
 
-	public <CONTEXT extends TaskContext, TARGET, FILE_TARGET> void computeTargets(
+	<CONTEXT extends TaskContext, TARGET, FILE_TARGET> void computeTargets(
 			TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec,
 			CONTEXT context,
 			TargetFinderLogger logger,

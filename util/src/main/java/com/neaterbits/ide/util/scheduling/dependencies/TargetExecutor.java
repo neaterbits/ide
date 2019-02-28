@@ -10,7 +10,7 @@ import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
-public class TargetExecutor extends TargetAsyncExecutor {
+final class TargetExecutor extends TargetAsyncExecutor {
 	
 	public <CONTEXT extends TaskContext, TARGET> void runTargets(CONTEXT context, Target<TARGET> rootTarget, TargetExecutorLogger logger) {
 		

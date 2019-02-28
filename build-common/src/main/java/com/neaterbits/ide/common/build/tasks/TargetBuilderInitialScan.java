@@ -2,25 +2,22 @@ package com.neaterbits.ide.common.build.tasks;
 
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
-import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilderImpl;
 
-public class TargetBuilderInitialScan {
+public class TargetBuilderInitialScan extends TargetBuildSpec<InitialScanContext> {
 
-	public static TargetSpec<InitialScanContext, ?, ?> makeTargetBuilder() {
+	@Override
+	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {
 
-		final TargetBuilder<InitialScanContext> targetBuilder = new TargetBuilderImpl<>();
-		
 		targetBuilder.addTarget("sourcefolders", "Source folders for all modules")
-				.withPrerequisites("Source folders")
-				.fromIterating(InitialScanContext::getModules)
-				.buildBy(subTarget -> subTarget
-						.addInfoSubTarget(ModuleResourcePath.class, "sourcefolders", module -> "Find source folders for " + module.getName())
-						.actionWithResult(Constraint.IO, (context, module) -> context.buildRoot.getBuildSystemRootScan().findSourceFolders(module))
-						.processResult((context, module, sourceFolders) -> context.buildRoot.setSourceFolders(module, sourceFolders))
-				);
-		
-		return targetBuilder.build();
+			.withPrerequisites("Source folders")
+			.fromIterating(InitialScanContext::getModules)
+			.buildBy(subTarget -> subTarget
+					.addInfoSubTarget(ModuleResourcePath.class, "sourcefolders", module -> "Find source folders for " + module.getName())
+					.actionWithResult(Constraint.IO, (context, module) -> context.buildRoot.getBuildSystemRootScan().findSourceFolders(module))
+					.processResult((context, module, sourceFolders) -> context.buildRoot.setSourceFolders(module, sourceFolders))
+			);
+			
 	}
 }
