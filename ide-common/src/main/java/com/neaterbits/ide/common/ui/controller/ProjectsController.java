@@ -9,7 +9,6 @@ import com.neaterbits.ide.common.ui.view.ProjectViewListener;
 
 public final class ProjectsController {
 
-	private final ProjectsModel model;
 	private final ProjectView view;
 
 	public ProjectsController(ProjectsModel model, ProjectView view, EditUIController<?> uiController) {
@@ -17,7 +16,6 @@ public final class ProjectsController {
 		Objects.requireNonNull(model);
 		Objects.requireNonNull(view);
 		
-		this.model = model;
 		this.view = view;
 
 		view.addListener(new ProjectViewListenerImpl(uiController));

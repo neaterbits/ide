@@ -170,7 +170,7 @@ public final class EditUIController<WINDOW> {
 	void deleteResource(ResourcePath resourcePath) {
 
 		// TODO do this based on change in project model instead
-		if (true) {
+		if (Boolean.TRUE) {
 			throw new UnsupportedOperationException();
 		}
 		
