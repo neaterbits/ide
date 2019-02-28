@@ -3,11 +3,22 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 
-final class TargetFinder extends TargetAsyncExecutor {
+final class TargetFinder {
+
+	private final AsyncExecutor asyncExecutor;
+
+	TargetFinder(AsyncExecutor asyncExecutor) {
+
+		Objects.requireNonNull(asyncExecutor);
+		
+		this.asyncExecutor = asyncExecutor;
+	}
 
 	<CONTEXT extends TaskContext, TARGET, FILE_TARGET> void computeTargets(
 			TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec,
@@ -17,7 +28,7 @@ final class TargetFinder extends TargetAsyncExecutor {
 
 		findTargets(targetSpec, context, null, logger, 0, rootTarget);
 
-		runQueuedRunnables();
+		asyncExecutor.runQueuedRunnables();
 	}
 
 	private <CONTEXT extends TaskContext, TARGET, FILE_TARGET>
@@ -121,7 +132,7 @@ final class TargetFinder extends TargetAsyncExecutor {
 		
 		if (prerequisiteSpec.getConstraint() != null) {
 
-			scheduler.schedule(
+			asyncExecutor.schedule(
 					prerequisiteSpec.getConstraint(),
 					null,
 					param -> {

@@ -3,22 +3,33 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
-final class TargetExecutor extends TargetAsyncExecutor {
+final class TargetExecutor {
 	
+	private final AsyncExecutor asyncExecutor;
+	
+	TargetExecutor(AsyncExecutor asyncExecutor) {
+		
+		Objects.requireNonNull(asyncExecutor);
+		
+		this.asyncExecutor = asyncExecutor;
+	}
+
 	public <CONTEXT extends TaskContext, TARGET> void runTargets(CONTEXT context, Target<TARGET> rootTarget, TargetExecutorLogger logger) {
 		
 		final TargetState state = TargetState.createFromTargetTree(rootTarget);
 		
 		scheduleTargets(context, state, logger);
 		
-		runQueuedRunnables();
+		asyncExecutor.runQueuedRunnables();
 	}
 	
 	private <CONTEXT extends TaskContext> void scheduleTargets(CONTEXT context, TargetState state, TargetExecutorLogger logger) {
@@ -85,7 +96,7 @@ final class TargetExecutor extends TargetAsyncExecutor {
 			onCompletedTarget(context, target, state, exception, false, logger);
 		}
 		else {
-			scheduler.schedule(
+			asyncExecutor.schedule(
 					action.getConstraint(),
 					null,
 					param -> {
@@ -111,7 +122,7 @@ final class TargetExecutor extends TargetAsyncExecutor {
 			onCompletedTarget(context, target, state, result.exception, false, logger);
 		}
 		else {
-			scheduler.schedule(
+			asyncExecutor.schedule(
 					actionWithResult.getConstraint(),
 					null,
 					param -> {

@@ -1,22 +1,13 @@
-package com.neaterbits.ide.util.scheduling.dependencies;
+package com.neaterbits.ide.util.scheduling;
 
-import com.neaterbits.ide.util.scheduling.ForwardToCaller;
-import com.neaterbits.ide.util.scheduling.ScheduleFunction;
-import com.neaterbits.ide.util.scheduling.ScheduleListener;
-import com.neaterbits.ide.util.scheduling.Scheduler;
-import com.neaterbits.ide.util.scheduling.SchedulerFactory;
-import com.neaterbits.ide.util.scheduling.SynchronousSchedulerFactory;
-import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.ThreadsafeQueue;
-
-abstract class TargetAsyncExecutor {
-
+public final class AsyncExecutor implements Scheduler {
+	
 	private final ThreadsafeQueue<Runnable> queue;
-	final Scheduler scheduler;
+	private final Scheduler scheduler;
 
 	private int scheduledJobs;
 	
-	TargetAsyncExecutor() {
+	public AsyncExecutor() {
 		this.queue = new ThreadsafeQueue<>();
 
 		final ForwardToCaller forwardToCaller = runnable -> queue.add(runnable);
@@ -42,7 +33,14 @@ abstract class TargetAsyncExecutor {
 		};
 	}
 
-	final void runQueuedRunnables() {
+	@Override
+	public <T, R> void schedule(Constraint constraint, T parameter, ScheduleFunction<T, R> function,
+			ScheduleListener<T, R> listener) {
+
+		scheduler.schedule(constraint, parameter, function, listener);
+	}
+
+	public final void runQueuedRunnables() {
 
 		Runnable runnable;
 
@@ -65,4 +63,5 @@ abstract class TargetAsyncExecutor {
 			}
 		}
 	}
+
 }
