@@ -9,7 +9,7 @@
   <dependencies>
   	<dependency>
   		<groupId>com.neaterbits.compiler</groupId>
-  		<artifactId>common</artifactId>
+  		<artifactId>compiler-common</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
   	<dependency>
