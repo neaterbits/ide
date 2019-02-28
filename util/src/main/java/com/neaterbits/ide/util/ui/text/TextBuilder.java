@@ -1,4 +1,4 @@
-package com.neaterbits.ide.common.ui.model.text;
+package com.neaterbits.ide.util.ui.text;
 
 public interface TextBuilder {
 

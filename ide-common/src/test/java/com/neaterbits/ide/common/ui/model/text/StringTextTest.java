@@ -1,6 +1,7 @@
 package com.neaterbits.ide.common.ui.model.text;
 
-import com.neaterbits.ide.common.ui.model.text.util.StringText;
+import com.neaterbits.ide.util.ui.text.StringText;
+import com.neaterbits.ide.util.ui.text.Text;
 
 public class StringTextTest extends BaseTextTest {
 

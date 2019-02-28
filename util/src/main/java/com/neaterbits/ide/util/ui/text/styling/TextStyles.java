@@ -1,11 +1,11 @@
-package com.neaterbits.ide.common.ui.model.text.styling;
+package com.neaterbits.ide.util.ui.text.styling;
 
-public class TextStyling {
+public class TextStyles {
 
 	private final TextColor color;
 	private final TextStyle style;
 	
-	public TextStyling(TextColor color, TextStyle style) {
+	public TextStyles(TextColor color, TextStyle style) {
 		this.color = color;
 		this.style = style;
 	}

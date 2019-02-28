@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
-import com.neaterbits.ide.common.ui.model.text.LineDelimiter;
-import com.neaterbits.ide.common.ui.model.text.Text;
 import com.neaterbits.ide.common.ui.model.text.TextAdd;
 import com.neaterbits.ide.common.ui.model.text.TextEdit;
 import com.neaterbits.ide.common.ui.model.text.TextRemove;
 import com.neaterbits.ide.common.ui.model.text.TextReplace;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.Text;
 
 public final class DiffTextModel extends BaseTextModel {
 
@@ -45,6 +45,11 @@ public final class DiffTextModel extends BaseTextModel {
 	public Text getText() {
 
 		return diffOffsets.getText(curTextLength, initialText, initialOffsets);
+	}
+	
+	@Override
+	public long getLength() {
+		return curTextLength;
 	}
 
 	@Override

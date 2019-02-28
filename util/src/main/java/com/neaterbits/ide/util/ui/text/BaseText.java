@@ -1,6 +1,4 @@
-package com.neaterbits.ide.common.ui.model.text.util;
-
-import com.neaterbits.ide.common.ui.model.text.Text;
+package com.neaterbits.ide.util.ui.text;
 
 abstract class BaseText implements Text {
 

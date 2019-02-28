@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.common.ui.view.EditorsView;
@@ -46,18 +45,15 @@ public final class SWTEditorsView implements EditorsView {
 	*/
 
 	@Override
-	public EditorView displayFile(SourceFileResourcePath sourceFile, BaseTextModel textModel) {
+	public EditorView displayFile(SourceFileResourcePath sourceFile) {
 
 		Objects.requireNonNull(sourceFile);
-		Objects.requireNonNull(textModel);
 		
 		SWTEditorView editorView = editorViews.get(sourceFile);
 		
 		if (editorView == null) {
 				
 			editorView = new SWTStyledTextEditorView(this.tabFolder, config, sourceFile);
-	
-			editorView.setTextModel(textModel);
 			
 			editorViews.put(sourceFile, editorView);
 		}

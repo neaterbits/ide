@@ -1,6 +1,7 @@
 package com.neaterbits.ide.common.ui.model.text;
 
-import com.neaterbits.ide.common.ui.model.text.util.CharText;
+import com.neaterbits.ide.util.ui.text.CharText;
+import com.neaterbits.ide.util.ui.text.Text;
 
 public class CharTextTest extends BaseTextTest {
 

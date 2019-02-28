@@ -9,18 +9,70 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.ide.component.common.language.LanguageComponent;
+import com.neaterbits.ide.component.common.language.LanguageName;
+import com.neaterbits.ide.component.common.language.Languages;
+
 public final class IDEComponents<WINDOW> {
 
 	private final List<IDEComponent<WINDOW>> components;
 
+	private final Map<LanguageName, LanguageComponent> languageComponents;
+	
+	private final Languages languages;
+	
 	public IDEComponents() {
 		this.components = new ArrayList<>();
+	
+		this.languageComponents = new HashMap<>();
+		
+		this.languages = new Languages() {
+			@Override
+			public LanguageComponent getLanguageComponent(LanguageName languageName) {
+				Objects.requireNonNull(languageName);
+
+				return languageComponents.get(languageName);
+			}
+
+			@Override
+			public LanguageName detectLanguage(SourceFileResourcePath sourceFile) {
+				
+				final String fileName = sourceFile.getName();
+				
+				final int suffixIndex = fileName.lastIndexOf('.');
+				
+				if (suffixIndex >= 0 && suffixIndex < fileName.length() - 1) {
+				
+					final String suffix = fileName.substring(suffixIndex + 1);
+					
+					for (LanguageComponent language : languageComponents.values()) {
+						for (String languageSuffix : language.getFileSuffixes()) {
+							if (suffix.toLowerCase().equals(languageSuffix.toLowerCase())) {
+								return language.getLanguageName();
+							}
+						}
+					}
+				}
+				
+				return null;
+			}
+		};
 	}
 
+	public Languages getLanguages() {
+		return languages;
+	}
+	
 	public void registerComponent(ComponentProvider componentProvider, UIComponentProvider<WINDOW> uiComponentProvider) {
 
-		components.add(new IDEComponent<>(componentProvider, uiComponentProvider));
+		if (componentProvider instanceof LanguageComponent) {
+			final LanguageComponent languageComponent = (LanguageComponent)componentProvider;
 		
+			languageComponents.put(languageComponent.getLanguageName(), languageComponent);
+		}
+		
+		components.add(new IDEComponent<>(componentProvider, uiComponentProvider));
 	}
 	
 	public List<NewableCategory> getNewableCategories() {

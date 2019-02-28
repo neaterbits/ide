@@ -2,6 +2,9 @@ package com.neaterbits.ide.common.ui.model.text;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.Text;
+
 public final class TextAdd extends TextEdit {
 
 	private final Text text;

@@ -15,6 +15,7 @@ import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
+import com.neaterbits.ide.common.ui.controller.EditorsController;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.common.ui.model.dialogs.SuggestionType;
 import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
@@ -34,7 +35,9 @@ final class UIController<WINDOW> {
 	private final UIView<WINDOW> uiView;
 	private final BuildRoot buildRoot;
 	private final IDEComponents<WINDOW> ideComponents;
+	
 	private final ComponentIDEAccess componentIDEAccess;
+	private final EditorsController editorsController;
 	
 	public UIController(UIView<WINDOW> uiView, BuildRoot buildRoot, IDEComponents<WINDOW> ideComponents) {
 		
@@ -47,6 +50,7 @@ final class UIController<WINDOW> {
 		this.ideComponents = ideComponents;
 		
 		this.componentIDEAccess = new ComponentIDEAccessImpl(buildRoot, this);
+		this.editorsController = new EditorsController(uiView.getEditorsView(), ideComponents.getLanguages());
 	}
 
 	private SourceFileResourcePath getCurrentEditedFile() {
@@ -81,7 +85,7 @@ final class UIController<WINDOW> {
 			
 			uiView.setWindowTitle(makeTitle(sourceFile));
 			
-			uiView.getEditorsView().displayFile(sourceFile, textModel);
+			editorsController.displayFile(sourceFile, textModel, ideComponents.getLanguages().detectLanguage(sourceFile));
 		}
 	}
 	

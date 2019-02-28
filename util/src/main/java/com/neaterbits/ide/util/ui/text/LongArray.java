@@ -1,4 +1,4 @@
-package com.neaterbits.ide.common.ui.model.text.util;
+package com.neaterbits.ide.util.ui.text;
 
 public final class LongArray extends Array64Bit<long[][], long[]> {
 	

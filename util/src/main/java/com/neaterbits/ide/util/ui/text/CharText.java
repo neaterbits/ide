@@ -1,7 +1,4 @@
-package com.neaterbits.ide.common.ui.model.text.util;
-
-import com.neaterbits.ide.common.ui.model.text.Text;
-import com.neaterbits.ide.common.ui.model.text.TextBuilder;
+package com.neaterbits.ide.util.ui.text;
 
 public class CharText extends CharArray64Bit implements Text, TextBuilder  {
 

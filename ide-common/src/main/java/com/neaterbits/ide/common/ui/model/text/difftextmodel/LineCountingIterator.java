@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.model.text.difftextmodel;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.ui.model.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
 
 class LineCountingIterator<T extends LineCountingIterator.LinesCounterState> extends CountingIterator<T> {
 

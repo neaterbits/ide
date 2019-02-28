@@ -1,8 +1,8 @@
 package com.neaterbits.ide.common.ui.model.text.difftextmodel;
 
-import com.neaterbits.ide.common.ui.model.text.LineDelimiter;
-import com.neaterbits.ide.common.ui.model.text.Text;
-import com.neaterbits.ide.common.ui.model.text.util.LongArray;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.LongArray;
+import com.neaterbits.ide.util.ui.text.Text;
 
 final class LinesFinder {
 	

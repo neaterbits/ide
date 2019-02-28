@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
 
-import com.neaterbits.ide.common.ui.model.text.Text;
 import com.neaterbits.ide.common.ui.model.text.UnixLineDelimiter;
-import com.neaterbits.ide.common.ui.model.text.util.CharText;
+import com.neaterbits.ide.util.ui.text.CharText;
+import com.neaterbits.ide.util.ui.text.Text;
 
 public class LinesFinderTest {
 

@@ -1,7 +1,5 @@
-package com.neaterbits.ide.common.ui.model.text;
+package com.neaterbits.ide.util.ui.text;
 
-import com.neaterbits.ide.common.ui.model.text.util.CharText;
-import com.neaterbits.ide.common.ui.model.text.util.StringText;
 import com.neaterbits.ide.util.Value;
 
 public interface Text {

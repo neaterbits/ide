@@ -2,7 +2,9 @@ package com.neaterbits.ide.common.ui.model.text;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.ui.model.text.util.StringText;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.StringText;
+import com.neaterbits.ide.util.ui.text.Text;
 
 public final class StringTextModel extends BaseTextModel {
 
@@ -29,6 +31,11 @@ public final class StringTextModel extends BaseTextModel {
 		this.text = new StringText(text);
 	}
 	
+	@Override
+	public long getLength() {
+		return text.length();
+	}
+
 	@Override
 	public void replaceTextRange(long start, long replaceLength, Text text) {
 

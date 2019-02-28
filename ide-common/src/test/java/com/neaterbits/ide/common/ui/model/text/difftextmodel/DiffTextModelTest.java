@@ -2,8 +2,8 @@ package com.neaterbits.ide.common.ui.model.text.difftextmodel;
 
 import com.neaterbits.ide.common.ui.model.text.BaseTextModel;
 import com.neaterbits.ide.common.ui.model.text.BaseTextModelTest;
-import com.neaterbits.ide.common.ui.model.text.LineDelimiter;
-import com.neaterbits.ide.common.ui.model.text.util.StringText;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.StringText;
 
 public class DiffTextModelTest extends BaseTextModelTest {
 

@@ -2,10 +2,10 @@ package com.neaterbits.ide.common.ui.model.text.difftextmodel;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.ui.model.text.LineDelimiter;
-import com.neaterbits.ide.common.ui.model.text.Text;
 import com.neaterbits.ide.common.ui.model.text.TextEdit;
 import com.neaterbits.ide.util.Value;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.Text;
 
 final class DiffTextOffset {
 

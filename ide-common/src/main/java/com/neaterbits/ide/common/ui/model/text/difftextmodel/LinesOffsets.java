@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.model.text.difftextmodel;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.ui.model.text.util.LongArray;
+import com.neaterbits.ide.util.ui.text.LongArray;
 
 final class LinesOffsets {
 

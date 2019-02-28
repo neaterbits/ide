@@ -1,5 +1,8 @@
 package com.neaterbits.ide.common.ui.model.text;
 
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.Text;
+
 public final class TextRemove extends TextChange {
 
 	public TextRemove(long startPos, long length, Text changedText) {

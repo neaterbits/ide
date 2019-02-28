@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.model.text.difftextmodel;
 
 import java.util.function.Function;
 
-import com.neaterbits.ide.common.ui.model.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
 
 final class GetOffsetForLineIterator extends LineCountingIterator<GetOffsetForLineIterator.GetOffsetForLineState> {
 

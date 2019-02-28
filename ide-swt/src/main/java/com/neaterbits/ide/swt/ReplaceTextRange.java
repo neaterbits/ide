@@ -1,6 +1,6 @@
 package com.neaterbits.ide.swt;
 
-import com.neaterbits.ide.common.ui.model.text.Text;
+import com.neaterbits.ide.util.ui.text.Text;
 
 class ReplaceTextRange {
 

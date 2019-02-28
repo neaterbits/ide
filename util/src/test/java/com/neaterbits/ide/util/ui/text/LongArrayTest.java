@@ -1,10 +1,10 @@
-package com.neaterbits.ide.common.ui.model.text.util;
+package com.neaterbits.ide.util.ui.text;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.neaterbits.ide.common.ui.model.text.util.LongArray;
+import com.neaterbits.ide.util.ui.text.LongArray;
 
 public class LongArrayTest {
 

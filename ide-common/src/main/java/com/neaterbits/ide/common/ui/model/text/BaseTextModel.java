@@ -2,6 +2,9 @@ package com.neaterbits.ide.common.ui.model.text;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.Text;
+
 public abstract class BaseTextModel {
 
 	private final LineDelimiter lineDelimiter;
@@ -33,4 +36,10 @@ public abstract class BaseTextModel {
 	public abstract Text getLineIncludingAnyNewline(long lineIndex);
 
 	public abstract long getCharCount();
+
+	public abstract long getLength();
+	
+	public final long getLineLengthWithoutAnyNewline(long lineIndex) {
+		return getLineWithoutAnyNewline(lineIndex).length();
+	}
 }

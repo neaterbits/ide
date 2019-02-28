@@ -2,6 +2,8 @@ package com.neaterbits.ide.common.ui.model.text;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.util.ui.text.Text;
+
 public abstract class TextChange extends TextEdit {
 
 	private final long length;

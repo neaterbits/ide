@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
 
+import com.neaterbits.ide.util.ui.text.Text;
+
 public abstract class BaseTextTest {
 
 	protected abstract Text createText(String string);

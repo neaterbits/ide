@@ -1,8 +1,6 @@
-package com.neaterbits.ide.common.ui.model.text.util;
+package com.neaterbits.ide.util.ui.text;
 
 import java.util.Objects;
-
-import com.neaterbits.ide.common.ui.model.text.Text;
 
 public final class StringText extends BaseText implements Text {
 

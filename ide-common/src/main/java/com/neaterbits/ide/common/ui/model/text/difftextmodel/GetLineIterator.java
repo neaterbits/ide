@@ -1,9 +1,9 @@
 package com.neaterbits.ide.common.ui.model.text.difftextmodel;
 
-import com.neaterbits.ide.common.ui.model.text.LineDelimiter;
-import com.neaterbits.ide.common.ui.model.text.Text;
-import com.neaterbits.ide.common.ui.model.text.TextBuilder;
 import com.neaterbits.ide.common.ui.model.text.difftextmodel.GetLineIterator.TextGetLineState;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.TextBuilder;
 
 final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 

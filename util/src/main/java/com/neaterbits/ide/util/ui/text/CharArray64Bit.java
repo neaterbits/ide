@@ -1,4 +1,4 @@
-package com.neaterbits.ide.common.ui.model.text.util;
+package com.neaterbits.ide.util.ui.text;
 
 public class CharArray64Bit extends Array64Bit<char[][], char[]>{
 

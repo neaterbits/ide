@@ -3,9 +3,6 @@ package com.neaterbits.ide.common.ui.model.text.difftextmodel;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.ide.common.ui.model.text.LineDelimiter;
-import com.neaterbits.ide.common.ui.model.text.Text;
-import com.neaterbits.ide.common.ui.model.text.TextBuilder;
 import com.neaterbits.ide.common.ui.model.text.TextEdit;
 import com.neaterbits.ide.common.ui.model.text.difftextmodel.CountingIterator.CounterState;
 import com.neaterbits.ide.common.ui.model.text.difftextmodel.GetLineAtOffsetIterator.GetLineAtOffsetState;
@@ -13,7 +10,10 @@ import com.neaterbits.ide.common.ui.model.text.difftextmodel.GetLineIterator.Tex
 import com.neaterbits.ide.common.ui.model.text.difftextmodel.GetOffsetForLineIterator.GetOffsetForLineState;
 import com.neaterbits.ide.common.ui.model.text.difftextmodel.GetTextRangeIterator.GetTextRangeState;
 import com.neaterbits.ide.common.ui.model.text.difftextmodel.LineCountingIterator.LinesCounterState;
-import com.neaterbits.ide.common.ui.model.text.util.CharText;
+import com.neaterbits.ide.util.ui.text.CharText;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.TextBuilder;
 
 class DiffTextOffsets {
 

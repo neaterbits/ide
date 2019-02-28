@@ -1,5 +1,8 @@
 package com.neaterbits.ide.common.ui.model.text;
 
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
+import com.neaterbits.ide.util.ui.text.Text;
+
 public abstract class TextEdit {
 
 	private final long startPos;
