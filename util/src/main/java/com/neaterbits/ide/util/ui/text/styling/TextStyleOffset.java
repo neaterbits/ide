@@ -4,11 +4,11 @@ import java.util.Objects;
 
 public final class TextStyleOffset {
 
-	private final int start;
-	private final int length;
+	private final long start;
+	private final long length;
 	private final TextColor color;
 	
-	public TextStyleOffset(int start, int length, TextColor color) {
+	public TextStyleOffset(long start, long length, TextColor color) {
 		
 		Objects.requireNonNull(color);
 		
@@ -17,11 +17,11 @@ public final class TextStyleOffset {
 		this.color = color;
 	}
 
-	public int getStart() {
+	public long getStart() {
 		return start;
 	}
 
-	public int getLength() {
+	public long getLength() {
 		return length;
 	}
 

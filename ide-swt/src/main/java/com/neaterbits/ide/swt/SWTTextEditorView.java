@@ -1,6 +1,5 @@
 package com.neaterbits.ide.swt;
 
-import java.util.Collection;
 import java.util.Objects;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
@@ -13,7 +12,6 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.TextChangeListener;
 import com.neaterbits.ide.util.ui.text.StringText;
-import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
 
 final class SWTTextEditorView extends SWTBaseTextEditorView {
 
@@ -93,10 +91,5 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	@Override
 	void setTabs(int tabs) {
 		textWidget.setTabs(tabs);
-	}
-
-	@Override
-	public void applyStyles(Collection<TextStyleOffset> styles) {
-		
 	}
 }

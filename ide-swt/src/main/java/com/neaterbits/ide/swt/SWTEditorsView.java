@@ -12,6 +12,7 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.common.ui.view.EditorsView;
+import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
 public final class SWTEditorsView implements EditorsView {
 
@@ -45,7 +46,7 @@ public final class SWTEditorsView implements EditorsView {
 	*/
 
 	@Override
-	public EditorView displayFile(SourceFileResourcePath sourceFile) {
+	public EditorView displayFile(SourceFileResourcePath sourceFile, TextStylingModel textStylingModel) {
 
 		Objects.requireNonNull(sourceFile);
 		
@@ -53,7 +54,7 @@ public final class SWTEditorsView implements EditorsView {
 		
 		if (editorView == null) {
 				
-			editorView = new SWTStyledTextEditorView(this.tabFolder, config, sourceFile);
+			editorView = new SWTStyledTextEditorView(this.tabFolder, config, textStylingModel, sourceFile);
 			
 			editorViews.put(sourceFile, editorView);
 		}

@@ -6,6 +6,6 @@ import com.neaterbits.ide.util.ui.text.Text;
 
 public interface TextStyling {
 
-	Collection<TextStyleOffset> applyStyles(Text text);
+	Collection<TextStyleOffset> applyStylesToLine(long startPos, Text lineText);
 
 }

@@ -17,6 +17,7 @@ import com.neaterbits.ide.common.ui.view.TextChangeListener;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
+import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
 final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 
@@ -24,7 +25,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	
 	private int textChangeEventsSinceSetWidgetText = 0;
 	
-	SWTStyledTextEditorView(TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
+	SWTStyledTextEditorView(TabFolder composite, TextEditorConfig config, TextStylingModel textStylingModel, SourceFileResourcePath sourceFile) {
 		super(composite, config, sourceFile);
 
 		this.textWidget = new StyledText(composite, SWT.NONE);
@@ -34,6 +35,17 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		textWidget.addDisposeListener(event -> font.dispose());
 		
 		textWidget.setFont(font);
+
+		if (textStylingModel != null) {
+			textWidget.addLineStyleListener(event -> {
+				
+				final Collection<TextStyleOffset> offsets = textStylingModel.getStyleOffsets(event.lineOffset, event.lineText.length());
+				
+				event.styles = makeStyleRanges(offsets);
+				
+			});
+		}
+		
 		
 		configure(textWidget);
 	}
@@ -92,13 +104,16 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		++ textChangeEventsSinceSetWidgetText;
 	}
 
-	@Override
-	public void applyStyles(Collection<TextStyleOffset> styles) {
+	private static StyleRange [] makeStyleRanges(Collection<TextStyleOffset> styles) {
 
+		final StyleRange [] result = new StyleRange[styles.size()];
+		
+		int dstIdx = 0;
+		
 		for (TextStyleOffset style : styles) {
-			final StyleRange styleRange = new StyleRange(
-					style.getStart(),
-					style.getLength(),
+			result[dstIdx ++] = new StyleRange(
+					(int)style.getStart(),
+					(int)style.getLength(),
 					new Color(
 							null,
 							style.getColor().getR(),
@@ -106,9 +121,8 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 							style.getColor().getB()),
 					null);
 			
-			System.out.println("## apply style range " + styleRange);
-			
-			textWidget.setStyleRange(styleRange);
 		}
+		
+		return result;
 	}
 }

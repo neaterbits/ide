@@ -4,11 +4,11 @@ import java.util.Objects;
 
 public final class LanguageStyleOffset {
 
-	private final int start;
-	private final int length;
+	private final long start;
+	private final long length;
 	private final LanguageStyleable styleable;
 	
-	public LanguageStyleOffset(int start, int length, LanguageStyleable styleable) {
+	public LanguageStyleOffset(long start, long length, LanguageStyleable styleable) {
 
 		Objects.requireNonNull(styleable);
 		
@@ -17,11 +17,11 @@ public final class LanguageStyleOffset {
 		this.styleable = styleable;
 	}
 
-	public int getStart() {
+	public long getStart() {
 		return start;
 	}
 
-	public int getLength() {
+	public long getLength() {
 		return length;
 	}
 
