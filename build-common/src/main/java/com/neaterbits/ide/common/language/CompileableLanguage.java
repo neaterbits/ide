@@ -9,7 +9,7 @@ import com.neaterbits.ide.common.resource.compile.CompiledFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 
-public interface CompilableLanguage {
+public interface CompileableLanguage {
 	
 	Set<CompleteName> getDependencies(CompiledFileResourcePath compiledFile);
 	

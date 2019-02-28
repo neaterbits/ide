@@ -7,14 +7,14 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.neaterbits.ide.common.resource.ResourcePath;
-import com.neaterbits.ide.common.ui.model.ProjectModel;
+import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.ui.swt.TreeContentAdapter;
 
 final class ProjectViewContentProvider extends TreeContentAdapter implements ITreeContentProvider {
 
-	private final ProjectModel projectModel;
+	private final ProjectsModel projectModel;
 	
-	public ProjectViewContentProvider(ProjectModel projectModel) {
+	public ProjectViewContentProvider(ProjectsModel projectModel) {
 		
 		Objects.requireNonNull(projectModel);
 		
@@ -47,7 +47,7 @@ final class ProjectViewContentProvider extends TreeContentAdapter implements ITr
 
 		final Object [] elements;
 		
-		if (inputElement instanceof ProjectModel) {
+		if (inputElement instanceof ProjectsModel) {
 			elements = new Object [] { projectModel.getRoot() };
 		}
 		else {

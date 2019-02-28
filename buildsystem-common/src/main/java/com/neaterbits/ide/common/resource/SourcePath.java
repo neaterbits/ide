@@ -55,7 +55,7 @@ public abstract class SourcePath extends FileSystemResourcePath {
 		return resourcePath;
 	}
 
-	private SourceFolderResourcePath makeSourceFolderResourcePath(int subtractLength) {
+	protected final SourceFolderResourcePath makeSourceFolderResourcePath(int subtractLength) {
 
 		final List<ModuleResource> moduleResources = getPaths(subtractLength + 1);
 		

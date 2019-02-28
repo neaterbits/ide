@@ -12,7 +12,7 @@ import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.util.Strings;
-import com.neaterbits.ide.common.language.CompilableLanguage;
+import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.resource.NamespaceResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledFileResource;
@@ -21,7 +21,7 @@ import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath
 import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 import com.neaterbits.ide.util.PathUtil;
 
-public final class JavaCompilableLanguage implements CompilableLanguage {
+public final class JavaCompileableLanguage implements CompileableLanguage {
 
 	@Override
 	public Set<CompleteName> getDependencies(CompiledFileResourcePath compiledFile) {

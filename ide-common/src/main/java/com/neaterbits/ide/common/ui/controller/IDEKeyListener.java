@@ -1,4 +1,4 @@
-package com.neaterbits.ide.main;
+package com.neaterbits.ide.common.ui.controller;
 
 import com.neaterbits.ide.common.ui.keys.Key;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
@@ -7,9 +7,9 @@ import com.neaterbits.ide.common.ui.view.KeyEventListener;
 
 final class IDEKeyListener implements KeyEventListener {
 	
-	private final UIController<?> uiController;
+	private final EditUIController<?> uiController;
 	
-	IDEKeyListener(UIController<?> uiController) {
+	IDEKeyListener(EditUIController<?> uiController) {
 		this.uiController = uiController;
 	}
 

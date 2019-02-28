@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
-import com.neaterbits.ide.common.ui.model.ProjectModel;
+import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
@@ -26,14 +26,14 @@ import com.neaterbits.ide.common.ui.view.NewableSelection;
 import com.neaterbits.ide.common.ui.view.BuildIssuesView;
 import com.neaterbits.ide.common.ui.view.ProjectView;
 import com.neaterbits.ide.common.ui.view.SearchView;
-import com.neaterbits.ide.common.ui.view.UIView;
+import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.Newable;
 import com.neaterbits.ide.component.common.NewableCategory;
 import com.neaterbits.ide.component.common.NewableCategoryName;
 import com.neaterbits.ide.component.common.UIComponentProvider;
 
-public final class SWTUIView implements UIView<Shell> {
+public final class SWTUIView implements UIViewAndSubViews<Shell> {
 
 	private final Display display;
 	private final Shell window;
@@ -52,7 +52,7 @@ public final class SWTUIView implements UIView<Shell> {
 	
 	private boolean editorsMaximized;
 	
-	SWTUIView(Display display, ProjectModel projectModel, TextEditorConfig textEditorConfig) {
+	SWTUIView(Display display, ProjectsModel projectModel, TextEditorConfig textEditorConfig) {
 		
 		this.display = display;
 		

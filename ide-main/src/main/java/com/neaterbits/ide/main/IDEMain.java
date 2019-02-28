@@ -6,18 +6,14 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootImpl;
 import com.neaterbits.ide.common.build.tasks.InitialScanContext;
 import com.neaterbits.ide.common.build.tasks.TargetBuilderInitialScan;
-import com.neaterbits.ide.common.ui.model.ProjectModel;
+import com.neaterbits.ide.common.ui.controller.IDEController;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
-import com.neaterbits.ide.common.ui.view.KeyEventListener;
-import com.neaterbits.ide.common.ui.view.ProjectViewListener;
-import com.neaterbits.ide.common.ui.view.UIView;
 import com.neaterbits.ide.component.common.IDEComponents;
-import com.neaterbits.ide.component.java.language.JavaCompilableLanguage;
+import com.neaterbits.ide.component.java.language.JavaCompileableLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
 import com.neaterbits.ide.swt.SWTUI;
@@ -56,23 +52,11 @@ public class IDEMain {
 				
 				final BuildRoot buildRoot = new BuildRootImpl<>(projectDir, buildSystem.scan(projectDir));  
 				
-				final ProjectModel projectModel = new ProjectModel(buildRoot);
-
 				final IDEComponents<Shell> ideComponents = registerComponents();
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
-				final UIView<Shell> uiView = ui.makeUIView(projectModel, config);
-
-				final UIController<Shell> uiController = new UIController<>(uiView, buildRoot, ideComponents);
-				
-				final KeyEventListener keyEventListener = new IDEKeyListener(uiController);
-
-				uiView.addKeyEventListener(keyEventListener);
-				
-				uiView.getProjectView().addListener(new ProjectViewListenerImpl(uiController));
-				
-				uiView.getProjectView().addKeyEventListener(new ProjectViewKeyListener<>(uiView.getProjectView(), uiController));
+				final IDEController<Shell> ideController = new IDEController<>(buildRoot, ui, config, ideComponents);
 				
 				startIDEScanJobs(buildRoot);
 				
@@ -101,7 +85,7 @@ public class IDEMain {
 		
 		final TargetSpec<InitialScanContext, ?, ?> targetSpec = TargetBuilderInitialScan.makeTargetBuilder();
 		final TargetFinder targetFinder = new TargetFinder();
-		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaCompilableLanguage());
+		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaCompileableLanguage());
 		
 		final TargetFinderLogger targetFinderLogger = null; // new PrintlnTargetFinderLogger();
 		
@@ -124,20 +108,6 @@ public class IDEMain {
 			+ stackTraceElement.getClassName() + "."
 			+ stackTraceElement.getMethodName() 
 			+ ":" + stackTraceElement.getLineNumber());
-		}
-	}
-
-	private static class ProjectViewListenerImpl implements ProjectViewListener {
-
-		private final UIController<?> uiController;
-		
-		ProjectViewListenerImpl(UIController<?> uiController) {
-			this.uiController = uiController;
-		}
-
-		@Override
-		public void onSourceFileSelected(SourceFileResourcePath sourceFile) {
-			uiController.openSourceFileForEditing(sourceFile);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.resource;
 
-public final class LibraryResourcePath extends ResourcePath {
+public final class LibraryResourcePath extends FileSystemResourcePath {
 
 	public LibraryResourcePath(LibraryResource resource) {
 		super(resource);

@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
-import com.neaterbits.ide.common.language.CompilableLanguage;
+import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
@@ -20,7 +20,7 @@ class BuildUtil {
 			ModuleResourcePath module,
 			Collection<SourceFolderResourcePath> sourceFolders,
 			BuildRoot buildRoot,
-			CompilableLanguage language) {
+			CompileableLanguage language) {
 		
 		
 		final List<SourceFileResourcePath> allModuleSourceFiles = new ArrayList<>();

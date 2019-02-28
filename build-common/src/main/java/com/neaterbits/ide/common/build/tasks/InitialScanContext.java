@@ -3,12 +3,12 @@ package com.neaterbits.ide.common.build.tasks;
 import java.util.Collection;
 
 import com.neaterbits.ide.common.build.model.BuildRoot;
-import com.neaterbits.ide.common.language.CompilableLanguage;
+import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
 
 public final class InitialScanContext extends TaskBuilderContext {
 
-	public InitialScanContext(BuildRoot buildRoot, CompilableLanguage language) {
+	public InitialScanContext(BuildRoot buildRoot, CompileableLanguage language) {
 		super(buildRoot, language);
 	}
 

@@ -1,4 +1,4 @@
-package com.neaterbits.ide.main;
+package com.neaterbits.ide.common.ui.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
-import com.neaterbits.ide.common.ui.controller.EditorsController;
+import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.common.ui.model.dialogs.SuggestionType;
 import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
@@ -23,6 +23,7 @@ import com.neaterbits.ide.common.ui.model.text.StringTextModel;
 import com.neaterbits.ide.common.ui.model.text.UnixLineDelimiter;
 import com.neaterbits.ide.common.ui.view.NewableSelection;
 import com.neaterbits.ide.common.ui.view.UIView;
+import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.IDEComponents;
 import com.neaterbits.ide.component.common.NewableCategory;
@@ -30,7 +31,7 @@ import com.neaterbits.ide.component.common.UIComponentProvider;
 import com.neaterbits.ide.util.IOUtil;
 import com.neaterbits.ide.util.PathUtil;
 
-final class UIController<WINDOW> {
+public final class EditUIController<WINDOW> {
 
 	private final UIView<WINDOW> uiView;
 	private final BuildRoot buildRoot;
@@ -38,8 +39,14 @@ final class UIController<WINDOW> {
 	
 	private final ComponentIDEAccess componentIDEAccess;
 	private final EditorsController editorsController;
+	private final ProjectsController projectsController;
 	
-	public UIController(UIView<WINDOW> uiView, BuildRoot buildRoot, IDEComponents<WINDOW> ideComponents) {
+	EditUIController(
+			UIViewAndSubViews<WINDOW> uiView,
+			BuildRoot buildRoot,
+			ProjectsModel projectsModel,
+			ComponentIDEAccess componentIDEAccess,
+			IDEComponents<WINDOW> ideComponents) {
 		
 		Objects.requireNonNull(uiView);
 		Objects.requireNonNull(buildRoot);
@@ -49,12 +56,13 @@ final class UIController<WINDOW> {
 		this.buildRoot = buildRoot;
 		this.ideComponents = ideComponents;
 		
-		this.componentIDEAccess = new ComponentIDEAccessImpl(buildRoot, this);
-		this.editorsController = new EditorsController(uiView.getEditorsView(), ideComponents.getLanguages());
+		this.componentIDEAccess = componentIDEAccess;
+		this.editorsController 	= new EditorsController(uiView.getEditorsView(), ideComponents.getLanguages());
+		this.projectsController = new ProjectsController(projectsModel, uiView.getProjectView(), this);
 	}
 
 	private SourceFileResourcePath getCurrentEditedFile() {
-		return uiView.getEditorsView().getCurrentEditedFile();
+		return editorsController.getCurrentEditedFile();
 	}
 	
 	void refreshProjectView() {
@@ -65,7 +73,7 @@ final class UIController<WINDOW> {
 			closeFile(currentEditedFile);
 		}
 		
-		uiView.getProjectView().refresh();
+		projectsController.refreshView();
 	}
 	
 	void openSourceFileForEditing(SourceFileResourcePath sourceFile) {
@@ -91,9 +99,7 @@ final class UIController<WINDOW> {
 	
 	void showInProjectView(SourceFileResourcePath sourceFile, boolean setFocusInProjectView) {
 		
-		Objects.requireNonNull(sourceFile);
-		
-		uiView.getProjectView().showSourceFile(sourceFile, setFocusInProjectView);
+		projectsController.showInProjectView(sourceFile, setFocusInProjectView);
 	}
 	
 	private static String makeTitle(SourceFileResourcePath sourceFile) {
@@ -148,17 +154,13 @@ final class UIController<WINDOW> {
 		final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
 
 		if (currentEditedFile != null) {
-			uiView.getProjectView().showSourceFile(currentEditedFile, true);
+			projectsController.showInProjectView(currentEditedFile, true);
 		}
 	}
 	
 	void closeCurrentEditedFile() {
 		
-		final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
-
-		if (currentEditedFile != null) {
-			uiView.getEditorsView().closeFile(currentEditedFile);
-		}
+		editorsController.closeCurrentEditedFile();
 	}
 	
 	void minMaxEditors() {
@@ -166,6 +168,11 @@ final class UIController<WINDOW> {
 	}
 
 	void deleteResource(ResourcePath resourcePath) {
+
+		// TODO do this based on change in project model instead
+		if (true) {
+			throw new UnsupportedOperationException();
+		}
 		
 		Objects.requireNonNull(resourcePath);
 		
@@ -180,13 +187,11 @@ final class UIController<WINDOW> {
 				closeFile(sourceFile);
 			}
 		}
-		
-		uiView.getProjectView().refresh();
+
+		projectsController.refreshView();
 	}
 
 	private void closeFile(SourceFileResourcePath sourceFile) {
-		uiView.getEditorsView().closeFile(sourceFile);
-		
 		uiView.setWindowTitle("");
 	}
 	

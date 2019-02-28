@@ -10,4 +10,8 @@ public final class NamespaceResourcePath extends SourceFileHolderResourcePath {
 	public ResourcePath getParentPath() {
 		return makeSourceFileHolderResourcePath();
 	}
+
+	public NamespaceResource getNamespaceResource() {
+		return (NamespaceResource)getLast();
+	}
 }

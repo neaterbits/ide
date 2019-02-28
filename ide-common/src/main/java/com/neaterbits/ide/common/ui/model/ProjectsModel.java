@@ -22,13 +22,13 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResource;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 
-public class ProjectModel {
+public class ProjectsModel {
 
 	private final BuildRoot buildRoot;
 	
 	private final List<ProjectModelListener> modelListeners;
 
-	public ProjectModel(BuildRoot buildRoot) {
+	public ProjectsModel(BuildRoot buildRoot) {
 
 		Objects.requireNonNull(buildRoot);
 

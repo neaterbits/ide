@@ -16,18 +16,35 @@ import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
 import com.neaterbits.ide.util.ui.text.styling.TextStyling;
 import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
-public final class EditorsController {
+final class EditorsController {
 
 	private final EditorsView editorsView;
 	private final Languages languages;
 	
-	public EditorsController(EditorsView editorsView, Languages languages) {
+	EditorsController(EditorsView editorsView, Languages languages) {
 
 		Objects.requireNonNull(editorsView);
 		Objects.requireNonNull(languages);
 		
 		this.editorsView = editorsView;
 		this.languages = languages;
+	}
+
+	void closeFile(SourceFileResourcePath sourceFile) {
+		editorsView.closeFile(sourceFile);
+	}
+	
+	void closeCurrentEditedFile() {
+		
+		final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
+
+		if (currentEditedFile != null) {
+			editorsView.closeFile(currentEditedFile);
+		}
+	}
+
+	SourceFileResourcePath getCurrentEditedFile() {
+		return editorsView.getCurrentEditedFile();
 	}
 
 	public EditorView displayFile(SourceFileResourcePath sourceFile, BaseTextModel textModel, LanguageName language) {

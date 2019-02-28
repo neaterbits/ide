@@ -1,4 +1,4 @@
-package com.neaterbits.ide.main;
+package com.neaterbits.ide.common.ui.controller;
 
 import java.util.Objects;
 
@@ -11,9 +11,9 @@ import com.neaterbits.ide.common.ui.view.ProjectView;
 final class ProjectViewKeyListener<WINDOW> implements KeyEventListener {
 
 	private final ProjectView projectView;
-	private final UIController<WINDOW> uiController;
+	private final EditUIController<WINDOW> uiController;
 
-	ProjectViewKeyListener(ProjectView projectView, UIController<WINDOW> uiController) {
+	ProjectViewKeyListener(ProjectView projectView, EditUIController<WINDOW> uiController) {
 		
 		Objects.requireNonNull(projectView);
 		Objects.requireNonNull(uiController);

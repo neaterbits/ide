@@ -9,7 +9,7 @@ import com.neaterbits.ide.common.build.model.BuildRootImpl;
 import com.neaterbits.ide.common.build.tasks.ModulesBuildContext;
 import com.neaterbits.ide.common.build.tasks.TargetBuilderModules;
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
-import com.neaterbits.ide.component.java.language.JavaCompilableLanguage;
+import com.neaterbits.ide.component.java.language.JavaCompileableLanguage;
 import com.neaterbits.ide.component.java.language.JavaCompiler;
 import com.neaterbits.ide.util.scheduling.dependencies.PrintlnTargetExecutorLogger;
 import com.neaterbits.ide.util.scheduling.dependencies.TargetExecutor;
@@ -51,7 +51,7 @@ public class BuildMain {
 				
 				final ModulesBuildContext context = new ModulesBuildContext(
 						buildRoot,
-						new JavaCompilableLanguage(),
+						new JavaCompileableLanguage(),
 						new JavaCompiler(),
 						null);
 				

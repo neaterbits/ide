@@ -1,4 +1,4 @@
-package com.neaterbits.ide.main;
+package com.neaterbits.ide.common.ui.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,22 +12,36 @@ import com.neaterbits.ide.common.resource.SourceFileHolderResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
+import com.neaterbits.ide.common.ui.UI;
+import com.neaterbits.ide.common.ui.model.ProjectsModel;
+import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
+import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
+import com.neaterbits.ide.component.common.IDEComponents;
 import com.neaterbits.ide.util.IOUtil;
 import com.neaterbits.ide.util.PathUtil;
 
-final class ComponentIDEAccessImpl implements ComponentIDEAccess {
+public final class IDEController<WINDOW> implements ComponentIDEAccess {
 
 	private final BuildRoot buildRoot;
-	private final UIController<?> uiController;
+	private final EditUIController<WINDOW> uiController;
 	
-	ComponentIDEAccessImpl(BuildRoot buildRoot, UIController<?> uiController) {
+	public IDEController(BuildRoot buildRoot, UI<WINDOW> ui, TextEditorConfig config, IDEComponents<WINDOW> ideComponents) {
 
 		Objects.requireNonNull(buildRoot);
-		Objects.requireNonNull(uiController);
 		
 		this.buildRoot = buildRoot;
-		this.uiController = uiController;
+		
+		final ProjectsModel projectModel = new ProjectsModel(buildRoot);
+
+		final UIViewAndSubViews<WINDOW> uiView = ui.makeUIView(projectModel, config);
+
+		this.uiController = new EditUIController<>(uiView, buildRoot, projectModel, this, ideComponents);
+		
+		final KeyEventListener keyEventListener = new IDEKeyListener(uiController);
+
+		uiView.addKeyEventListener(keyEventListener);
 	}
 
 	@Override

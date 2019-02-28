@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.TabItem;
 
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.ui.model.ProjectModel;
+import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.model.ProjectModelListener;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.ProjectView;
@@ -33,9 +33,9 @@ final class SWTProjectView implements ProjectView {
 
 	private final List<ProjectViewListener> listeners;
 	
-	private final ProjectModel projectModel;
+	private final ProjectsModel projectModel;
 	
-	SWTProjectView(TabFolder tabFolder, ProjectModel projectModel) {
+	SWTProjectView(TabFolder tabFolder, ProjectsModel projectModel) {
 
 		final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		
@@ -167,7 +167,7 @@ final class SWTProjectView implements ProjectView {
 		return new TreePath(elements.toArray(new Object[elements.size()]));
 	}
 
-	private static void findElement(ResourcePath element, ResourcePath cur, ProjectModel projectModel) {
+	private static void findElement(ResourcePath element, ResourcePath cur, ProjectsModel projectModel) {
 		
 		//System.out.println("## compare " + element + " to " + cur);
 

@@ -13,6 +13,42 @@ public final class SourceFileResourcePath extends SourcePath {
 		return makeSourceFileHolderResourcePath();
 	}
 	
+	public NamespaceResourcePath getNamespacePath() {
+
+		final Resource resource = getFromLast(1);
+		
+		final NamespaceResourcePath resourcePath;
+		
+		if (resource instanceof NamespaceResource) {
+
+			final SourceFolderResourcePath sourceFolderResourcePath = makeSourceFolderResourcePath(2);
+
+			resourcePath = new NamespaceResourcePath(sourceFolderResourcePath, (NamespaceResource)resource);
+		}
+		else {
+			resourcePath = null;
+		}
+		
+		return resourcePath;
+	}
+	
+	public final SourceFolderResourcePath getSourceFolderPath() {
+		
+		final SourceFolderResourcePath resourcePath;
+		
+		if (getFromLast(1) instanceof SourceFolderResource) {
+			resourcePath = makeSourceFolderResourcePath(1);
+		}
+		else if (getFromLast(2) instanceof SourceFolderResource) {
+			resourcePath = makeSourceFolderResourcePath(2);
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
+		
+		return resourcePath;
+	}
+
 	public File getSourceFolder() {
 
 		for (int i = 1; i < length(); ++ i) {
