@@ -95,12 +95,12 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 	}
 
 	@Override
-	public void downloadExternalDependency(Dependency dependency) {
+	public void downloadExternalDependencyAndAddToBuildModel(Dependency dependency) {
 		
 		@SuppressWarnings("unchecked")
 		final BuildDependency<DEPENDENCY> buildDependency = (BuildDependency<DEPENDENCY>)dependency;
 
-		buildSystemRoot.downloadExternalDependency(buildDependency.getDependency());
+		buildSystemRoot.downloadExternalDependencyIfNotPresent(buildDependency.getDependency());
 	}
 
 	@Override

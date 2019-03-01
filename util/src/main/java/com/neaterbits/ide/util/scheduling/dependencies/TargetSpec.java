@@ -110,11 +110,7 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 		return file;
 	}
 
-	String getDescription(TARGET target) {
-		return description.apply(target);
-	}
-
-	List<PrerequisiteSpec<CONTEXT, TARGET, ?>> getPrerequisites() {
+	List<PrerequisiteSpec<CONTEXT, TARGET, ?>> getPrerequisiteSpecs() {
 		return prerequisites;
 	}
 
@@ -130,6 +126,44 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 				: null;
 	}
 
+	Target<TARGET> createTarget(CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList) {
+
+		final Target<TARGET> createdTarget;
+		
+		final String description = this.description.apply(target);
+		
+		if (name != null) {
+			createdTarget = new NamedTarget<>(
+					type,
+					name,
+					description,
+					target,
+					prerequisitesList,
+					makeAction(),
+					makeActionWithResult(),
+					this);
+		}
+		else if (file != null) {
+			
+			final FILE_TARGET fileTarget = getFileTarget.apply(context, target);
+			
+			createdTarget = new FileTarget<>(
+					type,
+					file.apply(fileTarget),
+					description,
+					target,
+					prerequisitesList,
+					makeAction(),
+					makeActionWithResult(),
+					this);
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
+
+		return createdTarget;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

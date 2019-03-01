@@ -1,11 +1,15 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
@@ -89,7 +93,13 @@ final class TargetExecutor {
 		}
 	}
 
-	private <CONTEXT extends TaskContext> void runOrScheduleAction(Action<?> action, CONTEXT context, Target<?> target, TargetState state, TargetExecutorLogger logger) {
+	private <CONTEXT extends TaskContext> void runOrScheduleAction(
+			Action<?> action,
+			CONTEXT context,
+			Target<?> target,
+			TargetState state,
+			TargetExecutorLogger logger) {
+		
 		if (action.getConstraint() == null) {
 			final Exception exception = performAction(action, context, target, state, logger);
 			
@@ -112,7 +122,7 @@ final class TargetExecutor {
 		
 		if (actionWithResult.getConstraint() == null) {
 			
-			final Result result = performAction(actionWithResult, context, target, state, logger);
+			final Result result = performActionWithResult(actionWithResult, context, target, state, logger);
 			
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			final ProcessResult<CONTEXT, Object, Object> processResult = (ProcessResult)actionWithResult.getOnResult();
@@ -126,7 +136,7 @@ final class TargetExecutor {
 					actionWithResult.getConstraint(),
 					null,
 					param -> {
-						return performAction(actionWithResult, context, target, state, logger);
+						return performActionWithResult(actionWithResult, context, target, state, logger);
 					},
 					(param, result) -> {
 						@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -139,7 +149,12 @@ final class TargetExecutor {
 		}
 	}
 	
-	private <CONTEXT extends TaskContext> Exception performAction(Action<?> action, CONTEXT context, Target<?> target, TargetState state, TargetExecutorLogger logger) {
+	private <CONTEXT extends TaskContext> Exception performAction(
+			Action<?> action,
+			CONTEXT context,
+			Target<?> target,
+			TargetState state,
+			TargetExecutorLogger logger) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final ActionFunction<CONTEXT, Object> actionFunction = (ActionFunction)action.getActionFunction();
@@ -150,12 +165,59 @@ final class TargetExecutor {
 		
 		try {
 			actionFunction.perform(context, target.getTargetObject(), state);
+			
+			final Prerequisites prerequisites = target.getFromPrerequisite().getFromPrerequisites();
+			
+			if (prerequisites.isRecursiveBuild()) {
+				addRecursiveBuildTargets(context, prerequisites, target);
+			}
+			
 		} catch (Exception ex) {
 			return ex;
 		}
 		
 		return null;
 	}
+	
+	private void addRecursiveBuildTargets(TaskContext context, Prerequisites prerequisites, Target<?> target) {
+
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		final BiFunction<Object, Object, Collection<Object>> getSubPrerequisites
+			= (BiFunction)prerequisites.getSubPrerequisites();
+
+		final Collection<Object> targetPrerequisites = getSubPrerequisites.apply(context, target.getTargetObject());
+
+		if (targetPrerequisites.size() != target.getPrerequisites().size()) {
+			throw new IllegalStateException();
+		}
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		final Function<Object, Object> getTargetFromPrerequisite = (Function)prerequisites.getTargetFromSubPrerequisite();
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		final TargetSpec<TaskContext, Object, Object> targetSpec = (TargetSpec)target.getTargetSpec();
+	
+		for (Object subPrerequisiteObject : targetPrerequisites) {
+		
+			final Object subTargetObject = getTargetFromPrerequisite.apply(subPrerequisiteObject);
+
+			final Collection<Object> subPrerequisites = getSubPrerequisites.apply(context, subTargetObject);
+
+			final List<Prerequisite<?>> list = subPrerequisites.stream()
+					.map(sp -> new Prerequisite<>(sp, null))
+					.collect(Collectors.toList());
+			
+			
+			final Target<Object> subTarget =
+					targetSpec.createTarget(
+							context,
+							subTargetObject,
+							Arrays.asList(new Prerequisites(list, prerequisites.getSpec())));
+			
+			System.out.println("## added subtarget " + subTarget + " from prerequisites " + subPrerequisites);
+		}
+	}
+	
 	private static class Result {
 		private final Object result;
 		private final Exception exception;
@@ -166,7 +228,12 @@ final class TargetExecutor {
 		}
 	}
 
-	private <CONTEXT extends TaskContext> Result performAction(ActionWithResult<?> action, CONTEXT context, Target<?> target, TargetState state, TargetExecutorLogger logger) {
+	private <CONTEXT extends TaskContext> Result performActionWithResult(
+			ActionWithResult<?> action,
+			CONTEXT context,
+			Target<?> target,
+			TargetState state,
+			TargetExecutorLogger logger) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<CONTEXT, Object, Object> actionFunction = (BiFunction)action.getActionWithResult();
@@ -229,11 +296,6 @@ final class TargetExecutor {
 						
 						return Status.INCOMPLETE;
 					}
-					
-				}
-
-				if (prerequisites.isRecursiveBuild()) {
-					System.out.println("################### recursive build for " + prerequisite + "/" + prerequisite.getSubTarget());
 				}
 			}
 		}

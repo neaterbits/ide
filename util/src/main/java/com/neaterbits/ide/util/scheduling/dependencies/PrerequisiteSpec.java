@@ -78,6 +78,10 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		return getPrerequisites.apply(context, target);
 	}
 	
+	BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getSubPrerequisites() {
+		return getPrerequisites;
+	}
+	
 	Function<PREREQUISITE, TARGET> getTargetFromPrerequisite() {
 		
 		return getDependencyFromPrerequisite;

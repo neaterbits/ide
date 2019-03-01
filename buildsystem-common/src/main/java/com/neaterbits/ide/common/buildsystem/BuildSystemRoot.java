@@ -29,7 +29,7 @@ public interface BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> extends BuildSy
 
 	void addListener(BuildSystemRootListener listener);
 	
-	void downloadExternalDependency(DEPENDENCY dependency);
+	void downloadExternalDependencyIfNotPresent(DEPENDENCY dependency);
 	
 	Collection<DEPENDENCY> getTransitiveExternalDependencies(DEPENDENCY dependency) throws ScanException;
 	

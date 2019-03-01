@@ -6,13 +6,32 @@ final class Prerequisite<PREREQUISITE> {
 
 	private final PREREQUISITE item;
 	private final Target<PREREQUISITE> subTarget;
-
-	public Prerequisite(PREREQUISITE item, Target<PREREQUISITE> subTarget) {
+	
+	private Prerequisites fromPrerequisites;
+	
+	Prerequisite(PREREQUISITE item, Target<PREREQUISITE> subTarget) {
 		
 		Objects.requireNonNull(item);
 		
 		this.item = item;
 		this.subTarget = subTarget;
+		
+		if (subTarget != null) {
+			subTarget.setFromPrerequisite(this);
+		}
+	}
+
+	Prerequisites getFromPrerequisites() {
+		return fromPrerequisites;
+	}
+
+	void setFromPrerequisites(Prerequisites fromPrerequisites) {
+
+		if (this.fromPrerequisites != null) {
+			throw new IllegalStateException();
+		}
+		
+		this.fromPrerequisites = fromPrerequisites;
 	}
 
 	PREREQUISITE getItem() {

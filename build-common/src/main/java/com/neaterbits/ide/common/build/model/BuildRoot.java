@@ -32,7 +32,7 @@ public interface BuildRoot {
 	
 	BuildSystemRootScan getBuildSystemRootScan();
 	
-	void downloadExternalDependency(Dependency dependency);
+	void downloadExternalDependencyAndAddToBuildModel(Dependency dependency);
 
 	List<Dependency> getTransitiveExternalDependencies(Dependency dependency) throws ScanException;
 

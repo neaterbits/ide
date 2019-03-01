@@ -31,7 +31,6 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 		Objects.requireNonNull(projects);
 
 		this.listeners = new ArrayList<>();
-		
 
 		this.projects = projects;
 	}
@@ -132,6 +131,14 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 		return path;
 	}
 	
+	private File repositoryPomFile(MavenDependency mavenDependency) {
+		
+		final File repositoryDirectory = new File(repositoryDirectory(mavenDependency));
+		final File pomFile = new File(repositoryDirectory, "pom.xml");
+
+		return pomFile;
+	}
+	
 	@Override
 	public File repositoryJarFile(MavenDependency mavenDependency) {
 		
@@ -168,8 +175,7 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 		
 		Objects.requireNonNull(dependency);
 		
-		final File repositoryDirectory = new File(repositoryDirectory(dependency));
-		final File pomFile = new File(repositoryDirectory, "pom.xml");
+		final File pomFile = repositoryPomFile(dependency);
 
 		final MavenProject mavenProject;
 
@@ -183,7 +189,11 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	}
 
 	@Override
-	public void downloadExternalDependency(MavenDependency dependency) {
+	public void downloadExternalDependencyIfNotPresent(MavenDependency dependency) {
+		
+		final File repositoryPomFile = repositoryPomFile(dependency);
+		
+		
 		throw new UnsupportedOperationException();
 	}
 

@@ -15,12 +15,18 @@ final class FileTarget<TARGET> extends Target<TARGET> {
 			TARGET targetObject,
 			List<Prerequisites> prerequisites,
 			Action<TARGET> action,
-			ActionWithResult<TARGET> actionWithResult) {
-		super(type, description, targetObject, prerequisites, action, actionWithResult);
+			ActionWithResult<TARGET> actionWithResult,
+			TargetSpec<?, TARGET, ?> targetSpec) {
+		
+		super(type, description, targetObject, prerequisites, action, actionWithResult, targetSpec);
 
 		Objects.requireNonNull(file);
 		
 		this.file = file;
+		
+		if (targetSpec.getFile() == null) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	File getFile() {

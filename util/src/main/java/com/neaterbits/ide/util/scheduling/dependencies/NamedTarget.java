@@ -14,11 +14,16 @@ final class NamedTarget<TARGET> extends Target<TARGET> {
 			TARGET targetObject,
 			List<Prerequisites> prerequisites,
 			Action<TARGET> action,
-			ActionWithResult<TARGET> actionWithResult) {
-		super(type, description, targetObject, prerequisites, action, actionWithResult);
+			ActionWithResult<TARGET> actionWithResult,
+			TargetSpec<?, TARGET, ?> targetSpec) {
+		super(type, description, targetObject, prerequisites, action, actionWithResult, targetSpec);
 		
 		Objects.requireNonNull(name);
 
+		if (targetSpec.getFile() != null) {
+			throw new IllegalArgumentException();
+		}
+		
 		this.name = name;
 	}
 

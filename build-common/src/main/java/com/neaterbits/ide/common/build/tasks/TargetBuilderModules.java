@@ -87,7 +87,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 									dependency -> "External dependency " + dependency.getResourcePath().getLast().getName())
 
 							.action(Constraint.NETWORK, (context, target, actionParams) -> {
-								context.getBuildRoot().downloadExternalDependency(target);
+								context.getBuildRoot().downloadExternalDependencyAndAddToBuildModel(target);
 							});
 						})
 
