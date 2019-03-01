@@ -2,17 +2,17 @@ package com.neaterbits.ide.component.java.language;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 
+import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
+import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
-import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.ide.common.language.CompileableLanguage;
+import com.neaterbits.ide.common.resource.FileSystemResourcePath;
+import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.NamespaceResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledFileResource;
@@ -23,10 +23,10 @@ import com.neaterbits.ide.util.PathUtil;
 
 public final class JavaCompileableLanguage implements CompileableLanguage {
 
-	@Override
-	public Set<CompleteName> getDependencies(CompiledFileResourcePath compiledFile) {
-		// throw new UnsupportedOperationException();
-		return new HashSet<>();
+	private final BytecodeFormat bytecodeFormat;
+	
+	public JavaCompileableLanguage() {
+		this.bytecodeFormat = new JavaBytecodeFormat();
 	}
 	
 	@Override
@@ -47,25 +47,19 @@ public final class JavaCompileableLanguage implements CompileableLanguage {
 	}
 
 	@Override
-	public Set<CompleteName> getFilesFromCompiledModuleFile(CompiledModuleFileResourcePath compiledModuleFileResourcePath) throws IOException {
+	public Set<TypeName> getTypesFromCompiledModuleFile(CompiledModuleFileResourcePath compiledModuleFileResourcePath) throws IOException {
+		return getTypesFromJarFile(compiledModuleFileResourcePath);
+	}
+	
+	@Override
+	public Set<TypeName> getTypesFromLibraryFile(LibraryResourcePath libraryResourcePath) throws IOException {
+		return getTypesFromJarFile(libraryResourcePath);
+	}
 
-		final Set<CompleteName> files;
+	private Set<TypeName> getTypesFromJarFile(FileSystemResourcePath jarFileResourcePath) throws IOException {
+
+		return bytecodeFormat.getTypesFromLibraryFile(jarFileResourcePath.getFile());
 		
-		try (JarFile jarFile = new JarFile(compiledModuleFileResourcePath.getFile())) {
-		
-			files = jarFile.stream()
-				.map(entry -> entry.getName())
-				.filter(name -> name.endsWith(".class"))
-				.map(name -> Strings.split(name, '/'))
-				.map(parts -> new CompleteName(
-						new NamespaceReference(Arrays.copyOf(parts, parts.length - 1)),
-						null,
-						new ClassName(parts[parts.length - 1])))
-				.collect(Collectors.toSet());
-		
-		}
-		
-		return files;
 	}
 
 	@Override
@@ -90,4 +84,11 @@ public final class JavaCompileableLanguage implements CompileableLanguage {
 
 		return new CompiledFileResourcePath(targetDirectory, new CompiledFileResource(classFile));
 	}
+
+	@Override
+	public boolean canReadCodeMapFromCompiledCode() {
+		return true;
+	}
+
+	
 }

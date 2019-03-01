@@ -1,4 +1,4 @@
-package com.neaterbits.ide.common.build.tasks;
+package com.neaterbits.ide.common.tasks;
 
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
@@ -15,8 +15,8 @@ public class TargetBuilderInitialScan extends TargetBuildSpec<InitialScanContext
 			.fromIterating(InitialScanContext::getModules)
 			.buildBy(subTarget -> subTarget
 					.addInfoSubTarget(ModuleResourcePath.class, "sourcefolders", module -> "Find source folders for " + module.getName())
-					.actionWithResult(Constraint.IO, (context, module) -> context.buildRoot.getBuildSystemRootScan().findSourceFolders(module))
-					.processResult((context, module, sourceFolders) -> context.buildRoot.setSourceFolders(module, sourceFolders))
+					.actionWithResult(Constraint.IO, (context, module) -> context.getBuildRoot().getBuildSystemRootScan().findSourceFolders(module))
+					.processResult((context, module, sourceFolders) -> context.getBuildRoot().setSourceFolders(module, sourceFolders))
 			);
 			
 	}

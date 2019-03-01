@@ -6,10 +6,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
+import com.neaterbits.ide.common.tasks.InitialScanContext;
+import com.neaterbits.ide.common.tasks.TargetBuilderInitialScan;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootImpl;
-import com.neaterbits.ide.common.build.tasks.InitialScanContext;
-import com.neaterbits.ide.common.build.tasks.TargetBuilderInitialScan;
 import com.neaterbits.ide.common.ui.controller.IDEController;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.component.common.IDEComponents;

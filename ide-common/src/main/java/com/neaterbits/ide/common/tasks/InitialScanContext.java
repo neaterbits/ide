@@ -1,10 +1,9 @@
-package com.neaterbits.ide.common.build.tasks;
+package com.neaterbits.ide.common.tasks;
 
-import java.util.Collection;
 
 import com.neaterbits.ide.common.build.model.BuildRoot;
+import com.neaterbits.ide.common.build.tasks.TaskBuilderContext;
 import com.neaterbits.ide.common.language.CompileableLanguage;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
 
 public final class InitialScanContext extends TaskBuilderContext {
 
@@ -14,9 +13,5 @@ public final class InitialScanContext extends TaskBuilderContext {
 
 	public InitialScanContext(TaskBuilderContext context) {
 		super(context);
-	}
-	
-	public Collection<ModuleResourcePath> getModules() {
-		return buildRoot.getModules();
 	}
 }

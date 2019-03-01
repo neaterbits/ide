@@ -13,5 +13,10 @@
 			<artifactId>component-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.neaterbits.compiler</groupId>
+			<artifactId>bytecode-java</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

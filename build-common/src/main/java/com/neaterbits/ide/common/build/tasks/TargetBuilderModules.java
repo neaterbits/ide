@@ -28,18 +28,20 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 
 public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 
+	public static final String TARGET_COMPILEALL = "compileall";
+	
 	@Override
 	protected void buildSpec(TargetBuilder<ModulesBuildContext> targetBuilder) {
 		
-		targetBuilder.addTarget("compileall", "Compile all modules")
+		targetBuilder.addTarget(TARGET_COMPILEALL, "Compile all modules")
 			.withPrerequisites("Modules")
-			.fromIterating(context -> context.buildRoot.getModules())
+			.fromIterating(context -> context.getModules())
 			.buildBy(subTarget-> subTarget
 					
 				.addFileSubTarget(ModuleResourcePath.class,
 						CompiledModuleFileResourcePath.class,
 						
-						(context, module) -> context.buildRoot.getCompiledModuleFile(module),
+						(context, module) -> context.getCompiledModuleFile(module),
 						CompiledModuleFileResourcePath::getFile,
 						module -> "Compile module  " + module.getName())
 
@@ -85,7 +87,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 									dependency -> "External dependency " + dependency.getResourcePath().getLast().getName())
 
 							.action(Constraint.NETWORK, (context, target, actionParams) -> {
-								context.buildRoot.downloadExternalDependency(target);
+								context.getBuildRoot().downloadExternalDependency(target);
 							});
 						})
 
@@ -95,7 +97,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 						.makingProduct(ModuleCompileList.class)
 						.fromItemType(SourceFolderCompileList.class)
 						
-						.fromIterating(Constraint.IO, (context, module) -> context.buildRoot.getBuildSystemRootScan().findSourceFolders(module))
+						.fromIterating(Constraint.IO, (context, module) -> context.getBuildRoot().getBuildSystemRootScan().findSourceFolders(module))
 
 						.buildBy(st -> st
 								
@@ -122,7 +124,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 						
 						if (!moduleCompileList.getSourceFiles().isEmpty()) {
 						
-							final File targetDirectory = context.buildRoot.getTargetDirectory(target).getFile();
+							final File targetDirectory = context.getBuildRoot().getTargetDirectory(target).getFile();
 							final ModuleDependencyList moduleDependencyList = actionParameters.getCollected(ModuleDependencyList.class);
 	
 							compileSourceFiles(context.compiler, moduleCompileList, targetDirectory, moduleDependencyList);
@@ -143,7 +145,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 
 	private static void transitiveProjectDependencies(ModulesBuildContext context, ModuleResourcePath module, List<Dependency> dependencies) {
 		 
-		final List<Dependency> moduleDependencies = context.buildRoot.getDependenciesForModule(module);
+		final List<Dependency> moduleDependencies = context.getBuildRoot().getDependenciesForModule(module);
 		 
 		dependencies.addAll(moduleDependencies);
 
@@ -185,10 +187,10 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 
 		SourceFileScanner.findSourceFiles(sourceFolder, sourceFiles);
 
-		final TargetDirectoryResourcePath targetDirectory = context.buildRoot.getTargetDirectory(sourceFolder.getModule());
+		final TargetDirectoryResourcePath targetDirectory = context.getBuildRoot().getTargetDirectory(sourceFolder.getModule());
 
 		return sourceFiles.stream()
-				.map(sourceFile -> new FileCompilation(sourceFile, context.language.getCompiledFilePath(targetDirectory, sourceFile)))
+				.map(sourceFile -> new FileCompilation(sourceFile, context.getLanguage().getCompiledFilePath(targetDirectory, sourceFile)))
 				.collect(Collectors.toList());
 	}
 }
