@@ -3,11 +3,11 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 import java.util.List;
 import java.util.Objects;
 
-final class NamedTarget<TARGET> extends Target<TARGET> {
+final class InfoTarget<TARGET> extends Target<TARGET> {
 
 	private final String name;
 
-	NamedTarget(
+	InfoTarget(
 			Class<TARGET> type,
 			String name,
 			String description,
@@ -19,12 +19,22 @@ final class NamedTarget<TARGET> extends Target<TARGET> {
 		super(type, description, targetObject, prerequisites, action, actionWithResult, targetSpec);
 		
 		Objects.requireNonNull(name);
+		
+		if (targetObject != null) {
+			throw new IllegalArgumentException(" " + targetObject + "/" + name);
+		}
+		
 
 		if (targetSpec.getFile() != null) {
 			throw new IllegalArgumentException();
 		}
 		
 		this.name = name;
+	}
+
+	@Override
+	String getDebugString() {
+		return name;
 	}
 
 	String getName() {
@@ -47,7 +57,7 @@ final class NamedTarget<TARGET> extends Target<TARGET> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		NamedTarget<?> other = (NamedTarget<?>) obj;
+		InfoTarget<?> other = (InfoTarget<?>) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

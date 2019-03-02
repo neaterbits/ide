@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface TargetExecutorLogger {
 
-	void onScheduleTarget(Target<?> target, Status hasCompletedPrerequisites);
+	void onScheduleTarget(Target<?> target, Status hasCompletedPrerequisites, TargetExecutorLogState logState);
 	
-	void onCollect(Target<?> target, List<Object> targetObjects, Object collected);
+	void onCollect(Target<?> target, List<Object> targetObjects, Object collected, TargetExecutorLogState logState);
 	
-	void onAction(Target<?> target);
+	void onAction(Target<?> target, TargetExecutorLogState logState);
 	
-	void onComplete(Target<?> target, Exception exception);
+	void onComplete(Target<?> target, Exception exception, TargetExecutorLogState logState);
 }

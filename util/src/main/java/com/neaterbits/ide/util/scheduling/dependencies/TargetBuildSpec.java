@@ -1,5 +1,7 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
+import java.util.function.Consumer;
+
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilderImpl;
@@ -9,7 +11,7 @@ public abstract class TargetBuildSpec<CONTEXT extends TaskContext> {
 
 	protected abstract void buildSpec(TargetBuilder<CONTEXT> targetBuilder);
 	
-	public final void execute(CONTEXT context) {
+	public final void execute(CONTEXT context, TargetExecutorLogger logger, Consumer<TargetBuildResult> onResult) {
 		
 		final TargetBuilderImpl<CONTEXT> builderImpl = new TargetBuilderImpl<>();
 		buildSpec(builderImpl);
@@ -24,11 +26,11 @@ public abstract class TargetBuildSpec<CONTEXT extends TaskContext> {
 		
 		targetFinder.computeTargets(targetSpec, context, targetFinderLogger, target -> {
 			
-			target.printTargets();
+			// target.printTargets();
 			
 			final TargetExecutor targetExecutor = new TargetExecutor(asyncExecutor);
 			
-			targetExecutor.runTargets(context, target, new PrintlnTargetExecutorLogger());
+			targetExecutor.runTargets(context, target, logger, onResult);
 		});
 	}
 }

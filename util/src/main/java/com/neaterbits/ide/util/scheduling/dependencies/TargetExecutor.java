@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -27,16 +28,24 @@ final class TargetExecutor {
 		this.asyncExecutor = asyncExecutor;
 	}
 
-	public <CONTEXT extends TaskContext, TARGET> void runTargets(CONTEXT context, Target<TARGET> rootTarget, TargetExecutorLogger logger) {
+	public <CONTEXT extends TaskContext, TARGET> void runTargets(
+			CONTEXT context,
+			Target<TARGET> rootTarget,
+			TargetExecutorLogger logger,
+			Consumer<TargetBuildResult> onResult) {
 		
 		final TargetState state = TargetState.createFromTargetTree(rootTarget);
 		
-		scheduleTargets(context, state, logger);
+		scheduleTargets(context, state, logger, onResult);
 		
 		asyncExecutor.runQueuedRunnables();
 	}
 	
-	private <CONTEXT extends TaskContext> void scheduleTargets(CONTEXT context, TargetState state, TargetExecutorLogger logger) {
+	private <CONTEXT extends TaskContext> void scheduleTargets(
+			CONTEXT context,
+			TargetState state,
+			TargetExecutorLogger logger,
+			Consumer<TargetBuildResult> onResult) {
 		
 		if (!state.hasExecuteTargets()) {
 			throw new IllegalStateException();
@@ -46,7 +55,7 @@ final class TargetExecutor {
 
 			int targetsLeft = state.getNumExecuteTargets();
 			
-			final List<Target<?>> targets = new ArrayList<>(state.getExecuteTargets());
+			final List<Target<?>> targets = new ArrayList<>(state.getToExecuteTargets());
 			
 			for (Target<?> target : targets) {
 
@@ -60,7 +69,7 @@ final class TargetExecutor {
 				final Status status = hasCompletedPrerequisites(target, state.getCompletedTargets(), state.getFailedTargets());
 				
 				if (logger != null) {
-					logger.onScheduleTarget(target, status);
+					logger.onScheduleTarget(target, status, state);
 				}
 				
 				if (status == Status.COMPLETE) {
@@ -73,16 +82,16 @@ final class TargetExecutor {
 					final ActionWithResult<?> actionWithResult = target.getActionWithResult();
 					
 					if (action != null) {
-						runOrScheduleAction(action, context, target, state, logger);
+						runOrScheduleAction(action, context, target, state, logger, onResult);
 					}
 					else if (actionWithResult != null) {
 						
 						System.out.println("### actionWithResult");
 						
-						runOrScheduleActionWithResult(actionWithResult, context, target, state, logger);
+						runOrScheduleActionWithResult(actionWithResult, context, target, state, logger, onResult);
 					}
 					else {
-						onCompletedTarget(context, target, state, null, false, logger);
+						onCompletedTarget(context, target, state, null, false, logger, onResult);
 					}
 				}
 			}
@@ -91,6 +100,8 @@ final class TargetExecutor {
 				break;
 			}
 		}
+		
+		onResult.accept(state);
 	}
 
 	private <CONTEXT extends TaskContext> void runOrScheduleAction(
@@ -98,12 +109,13 @@ final class TargetExecutor {
 			CONTEXT context,
 			Target<?> target,
 			TargetState state,
-			TargetExecutorLogger logger) {
+			TargetExecutorLogger logger,
+			Consumer<TargetBuildResult> onResult) {
 		
 		if (action.getConstraint() == null) {
 			final Exception exception = performAction(action, context, target, state, logger);
 			
-			onCompletedTarget(context, target, state, exception, false, logger);
+			onCompletedTarget(context, target, state, exception, false, logger, onResult);
 		}
 		else {
 			asyncExecutor.schedule(
@@ -113,12 +125,18 @@ final class TargetExecutor {
 						return performAction(action, context, target, state, logger);
 					},
 					(param, exception) -> {
-						onCompletedTarget(context, target, state, exception, true, logger);
+						onCompletedTarget(context, target, state, exception, true, logger, onResult);
 					} );
 		}
 	}
 	
-	private <CONTEXT extends TaskContext> void runOrScheduleActionWithResult(ActionWithResult<?> actionWithResult, CONTEXT context, Target<?> target, TargetState state, TargetExecutorLogger logger) {
+	private <CONTEXT extends TaskContext> void runOrScheduleActionWithResult(
+			ActionWithResult<?> actionWithResult,
+			CONTEXT context,
+			Target<?> target,
+			TargetState state,
+			TargetExecutorLogger logger,
+			Consumer<TargetBuildResult> onResult) {
 		
 		if (actionWithResult.getConstraint() == null) {
 			
@@ -129,7 +147,7 @@ final class TargetExecutor {
 			
 			processResult.process(context, target.getTargetObject(), result.result);
 			
-			onCompletedTarget(context, target, state, result.exception, false, logger);
+			onCompletedTarget(context, target, state, result.exception, false, logger, onResult);
 		}
 		else {
 			asyncExecutor.schedule(
@@ -144,7 +162,7 @@ final class TargetExecutor {
 						
 						processResult.process(context, target.getTargetObject(), result.result);
 						
-						onCompletedTarget(context, target, state, result.exception, true, logger);
+						onCompletedTarget(context, target, state, result.exception, true, logger, onResult);
 					} );
 		}
 	}
@@ -160,7 +178,7 @@ final class TargetExecutor {
 		final ActionFunction<CONTEXT, Object> actionFunction = (ActionFunction)action.getActionFunction();
 		
 		if (logger != null) {
-			logger.onAction(target);
+			logger.onAction(target, state);
 		}
 		
 		try {
@@ -169,6 +187,7 @@ final class TargetExecutor {
 			final Prerequisites prerequisites = target.getFromPrerequisite().getFromPrerequisites();
 			
 			if (prerequisites.isRecursiveBuild()) {
+				
 				addRecursiveBuildTargets(context, prerequisites, target);
 			}
 			
@@ -184,7 +203,7 @@ final class TargetExecutor {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<Object, Object, Collection<Object>> getSubPrerequisites
 			= (BiFunction)prerequisites.getSubPrerequisites();
-
+		
 		final Collection<Object> targetPrerequisites = getSubPrerequisites.apply(context, target.getTargetObject());
 
 		if (targetPrerequisites.size() != target.getPrerequisites().size()) {
@@ -201,18 +220,19 @@ final class TargetExecutor {
 		
 			final Object subTargetObject = getTargetFromPrerequisite.apply(subPrerequisiteObject);
 
-			final Collection<Object> subPrerequisites = getSubPrerequisites.apply(context, subTargetObject);
+			final Collection<Object> subPrerequisitesList = getSubPrerequisites.apply(context, subTargetObject);
 
-			final List<Prerequisite<?>> list = subPrerequisites.stream()
+			final List<Prerequisite<?>> list = subPrerequisitesList.stream()
 					.map(sp -> new Prerequisite<>(sp, null))
 					.collect(Collectors.toList());
 			
+			final Prerequisites subPrerequisites = new Prerequisites(list, prerequisites.getSpec());
 			
 			final Target<Object> subTarget =
 					targetSpec.createTarget(
 							context,
 							subTargetObject,
-							Arrays.asList(new Prerequisites(list, prerequisites.getSpec())));
+							Arrays.asList(subPrerequisites));
 			
 			System.out.println("## added subtarget " + subTarget + " from prerequisites " + subPrerequisites);
 		}
@@ -239,7 +259,7 @@ final class TargetExecutor {
 		final BiFunction<CONTEXT, Object, Object> actionFunction = (BiFunction)action.getActionWithResult();
 		
 		if (logger != null) {
-			logger.onAction(target);
+			logger.onAction(target, state);
 		}
 
 		Exception exception = null;
@@ -257,17 +277,24 @@ final class TargetExecutor {
 
 	
 	private <CONTEXT extends TaskContext>
-	void onCompletedTarget(CONTEXT context, Target<?> target, TargetState targetState, Exception exception, boolean async, TargetExecutorLogger logger) {
+	void onCompletedTarget(
+			CONTEXT context,
+			Target<?> target,
+			TargetState targetState,
+			Exception exception,
+			boolean async,
+			TargetExecutorLogger logger,
+			Consumer<TargetBuildResult> onResult) {
 
 		
 		if (logger != null) {
-			logger.onComplete(target, exception);
+			logger.onComplete(target, exception, targetState);
 		}
 		
 		targetState.onCompletedTarget(target, exception);
 		
 		if (async) {
-			scheduleTargets(context, targetState, logger);
+			scheduleTargets(context, targetState, logger, onResult);
 		}
 	}
 
@@ -282,7 +309,7 @@ final class TargetExecutor {
 					final Status subStatus = hasCompletedPrerequisites(prerequisite.getSubTarget(), completedTargets, failedTargets);
 					
 					if (subStatus != Status.COMPLETE) {
-						System.out.println("## missing substatus " + prerequisite.getSubTarget() + "/" + subStatus);
+						// System.out.println("## missing substatus " + prerequisite.getSubTarget() + "/" + subStatus);
 
 						return subStatus;
 					}
@@ -292,7 +319,7 @@ final class TargetExecutor {
 					}
 					else if (!completedTargets.contains(prerequisite.getSubTarget())) {
 						
-						System.out.println("## missing subtarget " + prerequisite.getSubTarget());
+						// System.out.println("## missing subtarget " + prerequisite.getSubTarget());
 						
 						return Status.INCOMPLETE;
 					}
@@ -342,7 +369,7 @@ final class TargetExecutor {
 				final Object collected = collect.apply(target.getTargetObject(), targetObjects);
 				
 				if (logger != null) {
-					logger.onCollect(target, targetObjects, collected);
+					logger.onCollect(target, targetObjects, collected, state);
 				}
 				
 				if (collected != null) {

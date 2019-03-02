@@ -1,6 +1,10 @@
 package com.neaterbits.ide.buildmain;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
@@ -11,6 +15,9 @@ import com.neaterbits.ide.common.build.tasks.TargetBuilderModules;
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
 import com.neaterbits.ide.component.java.language.JavaCompileableLanguage;
 import com.neaterbits.ide.component.java.language.JavaCompiler;
+import com.neaterbits.ide.util.scheduling.dependencies.StructuredTargetExecutorLogger;
+import com.neaterbits.structuredlog.model.Log;
+import com.neaterbits.structuredlog.model.LogIO;
 
 public class BuildMain {
 
@@ -49,7 +56,23 @@ public class BuildMain {
 						new JavaCompiler(),
 						null);
 
-				targetBuilderModules.execute(context);
+				// final TargetExecutorLogger logger = new PrintlnTargetExecutorLogger();
+				final StructuredTargetExecutorLogger logger = new StructuredTargetExecutorLogger();
+
+				targetBuilderModules.execute(context, logger, result -> {
+
+					System.out.println("### completed execution");
+					
+					final Log log = logger.getLog();
+					
+					final LogIO logIO = new LogIO();
+					
+					try (FileOutputStream outputStream = new FileOutputStream(new File("buildlog.xml"))) {
+						logIO.writeLog(log, outputStream);
+					} catch (IOException | JAXBException ex) {
+						throw new IllegalStateException(ex);
+					}
+				});
 			}
 		}
 	}

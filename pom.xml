@@ -42,6 +42,8 @@
 		<module>component-java-language</module>
 		<module>component-java-ui</module>
 		<module>ui-swt</module>
+		<module>structured-log-model</module>
+		<module>structured-log-swt</module>
 		<module>util</module>
 	</modules>
 

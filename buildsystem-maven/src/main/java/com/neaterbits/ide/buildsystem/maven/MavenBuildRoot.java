@@ -23,16 +23,15 @@ import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, MavenProject, MavenDependency> {
 	
 	private final List<MavenProject> projects;
-	
 	private final List<BuildSystemRootListener> listeners;
 	
 	MavenBuildRoot(List<MavenProject> projects) {
 		
 		Objects.requireNonNull(projects);
 
-		this.listeners = new ArrayList<>();
-
 		this.projects = projects;
+
+		this.listeners = new ArrayList<>();
 	}
 	
 	@Override
@@ -138,7 +137,18 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 
 		return pomFile;
 	}
-	
+
+	private File repositoryExternalPomFile(MavenDependency mavenDependency) {
+		
+		final File repositoryDirectory = new File(repositoryDirectory(mavenDependency));
+		
+		final MavenModuleId moduleId = mavenDependency.getModuleId();
+		
+		final File pomFile = new File(repositoryDirectory, moduleId.getArtifactId() + '-' + moduleId.getVersion() + '.' + "pom");
+
+		return pomFile;
+	}
+
 	@Override
 	public File repositoryJarFile(MavenDependency mavenDependency) {
 		
@@ -169,7 +179,6 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 				+ (packaging != null ? ('.' + packaging) : ".jar");
 	}
 	
-	
 	@Override
 	public Collection<MavenDependency> getTransitiveExternalDependencies(MavenDependency dependency) throws ScanException {
 		
@@ -191,10 +200,12 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	@Override
 	public void downloadExternalDependencyIfNotPresent(MavenDependency dependency) {
 		
-		final File repositoryPomFile = repositoryPomFile(dependency);
-		
-		
-		throw new UnsupportedOperationException();
+		final File repositoryPomFile = repositoryExternalPomFile(dependency);
+
+		if (!repositoryPomFile.exists()) {
+			// Download from external repositories
+			throw new UnsupportedOperationException("No such repository file " + repositoryPomFile);
+		}
 	}
 
 	@Override

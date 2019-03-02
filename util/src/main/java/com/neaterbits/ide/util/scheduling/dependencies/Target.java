@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.neaterbits.ide.util.Indent;
 
-public abstract class Target<TARGET> {
+public abstract class Target<TARGET> extends BuildEntity {
 
 	private final Class<TARGET> type;
 	private final String description;
@@ -21,6 +21,7 @@ public abstract class Target<TARGET> {
 
 	public abstract String targetToLogString();
 	
+	
 	Target(
 			Class<TARGET> type,
 			String description,
@@ -32,6 +33,8 @@ public abstract class Target<TARGET> {
 		
 		Objects.requireNonNull(targetSpec);
 		
+		prerequisites.forEach(p -> p.setFromTarget(this));
+
 		this.type = type;
 		this.description = description;
 		this.targetObject = targetObject;
@@ -45,7 +48,12 @@ public abstract class Target<TARGET> {
 		return type;
 	}
 
-	Prerequisite<?> getFromPrerequisite() {
+	@Override
+	final BuildEntity getFromEntity() {
+		return fromPrerequisite;
+	}
+
+	final Prerequisite<?> getFromPrerequisite() {
 		return fromPrerequisite;
 	}
 

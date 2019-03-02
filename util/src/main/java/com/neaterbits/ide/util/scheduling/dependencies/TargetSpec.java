@@ -133,7 +133,7 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 		final String description = this.description.apply(target);
 		
 		if (name != null) {
-			createdTarget = new NamedTarget<>(
+			createdTarget = new InfoTarget<>(
 					type,
 					name,
 					description,

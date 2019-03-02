@@ -17,6 +17,7 @@ import com.neaterbits.ide.component.java.language.JavaCompileableLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
 import com.neaterbits.ide.swt.SWTUI;
+import com.neaterbits.ide.util.scheduling.dependencies.PrintlnTargetExecutorLogger;
 
 public class IDEMain {
 
@@ -51,7 +52,7 @@ public class IDEMain {
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
-				final IDEController<Shell> ideController = new IDEController<>(buildRoot, ui, config, ideComponents);
+				new IDEController<>(buildRoot, ui, config, ideComponents);
 				
 				startIDEScanJobs(buildRoot);
 				
@@ -81,7 +82,7 @@ public class IDEMain {
 		final TargetBuilderInitialScan initialScan = new TargetBuilderInitialScan();
 		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaCompileableLanguage());
 		
-		initialScan.execute(context);
+		initialScan.execute(context, new PrintlnTargetExecutorLogger(), null);
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {

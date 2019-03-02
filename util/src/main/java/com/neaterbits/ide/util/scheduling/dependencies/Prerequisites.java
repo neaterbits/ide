@@ -6,11 +6,13 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-final class Prerequisites {
+final class Prerequisites extends BuildEntity {
 
 	private final List<Prerequisite<?>> prerequisites;
 	private final PrerequisiteSpec<?, ?, ?> spec;
-	
+
+	private Target<?> fromTarget;
+
 	Prerequisites(List<Prerequisite<?>> prerequisites, PrerequisiteSpec<?, ?, ?> spec) {
 		
 		Objects.requireNonNull(prerequisites);
@@ -20,6 +22,27 @@ final class Prerequisites {
 		this.spec = spec;
 		
 		prerequisites.forEach(prerequisite -> prerequisite.setFromPrerequisites(this));
+	}
+	
+	@Override
+	String getDebugString() {
+		return getClass().getSimpleName();
+	}
+
+	@Override
+	BuildEntity getFromEntity() {
+		return fromTarget;
+	}
+
+	Target<?> getFromTarget() {
+		return fromTarget;
+	}
+
+	void setFromTarget(Target<?> fromTarget) {
+		
+		Objects.requireNonNull(fromTarget);
+		
+		this.fromTarget = fromTarget;
 	}
 
 	List<Prerequisite<?>> getPrerequisites() {

@@ -31,9 +31,10 @@ public final class JavaCompiler implements Compiler {
 					.map(file -> file.getName())
 					.collect(Collectors.toList()));
 
+		System.out.println("## dependencies: " + compiledDependencies);
+
 		*/
 
-		System.out.println("## dependencies: " + compiledDependencies);
 		
 		final List<String> arguments = new ArrayList<String>();
 		
@@ -76,7 +77,7 @@ public final class JavaCompiler implements Compiler {
 			
 			while (null != (line = reader.readLine())) {
 				
-				System.out.println("## compiler output: " + line);
+				// System.out.println("## compiler output: " + line);
 				
 				final BuildIssue buildIssue;
 				

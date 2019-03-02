@@ -29,6 +29,11 @@ final class FileTarget<TARGET> extends Target<TARGET> {
 		}
 	}
 
+	@Override
+	String getDebugString() {
+		return file.getName();
+	}
+
 	File getFile() {
 		return file;
 	}

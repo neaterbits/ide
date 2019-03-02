@@ -2,7 +2,7 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 
 import java.util.Objects;
 
-final class Prerequisite<PREREQUISITE> {
+final class Prerequisite<PREREQUISITE> extends BuildEntity {
 
 	private final PREREQUISITE item;
 	private final Target<PREREQUISITE> subTarget;
@@ -19,6 +19,16 @@ final class Prerequisite<PREREQUISITE> {
 		if (subTarget != null) {
 			subTarget.setFromPrerequisite(this);
 		}
+	}
+
+	@Override
+	String getDebugString() {
+		return getClass().getSimpleName();
+	}
+
+	@Override
+	BuildEntity getFromEntity() {
+		return fromPrerequisites;
 	}
 
 	Prerequisites getFromPrerequisites() {

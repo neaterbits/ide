@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionParameters;
 
-final class TargetState implements ActionParameters {
+final class TargetState implements ActionParameters, TargetExecutorLogState {
 
 	private final Set<Target<?>> toExecuteTargets;
 
@@ -55,18 +55,36 @@ final class TargetState implements ActionParameters {
 		return toExecuteTargets.size();
 	}
 	
-	Set<Target<?>> getExecuteTargets() {
+	@Override
+	public Set<Target<?>> getToExecuteTargets() {
 		return Collections.unmodifiableSet(toExecuteTargets);
 	}
 	
-	Set<Target<?>> getCompletedTargets() {
+	@Override
+	public Set<Target<?>> getCompletedTargets() {
 		return Collections.unmodifiableSet(completedTargets);
 	}
 
-	Map<Target<?>, Exception> getFailedTargets() {
+	@Override
+	public Map<Target<?>, Exception> getFailedTargets() {
 		return Collections.unmodifiableMap(failedTargets);
 	}
-	
+
+	@Override
+	public Set<Target<?>> getScheduledTargets() {
+		return Collections.unmodifiableSet(scheduledTargets);
+	}
+
+	@Override
+	public Map<Target<?>, Object> getCollected() {
+		return Collections.unmodifiableMap(collected);
+	}
+
+	@Override
+	public Map<Class<?>, Object> getPrerequisites() {
+		return Collections.unmodifiableMap(prerequisites);
+	}
+
 	void moveTargetFromToExecuteToScheduled(Target<?> target) {
 		
 		Objects.requireNonNull(target);
