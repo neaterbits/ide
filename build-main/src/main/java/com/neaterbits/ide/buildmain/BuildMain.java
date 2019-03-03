@@ -12,7 +12,7 @@ import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootImpl;
 import com.neaterbits.ide.common.build.tasks.ModulesBuildContext;
 import com.neaterbits.ide.common.build.tasks.TargetBuilderModules;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.component.java.language.JavaCompileableLanguage;
 import com.neaterbits.ide.component.java.language.JavaCompiler;
 import com.neaterbits.ide.util.scheduling.dependencies.StructuredTargetExecutorLogger;
@@ -44,7 +44,7 @@ public class BuildMain {
 				
 				System.out.println("Modules to build:");
 				
-				for (ModuleResourcePath module : buildRoot.getModules()) {
+				for (ProjectModuleResourcePath module : buildRoot.getModules()) {
 					System.out.println(module.getName());
 				}
 

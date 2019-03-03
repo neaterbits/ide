@@ -2,12 +2,12 @@ package com.neaterbits.ide.common.build.model;
 
 import java.util.Set;
 
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 
 public interface DependencyMap {
 
-	Set<ModuleResourcePath> findLeafModules();
+	Set<ProjectModuleResourcePath> findLeafModules();
 	
-	Set<ModuleResourcePath> getDependencies(ModuleResourcePath resourcePath);
+	Set<ProjectModuleResourcePath> getDependencies(ProjectModuleResourcePath resourcePath);
 	
 }

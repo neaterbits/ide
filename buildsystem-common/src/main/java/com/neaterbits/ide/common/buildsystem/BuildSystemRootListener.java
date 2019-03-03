@@ -1,9 +1,9 @@
 package com.neaterbits.ide.common.buildsystem;
 
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 
 public interface BuildSystemRootListener {
 
-	void onSourceFoldersChanged(ModuleResourcePath module);
+	void onSourceFoldersChanged(ProjectModuleResourcePath module);
 
 }

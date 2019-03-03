@@ -11,7 +11,7 @@ import com.neaterbits.ide.common.buildsystem.BuildSystemRoot;
 import com.neaterbits.ide.common.resource.LibraryResource;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.ModuleResource;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResource;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.TargetDirectoryResource;
@@ -20,9 +20,9 @@ import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 class BuildRootImplInit {
 
 	static <MODULE_ID, PROJECT, DEPENDENCY>
-	Map<MODULE_ID, ModuleResourcePath> mapModuleIdToResourcePath(Map<MODULE_ID, PROJECT> projects, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
+	Map<MODULE_ID, ProjectModuleResourcePath> mapModuleIdToResourcePath(Map<MODULE_ID, PROJECT> projects, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
-		final Map<MODULE_ID, ModuleResourcePath> moduleIdToResourcePath = new HashMap<>(projects.size());
+		final Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath = new HashMap<>(projects.size());
 		
 		for (PROJECT pom : projects.values()) {
 			final LinkedList<ModuleResource> modules = new LinkedList<>();
@@ -36,19 +36,19 @@ class BuildRootImplInit {
 				modules.addFirst(moduleResource);
 			}
 			
-			moduleIdToResourcePath.put(buildSystemRoot.getModuleId(pom), new ModuleResourcePath(modules));
+			moduleIdToResourcePath.put(buildSystemRoot.getModuleId(pom), new ProjectModuleResourcePath(modules));
 		}
 		
 		return moduleIdToResourcePath;
 	}
 	
 	static <MODULE_ID, PROJECT, DEPENDENCY>
-	Map<ModuleResourcePath, BuildProject<PROJECT>> makeBuildProjects(
+	Map<ProjectModuleResourcePath, BuildProject<PROJECT>> makeBuildProjects(
 			Map<MODULE_ID, PROJECT> projects,
-			Map<MODULE_ID, ModuleResourcePath> moduleIdToResourcePath,
+			Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath,
 			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 
-		final Map<ModuleResourcePath, BuildProject<PROJECT>> buildProjects = new HashMap<>();
+		final Map<ProjectModuleResourcePath, BuildProject<PROJECT>> buildProjects = new HashMap<>();
 
 		for (Map.Entry<MODULE_ID, PROJECT> entry : projects.entrySet()) {
 			
@@ -58,7 +58,7 @@ class BuildRootImplInit {
 			
 			final BuildProject<PROJECT> buildProject = new BuildProject<>(pom, findDependencies(pom, moduleIdToResourcePath, buildSystemRoot));
 
-			final ModuleResourcePath moduleResourcePath = moduleIdToResourcePath.get(mavenModuleId);
+			final ProjectModuleResourcePath moduleResourcePath = moduleIdToResourcePath.get(mavenModuleId);
 			
 			if (moduleResourcePath == null) {
 				throw new IllegalStateException();
@@ -72,7 +72,7 @@ class BuildRootImplInit {
 
 	private static <MODULE_ID, PROJECT, DEPENDENCY> List<Dependency> findDependencies(
 			PROJECT project,
-			Map<MODULE_ID, ModuleResourcePath> moduleIdToResourcePath,
+			Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath,
 			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
 		final List<Dependency> dependencies;
@@ -89,7 +89,7 @@ class BuildRootImplInit {
 					throw new IllegalStateException();
 				}
 				
-				final ModuleResourcePath projectModule = moduleIdToResourcePath.get(moduleId);
+				final ProjectModuleResourcePath projectModule = moduleIdToResourcePath.get(moduleId);
 				
 				final Dependency dependency;
 				
@@ -131,14 +131,14 @@ class BuildRootImplInit {
 	}
 	
 	private static <MODULE_ID, PROJECT, DEPENDENCY> File targetDirectoryJarFile(
-			ModuleResourcePath dependencyPath,
+			ProjectModuleResourcePath dependencyPath,
 			DEPENDENCY mavenDependency,
 			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
 		return new File(getTargetDirectory(dependencyPath, buildSystemRoot).getFile(), buildSystemRoot.compiledFileName(mavenDependency));
 	}
 
-	static <MODULE_ID, PROJECT, DEPENDENCY> TargetDirectoryResourcePath getTargetDirectory(ModuleResourcePath module, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
+	static <MODULE_ID, PROJECT, DEPENDENCY> TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
 		final File targetDir = buildSystemRoot.getTargetDirectory(module.getFile());
 		
@@ -148,7 +148,7 @@ class BuildRootImplInit {
 	}
 
 	static <MODULE_ID, PROJECT, DEPENDENCY>
-	CompiledModuleFileResourcePath getCompiledModuleFile(ModuleResourcePath module, PROJECT project, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
+	CompiledModuleFileResourcePath getCompiledModuleFile(ProjectModuleResourcePath module, PROJECT project, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 
 		final File compiledModuleFile = buildSystemRoot.getCompiledModuleFile(project, module.getFile());
 		

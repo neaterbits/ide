@@ -11,9 +11,11 @@ public interface TargetIteratingBuilder<CONTEXT extends TaskContext, TARGET> {
 	<PREREQUISITE>
 	PrerequisiteActionBuilder<CONTEXT, TARGET, PREREQUISITE> fromIterating(Constraint constraint, BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites);
 
-	<PREREQUISITE>
+	<PREREQUISITE, SUB_TARGET>
 	PrerequisiteActionBuilder<CONTEXT, TARGET, PREREQUISITE> fromIteratingAndBuildingRecursively(
 			Constraint constraint,
+			Class<SUB_TARGET> subTargetType,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
-			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite);
+			BiFunction<CONTEXT, SUB_TARGET, Collection<PREREQUISITE>> getSubPrerequisites,
+			Function<PREREQUISITE, SUB_TARGET> getDependencyFromPrerequisite);
 }

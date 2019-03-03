@@ -214,26 +214,33 @@ final class TargetExecutor {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<Object, Object, Collection<Object>> getSubPrerequisites
-			= (BiFunction)prerequisites.getSubPrerequisites();
+			= (BiFunction)prerequisites.getSubPrerequisitesFunction();
+
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+
+		final Function<Object, Object> getTargetFromPrerequisite = (Function)prerequisites.getTargetFromSubPrerequisite();
 		
-		final Collection<Object> targetPrerequisites = getSubPrerequisites.apply(context, target.getTargetObject());
+		final Object targetObject = getTargetFromPrerequisite.apply(target.getTargetObject());
+		
+		System.out.println("## got target object " + targetObject + " from " + target.getTargetObject() + " of " + target.getTargetObject().getClass());
+
+		final Collection<Object> targetPrerequisites = getSubPrerequisites.apply(context, targetObject);
 
 		if (targetPrerequisites.size() != target.getPrerequisites().size()) {
 			throw new IllegalStateException();
 		}
 		
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		final Function<Object, Object> getTargetFromPrerequisite = (Function)prerequisites.getTargetFromSubPrerequisite();
 		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final TargetSpec<TaskContext, Object, Object> targetSpec = (TargetSpec)target.getTargetSpec();
 	
 		for (Object subPrerequisiteObject : targetPrerequisites) {
-		
-			final Object subTargetObject = getTargetFromPrerequisite.apply(subPrerequisiteObject);
 
-			final Collection<Object> subPrerequisitesList = getSubPrerequisites.apply(context, subTargetObject);
+			System.out.println("## process sub prerequisite object " + subPrerequisiteObject);
+			
+			final Collection<Object> subPrerequisitesList = getSubPrerequisites.apply(context, subPrerequisiteObject);
 
+			
 			final List<Prerequisite<?>> list = subPrerequisitesList.stream()
 					.map(sp -> new Prerequisite<>(sp, null))
 					.collect(Collectors.toList());
@@ -243,7 +250,7 @@ final class TargetExecutor {
 			final Target<Object> subTarget =
 					targetSpec.createTarget(
 							context,
-							subTargetObject,
+							subPrerequisiteObject,
 							Arrays.asList(subPrerequisites));
 			
 			System.out.println("## added subtarget " + subTarget + " from prerequisites " + subPrerequisites);

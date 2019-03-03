@@ -14,7 +14,7 @@ public abstract class SourcePath extends FileSystemResourcePath {
 		super(resourcePath, resource);
 	}
 
-	public final ModuleResourcePath getModule() {
+	public final ProjectModuleResourcePath getModule() {
 		
 		final List<ModuleResource> moduleResources = new ArrayList<>();
 		
@@ -29,7 +29,7 @@ public abstract class SourcePath extends FileSystemResourcePath {
 			}
 		}
 		
-		return new ModuleResourcePath(moduleResources);
+		return new ProjectModuleResourcePath(moduleResources);
 	}
 
 	
@@ -59,6 +59,6 @@ public abstract class SourcePath extends FileSystemResourcePath {
 
 		final List<ModuleResource> moduleResources = getPaths(subtractLength + 1);
 		
-		return new SourceFolderResourcePath(new ModuleResourcePath(moduleResources), (SourceFolderResource)getFromLast(subtractLength));
+		return new SourceFolderResourcePath(new ProjectModuleResourcePath(moduleResources), (SourceFolderResource)getFromLast(subtractLength));
 	}
 }

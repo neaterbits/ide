@@ -18,7 +18,8 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 
 	private Constraint constraint;
 	private BiFunction<CONTEXT, TARGET, Collection<?>> getPrerequisites;
-	private Function<?, TARGET> getDependencyFromPrerequisite;
+	private BiFunction<CONTEXT, ?, Collection<?>> getSubPrerequisites;
+	private Function<?, ?> getDependencyFromPrerequisite;
 	
 	private boolean recursiveBuild;
 	
@@ -51,10 +52,11 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	final <PREREQUISITE> void setIteratingAndBuildingRecursively(
+	final <PREREQUISITE, SUB_TARGET> void setIteratingAndBuildingRecursively(
 			Constraint constraint,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
-			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite) {
+			BiFunction<CONTEXT, SUB_TARGET, Collection<PREREQUISITE>> getSubPrerequisites,
+			Function<PREREQUISITE, SUB_TARGET> getDependencyFromPrerequisite) {
 		
 		Objects.requireNonNull(getPrerequisites);
 		Objects.requireNonNull(getDependencyFromPrerequisite);
@@ -65,6 +67,7 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 
 		this.constraint = constraint;
 		this.getPrerequisites = (BiFunction)getPrerequisites;
+		this.getSubPrerequisites = (BiFunction)getSubPrerequisites;
 		this.getDependencyFromPrerequisite = getDependencyFromPrerequisite;
 		this.recursiveBuild = true;
 	}
@@ -96,6 +99,7 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 				itemType,
 				constraint,
 				(BiFunction)getPrerequisites,
+				(BiFunction)getSubPrerequisites,
 				(Function)getDependencyFromPrerequisite,
 				recursiveBuild,
 				build,

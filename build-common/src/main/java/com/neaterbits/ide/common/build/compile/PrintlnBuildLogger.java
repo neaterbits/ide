@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.common.build.model.Dependency;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 
 public final class PrintlnBuildLogger implements BuildLogger {
 	@Override
-	public void onScanModuleSourceFolders(ModuleResourcePath module) {
+	public void onScanModuleSourceFolders(ProjectModuleResourcePath module) {
 		System.out.println("Scanning source folders for " + module.getName());
 	}
 
 	@Override
-	public void onScanModuleSourceFoldersResult(ModuleResourcePath module,
+	public void onScanModuleSourceFoldersResult(ProjectModuleResourcePath module,
 			List<SourceFolderResourcePath> sourceFolders) {
 		
 		System.out.println("Got source folders for " + module.getName() + ": " + names(sourceFolders));
@@ -25,7 +25,7 @@ public final class PrintlnBuildLogger implements BuildLogger {
 
 	@Override
 	public void onScanModuleSourceFilesResult(
-			ModuleResourcePath module,
+			ProjectModuleResourcePath module,
 			List<SourceFileResourcePath> sourceFiles,
 			List<SourceFileResourcePath> alreadyBuilt) {
 		
@@ -35,17 +35,17 @@ public final class PrintlnBuildLogger implements BuildLogger {
 	}
 	
 	@Override
-	public void onBuildModules(Collection<ModuleResourcePath> modules) {
+	public void onBuildModules(Collection<ProjectModuleResourcePath> modules) {
 		System.out.println("Build modules: " + names(modules));
 	}
 
 	@Override
-	public void onGetDependencies(ModuleResourcePath module) {
+	public void onGetDependencies(ProjectModuleResourcePath module) {
 		System.out.println("Get dependencies for " + module.getName());
 	}
 
 	@Override
-	public void onGetDependenciesResult(ModuleResourcePath module, List<Dependency> dependencies) {
+	public void onGetDependenciesResult(ProjectModuleResourcePath module, List<Dependency> dependencies) {
 		System.out.println("Got dependencies result for " + module.getName() + ": " + dependencies.stream()
 						.map(dependency -> dependency.getResourcePath().getLast().getName())
 						.collect(Collectors.toList()));

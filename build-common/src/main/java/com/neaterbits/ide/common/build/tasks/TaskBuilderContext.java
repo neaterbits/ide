@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.language.CompileableLanguage;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 
@@ -29,11 +29,11 @@ public abstract class TaskBuilderContext extends TaskContext {
 		return language;
 	}
 
-	public final Collection<ModuleResourcePath> getModules() {
+	public final Collection<ProjectModuleResourcePath> getModules() {
 		return buildRoot.getModules();
 	}
 
-	public final CompiledModuleFileResourcePath getCompiledModuleFile(ModuleResourcePath module) {
+	public final CompiledModuleFileResourcePath getCompiledModuleFile(ProjectModuleResourcePath module) {
 		return buildRoot.getCompiledModuleFile(module);
 	}
 }

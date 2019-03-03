@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystemRootScan;
-import com.neaterbits.ide.common.buildsystem.ScanException;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
@@ -16,17 +15,19 @@ public interface BuildRoot {
 
 	File getPath();
 	
-	Collection<ModuleResourcePath> getModules();
+	Collection<ProjectModuleResourcePath> getModules();
 	
-	List<SourceFolderResourcePath> getSourceFolders(ModuleResourcePath module);
+	List<SourceFolderResourcePath> getSourceFolders(ProjectModuleResourcePath module);
 	
-	void setSourceFolders(ModuleResourcePath module, List<SourceFolderResourcePath> sourceFolders);
+	void setSourceFolders(ProjectModuleResourcePath module, List<SourceFolderResourcePath> sourceFolders);
 
-	List<Dependency> getDependenciesForModule(ModuleResourcePath module);
+	List<Dependency> getDependenciesForProjectModule(ProjectModuleResourcePath module);
+
+	List<Dependency> getDependenciesForExternalLibrary(Dependency dependency);
+
+	TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module);
 	
-	TargetDirectoryResourcePath getTargetDirectory(ModuleResourcePath module);
-	
-	CompiledModuleFileResourcePath getCompiledModuleFile(ModuleResourcePath module);
+	CompiledModuleFileResourcePath getCompiledModuleFile(ProjectModuleResourcePath module);
 
 	void addListener(BuildRootListener listener);
 	
@@ -34,11 +35,9 @@ public interface BuildRoot {
 	
 	void downloadExternalDependencyAndAddToBuildModel(Dependency dependency);
 
-	List<Dependency> getTransitiveExternalDependencies(Dependency dependency) throws ScanException;
-
 	default <T> T forEachSourceFolder(Function<SourceFolderResourcePath, T> function) {
 		
-		for (ModuleResourcePath module : getModules()) {
+		for (ProjectModuleResourcePath module : getModules()) {
 			for (SourceFolderResourcePath sourceFolder : getSourceFolders(module)) {
 				final T result = function.apply(sourceFolder);
 				

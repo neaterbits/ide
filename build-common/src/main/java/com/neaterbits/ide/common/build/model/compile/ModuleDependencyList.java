@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.ide.common.build.model.Dependency;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 
 public final class ModuleDependencyList {
 
-	private final ModuleResourcePath module;
+	private final ProjectModuleResourcePath module;
 	private final List<Dependency> dependencies;
 	
-	public ModuleDependencyList(ModuleResourcePath module, List<Dependency> dependencies) {
+	public ModuleDependencyList(ProjectModuleResourcePath module, List<Dependency> dependencies) {
 		
 		Objects.requireNonNull(module);
 		Objects.requireNonNull(dependencies);
@@ -20,7 +20,7 @@ public final class ModuleDependencyList {
 		this.dependencies = dependencies;
 	}
 
-	public ModuleResourcePath getModule() {
+	public ProjectModuleResourcePath getModule() {
 		return module;
 	}
 

@@ -54,12 +54,17 @@ final class Prerequisites extends BuildEntity {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	BiFunction<?, ?, Collection<?>> getSubPrerequisites() {
-		return (BiFunction)spec.getSubPrerequisites();
+	BiFunction<?, ?, Collection<?>> getPrerequisitesFunction() {
+		return (BiFunction)spec.getPrerequisitesFunction();
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	BiFunction<?, ?, Collection<?>> getSubPrerequisitesFunction() {
+		return (BiFunction)spec.getSubPrerequisitesFunction();
 	}
 
 	Function<?, ?> getTargetFromSubPrerequisite() {
-		return spec.getTargetFromPrerequisite();
+		return spec.getTargetFromPrerequisiteFunction();
 	}
 
 	boolean isRecursiveBuild() {

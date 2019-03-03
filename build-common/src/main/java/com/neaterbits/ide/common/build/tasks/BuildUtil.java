@@ -8,7 +8,7 @@ import java.util.List;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.language.CompileableLanguage;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledFileResourcePath;
@@ -17,7 +17,7 @@ import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 class BuildUtil {
 
 	static FilesToCompile getFilesToCompile(
-			ModuleResourcePath module,
+			ProjectModuleResourcePath module,
 			Collection<SourceFolderResourcePath> sourceFolders,
 			BuildRoot buildRoot,
 			CompileableLanguage language) {

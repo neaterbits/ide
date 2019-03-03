@@ -16,7 +16,7 @@ import com.neaterbits.ide.common.buildsystem.BuildSystemRoot;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRootListener;
 import com.neaterbits.ide.common.buildsystem.ScanException;
 import com.neaterbits.ide.common.language.Language;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResource;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 
@@ -101,7 +101,7 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	}
 
 	@Override
-	public List<SourceFolderResourcePath> findSourceFolders(ModuleResourcePath moduleResourcePath) {
+	public List<SourceFolderResourcePath> findSourceFolders(ProjectModuleResourcePath moduleResourcePath) {
 
 		final List<SourceFolderResourcePath> resourcePaths = new ArrayList<>();
 		
@@ -184,17 +184,17 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 		
 		Objects.requireNonNull(dependency);
 		
-		final File pomFile = repositoryPomFile(dependency);
+		final File pomFile = repositoryExternalPomFile(dependency);
 
 		final MavenProject mavenProject;
 
 		try {
 			 mavenProject = PomTreeParser.readModule(pomFile);
-		} catch (XMLStreamException | IOException ex) {
-			throw new ScanException("Failed to parse dependencies pom file", ex);
+		} catch (Exception ex) {
+			throw new ScanException("Failed to parse dependencies pom file for " + dependency, ex);
 		}
 		
-		return mavenProject.getDependencies();
+		return mavenProject.resolveDependencies();
 	}
 
 	@Override

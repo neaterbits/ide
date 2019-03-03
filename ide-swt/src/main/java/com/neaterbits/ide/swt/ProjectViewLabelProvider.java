@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import com.neaterbits.ide.common.resource.ModuleResource;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.Resource;
 import com.neaterbits.ide.common.resource.ResourcePath;
@@ -35,9 +35,9 @@ final class ProjectViewLabelProvider extends LabelProvider {
 		
 		final String text;
 		
-		if (element instanceof ModuleResourcePath) {
+		if (element instanceof ProjectModuleResourcePath) {
 			
-			final ModuleResourcePath moduleResourcePath = (ModuleResourcePath)element;
+			final ProjectModuleResourcePath moduleResourcePath = (ProjectModuleResourcePath)element;
 			
 			final ModuleResource moduleResource = (ModuleResource)moduleResourcePath.getLast();
 			
@@ -63,7 +63,7 @@ final class ProjectViewLabelProvider extends LabelProvider {
 		
 		final Image image;
 		
-		if (element instanceof ModuleResourcePath) {
+		if (element instanceof ProjectModuleResourcePath) {
 			image = projectImage;
 		}
 		else if (element instanceof SourceFolderResourcePath) {

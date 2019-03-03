@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 
 public final class CompileList {
 
-	private final Map<ModuleResourcePath, ModuleCompileList> moduleCompileList;
+	private final Map<ProjectModuleResourcePath, ModuleCompileList> moduleCompileList;
 	
 	public CompileList(Collection<ModuleCompileList> moduleCompileLists) {
 		this.moduleCompileList = new HashMap<>();
@@ -23,7 +23,7 @@ public final class CompileList {
 		return Collections.unmodifiableCollection(moduleCompileList.values());
 	}
 
-	public Map<ModuleResourcePath, ModuleCompileList> getModulesMap() {
+	public Map<ProjectModuleResourcePath, ModuleCompileList> getModulesMap() {
 		return Collections.unmodifiableMap(moduleCompileList);
 	}
 }

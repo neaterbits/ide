@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRoot;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRootScan;
 import com.neaterbits.ide.common.buildsystem.ScanException;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
@@ -22,12 +22,11 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 	private final File path;
 	private final BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot;
 	
-	private final Map<ModuleResourcePath, BuildProject<PROJECT>> projects;
+	private final Map<ProjectModuleResourcePath, BuildProject<PROJECT>> projects;
 	private final Map<MODULE_ID, PROJECT> buildSystemProjectByModuleId;
-	private final Map<MODULE_ID, ModuleResourcePath> moduleIdToResourcePath;
+	private final Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath;
 
 	private final List<BuildRootListener> listeners;
-
 	
 	public BuildRootImpl(File path, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
@@ -47,7 +46,6 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 		
 		this.projects = BuildRootImplInit.makeBuildProjects(buildSystemProjectByModuleId, moduleIdToResourcePath, buildSystemRoot);
 	}
-
 	
 	@Override
 	public File getPath() {
@@ -55,13 +53,12 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 	}
 
 	@Override
-	public Collection<ModuleResourcePath> getModules() {
+	public Collection<ProjectModuleResourcePath> getModules() {
 		return Collections.unmodifiableCollection(moduleIdToResourcePath.values());
 	}
-
 	
 	@Override
-	public void setSourceFolders(ModuleResourcePath module, List<SourceFolderResourcePath> sourceFolders) {
+	public void setSourceFolders(ProjectModuleResourcePath module, List<SourceFolderResourcePath> sourceFolders) {
 
 		System.out.println("## set sourcefolders for " + module);
 
@@ -73,7 +70,7 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 	}
 	
 	@Override
-	public List<SourceFolderResourcePath> getSourceFolders(ModuleResourcePath module) {
+	public List<SourceFolderResourcePath> getSourceFolders(ProjectModuleResourcePath module) {
 		
 		final BuildProject<PROJECT> buildProject = projects.get(module);
 		
@@ -85,12 +82,23 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 	}
 
 	@Override
-	public List<Dependency> getDependenciesForModule(ModuleResourcePath module) {
+	public List<Dependency> getDependenciesForProjectModule(ProjectModuleResourcePath module) {
 		return projects.get(module).getDependencies();
+	}
+	
+	@Override
+	public List<Dependency> getDependenciesForExternalLibrary(Dependency dependency) {
+
+		try {
+			return getTransitiveExternalDependencies(dependency);
+		}
+		catch (ScanException ex) {
+			throw new IllegalStateException(ex);
+		}
 	}
 
 	@Override
-	public TargetDirectoryResourcePath getTargetDirectory(ModuleResourcePath module) {
+	public TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module) {
 		return BuildRootImplInit.getTargetDirectory(module, buildSystemRoot);
 	}
 
@@ -103,8 +111,7 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 		buildSystemRoot.downloadExternalDependencyIfNotPresent(buildDependency.getDependency());
 	}
 
-	@Override
-	public List<Dependency> getTransitiveExternalDependencies(Dependency dependency) throws ScanException {
+	private List<Dependency> getTransitiveExternalDependencies(Dependency dependency) throws ScanException {
 		@SuppressWarnings("unchecked")
 		final BuildDependency<DEPENDENCY> buildDependency = (BuildDependency<DEPENDENCY>)dependency;
 
@@ -114,7 +121,7 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 	}
 
 	@Override
-	public CompiledModuleFileResourcePath getCompiledModuleFile(ModuleResourcePath module) {
+	public CompiledModuleFileResourcePath getCompiledModuleFile(ProjectModuleResourcePath module) {
 
 		return BuildRootImplInit.getCompiledModuleFile(module, projects.get(module).getBuildSystemProject(), buildSystemRoot);
 	}

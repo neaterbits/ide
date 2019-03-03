@@ -15,7 +15,7 @@ import com.neaterbits.ide.common.build.model.BuildRootListener;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner.Namespace;
 import com.neaterbits.ide.common.resource.ModuleResource;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
@@ -39,7 +39,7 @@ public class ProjectsModel {
 		buildRoot.addListener(new BuildRootListener() {
 			
 			@Override
-			public void onSourceFoldersChanged(ModuleResourcePath module) {
+			public void onSourceFoldersChanged(ProjectModuleResourcePath module) {
 				for (ProjectModelListener projectModelListener : modelListeners) {
 					projectModelListener.onModelChanged();
 				}
@@ -53,10 +53,10 @@ public class ProjectsModel {
 		modelListeners.add(listener);
 	}
 	
-	public ModuleResourcePath getRoot() {
+	public ProjectModuleResourcePath getRoot() {
 		return buildRoot.getModules().stream()
 		.filter(module -> module.isAtRoot())
-		.map(module -> new ModuleResourcePath(new ModuleResource(module.getFile(), ((ModuleResource)module.getLast()).getName())))
+		.map(module -> new ProjectModuleResourcePath(new ModuleResource(module.getFile(), ((ModuleResource)module.getLast()).getName())))
 		.findFirst()
 		.get();
 	}
@@ -68,10 +68,10 @@ public class ProjectsModel {
 		final List<ResourcePath> resources = new ArrayList<ResourcePath>();
 
 		if (path.isAtRoot()) {
-			findSubModulesAndFolders((ModuleResourcePath)path, resources);
+			findSubModulesAndFolders((ProjectModuleResourcePath)path, resources);
 		}
-		else if (path instanceof ModuleResourcePath) {
-			findSubModulesAndFolders((ModuleResourcePath)path, resources);
+		else if (path instanceof ProjectModuleResourcePath) {
+			findSubModulesAndFolders((ProjectModuleResourcePath)path, resources);
 		}
 		else if (path instanceof SourceFolderResourcePath) {
 
@@ -102,11 +102,11 @@ public class ProjectsModel {
 	}
 
 	
-	private void findSubModulesAndFolders(ModuleResourcePath modulePath, List<ResourcePath> resources) {
+	private void findSubModulesAndFolders(ProjectModuleResourcePath modulePath, List<ResourcePath> resources) {
 		
-		final Collection<ModuleResourcePath> modules = buildRoot.getModules();
+		final Collection<ProjectModuleResourcePath> modules = buildRoot.getModules();
 		
-		for (ModuleResourcePath module : modules) {
+		for (ProjectModuleResourcePath module : modules) {
 			
 			if (module.isDirectSubModuleOf(modulePath)) {
 				resources.add(module);

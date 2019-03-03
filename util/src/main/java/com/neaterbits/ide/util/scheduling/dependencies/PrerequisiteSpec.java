@@ -16,6 +16,7 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 	private final Class<?> itemType;
 	private final Constraint constraint;
 	private final BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites;
+	private final BiFunction<CONTEXT, ?, Collection<PREREQUISITE>> getSubPrerequisites;
 	private final Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite;
 	private final boolean recursiveBuild;
 	private final BuildSpec<CONTEXT, PREREQUISITE> action;
@@ -27,6 +28,7 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 			Class<?> itemType,
 			Constraint constraint,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
+			BiFunction<CONTEXT, ?, Collection<PREREQUISITE>> getSubPrerequisites,
 			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite,
 			boolean recursiveBuild,
 			BuildSpec<CONTEXT, PREREQUISITE> action,
@@ -35,6 +37,7 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		Objects.requireNonNull(getPrerequisites);
 		
 		if (recursiveBuild) {
+			Objects.requireNonNull(getSubPrerequisites);
 			Objects.requireNonNull(getDependencyFromPrerequisite);
 			Objects.requireNonNull(action);
 		}
@@ -47,6 +50,7 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		this.constraint = constraint;
 		this.getPrerequisites = getPrerequisites;
 
+		this.getSubPrerequisites = getSubPrerequisites;
 		this.getDependencyFromPrerequisite = getDependencyFromPrerequisite;
 		this.recursiveBuild = recursiveBuild;
 		
@@ -78,11 +82,15 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		return getPrerequisites.apply(context, target);
 	}
 	
-	BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getSubPrerequisites() {
+	BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisitesFunction() {
 		return getPrerequisites;
 	}
 	
-	Function<PREREQUISITE, TARGET> getTargetFromPrerequisite() {
+	BiFunction<CONTEXT, ?, Collection<PREREQUISITE>> getSubPrerequisitesFunction() {
+		return getSubPrerequisites;
+	}
+	
+	Function<PREREQUISITE, TARGET> getTargetFromPrerequisiteFunction() {
 		
 		return getDependencyFromPrerequisite;
 	}

@@ -3,17 +3,17 @@ package com.neaterbits.ide.common.build.model;
 import java.io.File;
 import java.util.Objects;
 
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.ResourcePath;
 
 public abstract class Dependency {
 
 	private final ResourcePath resourcePath;
 	private final DependencyType type;
-	private final ModuleResourcePath module;
+	private final ProjectModuleResourcePath module;
 	private final File compiledModuleFile;
 
-	public Dependency(ResourcePath resourcePath, DependencyType type, ModuleResourcePath module, File compiledModuleFile) {
+	public Dependency(ResourcePath resourcePath, DependencyType type, ProjectModuleResourcePath module, File compiledModuleFile) {
 		
 		Objects.requireNonNull(resourcePath);
 		Objects.requireNonNull(type);
@@ -39,7 +39,7 @@ public abstract class Dependency {
 		return type;
 	}
 
-	public final ModuleResourcePath getModule() {
+	public final ProjectModuleResourcePath getModule() {
 		return module;
 	}
 

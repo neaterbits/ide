@@ -26,4 +26,9 @@ abstract class MavenEntity {
 	public String getPackaging() {
 		return packaging;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " [moduleId=" + moduleId + ", packaging=" + packaging + "]";
+	}
 }

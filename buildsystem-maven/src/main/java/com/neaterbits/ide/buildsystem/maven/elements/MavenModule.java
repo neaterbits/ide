@@ -78,19 +78,24 @@ public class MavenModule extends MavenEntity {
 			resolvedDependencies = new ArrayList<>(dependencies.size());
 			
 			for (MavenDependency dependency : dependencies) {
-				final MavenDependency resolved = new MavenDependency(
-						new MavenModuleId(
-								dependency.getModuleId().getGroupId().replace("${project.groupId}", getGroupId()),
-								dependency.getModuleId().getArtifactId(),
-								dependency.getModuleId().getVersion().replace("${project.version}", getVersion())),
-						
-						dependency.getPackaging());
-				
+				final MavenDependency resolved = resolveDependency(dependency, getGroupId(), getVersion());
 				resolvedDependencies.add(resolved);
 			}
 		}
 
 		return resolvedDependencies;
+	}
+	
+	static MavenDependency resolveDependency(MavenDependency dependency, String groupId, String version) {
+		
+		return new MavenDependency(
+				new MavenModuleId(
+						dependency.getModuleId().getGroupId().replace("${project.groupId}", groupId),
+						dependency.getModuleId().getArtifactId(),
+						dependency.getModuleId().getVersion().replace("${project.version}", version)),
+				
+				dependency.getPackaging());
+		
 	}
 
 	public final MavenBuild getBuild() {

@@ -17,7 +17,7 @@ import com.neaterbits.ide.common.build.model.compile.ModuleDependencyList;
 import com.neaterbits.ide.common.build.model.compile.SourceFolderCompileList;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
@@ -38,7 +38,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 			.fromIterating(context -> context.getModules())
 			.buildBy(subTarget-> subTarget
 					
-				.addFileSubTarget(ModuleResourcePath.class,
+				.addFileSubTarget(ProjectModuleResourcePath.class,
 						CompiledModuleFileResourcePath.class,
 						
 						(context, module) -> context.getCompiledModuleFile(module),
@@ -72,10 +72,20 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 					
 						.fromIteratingAndBuildingRecursively(
 								Constraint.NETWORK,
+								Dependency.class,
+								
+								// from project all module target
 								(context, module) -> transitiveProjectDependencies(context, module).stream()
 									.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
 									.collect(Collectors.toList()),
-								Dependency::getModule)
+									
+								// from external dependencies found above
+								(context, dep) -> transitiveDependencies(context, dep).stream()
+									.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
+									.collect(Collectors.toList()),
+									
+								dependency -> dependency // dependency -> (ModuleResourcePath)dependency.getResourcePath()
+								)
 						
 						.buildBy(st -> {
 							
@@ -138,7 +148,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 		
 	}
 
-	private static List<Dependency> transitiveProjectDependencies(ModulesBuildContext context, ModuleResourcePath module) {
+	private static List<Dependency> transitiveProjectDependencies(ModulesBuildContext context, ProjectModuleResourcePath module) {
 		
 		final List<Dependency> dependencies = new ArrayList<>();
 		
@@ -147,9 +157,9 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 		return dependencies;
 	}
 
-	private static void transitiveProjectDependencies(ModulesBuildContext context, ModuleResourcePath module, List<Dependency> dependencies) {
+	private static void transitiveProjectDependencies(ModulesBuildContext context, ProjectModuleResourcePath module, List<Dependency> dependencies) {
 		 
-		final List<Dependency> moduleDependencies = context.getBuildRoot().getDependenciesForModule(module);
+		final List<Dependency> moduleDependencies = context.getBuildRoot().getDependenciesForProjectModule(module);
 		 
 		dependencies.addAll(moduleDependencies);
 
@@ -160,6 +170,39 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 		}
 	}
 
+	private static List<Dependency> transitiveDependencies(ModulesBuildContext context, Dependency module) {
+		
+		final List<Dependency> dependencies = new ArrayList<>();
+		
+		transitiveDependencies(context, module, dependencies);
+
+		return dependencies;
+	}
+
+	private static void transitiveDependencies(ModulesBuildContext context, Dependency dependency, List<Dependency> dependencies) {
+
+		final List<Dependency> moduleDependencies;
+		
+		switch (dependency.getType()) {
+		case PROJECT:
+			moduleDependencies = context.getBuildRoot().getDependenciesForProjectModule((ProjectModuleResourcePath)dependency.getResourcePath());
+			break;
+			
+		case EXTERNAL:
+			moduleDependencies = context.getBuildRoot().getDependenciesForExternalLibrary(dependency);
+			break;
+			
+		default:
+			throw new UnsupportedOperationException();
+		}
+		 
+		dependencies.addAll(moduleDependencies);
+
+		for (Dependency foundDep : moduleDependencies) {
+			transitiveDependencies(context, foundDep, dependencies);
+		}
+	}
+	
 	private static void compileSourceFiles(Compiler compiler, ModuleCompileList moduleCompileList, File targetDirectory, ModuleDependencyList moduleDependencyList) throws IOException, BuildException {
 
 		if (moduleCompileList == null) {

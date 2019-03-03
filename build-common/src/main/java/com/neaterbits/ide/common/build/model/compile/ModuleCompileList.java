@@ -6,14 +6,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.ide.common.resource.ModuleResourcePath;
+import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 
 public final class ModuleCompileList {
 
-	private final ModuleResourcePath module;
+	private final ProjectModuleResourcePath module;
 	private final List<SourceFolderCompileList> sourceFiles;
 
-	public ModuleCompileList(ModuleResourcePath module, Collection<SourceFolderCompileList> sourceFiles) {
+	public ModuleCompileList(ProjectModuleResourcePath module, Collection<SourceFolderCompileList> sourceFiles) {
 		
 		Objects.requireNonNull(module);
 		Objects.requireNonNull(sourceFiles);
@@ -22,7 +22,7 @@ public final class ModuleCompileList {
 		this.sourceFiles = Collections.unmodifiableList(new ArrayList<>(sourceFiles));
 	}
 	
-	public ModuleResourcePath getModule() {
+	public ProjectModuleResourcePath getModule() {
 		return module;
 	}
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class SourceFolderResourcePath extends SourceFileHolderResourcePath {
 
-	public SourceFolderResourcePath(ModuleResourcePath moduleResourcePath, SourceFolderResource sourceFolderResource) {
+	public SourceFolderResourcePath(ProjectModuleResourcePath moduleResourcePath, SourceFolderResource sourceFolderResource) {
 		super(moduleResourcePath, sourceFolderResource);
 	}
 
@@ -17,7 +17,7 @@ public final class SourceFolderResourcePath extends SourceFileHolderResourcePath
 		
 		final List<ModuleResource> moduleResources = getPaths(1);
 
-		return new ModuleResourcePath(moduleResources);
+		return new ProjectModuleResourcePath(moduleResources);
 	}
 
 	public String getName() {

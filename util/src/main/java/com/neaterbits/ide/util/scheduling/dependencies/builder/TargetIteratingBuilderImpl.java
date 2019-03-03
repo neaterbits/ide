@@ -40,16 +40,22 @@ class TargetIteratingBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TARGE
 	}
 
 	@Override
-	public <PREREQUISITE> PrerequisiteActionBuilder<CONTEXT, TARGET, PREREQUISITE>
+	public <PREREQUISITE, SUB_TARGET> PrerequisiteActionBuilder<CONTEXT, TARGET, PREREQUISITE>
 		fromIteratingAndBuildingRecursively(
 				
 			Constraint constraint,
+			Class<SUB_TARGET> subTargetType,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
-			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite) {
+			BiFunction<CONTEXT, SUB_TARGET, Collection<PREREQUISITE>> getSubPrerequisites,
+			Function<PREREQUISITE, SUB_TARGET> getDependencyFromPrerequisite) {
 
 		final PrerequisiteBuilderState<CONTEXT, TARGET, Void, Void> prerequisiteBuilderState = new PrerequisiteBuilderState<>(description, null, null);
 		
-		prerequisiteBuilderState.setIteratingAndBuildingRecursively(constraint, getPrerequisites, getDependencyFromPrerequisite);
+		prerequisiteBuilderState.setIteratingAndBuildingRecursively(
+				constraint,
+				getPrerequisites,
+				getSubPrerequisites,
+				getDependencyFromPrerequisite);
 
 		targetBuilderState.addPrerequisiteBuilder(prerequisiteBuilderState);
 
