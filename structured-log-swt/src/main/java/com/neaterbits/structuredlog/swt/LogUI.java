@@ -269,7 +269,7 @@ public final class LogUI {
 		
 		// final List list = new List(composite, SWT.NONE);
 		
-		table.setItemCount(log.getEntries().size() / 2);
+		table.setItemCount(log.getEntries().size());
 
 		final TableColumn pathColumn = new TableColumn(table, SWT.BEGINNING);
 		pathColumn.setText("Path");

@@ -111,7 +111,6 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		final LogEntry logEntry = addLogEntry(null, "Schedule more targets numScheduledJobs=" + numScheduledJobs);
 
 		addTargetLogState(logEntry, logState);
-
 	}
 
 	@Override

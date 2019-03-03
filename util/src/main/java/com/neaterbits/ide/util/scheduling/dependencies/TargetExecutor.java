@@ -62,21 +62,14 @@ final class TargetExecutor {
 			
 			for (Target<?> target : targets) {
 
-				/*
-				if (!state.toExecuteTargets.contains(target)) {
-					// Removed asynchronously
-					continue;
-				}
-				*/
-
 				final Status status = hasCompletedPrerequisites(target, context.state.getCompletedTargets(), context.state.getFailedTargets());
-				
-				if (context.logger != null) {
-					context.logger.onScheduleTarget(target, status, context.state);
-				}
 				
 				if (status == Status.COMPLETE) {
 					
+					if (context.logger != null) {
+						context.logger.onScheduleTarget(target, status, context.state);
+					}
+
 					context.state.moveTargetFromToExecuteToScheduled(target);
 
 					collectComputedTargets(context, target);
