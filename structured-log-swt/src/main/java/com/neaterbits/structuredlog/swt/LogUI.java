@@ -6,6 +6,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -42,13 +44,37 @@ public final class LogUI {
 		this.composite = new Composite(window, SWT.NONE);
 		
 		// composite.setLayout(new GridLayout(4, false));
-		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
+		composite.setLayout(new GridLayout(2, false));
 
 		// window.addDisposeListener(event -> window.close());
 		
 		final Table table = createLogTable(composite, log);
 
+		final GridData tableGridData = new GridData();
+		
+		tableGridData.grabExcessHorizontalSpace = true;
+		tableGridData.horizontalSpan = 1;
+		tableGridData.verticalSpan = 1;
+		tableGridData.grabExcessVerticalSpace = true;
+		tableGridData.horizontalAlignment = SWT.FILL;
+		tableGridData.grabExcessVerticalSpace = true;
+		tableGridData.verticalAlignment = SWT.FILL;
+		
+		table.setLayoutData(tableGridData);
+
 		final Composite listsComposite = new Composite(composite, SWT.NONE);
+		
+		final GridData listsGridData = new GridData();
+		
+		listsGridData.grabExcessHorizontalSpace = false;
+		listsGridData.horizontalSpan = 1;
+		listsGridData.verticalSpan = 1;
+		listsGridData.grabExcessVerticalSpace = true;
+		listsGridData.horizontalAlignment = SWT.BEGINNING;
+		listsGridData.grabExcessVerticalSpace = true;
+		listsGridData.verticalAlignment = SWT.FILL;
+
+		listsComposite.setLayoutData(listsGridData);
 		
 		listsComposite.setLayout(new FillLayout(SWT.VERTICAL));
 		
