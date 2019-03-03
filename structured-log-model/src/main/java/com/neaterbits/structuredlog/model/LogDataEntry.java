@@ -1,32 +1,29 @@
 package com.neaterbits.structuredlog.model;
 
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 public class LogDataEntry {
 
-	private List<String> path;
+	private Integer pathIndex;
 	private String data;
 
 	public LogDataEntry() {
 
 	}
 	
-	public LogDataEntry(List<String> path, String data) {
-		this.path = path;
+	public LogDataEntry(Integer pathIndex, String data) {
+		this.pathIndex = pathIndex;
 		this.data = data;
 	}
 
-	@XmlElementWrapper(name="path")
-	@XmlElement(name="entry")
-	public List<String> getPath() {
-		return path;
+	@XmlElement
+	public Integer getPathIndex() {
+		return pathIndex;
 	}
 
-	public void setPath(List<String> path) {
-		this.path = path;
+	public void setPathIndex(Integer pathIndex) {
+		this.pathIndex = pathIndex;
 	}
 
 	@XmlElement

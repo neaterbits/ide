@@ -95,7 +95,7 @@ public final class LogUI {
 				
 				selectedDataType = logData.getType();
 				
-				updateDataList(logData);
+				updateDataList(log, logData);
 			}
 		});
 		
@@ -107,13 +107,13 @@ public final class LogUI {
 				final TableItem tableItem = (TableItem)event.item;
 				final LogEntry logEntry = log.getEntries().get(table.indexOf(tableItem));
 				
-				updateDataTypeList(logEntry);
+				updateDataTypeList(log, logEntry);
 			}
 		});
 		
 		if (log.getEntries() != null && log.getEntries().size() > 0) {
 			table.setSelection(0);
-			updateDataTypeList(log.getEntries().get(0));
+			updateDataTypeList(log, log.getEntries().get(0));
 		}
 		
 		table.setFocus();
@@ -121,11 +121,14 @@ public final class LogUI {
 		window.open();
 	}
 	
-	private static String makePath(LogEntry logEntry) {
+	private static String makePath(Log log, LogEntry logEntry) {
 		
-		return makePath(logEntry.getPath());
+		return makePath(log, logEntry.getPathIndex());
 	}
-	
+
+	private static String makePath(Log log, Integer pathIndex) {
+		return makePath(log.getPaths().get(pathIndex).getEntries());
+	}
 		
 	private static String makePath(java.util.List<String> list) {
 		final StringBuilder sb = new StringBuilder();
@@ -142,7 +145,7 @@ public final class LogUI {
 		return sb.toString();
 	}
 
-	private void updateDataTypeList(LogEntry logEntry) {
+	private void updateDataTypeList(Log log, LogEntry logEntry) {
 
 		dataTypeList.removeAll();
 		
@@ -170,18 +173,18 @@ public final class LogUI {
 			if (selectionIndex != -1) {
 				dataTypeList.select(selectionIndex);
 
-				updateDataList(logEntry.getData().get(selectionIndex));
+				updateDataList(log, logEntry.getData().get(selectionIndex));
 			}
 		}
 	}
 	
-	private void updateDataList(LogData logData) {
+	private void updateDataList(Log log, LogData logData) {
 
 		dataList.removeAll();
 		
 		if (logData.getEntries() != null) {
 			for (LogDataEntry entry : logData.getEntries()) {
-				dataList.add(entry.getPath() != null ? makePath(entry.getPath()) : entry.getData());
+				dataList.add(entry.getPathIndex() != null ? makePath(log, entry.getPathIndex()) : entry.getData());
 			}
 		}
 		
@@ -216,7 +219,7 @@ public final class LogUI {
 				
 				final LogEntry logEntry = log.getEntries().get(table.indexOf(item));
 				
-				item.setText(new String [] { makePath(logEntry), logEntry.getLogMessage() });
+				item.setText(new String [] { makePath(log, logEntry), logEntry.getLogMessage() });
 			}
 		});
 		

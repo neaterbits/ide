@@ -1,18 +1,16 @@
 package com.neaterbits.structuredlog.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class LogEntry {
 
 	private String logMessage;
-	
-	private List<String> path;
+
+	private Integer pathIndex;
 	
 	private List<LogData> data;
 
@@ -20,10 +18,9 @@ public class LogEntry {
 
 	}
 
-	public LogEntry(List<String> path, String logMessage) {
+	public LogEntry(Integer pathIndex, String logMessage) {
 		this.logMessage = logMessage;
-		
-		this.path = path != null ? new ArrayList<>(path) : null;
+		this.pathIndex = pathIndex;
 	}
 
 	@XmlElement
@@ -35,14 +32,13 @@ public class LogEntry {
 		this.logMessage = logMessage;
 	}
 
-	@XmlElementWrapper(name="path")
-	@XmlElement(name="entry")
-	public List<String> getPath() {
-		return path;
+	@XmlElement
+	public Integer getPathIndex() {
+		return pathIndex;
 	}
 
-	public void setPath(List<String> path) {
-		this.path = path;
+	public void setPathIndex(Integer pathIndex) {
+		this.pathIndex = pathIndex;
 	}
 
 	@XmlElement(name="data")

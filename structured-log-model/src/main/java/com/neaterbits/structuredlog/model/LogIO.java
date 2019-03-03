@@ -16,7 +16,7 @@ public class LogIO {
 	public LogIO() {
 
 		try {
-			this.jaxbContext = JAXBContext.newInstance(Log.class, LogEntry.class, LogData.class, LogDataEntry.class);
+			this.jaxbContext = JAXBContext.newInstance(Log.class, LogEntry.class, LogData.class, LogDataEntry.class, LogPath.class);
 		} catch (JAXBException ex) {
 			throw new IllegalStateException(ex);
 		}

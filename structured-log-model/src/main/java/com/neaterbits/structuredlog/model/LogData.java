@@ -31,7 +31,7 @@ public class LogData {
 		this.type = type;
 	}
 
-	@XmlElement(name="logDataEntry")
+	@XmlElement(name="entry")
 	public List<LogDataEntry> getEntries() {
 		return entries;
 	}

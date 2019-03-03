@@ -2,7 +2,9 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -10,18 +12,22 @@ import com.neaterbits.structuredlog.model.Log;
 import com.neaterbits.structuredlog.model.LogData;
 import com.neaterbits.structuredlog.model.LogDataEntry;
 import com.neaterbits.structuredlog.model.LogEntry;
+import com.neaterbits.structuredlog.model.LogPath;
 
 public final class StructuredTargetExecutorLogger implements TargetExecutorLogger {
 
 	private final Log log;
 
+	private final Map<LogPath, Integer> paths;
+	
 	public StructuredTargetExecutorLogger() {
 		this.log = new Log();
+		this.paths = new HashMap<>();
 	}
 	
 	private LogEntry addLogEntry(BuildEntity buildEntity, String message) {
 
-		final LogEntry logEntry = new LogEntry(buildEntity.getPath(), message);
+		final LogEntry logEntry = new LogEntry(makePath(buildEntity.getPath()), message);
 		
 		if (log.getEntries() == null) {
 			log.setEntries(new ArrayList<>());
@@ -32,11 +38,32 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		return logEntry;
 	}
 	
-	public Log getLog() {
+	public Log makeLog() {
 		return log;
 	}
 
-	private static void addTargetLogState(LogEntry logEntry, String dataType, Collection<Target<?>> targets) {
+	private Integer makePath(List<String> list) {
+		
+		final LogPath logPath = new LogPath(list);
+		
+		if (log.getPaths() == null) {
+			log.setPaths(new ArrayList<>());
+		}
+		
+		Integer pathIndex = paths.get(logPath);
+		
+		if (pathIndex == null) {
+			pathIndex = paths.size();
+			
+			paths.put(logPath, pathIndex);
+			
+			log.getPaths().add(logPath);
+		}
+		
+		return pathIndex;
+	}
+
+	private void addTargetLogState(LogEntry logEntry, String dataType, Collection<Target<?>> targets) {
 		
 		addCollectionLogState(
 				logEntry,
@@ -46,7 +73,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 				Target::getDebugString);
 	}
 
-	private static <T> void addCollectionLogState(
+	private <T> void addCollectionLogState(
 			LogEntry logEntry,
 			String dataType,
 			Collection<T> data,
@@ -54,7 +81,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 			Function<T, String> toString) {
 
 		final List<LogDataEntry> dataEntries = data.stream()
-				.map(dataEntry -> new LogDataEntry(toPath.apply(dataEntry), toString.apply(dataEntry)))
+				.map(dataEntry -> new LogDataEntry(makePath(toPath.apply(dataEntry)), toString.apply(dataEntry)))
 				.collect(Collectors.toList());
 		
 		final LogData toExecute = new LogData(dataType, dataEntries);
@@ -66,7 +93,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		logEntry.getData().add(toExecute);
 	}
 	
-	private static void addTargetLogState(LogEntry logEntry, TargetExecutorLogState logState) {
+	private void addTargetLogState(LogEntry logEntry, TargetExecutorLogState logState) {
 
 		addTargetLogState(logEntry, "toExecute", logState.getToExecuteTargets());
 		addTargetLogState(logEntry, "scheduled", logState.getScheduledTargets());

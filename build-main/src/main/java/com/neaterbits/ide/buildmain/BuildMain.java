@@ -63,7 +63,7 @@ public class BuildMain {
 
 					System.out.println("### completed execution");
 					
-					final Log log = logger.getLog();
+					final Log log = logger.makeLog();
 					
 					final LogIO logIO = new LogIO();
 					
