@@ -18,24 +18,6 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		this.log = new Log();
 	}
 	
-	private static String makePath(BuildEntity buildEntity) {
-		
-		final List<String> list = buildEntity.getPath();
-		
-		final StringBuilder sb = new StringBuilder();
-		
-		for (int i = 0; i < list.size(); ++ i) {
-		
-			if (i > 0) {
-				sb.append("=>");
-			}
-			
-			sb.append(list.get(i));
-		}
-		
-		return sb.toString();
-	}
-	
 	private LogEntry addLogEntry(BuildEntity buildEntity, String message) {
 
 		final LogEntry logEntry = new LogEntry(buildEntity.getPath(), message);

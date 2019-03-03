@@ -26,7 +26,7 @@ final class Prerequisites extends BuildEntity {
 	
 	@Override
 	String getDebugString() {
-		return getClass().getSimpleName();
+		return null;
 	}
 
 	@Override

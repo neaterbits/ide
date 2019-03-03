@@ -31,6 +31,8 @@ public abstract class BuildEntity {
 		final String debugString = getDebugString();
 		// System.out.println("## add " + debugString);
 		
-		list.add(debugString);
+		if (debugString != null) {
+			list.add(debugString);
+		}
 	}
 }

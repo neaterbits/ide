@@ -62,8 +62,6 @@ public final class LogUI {
 
 				final LogEntry logEntry = log.getEntries().get(table.getSelectionIndex());
 		
-				updateDataTypeList(logEntry);
-				
 				final int dataTypeSelectionIdx = dataTypeList.getSelectionIndex();
 				final LogData logData = logEntry.getData().get(dataTypeSelectionIdx);
 				
@@ -95,6 +93,24 @@ public final class LogUI {
 		window.open();
 	}
 	
+	private static String makePath(LogEntry logEntry) {
+		
+		final java.util.List<String> list = logEntry.getPath();
+		
+		final StringBuilder sb = new StringBuilder();
+		
+		for (int i = 0; i < list.size(); ++ i) {
+		
+			if (i > 0) {
+				sb.append('/');
+			}
+			
+			sb.append(list.get(i));
+		}
+		
+		return sb.toString();
+	}
+
 	private void updateDataTypeList(LogEntry logEntry) {
 
 		dataTypeList.removeAll();
@@ -151,13 +167,14 @@ public final class LogUI {
 
 		final TableColumn pathColumn = new TableColumn(table, SWT.BEGINNING);
 		pathColumn.setText("Path");
-		pathColumn.setWidth(250);
+		pathColumn.setWidth(350);
 		
 		final TableColumn messageColumn = new TableColumn(table, SWT.BEGINNING);
 		messageColumn.setText("Message");
-		messageColumn.setWidth(150);
+		messageColumn.setWidth(250);
 		
 		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 		
 		table.addListener(SWT.SetData, new Listener() {
 			
@@ -168,7 +185,7 @@ public final class LogUI {
 				
 				final LogEntry logEntry = log.getEntries().get(table.indexOf(item));
 				
-				item.setText(new String [] { logEntry.getPath().toString(), logEntry.getLogMessage() });
+				item.setText(new String [] { makePath(logEntry), logEntry.getLogMessage() });
 			}
 		});
 		
