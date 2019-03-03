@@ -6,10 +6,12 @@ import java.util.Objects;
 final class InfoTarget<TARGET> extends Target<TARGET> {
 
 	private final String name;
+	private final String qualifierName;
 
 	InfoTarget(
 			Class<TARGET> type,
 			String name,
+			String qualifierName,
 			String description,
 			TARGET targetObject,
 			List<Prerequisites> prerequisites,
@@ -20,21 +22,17 @@ final class InfoTarget<TARGET> extends Target<TARGET> {
 		
 		Objects.requireNonNull(name);
 		
-		if (targetObject != null) {
-			throw new IllegalArgumentException(" " + targetObject + "/" + name);
-		}
-		
-
 		if (targetSpec.getFile() != null) {
 			throw new IllegalArgumentException();
 		}
 		
 		this.name = name;
+		this.qualifierName = qualifierName;
 	}
 
 	@Override
 	String getDebugString() {
-		return name;
+		return name + (qualifierName != null ? "-" + qualifierName : "");
 	}
 
 	String getName() {

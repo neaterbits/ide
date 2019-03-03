@@ -10,8 +10,8 @@ final class PrerequisitesOrActionBuilderImpl<CONTEXT extends TaskContext, TARGET
 		extends PrerequisitesBuilderImpl<CONTEXT, TARGET, FILE_TARGET>
 		implements PrerequisitesOrActionBuilder<CONTEXT, TARGET> {
 
-	PrerequisitesOrActionBuilderImpl(Class<TARGET> type, String targetName, Function<TARGET, String> description) {
-		super(type, targetName, description);
+	PrerequisitesOrActionBuilderImpl(Class<TARGET> type, String targetName, Function<TARGET, String> qualifierName, Function<TARGET, String> description) {
+		super(type, targetName, qualifierName, description);
 	}
 
 	PrerequisitesOrActionBuilderImpl(

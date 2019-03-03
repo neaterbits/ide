@@ -14,7 +14,12 @@ public class TargetBuilderInitialScan extends TargetBuildSpec<InitialScanContext
 			.withPrerequisites("Source folders")
 			.fromIterating(InitialScanContext::getModules)
 			.buildBy(subTarget -> subTarget
-					.addInfoSubTarget(ModuleResourcePath.class, "sourcefolders", module -> "Find source folders for " + module.getName())
+					.addInfoSubTarget(
+							ModuleResourcePath.class,
+							"sourcefolders",
+							ModuleResourcePath::getName,
+							module -> "Find source folders for " + module.getName())
+					
 					.actionWithResult(Constraint.IO, (context, module) -> context.getBuildRoot().getBuildSystemRootScan().findSourceFolders(module))
 					.processResult((context, module, sourceFolders) -> context.getBuildRoot().setSourceFolders(module, sourceFolders))
 			);

@@ -61,9 +61,10 @@ public final class LogUI {
 			public void widgetSelected(SelectionEvent event) {
 
 				final LogEntry logEntry = log.getEntries().get(table.getSelectionIndex());
+		
+				updateDataTypeList(logEntry);
 				
 				final int dataTypeSelectionIdx = dataTypeList.getSelectionIndex();
-				
 				final LogData logData = logEntry.getData().get(dataTypeSelectionIdx);
 				
 				selectedDataType = logData.getType();
@@ -78,50 +79,53 @@ public final class LogUI {
 			public void widgetSelected(SelectionEvent event) {
 				
 				final TableItem tableItem = (TableItem)event.item;
-				
 				final LogEntry logEntry = log.getEntries().get(table.indexOf(tableItem));
 				
-				System.out.println("selected " + logEntry);
-				
-				dataTypeList.removeAll();
-				
-				if (logEntry.getData() != null && !logEntry.getData().isEmpty()) {
-					for (LogData data : logEntry.getData()) {
-						dataTypeList.add(data.getType());
-					}
-
-					int selectionIndex = -1;
-					
-					if (selectedDataType != null) {
-
-						for (int i = 0; i < logEntry.getData().size(); ++ i) {
-							if (logEntry.getData().get(i).getType().equals(selectedDataType)) {
-								selectionIndex = i;
-								break;
-							}
-						}
-					}
-					
-					if (selectionIndex == -1 && !logEntry.getData().isEmpty()) {
-						selectionIndex = 0;
-					}
-
-					if (selectionIndex != -1) {
-						dataTypeList.select(selectionIndex);
-
-						updateDataList(logEntry.getData().get(selectionIndex));
-					}
-				}
+				updateDataTypeList(logEntry);
 			}
 		});
 		
 		if (log.getEntries() != null && log.getEntries().size() > 0) {
 			table.setSelection(0);
+			updateDataTypeList(log.getEntries().get(0));
 		}
 		
 		table.setFocus();
 		
 		window.open();
+	}
+	
+	private void updateDataTypeList(LogEntry logEntry) {
+
+		dataTypeList.removeAll();
+		
+		if (logEntry.getData() != null && !logEntry.getData().isEmpty()) {
+			for (LogData data : logEntry.getData()) {
+				dataTypeList.add(data.getType());
+			}
+
+			int selectionIndex = -1;
+			
+			if (selectedDataType != null) {
+
+				for (int i = 0; i < logEntry.getData().size(); ++ i) {
+					if (logEntry.getData().get(i).getType().equals(selectedDataType)) {
+						selectionIndex = i;
+						break;
+					}
+				}
+			}
+			
+			if (selectionIndex == -1 && !logEntry.getData().isEmpty()) {
+				selectionIndex = 0;
+			}
+
+			if (selectionIndex != -1) {
+				dataTypeList.select(selectionIndex);
+
+				updateDataList(logEntry.getData().get(selectionIndex));
+			}
+		}
 	}
 	
 	private void updateDataList(LogData logData) {

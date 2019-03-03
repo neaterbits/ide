@@ -101,7 +101,11 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 
 						.buildBy(st -> st
 								
-							.addInfoSubTarget(SourceFolderResourcePath.class, "compilelist", sourceFolder -> "Class files for source folder " + sourceFolder.getName())
+							.addInfoSubTarget(
+									SourceFolderResourcePath.class,
+									"compilelist",
+									sourceFolder -> sourceFolder.getModule().getName() + '/' + sourceFolder.getName(),
+									sourceFolder -> "Class files for source folder " + sourceFolder.getName())
 							
 								.withPrerequisites("Source folder compilations")
 									.makingProduct(SourceFolderCompileList.class)

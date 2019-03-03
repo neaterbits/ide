@@ -10,9 +10,9 @@ class PrerequisitesBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 	
 	private final TargetBuilderState<CONTEXT, TARGET, FILE_TARGET> targetBuilderState;
 	
-	PrerequisitesBuilderImpl(Class<TARGET> type, String targetName, Function<TARGET, String> description) {
+	PrerequisitesBuilderImpl(Class<TARGET> type, String targetName, Function<TARGET, String> qualifierName, Function<TARGET, String> description) {
 
-		this.targetBuilderState = new TargetBuilderState<>(type, targetName, description);
+		this.targetBuilderState = new TargetBuilderState<>(type, targetName, qualifierName, description);
 	}
 
 	PrerequisitesBuilderImpl(Class<TARGET> type, Class<FILE_TARGET> fileTargetType, BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget, Function<FILE_TARGET, File> file, Function<TARGET, String> description) {

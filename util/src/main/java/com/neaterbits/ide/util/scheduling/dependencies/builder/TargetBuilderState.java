@@ -21,6 +21,7 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 	private final BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget;
 	private final Class<FILE_TARGET> fileTargetType;
 	private final Function<FILE_TARGET, File> file;
+	private final Function<TARGET, String> qualifierName;
 	private final Function<TARGET, String> description;
 	
 	private final List<PrerequisiteBuilderState<CONTEXT, TARGET, ?, ?>> prerequisites;
@@ -32,10 +33,11 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 	private BiFunction<CONTEXT, TARGET, ?> actionWithResult;
 	private ProcessResult<CONTEXT, TARGET, ?> onResult;
 	
-	TargetBuilderState(Class<TARGET> type, String targetName, Function<TARGET, String> description) {
+	TargetBuilderState(Class<TARGET> type, String targetName, Function<TARGET, String> qualifierName, Function<TARGET, String> description) {
 		this.targetType = type;
 		
 		this.targetName = targetName;
+		this.qualifierName = qualifierName;
 		
 		this.getFileTarget = null;
 		this.fileTargetType = null;
@@ -49,6 +51,7 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 		this.targetType = type;
 		
 		this.targetName = null;
+		this.qualifierName = null;
 		
 		this.getFileTarget = getFileTarget;
 		this.fileTargetType = fileTargetType;
@@ -128,7 +131,7 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 		}
 		
 		return targetName != null
-				? new TargetSpec<>(targetType, targetName, description, prerequisites, constraint, actionFunction, actionWithResult, onResult)
+				? new TargetSpec<>(targetType, targetName, qualifierName, description, prerequisites, constraint, actionFunction, actionWithResult, onResult)
 				: new TargetSpec<>(targetType, fileTargetType, getFileTarget, file, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
 	}
 }

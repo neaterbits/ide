@@ -6,11 +6,11 @@ import java.util.function.Function;
 
 public interface SubTargetBuilder<CONTEXT extends TaskContext, TARGET, PREREQUISITES_BUILDER> {
 
-	PREREQUISITES_BUILDER addInfoSubTarget(String name, Function<TARGET, String> description);
+	PREREQUISITES_BUILDER addNamedSubTarget(String name, Function<TARGET, String> description);
 
 	PREREQUISITES_BUILDER addInfoSubTarget(Class<TARGET> type, Function<TARGET, String> description);
 
-	PREREQUISITES_BUILDER addInfoSubTarget(Class<TARGET> type, String qualifiername, Function<TARGET, String> description);
+	PREREQUISITES_BUILDER addInfoSubTarget(Class<TARGET> type, String name, Function<TARGET, String> qualifierName, Function<TARGET, String> description);
 
 	PREREQUISITES_BUILDER addFileSubTarget(Class<TARGET> type, Function<TARGET, File> file, Function<TARGET, String> description);
 	

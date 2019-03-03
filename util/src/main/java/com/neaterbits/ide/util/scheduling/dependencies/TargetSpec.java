@@ -16,6 +16,7 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 	private final Class<TARGET> type;
 
 	private final String name;
+	private final Function<TARGET, String> qualifierName;
 
 	private final Class<FILE_TARGET> fileTargetType;
 	private final BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget;
@@ -34,6 +35,7 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 	private TargetSpec(
 			Class<TARGET> type,
 			String name,
+			Function<TARGET, String> qualifierName,
 			Class<FILE_TARGET> fileTargetType,
 			BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget,
 			Function<FILE_TARGET, File> file,
@@ -50,6 +52,7 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 		
 		this.type = type;
 		this.name = name;
+		this.qualifierName = qualifierName;
 		
 		this.fileTargetType = fileTargetType;
 		this.getFileTarget = getFileTarget;
@@ -67,13 +70,14 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 	public TargetSpec(
 			Class<TARGET> type,
 			String name,
+			Function<TARGET, String> qualifierName,
 			Function<TARGET, String> description,
 			List<PrerequisiteSpec<CONTEXT, TARGET, ?>> prerequisites,
 			Constraint constraint,
 			ActionFunction<CONTEXT, TARGET> actionFunction,
 			BiFunction<CONTEXT, TARGET, ?> actionWithResult,
 			ProcessResult<CONTEXT, TARGET, ?> onResult) {
-		this(type, name, null, null, null, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
+		this(type, name, qualifierName, null, null, null, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
 	}
 
 	public TargetSpec(
@@ -87,7 +91,7 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 			ActionFunction<CONTEXT, TARGET> actionFunction,
 			BiFunction<CONTEXT, TARGET, ?> actionWithResult,
 			ProcessResult<CONTEXT, TARGET, ?> onResult) {
-		this(type, null, fileTargetType, getFileTarget, file, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
+		this(type, null, null, fileTargetType, getFileTarget, file, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
 	}
 
 	Class<TARGET> getType() {
@@ -136,6 +140,7 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 			createdTarget = new InfoTarget<>(
 					type,
 					name,
+					qualifierName != null ? qualifierName.apply(target) : null,
 					description,
 					target,
 					prerequisitesList,
