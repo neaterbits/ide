@@ -27,7 +27,9 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	
 	private LogEntry addLogEntry(BuildEntity buildEntity, String message) {
 
-		final LogEntry logEntry = new LogEntry(makePath(buildEntity.getPath()), message);
+		final LogEntry logEntry = new LogEntry(
+				buildEntity != null ? makePath(buildEntity.getPath()) : null,
+				message);
 		
 		if (log.getEntries() == null) {
 			log.setEntries(new ArrayList<>());
@@ -102,6 +104,16 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		
 	}
 	
+	
+	@Override
+	public void onScheduleTargets(int numScheduledJobs, TargetExecutorLogState logState) {
+		
+		final LogEntry logEntry = addLogEntry(null, "Schedule more targets numScheduledJobs=" + numScheduledJobs);
+
+		addTargetLogState(logEntry, logState);
+
+	}
+
 	@Override
 	public void onScheduleTarget(Target<?> target, Status hasCompletedPrerequisites, TargetExecutorLogState logState) {
 

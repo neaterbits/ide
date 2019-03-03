@@ -16,30 +16,23 @@ public final class AsyncExecutor implements Scheduler {
 				new SynchronousSchedulerFactory(forwardToCaller);
 				// new AsynchronousSchedulerFactory(forwardToCaller);
 
-		final Scheduler scheduler = schedulerFactory.createScheduler();
+		this.scheduler = schedulerFactory.createScheduler();
 		
-		this.scheduler = new Scheduler() {
-			@Override
-			public <T, R> void schedule(
-					Constraint constraint,
-					T parameter,
-					ScheduleFunction<T, R> function,
-					ScheduleListener<T, R> listener) {
-				
-				++ scheduledJobs;
-
-				scheduler.schedule(constraint, parameter, function, listener);
-			}
-		};
 	}
 
 	@Override
 	public <T, R> void schedule(Constraint constraint, T parameter, ScheduleFunction<T, R> function,
 			ScheduleListener<T, R> listener) {
 
+		++ scheduledJobs;
+
 		scheduler.schedule(constraint, parameter, function, listener);
 	}
 
+	public int getNumScheduledJobs() {
+		return scheduledJobs;
+	}
+	
 	public final void runQueuedRunnables() {
 
 		Runnable runnable;

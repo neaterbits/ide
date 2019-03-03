@@ -291,7 +291,9 @@ public final class LogUI {
 				
 				final LogEntry logEntry = log.getEntries().get(table.indexOf(item));
 				
-				item.setText(new String [] { makePath(log, logEntry), logEntry.getLogMessage() });
+				item.setText(new String [] {
+						logEntry.getPathIndex() != null ? makePath(log, logEntry) : "",
+						logEntry.getLogMessage() });
 			}
 		});
 		

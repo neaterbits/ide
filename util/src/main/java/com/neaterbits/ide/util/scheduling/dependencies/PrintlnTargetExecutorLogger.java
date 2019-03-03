@@ -5,6 +5,12 @@ import java.util.List;
 public final class PrintlnTargetExecutorLogger implements TargetExecutorLogger {
 
 	@Override
+	public void onScheduleTargets(int numScheduledJobs, TargetExecutorLogState logState) {
+
+		System.out.println("Schedule target numScheduledJobs=" + numScheduledJobs);
+	}
+
+	@Override
 	public void onScheduleTarget(Target<?> target, Status status, TargetExecutorLogState logState) {
 
 		System.out.println("Schedule target " + target.targetToLogString() + ", status=" + status);
