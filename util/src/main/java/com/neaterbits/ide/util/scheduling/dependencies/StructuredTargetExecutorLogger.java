@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.structuredlog.model.Log;
 import com.neaterbits.structuredlog.model.LogData;
+import com.neaterbits.structuredlog.model.LogDataEntry;
 import com.neaterbits.structuredlog.model.LogEntry;
 
 public final class StructuredTargetExecutorLogger implements TargetExecutorLogger {
@@ -37,16 +38,26 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 
 	private static void addTargetLogState(LogEntry logEntry, String dataType, Collection<Target<?>> targets) {
 		
-		addCollectionLogState(logEntry, dataType, targets, Target::getDebugString);
+		addCollectionLogState(
+				logEntry,
+				dataType,
+				targets,
+				BuildEntity::getPath,
+				Target::getDebugString);
 	}
 
-	private static <T> void addCollectionLogState(LogEntry logEntry, String dataType, Collection<T> data, Function<T, String> toString) {
+	private static <T> void addCollectionLogState(
+			LogEntry logEntry,
+			String dataType,
+			Collection<T> data,
+			Function<T, List<String>> toPath,
+			Function<T, String> toString) {
 
-		final List<String> strings = data.stream()
-				.map(toString)
+		final List<LogDataEntry> dataEntries = data.stream()
+				.map(dataEntry -> new LogDataEntry(toPath.apply(dataEntry), toString.apply(dataEntry)))
 				.collect(Collectors.toList());
 		
-		final LogData toExecute = new LogData(dataType, strings);
+		final LogData toExecute = new LogData(dataType, dataEntries);
 		
 		if (logEntry.getData() == null) {
 			logEntry.setData(new ArrayList<>());

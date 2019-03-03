@@ -104,7 +104,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 							.addInfoSubTarget(
 									SourceFolderResourcePath.class,
 									"compilelist",
-									sourceFolder -> sourceFolder.getModule().getName() + '/' + sourceFolder.getName(),
+									sourceFolder -> sourceFolder.getModule().getName(),
 									sourceFolder -> "Class files for source folder " + sourceFolder.getName())
 							
 								.withPrerequisites("Source folder compilations")

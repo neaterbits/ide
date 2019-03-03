@@ -3,6 +3,7 @@ package com.neaterbits.structuredlog.swt;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.bind.JAXBException;
 
@@ -30,7 +31,7 @@ public class StructuredLogMain {
 				
 				final LogIO logIO = new LogIO();
 				
-				try (FileInputStream inputStream = new FileInputStream(logFile)) {
+				try (InputStream inputStream = new FileInputStream(logFile)) {
 				
 					final Log log = logIO.readLog(inputStream);
 

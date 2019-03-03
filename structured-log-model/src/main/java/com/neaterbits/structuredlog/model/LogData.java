@@ -11,13 +11,13 @@ public class LogData {
 
 	private String type;
 	
-	private List<String> entries;
+	private List<LogDataEntry> entries;
 
 	public LogData() {
 
 	}
 	
-	public LogData(String type, List<String> entries) {
+	public LogData(String type, List<LogDataEntry> entries) {
 		this.type = type;
 		this.entries = entries;
 	}
@@ -31,12 +31,12 @@ public class LogData {
 		this.type = type;
 	}
 
-	@XmlElement(name="entry")
-	public List<String> getEntries() {
+	@XmlElement(name="logDataEntry")
+	public List<LogDataEntry> getEntries() {
 		return entries;
 	}
 
-	public void setEntries(List<String> entries) {
+	public void setEntries(List<LogDataEntry> entries) {
 		this.entries = entries;
 	}
 }

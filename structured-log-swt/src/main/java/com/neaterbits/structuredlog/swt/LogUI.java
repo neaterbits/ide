@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import com.neaterbits.structuredlog.model.Log;
 import com.neaterbits.structuredlog.model.LogData;
+import com.neaterbits.structuredlog.model.LogDataEntry;
 import com.neaterbits.structuredlog.model.LogEntry;
 
 public final class LogUI {
@@ -32,12 +33,13 @@ public final class LogUI {
 
 	private String selectedDataType;
 	
-	
 	LogUI(Log log) {
 
 		Objects.requireNonNull(log);
 		
 		this.window = new Shell();
+		
+		window.setSize(1500, 850);
 		
 		window.setLayout(new FillLayout());
 		
@@ -121,14 +123,17 @@ public final class LogUI {
 	
 	private static String makePath(LogEntry logEntry) {
 		
-		final java.util.List<String> list = logEntry.getPath();
+		return makePath(logEntry.getPath());
+	}
+	
 		
+	private static String makePath(java.util.List<String> list) {
 		final StringBuilder sb = new StringBuilder();
 		
 		for (int i = 0; i < list.size(); ++ i) {
 		
 			if (i > 0) {
-				sb.append('/');
+				sb.append('#');
 			}
 			
 			sb.append(list.get(i));
@@ -175,8 +180,8 @@ public final class LogUI {
 		dataList.removeAll();
 		
 		if (logData.getEntries() != null) {
-			for (String entry : logData.getEntries()) {
-				dataList.add(entry);
+			for (LogDataEntry entry : logData.getEntries()) {
+				dataList.add(entry.getPath() != null ? makePath(entry.getPath()) : entry.getData());
 			}
 		}
 		
@@ -193,11 +198,11 @@ public final class LogUI {
 
 		final TableColumn pathColumn = new TableColumn(table, SWT.BEGINNING);
 		pathColumn.setText("Path");
-		pathColumn.setWidth(350);
+		pathColumn.setWidth(650);
 		
 		final TableColumn messageColumn = new TableColumn(table, SWT.BEGINNING);
 		messageColumn.setText("Message");
-		messageColumn.setWidth(250);
+		messageColumn.setWidth(350);
 		
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
