@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 import com.neaterbits.structuredlog.model.Log;
 import com.neaterbits.structuredlog.model.LogData;
@@ -29,6 +30,7 @@ public final class LogUI {
 	private final Composite composite;
 
 	private final List dataTypeList;
+	private final Text dataListSearchText;
 	private final List dataList;
 
 	private String selectedDataType;
@@ -71,27 +73,80 @@ public final class LogUI {
 		listsGridData.grabExcessHorizontalSpace = false;
 		listsGridData.horizontalSpan = 1;
 		listsGridData.verticalSpan = 1;
-		listsGridData.grabExcessVerticalSpace = true;
 		listsGridData.horizontalAlignment = SWT.BEGINNING;
 		listsGridData.grabExcessVerticalSpace = true;
 		listsGridData.verticalAlignment = SWT.FILL;
 
+		listsGridData.widthHint = 500;
+		
 		listsComposite.setLayoutData(listsGridData);
 		
-		listsComposite.setLayout(new FillLayout(SWT.VERTICAL));
+		final GridLayout listsLayout = new GridLayout(1, true);
+		// final FillLayout listsLayout = new FillLayout(SWT.VERTICAL);
+		
+		listsLayout.marginTop = 0;
+		listsLayout.marginBottom = 0;
+		listsLayout.marginLeft = 0;
+		listsLayout.marginRight = 0;
+
+		listsLayout.marginWidth = 0;
+		
+		listsComposite.setLayout(listsLayout);
 		
 		this.dataTypeList = new List(listsComposite, SWT.BORDER);
-		this.dataList = new List(listsComposite, SWT.BORDER|SWT.V_SCROLL);
+
+		final GridData dataTypeListGridData = new GridData();
+		
+		dataTypeListGridData.grabExcessHorizontalSpace = true;
+		dataTypeListGridData.verticalIndent = 0;
+		dataTypeListGridData.horizontalSpan = 1;
+		// dataTypeListGridData.verticalSpan = 1;
+		dataTypeListGridData.horizontalAlignment = SWT.FILL;
+		dataTypeListGridData.grabExcessVerticalSpace = false;
+		dataTypeListGridData.verticalAlignment = SWT.BEGINNING;
+		dataTypeListGridData.heightHint = 250;
+
+		dataTypeList.setLayoutData(dataTypeListGridData);
+		
+		this.dataListSearchText = new Text(listsComposite, SWT.BORDER);
+		
+		final GridData dataListSearchGridData = new GridData();
+		
+		dataListSearchGridData.grabExcessHorizontalSpace = true;
+		dataListSearchGridData.horizontalSpan = 1;
+		// dataListSearchGridData.verticalSpan = 1;
+		dataListSearchGridData.horizontalAlignment = SWT.FILL;
+		dataListSearchGridData.grabExcessVerticalSpace = false;
+		dataListSearchGridData.verticalAlignment = SWT.BEGINNING;
+		dataListSearchGridData.heightHint = 20;
+		
+		dataListSearchText.setLayoutData(dataListSearchGridData);
+		
+		dataListSearchText.addModifyListener(event -> {
+
+			updateDataList(log, getSelectedLogData(log, table));
+		});
+
+		final GridData dataListGridData = new GridData();
+		
+		dataListGridData.grabExcessHorizontalSpace = true;
+		dataListGridData.horizontalSpan = 1;
+		// dataListGridData.verticalSpan = 1;
+		dataListGridData.horizontalAlignment = SWT.FILL;
+		dataListGridData.grabExcessVerticalSpace = true;
+		dataListGridData.verticalAlignment = SWT.FILL;
+		// dataListGridData.heightHint = 500;
+		
+		this.dataList = new List(listsComposite, SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL);
+
+		dataList.setLayoutData(dataListGridData);
 		
 		dataTypeList.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 
-				final LogEntry logEntry = log.getEntries().get(table.getSelectionIndex());
-		
-				final int dataTypeSelectionIdx = dataTypeList.getSelectionIndex();
-				final LogData logData = logEntry.getData().get(dataTypeSelectionIdx);
+				final LogData logData = getSelectedLogData(log, table);
 				
 				selectedDataType = logData.getType();
 				
@@ -119,6 +174,16 @@ public final class LogUI {
 		table.setFocus();
 		
 		window.open();
+	}
+	
+	private LogData getSelectedLogData(Log log, Table table) {
+		
+		final LogEntry logEntry = log.getEntries().get(table.getSelectionIndex());
+		
+		final int dataTypeSelectionIdx = dataTypeList.getSelectionIndex();
+		final LogData logData = logEntry.getData().get(dataTypeSelectionIdx);
+		
+		return logData;
 	}
 	
 	private static String makePath(Log log, LogEntry logEntry) {
@@ -181,10 +246,17 @@ public final class LogUI {
 	private void updateDataList(Log log, LogData logData) {
 
 		dataList.removeAll();
+
+		final String searchText = dataListSearchText.getText().trim();
 		
 		if (logData.getEntries() != null) {
 			for (LogDataEntry entry : logData.getEntries()) {
-				dataList.add(entry.getPathIndex() != null ? makePath(log, entry.getPathIndex()) : entry.getData());
+				
+				final String text = entry.getPathIndex() != null ? makePath(log, entry.getPathIndex()) : entry.getData();
+				
+				if (searchText.isEmpty() || text.contains(searchText)) {
+					dataList.add(text);
+				}
 			}
 		}
 		
@@ -226,8 +298,6 @@ public final class LogUI {
 		return table;
 	}
 
-	
-	
 	void start() {
 
 		final Display display = window.getDisplay();
@@ -236,5 +306,4 @@ public final class LogUI {
 			display.sleep();
 		}
 	}
-
 }
