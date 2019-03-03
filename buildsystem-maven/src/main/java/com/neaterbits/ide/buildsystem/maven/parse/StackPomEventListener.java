@@ -8,6 +8,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenBuild;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenDependency;
+import com.neaterbits.ide.buildsystem.maven.elements.MavenExtension;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenPlugin;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenProject;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenReporting;
@@ -262,6 +263,43 @@ final class StackPomEventListener implements PomEventListener {
 		final PluginsSetter pluginsSetter = get();
 		
 		pluginsSetter.setPlugins(stackPlugins.getPlugins());
+	}
+
+	@Override
+	public void onExtensionsStart(Context context) {
+		
+		if (get() instanceof StackBuild) {
+			push(new StackExtensions(context));
+		}
+	}
+
+	
+	@Override
+	public void onExtensionStart(Context context) {
+		push(new StackExtension(context));
+	}
+
+	@Override
+	public void onExtensionEnd(Context context) {
+		
+		final StackExtension stackExtension = pop();
+		
+		final StackExtensions stackExtensions = get();
+		
+		stackExtensions.addExtension(new MavenExtension(stackExtension.makeModuleId()));
+	}
+
+	@Override
+	public void onExtensionsEnd(Context context) {
+		
+		if (get() instanceof StackExtensions) {
+		
+			final StackExtensions stackExtensions = pop();
+			
+			final StackBuild stackBuild = get();
+			
+			stackBuild.setExtensions(stackExtensions.getExtensions());
+		}
 	}
 
 	@Override

@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.ide.buildsystem.maven.elements.MavenExtension;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenPlugin;
 
 final class StackBuild extends StackBase implements PluginsSetter {
 
 	private List<MavenPlugin> plugins;
+	private List<MavenExtension> extensions;
 	
 	StackBuild(Context context) {
 		super(context);
@@ -23,5 +25,13 @@ final class StackBuild extends StackBase implements PluginsSetter {
 	@Override
 	public void setPlugins(List<MavenPlugin> plugins) {
 		this.plugins = plugins;
+	}
+
+	List<MavenExtension> getExtensions() {
+		return extensions;
+	}
+
+	void setExtensions(List<MavenExtension> extensions) {
+		this.extensions = extensions;
 	}
 }

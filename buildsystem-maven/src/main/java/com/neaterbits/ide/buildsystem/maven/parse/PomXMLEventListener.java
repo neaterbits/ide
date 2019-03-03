@@ -100,6 +100,14 @@ public final class PomXMLEventListener implements XMLEventListener<Void> {
 		case "plugin":
 			delegate.onPluginStart(context(event));
 			break;
+		
+		case "extensions":
+			delegate.onExtensionsStart(context(event));
+			break;
+			
+		case "extension":
+			delegate.onExtensionStart(context(event));
+			break;
 		}
 	}
 	@Override
@@ -164,6 +172,14 @@ public final class PomXMLEventListener implements XMLEventListener<Void> {
 			
 		case "plugin":
 			delegate.onPluginEnd(context(event));
+			break;
+
+		case "extensions":
+			delegate.onExtensionsEnd(context(event));
+			break;
+			
+		case "extension":
+			delegate.onExtensionEnd(context(event));
 			break;
 		}
 	}

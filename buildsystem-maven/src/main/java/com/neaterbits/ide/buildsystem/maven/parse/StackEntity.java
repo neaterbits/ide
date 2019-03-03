@@ -14,39 +14,39 @@ abstract class StackEntity extends StackBase implements EntitySetter {
 		super(context);
 	}
 
-	String getGroupId() {
+	final String getGroupId() {
 		return groupId;
 	}
 	
 	@Override
-	public void setGroupId(String groupId) {
+	public final void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
 	
-	public String getArtifactId() {
+	public final String getArtifactId() {
 		return artifactId;
 	}
 	
 	@Override
-	public void setArtifactId(String artifactId) {
+	public final void setArtifactId(String artifactId) {
 		this.artifactId = artifactId;
 	}
 	
-	public String getVersion() {
+	public final String getVersion() {
 		return version;
 	}
 	
 	@Override
-	public void setVersion(String version) {
+	public final void setVersion(String version) {
 		this.version = version;
 	}
 	
-	public String getPackaging() {
+	public final String getPackaging() {
 		return packaging;
 	}
 	
 	@Override
-	public void setPackaging(String packaging) {
+	public final void setPackaging(String packaging) {
 		this.packaging = packaging;
 	}
 	

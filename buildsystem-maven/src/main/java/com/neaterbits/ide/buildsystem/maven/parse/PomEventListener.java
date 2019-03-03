@@ -52,6 +52,14 @@ public interface PomEventListener {
 	
 	void onPluginsEnd(Context context);
 	
+	void onExtensionsStart(Context context);
+	
+	void onExtensionStart(Context context);
+	
+	void onExtensionEnd(Context context);
+	
+	void onExtensionsEnd(Context context);
+	
 	void onBuildEnd(Context context);
 	
 	void onProjectEnd(Context context);
