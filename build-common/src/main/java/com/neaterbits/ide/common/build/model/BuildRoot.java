@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystemRootScan;
+import com.neaterbits.ide.common.buildsystem.Scope;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
@@ -23,7 +24,7 @@ public interface BuildRoot {
 
 	List<Dependency> getDependenciesForProjectModule(ProjectModuleResourcePath module);
 
-	List<Dependency> getDependenciesForExternalLibrary(Dependency dependency);
+	List<Dependency> getDependenciesForExternalLibrary(Dependency dependency, Scope scope, boolean includeOptionalDependencies);
 
 	TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module);
 	
@@ -35,6 +36,8 @@ public interface BuildRoot {
 	
 	void downloadExternalDependencyAndAddToBuildModel(Dependency dependency);
 
+	Scope getDependencyScope(Dependency dependency);
+	
 	default <T> T forEachSourceFolder(Function<SourceFolderResourcePath, T> function) {
 		
 		for (ProjectModuleResourcePath module : getModules()) {

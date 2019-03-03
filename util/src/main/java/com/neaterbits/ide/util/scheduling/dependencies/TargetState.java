@@ -63,6 +63,27 @@ final class TargetState implements ActionParameters, TargetExecutorLogState {
 		return !scheduledTargets.isEmpty();
 	}
 	
+	boolean hasExecuteOrScheduledTarget(Target<?> target) {
+		Objects.requireNonNull(target);
+		
+		return toExecuteTargets.contains(target) || scheduledTargets.contains(target);
+	}
+	
+	void addTargetToExecute(Target<?> target) {
+
+		Objects.requireNonNull(target);
+		
+		if (   toExecuteTargets.contains(target)
+			|| scheduledTargets.contains(target)
+			|| completedTargets.contains(target)
+			|| failedTargets.containsKey(target)) {
+		
+			throw new IllegalStateException();
+		}
+		
+		toExecuteTargets.add(target);
+	}
+	
 	@Override
 	public Set<Target<?>> getToExecuteTargets() {
 		return Collections.unmodifiableSet(toExecuteTargets);

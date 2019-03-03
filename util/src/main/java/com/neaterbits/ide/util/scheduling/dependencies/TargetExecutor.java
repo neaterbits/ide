@@ -20,6 +20,8 @@ import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
 final class TargetExecutor {
 	
+	private static final Boolean DEBUG = false;
+	
 	private final AsyncExecutor asyncExecutor;
 	
 	TargetExecutor(AsyncExecutor asyncExecutor) {
@@ -36,7 +38,6 @@ final class TargetExecutor {
 			Consumer<TargetBuildResult> onResult) {
 		
 		final TargetState state = TargetState.createFromTargetTree(rootTarget);
-		
 		final TargetExecutionContext<CONTEXT> targetExecutionContext = new TargetExecutionContext<CONTEXT>(context, state, logger, onResult);
 		
 		scheduleTargets(targetExecutionContext);
@@ -111,16 +112,12 @@ final class TargetExecutor {
 			runOrScheduleAction(context, action, target, onCompleted);
 		}
 		else if (actionWithResult != null) {
-			
-			System.out.println("### actionWithResult");
-			
 			runOrScheduleActionWithResult(context, actionWithResult, target, onCompleted);
 		}
 		else {
 			onCompleted.accept(null, false);
 		}
 	}
-
 	
 	private <CONTEXT extends TaskContext> void runOrScheduleAction(
 			TargetExecutionContext<CONTEXT> context,
@@ -197,10 +194,14 @@ final class TargetExecutor {
 			actionFunction.perform(context.context, target.getTargetObject(), context.state);
 			
 			final Prerequisites prerequisites = target.getFromPrerequisite().getFromPrerequisites();
+
+			if (prerequisites == null) {
+				throw new IllegalStateException("## no prerequisites for target " + target.getTargetObject());
+			}
 			
 			if (prerequisites.isRecursiveBuild()) {
 				
-				addRecursiveBuildTargets(context.context, prerequisites, target);
+				addRecursiveBuildTargets(context.state, context.context, prerequisites, target);
 			}
 			
 		} catch (Exception ex) {
@@ -210,7 +211,7 @@ final class TargetExecutor {
 		return null;
 	}
 	
-	private void addRecursiveBuildTargets(TaskContext context, Prerequisites prerequisites, Target<?> target) {
+	private void addRecursiveBuildTargets(TargetState targetState, TaskContext context, Prerequisites prerequisites, Target<?> target) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<Object, Object, Collection<Object>> getSubPrerequisites
@@ -222,25 +223,31 @@ final class TargetExecutor {
 		
 		final Object targetObject = getTargetFromPrerequisite.apply(target.getTargetObject());
 		
-		System.out.println("## got target object " + targetObject + " from " + target.getTargetObject() + " of " + target.getTargetObject().getClass());
+		if (DEBUG) {
+			System.out.println("## got target object " + targetObject + " from " + target.getTargetObject() + " of " + target.getTargetObject().getClass());
+		}
 
 		final Collection<Object> targetPrerequisites = getSubPrerequisites.apply(context, targetObject);
 
+		/*
 		if (targetPrerequisites.size() != target.getPrerequisites().size()) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("prerequisites mismatch for "  + target + " " + targetPrerequisites + "/" + target.getPrerequisites());
 		}
-		
+		*/
 		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final TargetSpec<TaskContext, Object, Object> targetSpec = (TargetSpec)target.getTargetSpec();
-	
+
+		final List<Prerequisite<?>> targetPrerequisitesList = new ArrayList<>(targetPrerequisites.size());
+		
 		for (Object subPrerequisiteObject : targetPrerequisites) {
 
-			System.out.println("## process sub prerequisite object " + subPrerequisiteObject);
+			if (DEBUG) {
+				System.out.println("## process sub prerequisite object " + subPrerequisiteObject);
+			}
 			
 			final Collection<Object> subPrerequisitesList = getSubPrerequisites.apply(context, subPrerequisiteObject);
 
-			
 			final List<Prerequisite<?>> list = subPrerequisitesList.stream()
 					.map(sp -> new Prerequisite<>(sp, null))
 					.collect(Collectors.toList());
@@ -252,9 +259,34 @@ final class TargetExecutor {
 							context,
 							subPrerequisiteObject,
 							Arrays.asList(subPrerequisites));
+
+			targetPrerequisitesList.add(new Prerequisite<>(subPrerequisiteObject, subTarget));
+
+			if (DEBUG) {
+				System.out.println("## added subtarget " + subTarget + " from prerequisites " + targetPrerequisites + " from " + target.getTargetObject());
+			}
 			
-			System.out.println("## added subtarget " + subTarget + " from prerequisites " + subPrerequisites);
+			if (!targetState.hasExecuteOrScheduledTarget(subTarget)) {
+				targetState.addTargetToExecute(subTarget);
+			}
+			
+			if (DEBUG) {
+				System.out.println("## added subtarget done");
+			}
 		}
+		
+		// Trigger fromPrerequisite to be set in sub targets
+		new Prerequisites(targetPrerequisitesList, prerequisites.getSpec());
+		
+		/*
+		final Target<?> replaceTarget = targetSpec.createTarget(
+				context,
+				target.getTargetObject(),
+				Arrays.asList(new Prerequisites(targetPrerequisitesList, prerequisites.getSpec())));
+		
+		targetState.replaceTarget(target, replaceTarget);
+		*/
+		
 	}
 	
 	private static class Result {

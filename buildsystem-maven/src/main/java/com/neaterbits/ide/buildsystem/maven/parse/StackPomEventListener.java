@@ -21,8 +21,6 @@ final class StackPomEventListener implements PomEventListener {
 	
 	private final Stack<StackBase> stack;
 
-	
-	
 	StackPomEventListener(File rootDirectory) {
 		
 		Objects.requireNonNull(rootDirectory);
@@ -153,13 +151,45 @@ final class StackPomEventListener implements PomEventListener {
 	}
 
 	@Override
+	public void onScopeStart(Context context) {
+		push(new StackScope(context));
+	}
+
+	@Override
+	public void onScopeEnd(Context context) {
+		
+		final StackScope stackScope = pop();
+		
+		final StackDependency stackDependency = get();
+		
+		stackDependency.setScope(stackScope.getText());
+	}
+
+	@Override
+	public void onOptionalStart(Context context) {
+		push(new StackOptional(context));
+	}
+
+	@Override
+	public void onOptionalEnd(Context context) {
+
+		final StackOptional stackOptional = pop();
+		
+		final StackDependency stackDependency = get();
+		
+		stackDependency.setOptional(stackOptional.getText());
+	}
+
+	@Override
 	public void onDependencyEnd(Context context) {
 
 		final StackDependency stackDependency = pop();
 		
 		final MavenDependency dependency = new MavenDependency(
 				stackDependency.makeModuleId(),
-				stackDependency.getPackaging());
+				stackDependency.getPackaging(),
+				stackDependency.getScope(),
+				stackDependency.getOptional());
 	
 		final StackDependencies stackDependencies = get();
 	

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRoot;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRootScan;
 import com.neaterbits.ide.common.buildsystem.ScanException;
+import com.neaterbits.ide.common.buildsystem.Scope;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
@@ -87,10 +88,10 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 	}
 	
 	@Override
-	public List<Dependency> getDependenciesForExternalLibrary(Dependency dependency) {
+	public List<Dependency> getDependenciesForExternalLibrary(Dependency dependency, Scope scope, boolean includeOptionalDependencies) {
 
 		try {
-			return getTransitiveExternalDependencies(dependency);
+			return getTransitiveExternalDependencies(dependency, scope, includeOptionalDependencies);
 		}
 		catch (ScanException ex) {
 			throw new IllegalStateException(ex);
@@ -103,6 +104,14 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 	}
 
 	@Override
+	public Scope getDependencyScope(Dependency dependency) {
+		@SuppressWarnings("unchecked")
+		final BuildDependency<DEPENDENCY> buildDependency = (BuildDependency<DEPENDENCY>)dependency;
+
+		return buildSystemRoot.getDependencyScope(buildDependency.getDependency());
+	}
+
+	@Override
 	public void downloadExternalDependencyAndAddToBuildModel(Dependency dependency) {
 		
 		@SuppressWarnings("unchecked")
@@ -111,11 +120,13 @@ public class BuildRootImpl<MODULE_ID, PROJECT, DEPENDENCY> implements BuildRoot 
 		buildSystemRoot.downloadExternalDependencyIfNotPresent(buildDependency.getDependency());
 	}
 
-	private List<Dependency> getTransitiveExternalDependencies(Dependency dependency) throws ScanException {
+	private List<Dependency> getTransitiveExternalDependencies(Dependency dependency, Scope scope, boolean includeOptionalDependencies) throws ScanException {
 		@SuppressWarnings("unchecked")
 		final BuildDependency<DEPENDENCY> buildDependency = (BuildDependency<DEPENDENCY>)dependency;
 
 		return buildSystemRoot.getTransitiveExternalDependencies(buildDependency.getDependency()).stream()
+				.filter(transitive ->      buildSystemRoot.getDependencyScope(transitive) == scope
+										&& (includeOptionalDependencies ? true : !buildSystemRoot.isOptionalDependency(transitive)))
 				.map(transitive -> BuildRootImplInit.makeExternalDependency(transitive, buildSystemRoot))
 				.collect(Collectors.toList());
 	}

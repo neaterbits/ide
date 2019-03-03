@@ -85,6 +85,14 @@ public final class PomXMLEventListener implements XMLEventListener<Void> {
 			delegate.onDependencyStart(context(event));
 			break;
 			
+		case "scope":
+			delegate.onScopeStart(context(event));
+			break;
+			
+		case "optional":
+			delegate.onOptionalStart(context(event));
+			break;
+			
 		case "reporting":
 			delegate.onReportingStart(context(event));
 			break;
@@ -154,10 +162,18 @@ public final class PomXMLEventListener implements XMLEventListener<Void> {
 			delegate.onDependenciesEnd(context(event));
 			break;
 			
+		case "scope":
+			delegate.onScopeEnd(context(event));
+			break;
+
 		case "dependency":
 			delegate.onDependencyEnd(context(event));
 			break;
 			
+		case "optional":
+			delegate.onOptionalEnd(context(event));
+			break;
+
 		case "reporting":
 			delegate.onReportingEnd(context(event));
 			break;

@@ -17,6 +17,10 @@ public interface BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> extends BuildSy
 	
 	String getDisplayName(PROJECT project);
 
+	Scope getDependencyScope(DEPENDENCY dependency);
+	
+	boolean isOptionalDependency(DEPENDENCY dependency);
+
 	Collection<DEPENDENCY> getDependencies(PROJECT project);
 	
 	Collection<DEPENDENCY> resolveDependencies(PROJECT project);

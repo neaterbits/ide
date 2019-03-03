@@ -16,6 +16,7 @@ import com.neaterbits.ide.common.build.model.compile.ModuleCompileList;
 import com.neaterbits.ide.common.build.model.compile.ModuleDependencyList;
 import com.neaterbits.ide.common.build.model.compile.SourceFolderCompileList;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
+import com.neaterbits.ide.common.buildsystem.Scope;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
@@ -189,7 +190,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 			break;
 			
 		case EXTERNAL:
-			moduleDependencies = context.getBuildRoot().getDependenciesForExternalLibrary(dependency);
+			moduleDependencies = context.getBuildRoot().getDependenciesForExternalLibrary(dependency, Scope.COMPILE, false);
 			break;
 			
 		default:
@@ -199,7 +200,12 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 		dependencies.addAll(moduleDependencies);
 
 		for (Dependency foundDep : moduleDependencies) {
-			transitiveDependencies(context, foundDep, dependencies);
+			try {
+				transitiveDependencies(context, foundDep, dependencies);
+			}
+			catch (Exception ex) {
+				throw new IllegalStateException("Exception while getting dependencies for " + dependency, ex);
+			}
 		}
 	}
 	

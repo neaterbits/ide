@@ -7,14 +7,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import javax.xml.stream.XMLStreamException;
-
 import com.neaterbits.ide.buildsystem.maven.elements.MavenDependency;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenProject;
 import com.neaterbits.ide.buildsystem.maven.parse.PomTreeParser;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRoot;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRootListener;
 import com.neaterbits.ide.common.buildsystem.ScanException;
+import com.neaterbits.ide.common.buildsystem.Scope;
 import com.neaterbits.ide.common.language.Language;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResource;
@@ -70,6 +69,41 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	@Override
 	public String getDisplayName(MavenProject project) {
 		return project.getModuleId().getArtifactId();
+	}
+
+	@Override
+	public Scope getDependencyScope(MavenDependency dependency) {
+
+		final Scope scope;
+		
+		if (dependency.getScope() == null) {
+			scope = Scope.COMPILE;
+		}
+		else {
+			switch (dependency.getScope()) {
+			case "compile":
+				scope = Scope.COMPILE;
+				break;
+				
+			case "test":
+				scope = Scope.TEST;
+				break;
+
+			case "provided":
+				scope = Scope.PROVIDED;
+				break;
+				
+			default:
+				throw new UnsupportedOperationException();
+			}
+		}
+		
+		return scope;
+	}
+	
+	@Override
+	public boolean isOptionalDependency(MavenDependency dependency) {
+		return "true".equals(dependency.getOptional());
 	}
 
 	@Override
@@ -152,8 +186,7 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	@Override
 	public File repositoryJarFile(MavenDependency mavenDependency) {
 		
-		final String path = repositoryDirectory(mavenDependency)
-					+ '/' + compiledFileName(mavenDependency);
+		final String path = repositoryDirectory(mavenDependency) + '/' + compiledFileName(mavenDependency);
 				
 		try {
 			return new File(path).getCanonicalFile();
@@ -172,7 +205,7 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	private String compiledFileName(MavenModuleId moduleId, String packaging) {
 		
 		if (moduleId.getVersion() == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("No version for module " + moduleId);
 		}
 		
 		return moduleId.getArtifactId() + '-' + moduleId.getVersion()
@@ -181,6 +214,7 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	
 	@Override
 	public Collection<MavenDependency> getTransitiveExternalDependencies(MavenDependency dependency) throws ScanException {
+		
 		
 		Objects.requireNonNull(dependency);
 		
@@ -194,7 +228,12 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 			throw new ScanException("Failed to parse dependencies pom file for " + dependency, ex);
 		}
 		
-		return mavenProject.resolveDependencies();
+		try {
+			return mavenProject.resolveDependencies();
+		}
+		catch (Exception ex) {
+			throw new ScanException("Failed to resolve dependencies for " + pomFile, ex);
+		}
 	}
 
 	@Override
@@ -216,3 +255,4 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 		listeners.add(listener);
 	}
 }
+	

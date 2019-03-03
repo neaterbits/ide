@@ -88,13 +88,18 @@ public class MavenModule extends MavenEntity {
 	
 	static MavenDependency resolveDependency(MavenDependency dependency, String groupId, String version) {
 		
+		
+		final MavenModuleId moduleId = dependency.getModuleId();
+		
 		return new MavenDependency(
 				new MavenModuleId(
-						dependency.getModuleId().getGroupId().replace("${project.groupId}", groupId),
-						dependency.getModuleId().getArtifactId(),
-						dependency.getModuleId().getVersion().replace("${project.version}", version)),
+						moduleId.getGroupId().replace("${project.groupId}", groupId),
+						moduleId.getArtifactId(),
+						moduleId.getVersion() != null ? moduleId.getVersion().replace("${project.version}", version) : null),
 				
-				dependency.getPackaging());
+				dependency.getPackaging(),
+				dependency.getScope(),
+				dependency.getOptional());
 		
 	}
 
