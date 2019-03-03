@@ -50,11 +50,9 @@ public final class AsyncExecutor implements Scheduler {
 					if (!queue.isEmpty()) {
 						throw new IllegalStateException();
 					}
-					
 					break;
 				}
 			}
 		}
 	}
-
 }

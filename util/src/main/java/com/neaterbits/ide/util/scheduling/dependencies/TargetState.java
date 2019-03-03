@@ -54,6 +54,14 @@ final class TargetState implements ActionParameters, TargetExecutorLogState {
 	int getNumExecuteTargets() {
 		return toExecuteTargets.size();
 	}
+
+	int getNumExecuteOrScheduledTargets() {
+		return toExecuteTargets.size() + scheduledTargets.size();
+	}
+
+	boolean hasScheduledTargets() {
+		return !scheduledTargets.isEmpty();
+	}
 	
 	@Override
 	public Set<Target<?>> getToExecuteTargets() {
@@ -97,7 +105,28 @@ final class TargetState implements ActionParameters, TargetExecutorLogState {
 			throw new IllegalStateException();
 		}
 	}
-	
+
+	void moveTargetFromToExecuteToFailed(Target<?> target) {
+		
+		Objects.requireNonNull(target);
+		
+		if (!toExecuteTargets.remove(target)) {
+			throw new IllegalStateException();
+		}
+		
+		if (scheduledTargets.contains(target)) {
+			throw new IllegalStateException();
+		}
+		
+		if (completedTargets.contains(target)) {
+			throw new IllegalStateException();
+		}
+		
+		if (failedTargets.put(target, null) != null) {
+			throw new IllegalStateException();
+		}
+	}
+
 	void onCompletedTarget(Target<?> target, Exception exception) {
 		if (toExecuteTargets.contains(target)) {
 			throw new IllegalStateException();

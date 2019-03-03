@@ -54,6 +54,8 @@ final class TargetExecutor {
 		
 		asyncExecutor.runQueuedRunnables();
 
+		final int priorToExecuteOrScheduled = context.state.getNumExecuteOrScheduledTargets();
+		
 		for (;;) {
 
 			int targetsLeft = context.state.getNumExecuteTargets();
@@ -62,12 +64,12 @@ final class TargetExecutor {
 			
 			for (Target<?> target : targets) {
 
-				final Status status = hasCompletedPrerequisites(target, context.state.getCompletedTargets(), context.state.getFailedTargets());
+				final PrerequisiteCompletion status = hasCompletedPrerequisites(target, context.state.getCompletedTargets(), context.state.getFailedTargets());
 				
-				if (status == Status.COMPLETE) {
+				if (status.getStatus() == Status.COMPLETE) {
 					
 					if (context.logger != null) {
-						context.logger.onScheduleTarget(target, status, context.state);
+						context.logger.onScheduleTarget(target, status.getStatus(), context.state);
 					}
 
 					context.state.moveTargetFromToExecuteToScheduled(target);
@@ -76,6 +78,13 @@ final class TargetExecutor {
 
 					runAnyActionsAndCallOnCompleted(context, target);
 				}
+				else if (status.getStatus() == Status.FAILED) {
+					context.state.moveTargetFromToExecuteToFailed(target);
+					
+					if (context.logger != null) {
+						context.logger.onComplete(target, status.getException(), context.state);
+					}
+				}
 			}
 			
 			if (targetsLeft == context.state.getNumExecuteTargets()) {
@@ -83,9 +92,12 @@ final class TargetExecutor {
 			}
 		}
 		
-		// if (context.state.getNumExecuteTargets() == 0) {
+		if (   context.state.getNumExecuteOrScheduledTargets() == 0
+			&& priorToExecuteOrScheduled != 0
+			&& asyncExecutor.getNumScheduledJobs() == 0) {
+
 			context.onResult.accept(context.state);
-		// }
+		}
 	}
 	
 	private <CONTEXT extends TaskContext> void runAnyActionsAndCallOnCompleted(TargetExecutionContext<CONTEXT> context, Target<?> target) {
@@ -293,7 +305,7 @@ final class TargetExecutor {
 		}
 	}
 
-	private Status hasCompletedPrerequisites(Target<?> target, Set<Target<?>> completedTargets, Map<Target<?>, Exception> failedTargets) {
+	private PrerequisiteCompletion hasCompletedPrerequisites(Target<?> target, Set<Target<?>> completedTargets, Map<Target<?>, Exception> failedTargets) {
 		
 		for (Prerequisites prerequisites : target.getPrerequisites()) {
 
@@ -301,28 +313,28 @@ final class TargetExecutor {
 				
 				if (prerequisite.getSubTarget() != null) {
 					
-					final Status subStatus = hasCompletedPrerequisites(prerequisite.getSubTarget(), completedTargets, failedTargets);
+					final PrerequisiteCompletion subStatus = hasCompletedPrerequisites(prerequisite.getSubTarget(), completedTargets, failedTargets);
 					
-					if (subStatus != Status.COMPLETE) {
+					if (subStatus.getStatus() != Status.COMPLETE) {
 						// System.out.println("## missing substatus " + prerequisite.getSubTarget() + "/" + subStatus);
 
 						return subStatus;
 					}
 					
 					if (failedTargets.containsKey(prerequisite.getSubTarget())) {
-						return Status.FAILED;
+						return new PrerequisiteCompletion(Status.FAILED, failedTargets.get(prerequisite.getSubTarget()));
 					}
 					else if (!completedTargets.contains(prerequisite.getSubTarget())) {
 						
 						// System.out.println("## missing subtarget " + prerequisite.getSubTarget());
 						
-						return Status.INCOMPLETE;
+						return new PrerequisiteCompletion(Status.INCOMPLETE);
 					}
 				}
 			}
 		}
 		
-		return Status.COMPLETE;
+		return new PrerequisiteCompletion(Status.COMPLETE);
 	}
 
 	
