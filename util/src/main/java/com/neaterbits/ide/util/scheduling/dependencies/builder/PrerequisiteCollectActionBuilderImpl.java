@@ -40,10 +40,10 @@ class PrerequisiteCollectActionBuilderImpl<CONTEXT extends TaskContext, TARGET, 
 	}
 
 	@Override
-	public PrerequisitesBuilder<CONTEXT, TARGET> collectToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
+	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> collectToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
 
 		prerequisiteBuilderState.setCollect(collect);
 		
-		return new PrerequisitesBuilderImpl<>(targetBuilderState);
+		return new PrerequisitesOrActionBuilderImpl<>(targetBuilderState);
 	}
 }

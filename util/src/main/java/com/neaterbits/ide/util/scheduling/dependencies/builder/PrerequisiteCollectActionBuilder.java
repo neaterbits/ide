@@ -9,5 +9,5 @@ public interface PrerequisiteCollectActionBuilder<CONTEXT extends TaskContext, T
 	PrerequisitesOrCollectBuilder<CONTEXT, TARGET, PRODUCT, ITEM>
 	buildBy(Consumer<TypedSubTargetBuilder<CONTEXT, PREREQUISITE>> prerequisiteTargets);
 
-	PrerequisitesBuilder<CONTEXT, TARGET> collectToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect);
+	PrerequisitesOrActionBuilder<CONTEXT, TARGET> collectToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect);
 }

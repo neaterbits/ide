@@ -5,6 +5,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.Constraint;
+import com.neaterbits.ide.util.scheduling.dependencies.PrerequisitesBuildSpec;
 
 final class PrerequisitesOrActionBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 		extends PrerequisitesBuilderImpl<CONTEXT, TARGET, FILE_TARGET>
@@ -26,6 +27,16 @@ final class PrerequisitesOrActionBuilderImpl<CONTEXT extends TaskContext, TARGET
 
 	PrerequisitesOrActionBuilderImpl(TargetBuilderState<CONTEXT, TARGET, FILE_TARGET> targetBuilderState) {
 		super(targetBuilderState);
+	}
+
+	@Override
+	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> withPrerequisites(PrerequisitesBuildSpec<CONTEXT, TARGET> buildSpec) {
+
+		final PrerequisitesBuilderImpl<CONTEXT, TARGET, ?> builder = new PrerequisitesBuilderImpl<>(getTargetBuilderState());
+		
+		buildSpec.buildSpec(builder);
+		
+		return this;
 	}
 
 	@Override
