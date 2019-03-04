@@ -11,7 +11,7 @@ public final class ShowInProjectsAction extends NavigateAction {
 	}
 
 	@Override
-	public boolean isApplicableInContexts(ActionContexts contexts) {
+	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
 		return true;
 	}
 }

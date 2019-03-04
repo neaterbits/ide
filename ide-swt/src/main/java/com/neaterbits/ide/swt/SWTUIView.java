@@ -20,19 +20,22 @@ import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.ui.controller.UIParameters;
 import com.neaterbits.ide.common.ui.menus.MenuEntry;
+import com.neaterbits.ide.common.ui.menus.MenuItemEntry;
 import com.neaterbits.ide.common.ui.menus.MenuListEntry;
+import com.neaterbits.ide.common.ui.menus.Menus;
 import com.neaterbits.ide.common.ui.menus.SubMenuEntry;
-import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
 import com.neaterbits.ide.common.ui.translation.Translator;
 import com.neaterbits.ide.common.ui.view.EditorsView;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
+import com.neaterbits.ide.common.ui.view.MapMenuItem;
 import com.neaterbits.ide.common.ui.view.NewableSelection;
 import com.neaterbits.ide.common.ui.view.BuildIssuesView;
 import com.neaterbits.ide.common.ui.view.ProjectView;
 import com.neaterbits.ide.common.ui.view.SearchResultsView;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
+import com.neaterbits.ide.common.ui.view.ViewMenuItem;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.Newable;
 import com.neaterbits.ide.component.common.NewableCategory;
@@ -62,7 +65,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 	
 	private boolean editorsMaximized;
 	
-	SWTUIView(Display display, UIParameters uiParameters, ProjectsModel projectModel) {
+	SWTUIView(Display display, UIParameters uiParameters, Menus menus, MapMenuItem mapMenuItem) {
 		
 		this.viewList = new SWTViewList();
 		
@@ -71,7 +74,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 		this.window = new Shell(display); 
 		window.setLayout(new FillLayout());
 		
-		final Menu menu = buildMenus(window, uiParameters);
+		final Menu menu = buildMenus(window, menus, mapMenuItem, uiParameters.getTranslator());
 		
 		window.setMenuBar(menu);
 		
@@ -106,7 +109,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 		this.projectView = new SWTProjectView(
 				viewList,
 				overviewTabFolder,
-				projectModel);
+				uiParameters.getUIModels().getProjectsModel());
 		
 		final GridData editorsGridData = new GridData();
 		
@@ -151,16 +154,16 @@ public final class SWTUIView implements UIViewAndSubViews {
 		return viewList;
 	}
 
-	private static Menu buildMenus(Shell shell, UIParameters uiParameters) {
+	private static Menu buildMenus(Shell shell, Menus menus, MapMenuItem mapMenuItems, Translator translator) {
 	
 		final Menu rootMenu = new Menu(shell, SWT.BAR);
 		
-		buildMenuList(shell, rootMenu, uiParameters.getMenus(), uiParameters.getTranslator());
+		buildMenuList(shell, rootMenu, menus, mapMenuItems, translator);
 		
 		return rootMenu;
 	}
 	
-	private static void buildMenuList(Shell shell, Menu menu, MenuListEntry list, Translator translator) {
+	private static void buildMenuList(Shell shell, Menu menu, MenuListEntry list, MapMenuItem mapMenuItems, Translator translator) {
 
 		for (MenuEntry entry : list.getEntries()) {
 			
@@ -173,10 +176,18 @@ public final class SWTUIView implements UIViewAndSubViews {
 				final Menu subMenu = new Menu(shell, SWT.DROP_DOWN);
 				menuItem.setMenu(subMenu);
 				
-				buildMenuList(shell, subMenu, (SubMenuEntry)entry, translator);
+				buildMenuList(shell, subMenu, (SubMenuEntry)entry, mapMenuItems, translator);
 			}
 			else {
 				menuItem = new MenuItem(menu, SWT.PUSH);
+				
+				mapMenuItems.accept((MenuItemEntry)entry, new ViewMenuItem() {
+					@Override
+					public void setEnabled(boolean enabled) {
+						menuItem.setEnabled(enabled);
+					}
+				});
+				
 			}
 
 			menuItem.setText(translator.translate(entry));

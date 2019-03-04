@@ -3,7 +3,6 @@ package com.neaterbits.ide.common.ui.controller;
 import java.util.Objects;
 
 import com.neaterbits.ide.common.ui.keys.KeyBindings;
-import com.neaterbits.ide.common.ui.menus.Menus;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.translation.Translator;
 
@@ -11,19 +10,19 @@ public final class UIParameters {
 
 	private final Translator translator;
 	private final KeyBindings keyBindings;
-	private final Menus menus;
+	private final UIModels uiModels;
 	private final TextEditorConfig textEditorConfig;
 
-	public UIParameters(Translator translator, KeyBindings keyBindings, Menus menus, TextEditorConfig textEditorConfig) {
+	public UIParameters(Translator translator, KeyBindings keyBindings, UIModels uiModels, TextEditorConfig textEditorConfig) {
 		
 		Objects.requireNonNull(translator);
 		Objects.requireNonNull(keyBindings);
-		Objects.requireNonNull(menus);
+		Objects.requireNonNull(uiModels);
 		Objects.requireNonNull(textEditorConfig);
 		
 		this.translator = translator;
 		this.keyBindings = keyBindings;
-		this.menus = menus;
+		this.uiModels = uiModels;
 		this.textEditorConfig = textEditorConfig;
 	}
 
@@ -35,8 +34,8 @@ public final class UIParameters {
 		return keyBindings;
 	}
 
-	public Menus getMenus() {
-		return menus;
+	public UIModels getUIModels() {
+		return uiModels;
 	}
 
 	public TextEditorConfig getTextEditorConfig() {

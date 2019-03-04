@@ -4,6 +4,6 @@ import com.neaterbits.ide.common.ui.view.View;
 
 public interface ViewFocusListener {
 
-	void onViewFocused(View view);
+	void onViewFocusChange(View view);
 	
 }

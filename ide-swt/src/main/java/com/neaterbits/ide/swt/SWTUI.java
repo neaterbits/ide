@@ -8,7 +8,8 @@ import org.eclipse.swt.widgets.Listener;
 import com.neaterbits.ide.common.ui.UI;
 import com.neaterbits.ide.common.ui.ViewFocusListener;
 import com.neaterbits.ide.common.ui.controller.UIParameters;
-import com.neaterbits.ide.common.ui.model.ProjectsModel;
+import com.neaterbits.ide.common.ui.menus.Menus;
+import com.neaterbits.ide.common.ui.view.MapMenuItem;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.util.scheduling.ForwardToCaller;
@@ -36,11 +37,13 @@ public class SWTUI implements UI {
 	
 
 	@Override
-	public UIViewAndSubViews makeUIView(UIParameters uiParameters, ProjectsModel projectModel) {
+	public UIViewAndSubViews makeUIView(UIParameters uiParameters, Menus menus, MapMenuItem mapMenuItem) {
 	
-		return new SWTUIView(display, uiParameters, projectModel);
+		return new SWTUIView(display, uiParameters, menus, mapMenuItem);
 	}
 
+	private View focusedView = null;
+	
 	@Override
 	public void addFocusListener(ViewFocusListener focusListener) {
 		display.addFilter(SWT.FocusIn, new Listener() {
@@ -48,10 +51,30 @@ public class SWTUI implements UI {
 			@Override
 			public void handleEvent(Event event) {
 
-				final View focusedView = SWTViewList.findSelectedView(event.widget);
+				focusedView = SWTViewList.findView(event.widget);
 				
 				if (focusedView != null) {
-					focusListener.onViewFocused(focusedView);
+					focusListener.onViewFocusChange(focusedView);
+				}
+			}
+		});
+
+		display.addFilter(SWT.FocusOut, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+
+				final View view = SWTViewList.findView(event.widget);
+				
+				if (view != null) {
+					
+					if (view != focusedView) {
+						throw new IllegalStateException();
+					}
+					
+					focusedView = null;
+
+					focusListener.onViewFocusChange(null);
 				}
 			}
 		});

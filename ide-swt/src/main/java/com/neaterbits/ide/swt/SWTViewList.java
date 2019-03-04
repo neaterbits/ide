@@ -23,7 +23,7 @@ final class SWTViewList extends ViewList {
 		control.addDisposeListener(event -> removeView(impl));
 	}
 	
-	static View findSelectedView(Widget widget) {
+	static View findView(Widget widget) {
 		
 		for (Control control = (Control)widget; control != null; control = control.getParent()) {
 			

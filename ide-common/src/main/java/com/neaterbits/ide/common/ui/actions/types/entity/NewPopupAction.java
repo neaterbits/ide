@@ -12,7 +12,7 @@ public final class NewPopupAction extends NewAction {
 	}
 
 	@Override
-	public boolean isApplicableInContexts(ActionContexts contexts) {
+	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
 		return true;
 	}
 }

@@ -46,8 +46,6 @@ final class SWTProjectView extends SWTView implements ProjectView {
 
 		this.composite = new Composite(tabFolder, SWT.NONE);
 		
-		viewList.addView(this, composite);
-
 		tabItem.setControl(composite);
 		
 		this.composite.setLayout(new FillLayout());
@@ -57,7 +55,7 @@ final class SWTProjectView extends SWTView implements ProjectView {
 		this.treeViewer = new TreeViewer(this.composite);
 		
 		this.projectModel = projectModel;
-		
+
 		projectModel.addListener(new ProjectModelListener() {
 			
 			@Override
@@ -94,6 +92,8 @@ final class SWTProjectView extends SWTView implements ProjectView {
 		treeViewer.setSorter(new TreePathViewerSorter());
 		
 		treeViewer.setExpandedElements(new Object [] { projectModel.getRoot() });
+
+		viewList.addView(this, composite);
 	}
 	
 	Composite getComposite() {
@@ -121,6 +121,9 @@ final class SWTProjectView extends SWTView implements ProjectView {
 
 	@Override
 	public void addActionContextListener(ActionContextListener listener) {
+
+		Objects.requireNonNull(listener);
+		
 		treeViewer.addSelectionChangedListener(event -> listener.onUpdated(getActiveActionContexts()));
 	}
 

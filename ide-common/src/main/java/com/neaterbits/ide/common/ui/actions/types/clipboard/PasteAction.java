@@ -12,7 +12,7 @@ public final class PasteAction extends ClipboardAction {
 	}
 
 	@Override
-	public boolean isApplicableInContexts(ActionContexts contexts) {
+	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
 		// TODO Auto-generated method stub
 		return false;
 	}

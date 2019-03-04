@@ -13,7 +13,7 @@ public class MinMaxEditorsAction extends Action {
 	}
 
 	@Override
-	public boolean isApplicableInContexts(ActionContexts contexts) {
+	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
 		return true;
 	}
 }

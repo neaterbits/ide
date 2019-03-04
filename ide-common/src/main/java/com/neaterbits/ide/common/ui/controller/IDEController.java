@@ -2,8 +2,10 @@ package com.neaterbits.ide.common.ui.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,6 +27,7 @@ import com.neaterbits.ide.common.ui.keys.Key;
 import com.neaterbits.ide.common.ui.keys.KeyBindings;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
 import com.neaterbits.ide.common.ui.menus.IDEMenus;
+import com.neaterbits.ide.common.ui.menus.MenuItemEntry;
 import com.neaterbits.ide.common.ui.menus.Menus;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
@@ -32,6 +35,7 @@ import com.neaterbits.ide.common.ui.translation.Translator;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.common.ui.view.View;
+import com.neaterbits.ide.common.ui.view.ViewMenuItem;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.IDEComponents;
 import com.neaterbits.ide.util.IOUtil;
@@ -41,6 +45,8 @@ public final class IDEController implements ComponentIDEAccess {
 
 	private final BuildRoot buildRoot;
 	private final EditUIController uiController;
+	
+	private final Map<MenuItemEntry, ViewMenuItem> menuMap;
 	
 	private View focusedView;
 	
@@ -55,9 +61,14 @@ public final class IDEController implements ComponentIDEAccess {
 		final Translator uiTranslator = new IDETranslator();
 		final Menus menus = IDEMenus.makeMenues();
 		final KeyBindings keyBindings = IDEKeyBindings.makeKeyBindings();
-		final UIParameters uiParameters = new UIParameters(uiTranslator, keyBindings, menus, config);
 		
-		final UIViewAndSubViews uiView = ui.makeUIView(uiParameters, projectModel);
+		final UIModels uiModels = new UIModels(projectModel);
+		
+		final UIParameters uiParameters = new UIParameters(uiTranslator, keyBindings, uiModels, config);
+		
+		this.menuMap = new HashMap<>();
+		
+		final UIViewAndSubViews uiView = ui.makeUIView(uiParameters, menus, menuMap::put);
 		
 		this.uiController = new EditUIController(uiView, projectModel, ideComponents);
 		
@@ -79,12 +90,9 @@ public final class IDEController implements ComponentIDEAccess {
 			public void onKeyPress(Key key, KeyMask mask) {
 				final Action action = keyBindings.findAction(key, mask);
 				
-				
 				if (action != null) {
 
-					final ActionContexts actionContexts = getActionContexts();
-					
-					if (action.isApplicableInContexts(actionContexts)) {
+					if (action.isApplicableInContexts(getFocusedViewActionContexts(), getAllActionContexts(uiView))) {
 					
 						final ActionExecuteParameters parameters = new ActionExecuteParametersImpl(actionExecuteState, uiController.getCurrentEditedFile());
 					
@@ -95,58 +103,53 @@ public final class IDEController implements ComponentIDEAccess {
 		});
 
 		uiView.getViewList().addActionContextViewListener((view, updatedContexts) -> {
-			
-			// Change menu enabled state
-			
+			updateMenuItemsEnabledState(uiView);
 		});
+
+		// initial update
+		updateMenuItemsEnabledState(uiView);
 		
 		ui.addFocusListener(view -> {
 			focusedView = view;
 		});
+	
 	}
 	
-	private ActionContexts getActionContexts() {
-		
-		final ActionContexts actionContexts;
-		
-		if (focusedView == null) {
-			actionContexts = new ActionContexts() {
-				@Override
-				public <T extends ActionContext> T getOfType(Class<T> cl) {
-					
-					Objects.requireNonNull(cl);
-					
-					return null;
-				}
-			};
-		}
-		else {
-			
-			final Map<Class<?>, ActionContext> map = new HashMap<>();
+	private void updateMenuItemsEnabledState(UIViewAndSubViews uiView) {
 
-			final Collection<ActionContext> activeActionContexts = focusedView.getActiveActionContexts();
-			
-			if (activeActionContexts != null && !activeActionContexts.isEmpty()) {
-				for (ActionContext actionContext : activeActionContexts) {
-					map.put(actionContext.getClass(), actionContext);
-				}
-			}
-
-			actionContexts = new ActionContexts() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public <T extends ActionContext> T getOfType(Class<T> cl) {
-					
-					Objects.requireNonNull(cl);
-					
-					return (T)map.get(cl);
-				}
-			};
-		}
+		final ActionContexts focusedViewActionContexts = getFocusedViewActionContexts();
+		final ActionContexts allActionContexts = getAllActionContexts(uiView);
 		
-		return actionContexts;
+		// Change menu enabled state depending on applicable contexts
+		for (MenuItemEntry entry : menuMap.keySet()) {
+			final boolean applicable = entry.isApplicableInContexts(focusedViewActionContexts, allActionContexts);
+		
+			final ViewMenuItem viewMenuItem = menuMap.get(entry);
+		
+			viewMenuItem.setEnabled(applicable);
+		}
+	}
+	
+	private ActionContexts getFocusedViewActionContexts() {
+		return new ActionContextsImpl(focusedView != null ? focusedView.getActiveActionContexts() : null);
 	}
 
+	private static ActionContexts getAllActionContexts(UIViewAndSubViews uiViews) {
+		
+		final List<ActionContext> actionContexts = new ArrayList<>();
+		
+		for (View view : uiViews.getViewList().getViews()) {
+			
+			final Collection<ActionContext> viewActionContexts = view.getActiveActionContexts();
+			
+			if (viewActionContexts != null) {
+				actionContexts.addAll(viewActionContexts);
+			}
+		}
+		
+		return new ActionContextsImpl(actionContexts);
+	}
+	
 	@Override
 	public void writeAndOpenFile(
 			String projectName,

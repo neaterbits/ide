@@ -60,7 +60,7 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	@Override
 	public final Collection<ActionContext> getActiveActionContexts() {
 
-		return getActiveActionContexts(false);
+		return getActiveActionContexts(hasSelectedText());
 	}
 
 	private Collection<ActionContext> getActiveActionContexts(boolean hasSelectedText) {

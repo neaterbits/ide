@@ -2,9 +2,10 @@ package com.neaterbits.ide.common.ui.menus;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.BuiltinAction;
 
-public final class BuiltinActionMenuEntry extends MenuEntry {
+public final class BuiltinActionMenuEntry extends MenuItemEntry {
 
 	private final BuiltinAction action;
 
@@ -17,6 +18,10 @@ public final class BuiltinActionMenuEntry extends MenuEntry {
 
 	public BuiltinAction getAction() {
 		return action;
+	}
+
+	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
+		return action.getAction().isApplicableInContexts(focusedViewContexts, allContexts);
 	}
 
 	@Override

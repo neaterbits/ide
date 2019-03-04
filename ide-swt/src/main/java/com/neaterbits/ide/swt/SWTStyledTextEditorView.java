@@ -48,7 +48,6 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 			});
 		}
 		
-		
 		configure(textWidget);
 
 		viewList.addView(this, textWidget);
