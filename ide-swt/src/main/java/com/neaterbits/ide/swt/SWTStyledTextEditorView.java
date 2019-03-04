@@ -52,7 +52,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 
 		viewList.addView(this, textWidget);
 	}
-	
+
 	@Override
 	public void setCurrentText(Text text) {
 		setWidgetText(text.asString());
@@ -115,6 +115,21 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 				textSelectionListener.onTextSelectionChange(hasSelectedText());
 			}
 		});
+	}
+
+	@Override
+	public void cut() {
+		textWidget.cut();
+	}
+
+	@Override
+	public void copy() {
+		textWidget.copy();
+	}
+
+	@Override
+	public void paste() {
+		textWidget.paste();
 	}
 
 	@Override

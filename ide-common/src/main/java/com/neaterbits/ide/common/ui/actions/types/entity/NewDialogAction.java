@@ -3,6 +3,7 @@ package com.neaterbits.ide.common.ui.actions.types.entity;
 import java.util.List;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.view.NewableSelection;
@@ -39,7 +40,7 @@ public final class NewDialogAction extends NewAction {
 	}
 
 	@Override
-	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
+	public boolean isApplicableInContexts(ActionApplicableParameters parameters, ActionContexts focusedViewContexts, ActionContexts allContexts) {
 		return true;
 	}
 }

@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Objects;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,6 +32,7 @@ import com.neaterbits.ide.common.ui.translation.Translator;
 import com.neaterbits.ide.common.ui.view.EditorsView;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.MapMenuItem;
+import com.neaterbits.ide.common.ui.view.MenuSelectionListener;
 import com.neaterbits.ide.common.ui.view.NewableSelection;
 import com.neaterbits.ide.common.ui.view.BuildIssuesView;
 import com.neaterbits.ide.common.ui.view.ProjectView;
@@ -181,13 +184,24 @@ public final class SWTUIView implements UIViewAndSubViews {
 			else {
 				menuItem = new MenuItem(menu, SWT.PUSH);
 				
-				mapMenuItems.accept((MenuItemEntry)entry, new ViewMenuItem() {
+				final ViewMenuItem viewMenuItem = new ViewMenuItem() {
 					@Override
 					public void setEnabled(boolean enabled) {
 						menuItem.setEnabled(enabled);
 					}
-				});
+				};
 				
+				final MenuItemEntry menuItemEntry = (MenuItemEntry)entry;
+				
+				final MenuSelectionListener listener = mapMenuItems.apply((MenuItemEntry)entry, viewMenuItem);
+				
+				menuItem.addSelectionListener(new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(SelectionEvent event) {
+						listener.onMenuItemSelected(menuItemEntry);
+					}
+				});
 			}
 
 			menuItem.setText(translator.translate(entry));

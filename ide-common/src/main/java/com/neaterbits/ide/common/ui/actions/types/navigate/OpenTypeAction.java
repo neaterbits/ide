@@ -12,6 +12,7 @@ import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
+import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
@@ -36,7 +37,7 @@ public class OpenTypeAction extends NavigateAction {
 	}
 
 	@Override
-	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
+	public boolean isApplicableInContexts(ActionApplicableParameters parameters, ActionContexts focusedViewContexts, ActionContexts allContexts) {
 		return true;
 	}
 

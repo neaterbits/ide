@@ -10,6 +10,7 @@ import com.neaterbits.ide.common.ui.ViewFocusListener;
 import com.neaterbits.ide.common.ui.controller.UIParameters;
 import com.neaterbits.ide.common.ui.menus.Menus;
 import com.neaterbits.ide.common.ui.view.MapMenuItem;
+import com.neaterbits.ide.common.ui.view.SystemClipboard;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.util.scheduling.ForwardToCaller;
@@ -18,10 +19,13 @@ public class SWTUI implements UI {
 
 	private final Display display;
 	
+	private final SWTSystemClipboard systemClipboard;
+	
 	public SWTUI() {
 	
 		this.display = Display.getDefault();
 
+		this.systemClipboard = new SWTSystemClipboard(display);
 	}
 	
 	@Override
@@ -35,6 +39,10 @@ public class SWTUI implements UI {
 		};
 	}
 	
+	@Override
+	public SystemClipboard getSystemClipboard() {
+		return systemClipboard;
+	}
 
 	@Override
 	public UIViewAndSubViews makeUIView(UIParameters uiParameters, Menus menus, MapMenuItem mapMenuItem) {

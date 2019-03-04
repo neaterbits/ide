@@ -2,7 +2,9 @@ package com.neaterbits.ide.common.ui.menus;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
+import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.actions.BuiltinAction;
 
 public final class BuiltinActionMenuEntry extends MenuItemEntry {
@@ -20,8 +22,14 @@ public final class BuiltinActionMenuEntry extends MenuItemEntry {
 		return action;
 	}
 
-	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
-		return action.getAction().isApplicableInContexts(focusedViewContexts, allContexts);
+	@Override
+	public boolean isApplicableInContexts(ActionApplicableParameters parameters, ActionContexts focusedViewContexts, ActionContexts allContexts) {
+		return action.getAction().isApplicableInContexts(parameters, focusedViewContexts, allContexts);
+	}
+
+	@Override
+	public void execute(ActionExecuteParameters parameters) {
+		action.getAction().execute(parameters);
 	}
 
 	@Override

@@ -1,19 +1,41 @@
 package com.neaterbits.ide.common.ui.actions.types.clipboard;
 
+import com.neaterbits.ide.common.model.clipboard.ClipboardDataType;
+import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
+import com.neaterbits.ide.common.ui.actions.contexts.ClipboardPasteableContext;
 
 public final class PasteAction extends ClipboardAction {
 
 	@Override
 	public void execute(ActionExecuteParameters parameters) {
-		// TODO Auto-generated method stub
 		
+		parameters.getFocusedView().paste();
 	}
 
 	@Override
-	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isApplicableInContexts(ActionApplicableParameters parameters, ActionContexts focusedViewContexts, ActionContexts allContexts) {
+		
+		final ClipboardPasteableContext context = focusedViewContexts.getOfType(ClipboardPasteableContext.class);
+		
+		boolean applicable;
+		
+		if (context == null) {
+			applicable = false;
+		}
+		else {
+			
+			applicable = false;
+			
+			for (ClipboardDataType dataType : context.getPasteableDataTypes()) {
+				if (parameters.getClipboard().hasDataType(dataType)) {
+					applicable = true;
+					break;
+				}
+			}
+		}
+
+		return applicable;
 	}
 }

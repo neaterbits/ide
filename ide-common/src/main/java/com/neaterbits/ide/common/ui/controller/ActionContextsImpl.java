@@ -43,7 +43,7 @@ final class ActionContextsImpl implements ActionContexts {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ActionContext> Collection<T> getOfType(Class<T> cl) {
+	public <T extends ActionContext> Collection<T> getListOfType(Class<T> cl) {
 		
 		Objects.requireNonNull(cl);
 		
@@ -62,6 +62,40 @@ final class ActionContextsImpl implements ActionContexts {
 		return result;
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends ActionContext> T getOfType(Class<T> cl) {
+		final T result;
+		
+		if (map == null) {
+			result = null;
+		}
+		else {
+			final List<ActionContext> list = map.get(cl);
+			
+			if (list == null) {
+				result = null;
+			}
+			else {
+				switch (list.size()) {
+				case 0:
+					result = null;
+					break;
+					
+				case 1:
+					result = (T)list.get(0);
+					break;
+					
+				default:
+					throw new UnsupportedOperationException();
+				}
+			}
+		}
+		
+		return result;
+	}
+
 	@Override
 	public boolean hasOfType(Class<?> cl) {
 

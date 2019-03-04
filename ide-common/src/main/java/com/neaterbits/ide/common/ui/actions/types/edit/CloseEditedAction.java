@@ -1,6 +1,7 @@
 package com.neaterbits.ide.common.ui.actions.types.edit;
 
 import com.neaterbits.ide.common.ui.actions.Action;
+import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 
@@ -13,7 +14,7 @@ public class CloseEditedAction extends Action {
 	}
 
 	@Override
-	public boolean isApplicableInContexts(ActionContexts focusedViewContexts, ActionContexts allContexts) {
+	public boolean isApplicableInContexts(ActionApplicableParameters parameters, ActionContexts focusedViewContexts, ActionContexts allContexts) {
 		return true;
 	}
 }

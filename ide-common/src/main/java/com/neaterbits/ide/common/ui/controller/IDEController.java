@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.ide.common.build.model.BuildRoot;
+import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.resource.NamespaceResource;
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileHolderResourcePath;
@@ -19,6 +20,7 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.ui.UI;
 import com.neaterbits.ide.common.ui.actions.Action;
+import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
@@ -33,6 +35,7 @@ import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.translation.Translator;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
+import com.neaterbits.ide.common.ui.view.MenuSelectionListener;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.common.ui.view.ViewMenuItem;
@@ -45,6 +48,9 @@ public final class IDEController implements ComponentIDEAccess {
 
 	private final BuildRoot buildRoot;
 	private final EditUIController uiController;
+	
+	private final ActionExecuteState actionExecuteState;
+	private final ActionApplicableParameters actionApplicableParameters;
 	
 	private final Map<MenuItemEntry, ViewMenuItem> menuMap;
 	
@@ -68,17 +74,30 @@ public final class IDEController implements ComponentIDEAccess {
 		
 		this.menuMap = new HashMap<>();
 		
-		final UIViewAndSubViews uiView = ui.makeUIView(uiParameters, menus, menuMap::put);
+		final MenuSelectionListener menuListener = menuItemEntry -> {
+			callMenuItemAction(menuItemEntry);
+		};
+		
+		final UIViewAndSubViews uiView = ui.makeUIView(uiParameters, menus, (menuItemEntry, viewMenuItem) -> {
+			menuMap.put(menuItemEntry, viewMenuItem);
+			
+			return menuListener;
+		});
 		
 		this.uiController = new EditUIController(uiView, projectModel, ideComponents);
 		
-		final ActionExecuteState actionExecuteState = new ActionExecuteState(
+		final Clipboard clipboard = new ClipboardImpl(ui.getSystemClipboard());
+		
+		this.actionExecuteState = new ActionExecuteState(
 				ideComponents,
 				uiView,
+				clipboard,
 				this,
 				buildRoot,
 				uiController);
 
+		this.actionApplicableParameters = new ActionApplicableParametersImpl(actionExecuteState);
+		
 		uiView.addKeyEventListener(new KeyEventListener() {
 			
 			@Override
@@ -91,38 +110,63 @@ public final class IDEController implements ComponentIDEAccess {
 				final Action action = keyBindings.findAction(key, mask);
 				
 				if (action != null) {
-
-					if (action.isApplicableInContexts(getFocusedViewActionContexts(), getAllActionContexts(uiView))) {
 					
-						final ActionExecuteParameters parameters = new ActionExecuteParametersImpl(actionExecuteState, uiController.getCurrentEditedFile());
 					
-						action.execute(parameters);
+					if (action.isApplicableInContexts(
+							actionApplicableParameters,
+							getFocusedViewActionContexts(),
+							getAllActionContexts(uiView))) {
+					
+					
+						action.execute(makeActionExecuteParameters());
 					}
 				}
 			}
 		});
 
 		uiView.getViewList().addActionContextViewListener((view, updatedContexts) -> {
-			updateMenuItemsEnabledState(uiView);
+			updateMenuItemsEnabledState(uiView, actionApplicableParameters);
 		});
 
 		// initial update
-		updateMenuItemsEnabledState(uiView);
+		updateMenuItemsEnabledState(uiView, actionApplicableParameters);
 		
 		ui.addFocusListener(view -> {
 			focusedView = view;
+			
+			updateMenuItemsEnabledState(uiView, actionApplicableParameters);
 		});
 	
 	}
 	
-	private void updateMenuItemsEnabledState(UIViewAndSubViews uiView) {
+	private ActionExecuteParameters makeActionExecuteParameters() {
+		
+		final ActionExecuteParameters parameters = new ActionExecuteParametersImpl(
+				actionExecuteState,
+				focusedView,
+				uiController.getCurrentEditedFile());
+	
+		return parameters;
+	}
+	
+	private void callMenuItemAction(MenuItemEntry menuItem) {
+		
+		Objects.requireNonNull(menuItem);
+		
+		menuItem.execute(makeActionExecuteParameters());
+	}
+	
+	private void updateMenuItemsEnabledState(UIViewAndSubViews uiView, ActionApplicableParameters applicableParameters) {
 
 		final ActionContexts focusedViewActionContexts = getFocusedViewActionContexts();
 		final ActionContexts allActionContexts = getAllActionContexts(uiView);
 		
 		// Change menu enabled state depending on applicable contexts
 		for (MenuItemEntry entry : menuMap.keySet()) {
-			final boolean applicable = entry.isApplicableInContexts(focusedViewActionContexts, allActionContexts);
+			final boolean applicable = entry.isApplicableInContexts(
+					applicableParameters,
+					focusedViewActionContexts,
+					allActionContexts);
 		
 			final ViewMenuItem viewMenuItem = menuMap.get(entry);
 		

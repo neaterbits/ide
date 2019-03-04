@@ -1,6 +1,7 @@
 package com.neaterbits.ide.swt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -13,8 +14,11 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.ide.common.model.clipboard.ClipboardDataType;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
+import com.neaterbits.ide.common.ui.actions.contexts.ClipboardPasteableContext;
+import com.neaterbits.ide.common.ui.actions.contexts.ClipboardSelectionContext;
 import com.neaterbits.ide.common.ui.actions.contexts.EditorContext;
 import com.neaterbits.ide.common.ui.actions.contexts.EditorSelectionContext;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
@@ -68,9 +72,11 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		final List<ActionContext> actionContexts = new ArrayList<>();
 		
 		actionContexts.add(new EditorContext(sourceFile));
+		actionContexts.add(new ClipboardPasteableContext(Arrays.asList(ClipboardDataType.TEXT)));
 		
 		if (hasSelectedText) {
 			actionContexts.add(new EditorSelectionContext());
+			actionContexts.add(new ClipboardSelectionContext(ClipboardDataType.TEXT));
 		}
 		
 		return actionContexts;
@@ -238,6 +244,11 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		setCursorPos(caretPosition + newline.length());
 	}
 
+	@Override
+	public final Collection<ClipboardDataType> getSupportedPasteDataTypes() {
+		return Arrays.asList(ClipboardDataType.TEXT);
+	}
+	
 	@Override
 	final SourceFileResourcePath getSourceFile() {
 		return sourceFile;
