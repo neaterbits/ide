@@ -61,31 +61,6 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 		this.prerequisites = new ArrayList<>();
 	}
 	
-	final Class<TARGET> getType() {
-		return targetType;
-	}
-
-	final String getTargetName() {
-		return targetName;
-	}
-	
-	final FILE_TARGET getFileTarget(CONTEXT context, TARGET target) {
-		return getFileTarget.apply(context, target);
-	}
-
-	final Class<FILE_TARGET> getFileTargetType() {
-		return fileTargetType;
-	}
-
-	final Function<FILE_TARGET, File> getFile() {
-		return file;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	final String getDescription(Object target) {
-		return (String)((Function)description).apply(target);
-	}
-
 	final void addPrerequisiteBuilder(PrerequisiteBuilderState<CONTEXT, TARGET, ?, ?> builder) {
 		
 		Objects.requireNonNull(builder);
