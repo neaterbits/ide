@@ -20,11 +20,11 @@ public class SWTBuildIssuesView extends SWTView implements BuildIssuesView {
 
 	private final TableViewer tableViewer;
 	
-	public SWTBuildIssuesView(TabFolder tabFolder) {
+	public SWTBuildIssuesView(SWTViewList viewList, TabFolder tabFolder) {
 		
 		this.tableViewer = new TableViewer(tabFolder);
 
-		setIDEView(this, tableViewer.getTable());
+		viewList.addView(this, tableViewer.getTable());
 
 		// final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		

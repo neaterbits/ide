@@ -28,7 +28,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	
 	private int textChangeEventsSinceSetWidgetText = 0;
 	
-	SWTStyledTextEditorView(TabFolder composite, TextEditorConfig config, TextStylingModel textStylingModel, SourceFileResourcePath sourceFile) {
+	SWTStyledTextEditorView(SWTViewList viewList, TabFolder composite, TextEditorConfig config, TextStylingModel textStylingModel, SourceFileResourcePath sourceFile) {
 		super(composite, config, sourceFile);
 
 		this.textWidget = new StyledText(composite, SWT.NONE);
@@ -51,7 +51,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		
 		configure(textWidget);
 
-		setIDEView(this, textWidget);
+		viewList.addView(this, textWidget);
 	}
 	
 	@Override

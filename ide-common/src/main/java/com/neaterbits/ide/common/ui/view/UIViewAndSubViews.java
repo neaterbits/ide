@@ -9,4 +9,7 @@ public interface UIViewAndSubViews extends UIView {
 	BuildIssuesView getBuildIssuesView();
 	
 	SearchResultsView getSearchView();
+	
+	ViewList getViewList();
+
 }

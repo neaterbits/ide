@@ -19,6 +19,7 @@ import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
 public final class SWTEditorsView extends SWTView implements EditorsView {
 
+	private final SWTViewList viewList;
 	private final TextEditorConfig config;
 	private final TabFolder tabFolder;
 	
@@ -26,12 +27,13 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 	
 	private final Map<SourceFileResourcePath, SWTEditorView> editorViews;
 	
-	public SWTEditorsView(Composite composite, TextEditorConfig config) {
+	public SWTEditorsView(SWTViewList viewList, Composite composite, TextEditorConfig config) {
 		
+		this.viewList = viewList;
 		this.config = config;
 		this.tabFolder = new TabFolder(composite, SWT.NONE);
 		
-		setIDEView(this, tabFolder);
+		viewList.addView(this, tabFolder);
 
 		// this.composite = new Composite(composite, SWT.NONE);
 		
@@ -53,7 +55,7 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 		
 		if (editorView == null) {
 				
-			editorView = new SWTStyledTextEditorView(this.tabFolder, config, textStylingModel, sourceFile);
+			editorView = new SWTStyledTextEditorView(viewList, this.tabFolder, config, textStylingModel, sourceFile);
 			
 			editorViews.put(sourceFile, editorView);
 		}

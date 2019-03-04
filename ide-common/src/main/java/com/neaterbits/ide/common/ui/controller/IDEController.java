@@ -94,6 +94,12 @@ public final class IDEController implements ComponentIDEAccess {
 			}
 		});
 
+		uiView.getViewList().addActionContextViewListener((view, updatedContexts) -> {
+			
+			// Change menu enabled state
+			
+		});
+		
 		ui.addFocusListener(view -> {
 			focusedView = view;
 		});

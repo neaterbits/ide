@@ -23,7 +23,7 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 
 	private com.neaterbits.ide.util.ui.text.Text currentText;
 	
-	SWTTextEditorView(TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
+	SWTTextEditorView(SWTViewList viewList, TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
 
 		super(composite, config, sourceFile);
 
@@ -31,7 +31,7 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 		
 		configure(textWidget);
 		
-		setIDEView(this, textWidget);
+		viewList.addView(this, textWidget);
 	}
 
 	@Override

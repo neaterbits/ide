@@ -37,6 +37,7 @@ public class SWTUI implements UI {
 
 	@Override
 	public UIViewAndSubViews makeUIView(UIParameters uiParameters, ProjectsModel projectModel) {
+	
 		return new SWTUIView(display, uiParameters, projectModel);
 	}
 
@@ -47,7 +48,7 @@ public class SWTUI implements UI {
 			@Override
 			public void handleEvent(Event event) {
 
-				final View focusedView = SWTView.findSelectedView(event.widget);
+				final View focusedView = SWTViewList.findSelectedView(event.widget);
 				
 				if (focusedView != null) {
 					focusListener.onViewFocused(focusedView);

@@ -42,6 +42,7 @@ import com.neaterbits.ide.ui.swt.SWTUIContext;
 
 public final class SWTUIView implements UIViewAndSubViews {
 
+	private final SWTViewList viewList;
 	private final Display display;
 	private final Shell window;
 	
@@ -63,10 +64,11 @@ public final class SWTUIView implements UIViewAndSubViews {
 	
 	SWTUIView(Display display, UIParameters uiParameters, ProjectsModel projectModel) {
 		
+		this.viewList = new SWTViewList();
+		
 		this.display = display;
 		
 		this.window = new Shell(display); 
-		
 		window.setLayout(new FillLayout());
 		
 		final Menu menu = buildMenus(window, uiParameters);
@@ -74,7 +76,6 @@ public final class SWTUIView implements UIViewAndSubViews {
 		window.setMenuBar(menu);
 		
 		this.composite = new Composite(window, SWT.NONE);
-		
 		composite.setLayout(new GridLayout(4, false));
 
 		this.overviewTabFolder = new TabFolder(composite, SWT.NONE);
@@ -103,6 +104,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 		// overviewComposite.setLayout(new FillLayout());
 		
 		this.projectView = new SWTProjectView(
+				viewList,
 				overviewTabFolder,
 				projectModel);
 		
@@ -116,7 +118,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 		editorsGridData.grabExcessVerticalSpace = true;
 		editorsGridData.verticalAlignment = SWT.FILL;
 		
-		this.editorsView = new SWTEditorsView(composite, uiParameters.getTextEditorConfig());
+		this.editorsView = new SWTEditorsView(viewList, composite, uiParameters.getTextEditorConfig());
 		
 		editorsView.getTabFolder().setLayoutData(editorsGridData);
 
@@ -131,7 +133,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 		
 		detailsTabFolder.setLayoutData(detailsGridData);
 
-		this.buildIssuesView = new SWTBuildIssuesView(detailsTabFolder);
+		this.buildIssuesView = new SWTBuildIssuesView(viewList, detailsTabFolder);
 		
 		window.addDisposeListener(event -> System.exit(0));
 		
@@ -144,7 +146,11 @@ public final class SWTUIView implements UIViewAndSubViews {
 		this.editorsMaximized = false;
 	}
 	
-	
+	@Override
+	public SWTViewList getViewList() {
+		return viewList;
+	}
+
 	private static Menu buildMenus(Shell shell, UIParameters uiParameters) {
 	
 		final Menu rootMenu = new Menu(shell, SWT.BAR);

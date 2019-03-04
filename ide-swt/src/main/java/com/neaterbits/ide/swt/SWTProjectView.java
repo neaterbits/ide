@@ -38,7 +38,7 @@ final class SWTProjectView extends SWTView implements ProjectView {
 	
 	private final ProjectsModel projectModel;
 	
-	SWTProjectView(TabFolder tabFolder, ProjectsModel projectModel) {
+	SWTProjectView(SWTViewList viewList, TabFolder tabFolder, ProjectsModel projectModel) {
 
 		final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		
@@ -46,7 +46,7 @@ final class SWTProjectView extends SWTView implements ProjectView {
 
 		this.composite = new Composite(tabFolder, SWT.NONE);
 		
-		setIDEView(this, composite);
+		viewList.addView(this, composite);
 
 		tabItem.setControl(composite);
 		
