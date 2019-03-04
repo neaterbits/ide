@@ -17,6 +17,10 @@ public class Key {
 	private final char character;
 	private final int keyCode;
 
+	public Key(char character) {
+		this(character, -1);
+	}
+
 	public Key(char character, int keyCode) {
 		this.character = character;
 		this.keyCode = keyCode;
@@ -28,5 +32,52 @@ public class Key {
 
 	public int getKeyCode() {
 		return keyCode;
+	}
+	
+	public boolean matches(Key other) {
+		
+		final boolean matches;
+		
+		if (keyCode != -1 && other.keyCode != -1) {
+			matches = keyCode == other.keyCode;
+		}
+		else if (character != -1 && other.character != -1) {
+			matches = character == other.character;
+		}
+		else {
+			matches = false;
+		}
+		
+		return matches;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + character;
+		result = prime * result + keyCode;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Key other = (Key) obj;
+		if (character != other.character)
+			return false;
+		if (keyCode != other.keyCode)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Key [character=" + character + ", keyCode=" + keyCode + "]";
 	}
 }

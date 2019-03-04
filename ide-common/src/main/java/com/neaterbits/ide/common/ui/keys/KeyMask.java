@@ -7,10 +7,10 @@ import com.neaterbits.ide.util.EnumMask;
 public final class KeyMask extends EnumMask<QualifierKey> {
 
 	public KeyMask(QualifierKey... values) {
-		super(values);
+		super(QualifierKey.class, values);
 	}
 
 	public KeyMask(Collection<QualifierKey> values) {
-		super(values);
+		super(QualifierKey.class, values);
 	}
 }

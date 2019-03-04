@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.neaterbits.ide.common.resource.SourceLineResourcePath;
 
-public interface SearchView {
+public interface SearchResultsView extends View {
 
 	void update(List<SourceLineResourcePath> sourceLines, SearchViewListener searchViewListener);
 	

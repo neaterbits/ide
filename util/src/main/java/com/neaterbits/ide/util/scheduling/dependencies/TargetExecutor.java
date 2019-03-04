@@ -93,7 +93,9 @@ final class TargetExecutor {
 			}
 		}
 		
-		if (   context.state.getNumExecuteOrScheduledTargets() == 0
+		if (
+				context.onResult != null
+			&&	context.state.getNumExecuteOrScheduledTargets() == 0
 			&& priorToExecuteOrScheduled != 0
 			&& asyncExecutor.getNumScheduledJobs() == 0) {
 

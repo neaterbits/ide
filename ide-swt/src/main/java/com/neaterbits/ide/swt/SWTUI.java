@@ -1,22 +1,26 @@
 package com.neaterbits.ide.swt;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import com.neaterbits.ide.common.ui.UI;
+import com.neaterbits.ide.common.ui.ViewFocusListener;
+import com.neaterbits.ide.common.ui.controller.UIParameters;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
-import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
+import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.util.scheduling.ForwardToCaller;
 
-public class SWTUI implements UI<Shell> {
+public class SWTUI implements UI {
 
 	private final Display display;
 	
 	public SWTUI() {
-		
+	
 		this.display = Display.getDefault();
-		
+
 	}
 	
 	@Override
@@ -32,8 +36,24 @@ public class SWTUI implements UI<Shell> {
 	
 
 	@Override
-	public UIViewAndSubViews<Shell> makeUIView(ProjectsModel projectModel, TextEditorConfig config) {
-		return new SWTUIView(display, projectModel, config);
+	public UIViewAndSubViews makeUIView(UIParameters uiParameters, ProjectsModel projectModel) {
+		return new SWTUIView(display, uiParameters, projectModel);
+	}
+
+	@Override
+	public void addFocusListener(ViewFocusListener focusListener) {
+		display.addFilter(SWT.FocusIn, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+
+				final View focusedView = SWTView.findSelectedView(event.widget);
+				
+				if (focusedView != null) {
+					focusListener.onViewFocused(focusedView);
+				}
+			}
+		});
 	}
 
 	@Override

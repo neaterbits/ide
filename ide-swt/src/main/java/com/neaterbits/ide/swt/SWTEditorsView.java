@@ -1,5 +1,6 @@
 package com.neaterbits.ide.swt;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -9,12 +10,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.view.ActionContextListener;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.common.ui.view.EditorsView;
 import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
-public final class SWTEditorsView implements EditorsView {
+public final class SWTEditorsView extends SWTView implements EditorsView {
 
 	private final TextEditorConfig config;
 	private final TabFolder tabFolder;
@@ -28,6 +31,8 @@ public final class SWTEditorsView implements EditorsView {
 		this.config = config;
 		this.tabFolder = new TabFolder(composite, SWT.NONE);
 		
+		setIDEView(this, tabFolder);
+
 		// this.composite = new Composite(composite, SWT.NONE);
 		
 		// this.composite.setLayout(new FillLayout());
@@ -38,12 +43,6 @@ public final class SWTEditorsView implements EditorsView {
 	public TabFolder getTabFolder() {
 		return tabFolder;
 	}
-
-	/*
-	public Composite getComposite() {
-		return composite;
-	}
-	*/
 
 	@Override
 	public EditorView displayFile(SourceFileResourcePath sourceFile, TextStylingModel textStylingModel) {
@@ -64,6 +63,16 @@ public final class SWTEditorsView implements EditorsView {
 		return editorView;
 	}
 	
+	@Override
+	public Collection<ActionContext> getActiveActionContexts() {
+		return null;
+	}
+
+	@Override
+	public void addActionContextListener(ActionContextListener listener) {
+		
+	}
+
 	@Override
 	public SourceFileResourcePath getCurrentEditedFile() {
 		

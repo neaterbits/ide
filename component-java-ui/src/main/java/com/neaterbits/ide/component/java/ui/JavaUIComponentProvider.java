@@ -1,27 +1,29 @@
 package com.neaterbits.ide.component.java.ui;
 
-import org.eclipse.swt.widgets.Shell;
-
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.Newable;
 import com.neaterbits.ide.component.common.NewableCategoryName;
+import com.neaterbits.ide.component.common.UIComponentContext;
 import com.neaterbits.ide.component.common.UIComponentProvider;
+import com.neaterbits.ide.ui.swt.SWTUIContext;
 
-public final class JavaUIComponentProvider implements UIComponentProvider<Shell> {
+public final class JavaUIComponentProvider implements UIComponentProvider {
 
 	@Override
 	public void openNewableDialog(
-			Shell window,
+			UIComponentContext uiContext,
 			NewableCategoryName category,
 			Newable newable,
 			SourceFolderResourcePath sourceFolder,
 			NamespaceResourcePath namespace,
 			ComponentIDEAccess ideAccess) {
+
+		final SWTUIContext swtContext = (SWTUIContext)uiContext;
 		
 		final NewJavaTypeDialog dialog = new NewJavaTypeDialog(
-				window,
+				swtContext.getWindow(),
 				"New " + newable.getDisplayName(),
 				newable,
 				sourceFolder,

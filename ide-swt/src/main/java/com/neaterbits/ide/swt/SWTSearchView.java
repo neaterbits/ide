@@ -1,5 +1,5 @@
 package com.neaterbits.ide.swt;
 
-public class SWTSearchView {
+public class SWTSearchView extends SWTView {
 
 }

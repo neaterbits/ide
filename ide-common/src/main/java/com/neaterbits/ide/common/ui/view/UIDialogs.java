@@ -12,14 +12,14 @@ import com.neaterbits.ide.component.common.NewableCategory;
 import com.neaterbits.ide.component.common.NewableCategoryName;
 import com.neaterbits.ide.component.common.UIComponentProvider;
 
-public interface UIDialogs<WINDOW> {
+public interface UIDialogs {
 
 	TypeSuggestion askOpenType(OpenTypeDialogModel model);
 
 	NewableSelection askCreateNewable(Collection<NewableCategory> categories);
 
 	void openNewableDialog(
-			UIComponentProvider<WINDOW> uiComponentProvider,
+			UIComponentProvider uiComponentProvider,
 			NewableCategoryName category,
 			Newable newable,
 			SourceFolderResourcePath sourceFolder,

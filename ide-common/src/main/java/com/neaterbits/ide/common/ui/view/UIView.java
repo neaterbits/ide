@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.ui.view;
 
-public interface UIView<WINDOW> extends UIDialogs<WINDOW> {
+public interface UIView extends UIDialogs {
 	
 	void setWindowTitle(String title);
 

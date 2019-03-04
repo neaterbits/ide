@@ -1,5 +1,8 @@
 package com.neaterbits.ide.swt;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.swt.SWT;
@@ -11,7 +14,12 @@ import org.eclipse.swt.widgets.TabItem;
 
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
+import com.neaterbits.ide.common.ui.actions.contexts.EditorContext;
+import com.neaterbits.ide.common.ui.actions.contexts.EditorSelectionContext;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.view.ActionContextListener;
+import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.Text;
 
 abstract class SWTBaseTextEditorView extends SWTEditorView {
@@ -28,12 +36,15 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	abstract int getCursorPos();
 	abstract void setFocus();
 	abstract void setTabs(int tabs);
+	
 	abstract void addKeyListener(KeyListener keyListener);
+	abstract void addTextSelectionListener(TextSelectionListener textSelectionListener);
+	abstract boolean hasSelectedText();
 	
 	SWTBaseTextEditorView(TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
 
 		this.composite = composite;
-		
+
 		this.sourceFile = sourceFile;
 		
 		this.tabItem = new TabItem(composite, SWT.NONE);
@@ -44,6 +55,25 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		Objects.requireNonNull(config);
 		
 		this.config = config;
+	}
+	
+	@Override
+	public final Collection<ActionContext> getActiveActionContexts() {
+
+		return getActiveActionContexts(false);
+	}
+
+	private Collection<ActionContext> getActiveActionContexts(boolean hasSelectedText) {
+		
+		final List<ActionContext> actionContexts = new ArrayList<>();
+		
+		actionContexts.add(new EditorContext(sourceFile));
+		
+		if (hasSelectedText) {
+			actionContexts.add(new EditorSelectionContext());
+		}
+		
+		return actionContexts;
 	}
 	
 	final void configure(Control tabItemControl) {
@@ -107,7 +137,13 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 			}
 		});
 	}
+	
+	@Override
+	public void addActionContextListener(ActionContextListener listener) {
 
+		addTextSelectionListener(hasSelectedText -> listener.onUpdated(getActiveActionContexts(hasSelectedText)));
+	}
+	
 	private void indentOnNewline(String text, int cursorPos) {
 		int lineStart;
 		
@@ -229,3 +265,4 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		this.config = config;
 	}
 }
+

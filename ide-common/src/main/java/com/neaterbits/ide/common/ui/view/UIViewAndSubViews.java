@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.ui.view;
 
-public interface UIViewAndSubViews<WINDOW> extends UIView<WINDOW> {
+public interface UIViewAndSubViews extends UIView {
 
 	ProjectView getProjectView();
 	
@@ -8,6 +8,5 @@ public interface UIViewAndSubViews<WINDOW> extends UIView<WINDOW> {
 	
 	BuildIssuesView getBuildIssuesView();
 	
-	SearchView getSearchView();
-
+	SearchResultsView getSearchView();
 }

@@ -3,7 +3,7 @@ package com.neaterbits.ide.common.ui.view;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 
-public interface ProjectView {
+public interface ProjectView extends View {
 
 	void refresh();
 	

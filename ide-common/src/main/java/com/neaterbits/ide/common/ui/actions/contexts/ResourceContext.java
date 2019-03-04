@@ -1,0 +1,21 @@
+package com.neaterbits.ide.common.ui.actions.contexts;
+
+import java.util.Objects;
+
+import com.neaterbits.ide.common.resource.ResourcePath;
+
+public abstract class ResourceContext<T extends ResourcePath> {
+
+	private final T resource;
+
+	public ResourceContext(T resource) {
+
+		Objects.requireNonNull(resource);
+		
+		this.resource = resource;
+	}
+
+	public final T getResource() {
+		return resource;
+	}
+}

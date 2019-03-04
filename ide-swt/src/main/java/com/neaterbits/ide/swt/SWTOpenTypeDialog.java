@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
 
-final class OpenTypeDialog extends Dialog {
+final class SWTOpenTypeDialog extends Dialog {
 
 	private final OpenTypeDialogModel model;
 	
@@ -30,7 +30,7 @@ final class OpenTypeDialog extends Dialog {
 	private java.util.List<TypeSuggestion> suggestions;
 	private TypeSuggestion suggestion;
 	
-	OpenTypeDialog(Shell parentShell, OpenTypeDialogModel model) {
+	SWTOpenTypeDialog(Shell parentShell, OpenTypeDialogModel model) {
 		super(parentShell);
 
 		this.model = model;
@@ -55,7 +55,9 @@ final class OpenTypeDialog extends Dialog {
 		
 		final GridData textLayout = new GridData(SWT.FILL, SWT.FILL, true, false);
 		
-		final Text text = new Text(composite, SWT.NONE);
+		textLayout.heightHint = UIDimensions.TEXT_HEIGHT;
+		
+		final Text text = new Text(composite, SWT.BORDER);
 		
 		text.setLayoutData(textLayout);
 		

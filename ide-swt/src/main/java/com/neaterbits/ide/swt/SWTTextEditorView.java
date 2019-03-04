@@ -5,12 +5,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Text;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.TextChangeListener;
+import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.StringText;
 
 final class SWTTextEditorView extends SWTBaseTextEditorView {
@@ -27,6 +30,8 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 		this.textWidget = new Text(composite, SWT.MULTI|SWT.BORDER);
 		
 		configure(textWidget);
+		
+		setIDEView(this, textWidget);
 	}
 
 	@Override
@@ -80,7 +85,22 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 				}
 			}
 		});
-		
+	}
+
+	@Override
+	void addTextSelectionListener(TextSelectionListener textSelectionListener) {
+		textWidget.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				textSelectionListener.onTextSelectionChange(hasSelectedText());
+			}
+		});
+	}
+
+	@Override
+	boolean hasSelectedText() {
+		return textWidget.getSelectionCount() != 0;
 	}
 
 	@Override

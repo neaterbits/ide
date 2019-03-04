@@ -7,10 +7,10 @@ import com.neaterbits.ide.util.EnumMask;
 final class SourceElementMask extends EnumMask<SourceElementFlag> {
 
 	SourceElementMask(Collection<SourceElementFlag> values) {
-		super(values);
+		super(SourceElementFlag.class, values);
 	}
 
 	SourceElementMask(SourceElementFlag... values) {
-		super(values);
+		super(SourceElementFlag.class, values);
 	}
 }

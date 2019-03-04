@@ -44,7 +44,12 @@ final class CreateNewableDialog extends Dialog {
 		composite.setLayout(new GridLayout(1, false));
 		
 		final Text text = new Text(composite, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		
+		final GridData textGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		
+		textGridData.heightHint = UIDimensions.TEXT_HEIGHT;
+		
+		text.setLayoutData(textGridData);
 		
 		final TreeViewer treeViewer = new TreeViewer(composite);
 		

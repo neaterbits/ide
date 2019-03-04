@@ -6,6 +6,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -14,6 +16,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.TextChangeListener;
+import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
@@ -33,7 +36,6 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		final Font font = new Font(composite.getDisplay(), new FontData("Monospace", 10, SWT.NONE));
 		
 		textWidget.addDisposeListener(event -> font.dispose());
-		
 		textWidget.setFont(font);
 
 		if (textStylingModel != null) {
@@ -48,8 +50,9 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		
 		
 		configure(textWidget);
+
+		setIDEView(this, textWidget);
 	}
-	
 	
 	@Override
 	public void setCurrentText(Text text) {
@@ -102,6 +105,22 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		}
 		
 		++ textChangeEventsSinceSetWidgetText;
+	}
+	
+	@Override
+	void addTextSelectionListener(TextSelectionListener textSelectionListener) {
+		textWidget.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				textSelectionListener.onTextSelectionChange(hasSelectedText());
+			}
+		});
+	}
+
+	@Override
+	boolean hasSelectedText() {
+		return textWidget.isTextSelected();
 	}
 
 	private static StyleRange [] makeStyleRanges(Collection<TextStyleOffset> styles) {

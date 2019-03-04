@@ -66,10 +66,14 @@ final class SWTKeyEventListener implements KeyListener {
 			break;
 		}
 		
+		char c = Character.toLowerCase(character);
+		
 		final List<QualifierKey> qualifiers = new ArrayList<>();
 		
 		if ((stateMask & SWT.CTRL) != 0) {
 			qualifiers.add(QualifierKey.CTRL);
+	
+			c = (char)(c + 'a' - 1);
 		}
 
 		if ((stateMask & SWT.SHIFT) != 0) {
@@ -81,7 +85,7 @@ final class SWTKeyEventListener implements KeyListener {
 		}
 
 		keyEventHandler.onKey(
-				new Key(character, convertedKeyCode),
+				new Key(c, convertedKeyCode),
 				new KeyMask(qualifiers));
 	}
 }

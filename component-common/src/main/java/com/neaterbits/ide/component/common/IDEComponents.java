@@ -14,9 +14,9 @@ import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.component.common.language.Languages;
 
-public final class IDEComponents<WINDOW> {
+public final class IDEComponents implements IDEComponentsConstAccess {
 
-	private final List<IDEComponent<WINDOW>> components;
+	private final List<IDEComponent> components;
 
 	private final Map<LanguageName, LanguageComponent> languageComponents;
 	
@@ -60,11 +60,12 @@ public final class IDEComponents<WINDOW> {
 		};
 	}
 
+	@Override
 	public Languages getLanguages() {
 		return languages;
 	}
 	
-	public void registerComponent(ComponentProvider componentProvider, UIComponentProvider<WINDOW> uiComponentProvider) {
+	public void registerComponent(ComponentProvider componentProvider, UIComponentProvider uiComponentProvider) {
 
 		if (componentProvider instanceof LanguageComponent) {
 			final LanguageComponent languageComponent = (LanguageComponent)componentProvider;
@@ -72,14 +73,15 @@ public final class IDEComponents<WINDOW> {
 			languageComponents.put(languageComponent.getLanguageName(), languageComponent);
 		}
 		
-		components.add(new IDEComponent<>(componentProvider, uiComponentProvider));
+		components.add(new IDEComponent(componentProvider, uiComponentProvider));
 	}
 	
+	@Override
 	public List<NewableCategory> getNewableCategories() {
 		
 		final Map<NewableCategory, Set<Newable>> map = new HashMap<>();
 		
-		for (IDEComponent<WINDOW> ideComponent : components) {
+		for (IDEComponent ideComponent : components) {
 			
 			final List<NewableCategory> componentNewableCategories = ideComponent.getComponentProvider().getNewables();
 			
@@ -125,15 +127,16 @@ public final class IDEComponents<WINDOW> {
 				categories,
 				(category1, category2) -> category1.getDisplayName().compareTo(category2.getDisplayName()));
 		
-		return categories;
+		return Collections.unmodifiableList(categories);
 	}
 	
-	public UIComponentProvider<WINDOW> findUIComponentProvider(NewableCategoryName category, Newable newable) {
+	@Override
+	public UIComponentProvider findUIComponentProvider(NewableCategoryName category, Newable newable) {
 		
 		Objects.requireNonNull(category);
 		Objects.requireNonNull(newable);
 		
-		for (IDEComponent<WINDOW> ideComponent : components) {
+		for (IDEComponent ideComponent : components) {
 			
 			if (ideComponent.getComponentProvider().getNewables() != null) {
 				for (NewableCategory componentCategory : ideComponent.getComponentProvider().getNewables()) {

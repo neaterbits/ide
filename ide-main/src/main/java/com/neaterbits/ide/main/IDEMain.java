@@ -2,8 +2,6 @@ package com.neaterbits.ide.main;
 
 import java.io.File;
 
-import org.eclipse.swt.widgets.Shell;
-
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
@@ -48,11 +46,11 @@ public class IDEMain {
 				
 				final BuildRoot buildRoot = new BuildRootImpl<>(projectDir, buildSystem.scan(projectDir));  
 				
-				final IDEComponents<Shell> ideComponents = registerComponents();
+				final IDEComponents ideComponents = registerComponents();
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
-				new IDEController<>(buildRoot, ui, config, ideComponents);
+				new IDEController(buildRoot, ui, config, ideComponents);
 				
 				startIDEScanJobs(buildRoot);
 				
@@ -67,9 +65,9 @@ public class IDEMain {
 		}
 	}
 	
-	private static IDEComponents<Shell> registerComponents() {
+	private static IDEComponents registerComponents() {
 
-		final IDEComponents<Shell> components = new IDEComponents<>();
+		final IDEComponents components = new IDEComponents();
 		
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
 		

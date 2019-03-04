@@ -47,7 +47,7 @@ final class EditorsController {
 		return editorsView.getCurrentEditedFile();
 	}
 
-	public EditorView displayFile(SourceFileResourcePath sourceFile, BaseTextModel textModel, LanguageName language) {
+	EditorView displayFile(SourceFileResourcePath sourceFile, BaseTextModel textModel, LanguageName language) {
 		
 		final EditorView editorView = editorsView.displayFile(sourceFile, makeTextStylingModel(language, textModel));
 		

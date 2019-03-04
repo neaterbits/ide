@@ -8,12 +8,12 @@ import com.neaterbits.ide.common.ui.keys.KeyMask;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.ProjectView;
 
-final class ProjectViewKeyListener<WINDOW> implements KeyEventListener {
+final class ProjectViewKeyListener implements KeyEventListener {
 
 	private final ProjectView projectView;
-	private final EditUIController<WINDOW> uiController;
+	private final EditUIController uiController;
 
-	ProjectViewKeyListener(ProjectView projectView, EditUIController<WINDOW> uiController) {
+	ProjectViewKeyListener(ProjectView projectView, EditUIController uiController) {
 		
 		Objects.requireNonNull(projectView);
 		Objects.requireNonNull(uiController);

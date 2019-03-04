@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.view;
 
 import com.neaterbits.ide.util.ui.text.Text;
 
-public interface EditorView {
+public interface EditorView extends View {
 
 	Text getText();
 	

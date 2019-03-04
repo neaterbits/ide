@@ -4,7 +4,7 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.EditorView;
 
-abstract class SWTEditorView implements EditorView {
+abstract class SWTEditorView extends SWTView implements EditorView {
 
 	SWTEditorView() {
 		

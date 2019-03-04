@@ -11,7 +11,7 @@ public final class ProjectsController {
 
 	private final ProjectView view;
 
-	public ProjectsController(ProjectsModel model, ProjectView view, EditUIController<?> uiController) {
+	public ProjectsController(ProjectsModel model, ProjectView view, EditUIController uiController) {
 
 		Objects.requireNonNull(model);
 		Objects.requireNonNull(view);
@@ -20,7 +20,7 @@ public final class ProjectsController {
 
 		view.addListener(new ProjectViewListenerImpl(uiController));
 		
-		view.addKeyEventListener(new ProjectViewKeyListener<>(view, uiController));
+		view.addKeyEventListener(new ProjectViewKeyListener(view, uiController));
 }
 	
 	void showInProjectView(SourceFileResourcePath sourceFile, boolean setFocusInProjectView) {
@@ -36,9 +36,9 @@ public final class ProjectsController {
 
 	private static class ProjectViewListenerImpl implements ProjectViewListener {
 
-		private final EditUIController<?> uiController;
+		private final EditUIController uiController;
 		
-		ProjectViewListenerImpl(EditUIController<?> uiController) {
+		ProjectViewListenerImpl(EditUIController uiController) {
 			this.uiController = uiController;
 		}
 

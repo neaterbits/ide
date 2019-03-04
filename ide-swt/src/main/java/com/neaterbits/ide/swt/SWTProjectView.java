@@ -1,6 +1,7 @@
 package com.neaterbits.ide.swt;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -20,12 +21,14 @@ import org.eclipse.swt.widgets.TabItem;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
+import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.model.ProjectModelListener;
+import com.neaterbits.ide.common.ui.view.ActionContextListener;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.ProjectView;
 import com.neaterbits.ide.common.ui.view.ProjectViewListener;
 
-final class SWTProjectView implements ProjectView {
+final class SWTProjectView extends SWTView implements ProjectView {
 
 	private final Composite composite;
 	
@@ -43,6 +46,8 @@ final class SWTProjectView implements ProjectView {
 
 		this.composite = new Composite(tabFolder, SWT.NONE);
 		
+		setIDEView(this, composite);
+
 		tabItem.setControl(composite);
 		
 		this.composite.setLayout(new FillLayout());
@@ -93,6 +98,30 @@ final class SWTProjectView implements ProjectView {
 	
 	Composite getComposite() {
 		return composite;
+	}
+
+	@Override
+	public Collection<ActionContext> getActiveActionContexts() {
+		
+		final ITreeSelection treeSelection = (ITreeSelection)treeViewer.getSelection();
+
+		final List<ActionContext> contexts;
+		
+		if (treeSelection.isEmpty()) {
+			contexts = null;
+		}
+		else {
+			contexts = new ArrayList<>();
+
+			
+		}
+		
+		return contexts;
+	}
+
+	@Override
+	public void addActionContextListener(ActionContextListener listener) {
+		treeViewer.addSelectionChangedListener(event -> listener.onUpdated(getActiveActionContexts()));
 	}
 
 	@Override
