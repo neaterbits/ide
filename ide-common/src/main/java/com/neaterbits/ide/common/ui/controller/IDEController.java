@@ -28,6 +28,7 @@ import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.keys.IDEKeyBindings;
 import com.neaterbits.ide.common.ui.keys.Key;
 import com.neaterbits.ide.common.ui.keys.KeyBindings;
+import com.neaterbits.ide.common.ui.keys.KeyCombination;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
 import com.neaterbits.ide.common.ui.menus.IDEMenus;
 import com.neaterbits.ide.common.ui.menus.MenuItemEntry;
@@ -43,6 +44,7 @@ import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.IDEComponents;
 import com.neaterbits.ide.util.IOUtil;
 import com.neaterbits.ide.util.PathUtil;
+import com.neaterbits.ide.util.Value;
 
 public final class IDEController implements ComponentIDEAccess {
 
@@ -65,8 +67,9 @@ public final class IDEController implements ComponentIDEAccess {
 		final ProjectsModel projectModel = new ProjectsModel(buildRoot);
 
 		final Translator uiTranslator = new IDETranslator();
-		final Menus menus = IDEMenus.makeMenues();
 		final KeyBindings keyBindings = IDEKeyBindings.makeKeyBindings();
+
+		final Menus menus = IDEMenus.makeMenues(keyBindings);
 		
 		final UIModels uiModels = new UIModels(projectModel);
 		
@@ -107,10 +110,10 @@ public final class IDEController implements ComponentIDEAccess {
 			
 			@Override
 			public void onKeyPress(Key key, KeyMask mask) {
-				final Action action = keyBindings.findAction(key, mask);
 				
+				final Action action = findActionWithNoKeyBindingInMenus(keyBindings, menus, new KeyCombination(key, mask));
+
 				if (action != null) {
-					
 					
 					if (action.isApplicableInContexts(
 							actionApplicableParameters,
@@ -137,6 +140,25 @@ public final class IDEController implements ComponentIDEAccess {
 			updateMenuItemsEnabledState(uiView, actionApplicableParameters);
 		});
 	
+	}
+
+	private static Action findActionWithNoKeyBindingInMenus(KeyBindings keyBindings, Menus menus, KeyCombination keyCombination) {
+
+		Objects.requireNonNull(keyBindings);
+		Objects.requireNonNull(menus);
+		Objects.requireNonNull(keyCombination);
+		
+		final Value<Boolean> found = new Value<>();
+		
+		menus.iterateItems(menuItem -> {
+			if (keyCombination.equals(menuItem.getKeyCombination())) {
+				found.set(true);
+			}
+		});
+		
+		return found.get() != null && found.get()
+				? null
+				: keyBindings.findAction(keyCombination.getKey(), keyCombination.getQualifiers());
 	}
 	
 	private ActionExecuteParameters makeActionExecuteParameters() {

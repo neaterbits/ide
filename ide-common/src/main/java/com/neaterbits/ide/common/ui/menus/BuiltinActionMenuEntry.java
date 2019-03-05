@@ -6,44 +6,53 @@ import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.actions.BuiltinAction;
+import com.neaterbits.ide.common.ui.keys.KeyBindings;
+import com.neaterbits.ide.common.ui.keys.KeyCombination;
 
 public final class BuiltinActionMenuEntry extends MenuItemEntry {
 
-	private final BuiltinAction action;
+	private final BuiltinAction builtinAction;
+	private final KeyCombination keyCombination;
+	
+	BuiltinActionMenuEntry(BuiltinAction builtinAction, KeyBindings keyBindings) {
 
-	BuiltinActionMenuEntry(BuiltinAction action) {
-
-		Objects.requireNonNull(action);
+		Objects.requireNonNull(builtinAction);
 		
-		this.action = action;
+		this.builtinAction = builtinAction;
+		this.keyCombination = keyBindings.findKeyCombination(builtinAction.getAction());
 	}
 
 	public BuiltinAction getAction() {
-		return action;
+		return builtinAction;
 	}
 
 	@Override
 	public boolean isApplicableInContexts(ActionApplicableParameters parameters, ActionContexts focusedViewContexts, ActionContexts allContexts) {
-		return action.getAction().isApplicableInContexts(parameters, focusedViewContexts, allContexts);
+		return builtinAction.getAction().isApplicableInContexts(parameters, focusedViewContexts, allContexts);
+	}
+
+	@Override
+	public KeyCombination getKeyCombination() {
+		return keyCombination;
 	}
 
 	@Override
 	public void execute(ActionExecuteParameters parameters) {
-		action.getAction().execute(parameters);
+		builtinAction.getAction().execute(parameters);
 	}
 
 	@Override
 	public String getTranslationNamespace() {
-		return action.getTranslationNamespace();
+		return builtinAction.getTranslationNamespace();
 	}
 
 	@Override
 	public String getTranslationId() {
-		return action.getTranslationId();
+		return builtinAction.getTranslationId();
 	}
 
 	@Override
 	public String toString() {
-		return "BuiltinActionMenuEntry [action=" + action + "]";
+		return "BuiltinActionMenuEntry [action=" + builtinAction + "]";
 	}
 }

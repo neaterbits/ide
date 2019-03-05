@@ -1,16 +1,17 @@
 package com.neaterbits.ide.common.ui.menus;
 
 import com.neaterbits.ide.common.ui.actions.BuiltinAction;
+import com.neaterbits.ide.common.ui.keys.KeyBindings;
 
 public class IDEMenus {
 
-	public static Menus makeMenues() {
+	public static Menus makeMenues(KeyBindings keyBindings) {
 		
-		final MenuBuilder builder = new MenuBuilder();
+		final MenuBuilder builder = new MenuBuilder(keyBindings);
 		
 		builder
 			.addSubMenu(BuiltinMenu.FILE, b -> b
-					.addBuiltinAction(BuiltinAction.NEW_POPUP))
+					.addBuiltinAction(BuiltinAction.NEW_DIALOG))
 			
 			.addSubMenu(BuiltinMenu.EDIT, b -> b
 					.addBuiltinAction(BuiltinAction.CUT)

@@ -3,6 +3,7 @@ package com.neaterbits.ide.common.ui.keys;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import com.neaterbits.ide.common.ui.actions.Action;
 
@@ -15,6 +16,17 @@ public final class KeyBindings {
 		this.bindings = new ArrayList<>(bindings);
 	}
 
+	public KeyCombination findKeyCombination(Action action) {
+		
+		Objects.requireNonNull(action);
+
+		return bindings.stream()
+				.filter(binding -> binding.getAction().equals(action))
+				.map(binding -> binding.getKeyCombination())
+				.findFirst()
+				.orElse(null);
+	}
+	
 	public Action findAction(Key key, KeyMask qualifierMask) {
 		
 		final KeyCombination keyCombination = new KeyCombination(key, qualifierMask);

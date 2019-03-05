@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.ui.controller.UIParameters;
+import com.neaterbits.ide.common.ui.keys.KeyCombination;
+import com.neaterbits.ide.common.ui.keys.KeyMask;
+import com.neaterbits.ide.common.ui.keys.QualifierKey;
 import com.neaterbits.ide.common.ui.menus.MenuEntry;
 import com.neaterbits.ide.common.ui.menus.MenuItemEntry;
 import com.neaterbits.ide.common.ui.menus.MenuListEntry;
@@ -171,9 +174,13 @@ public final class SWTUIView implements UIViewAndSubViews {
 	
 	private static void buildMenuList(Shell shell, Menu menu, MenuListEntry list, MapMenuItem mapMenuItems, Translator translator) {
 
+		final StringBuilder sb = new StringBuilder();
+
 		for (MenuEntry entry : list.getEntries()) {
 			
 			final MenuItem menuItem;
+
+			sb.setLength(0);
 			
 			if (entry instanceof SubMenuEntry) {
 				
@@ -187,14 +194,25 @@ public final class SWTUIView implements UIViewAndSubViews {
 			else {
 				menuItem = new MenuItem(menu, SWT.PUSH);
 				
+				
 				final ViewMenuItem viewMenuItem = new ViewMenuItem() {
 					@Override
 					public void setEnabled(boolean enabled) {
 						menuItem.setEnabled(enabled);
 					}
 				};
-				
+
+
 				final MenuItemEntry menuItemEntry = (MenuItemEntry)entry;
+				
+				final KeyCombination keyCombination = menuItemEntry.getKeyCombination();
+
+				if (keyCombination != null) {
+							
+					final int accelerator = applyKeyShortcut(keyCombination, sb);
+
+					menuItem.setAccelerator(accelerator);
+				}
 				
 				final MenuSelectionListener listener = mapMenuItems.apply((MenuItemEntry)entry, viewMenuItem);
 				
@@ -207,8 +225,57 @@ public final class SWTUIView implements UIViewAndSubViews {
 				});
 			}
 
-			menuItem.setText(translator.translate(entry));
+			final String text = sb.length() == 0
+					? translator.translate(entry)
+					: translator.translate(entry) + '\t' + sb.toString();
+			
+			menuItem.setText(text);
 		}
+	}
+	
+	private static int applyKeyShortcut(KeyCombination keyCombination, StringBuilder sb) {
+		
+		final char keyCharacter = Character.toUpperCase(keyCombination.getKey().getCharacter());
+		
+		int accelerator = keyCharacter;
+		
+		final KeyMask qualifiers = keyCombination.getQualifiers();
+
+		if (qualifiers.isSet(QualifierKey.SHIFT)) {
+			accelerator |= SWT.SHIFT;
+			
+			appendQualifier(sb, "Shift");
+		}
+
+		if (qualifiers.isSet(QualifierKey.CTRL)) {
+			accelerator |= SWT.CONTROL;
+			
+			appendQualifier(sb, "Ctrl");
+		}
+
+		if (qualifiers.isSet(QualifierKey.ALT)) {
+			accelerator |= SWT.ALT;
+
+			appendQualifier(sb, "Alt");
+		}
+		
+		if (qualifiers.isSet(QualifierKey.ALT_GR)) {
+			accelerator |= SWT.ALT_GR;
+
+			appendQualifier(sb, "Alt Gr");
+		}
+		
+		appendQualifier(sb, String.valueOf(keyCharacter));
+		
+		return accelerator;
+	}
+	
+	private static void appendQualifier(StringBuilder sb, String qualifier) {
+		if (sb.length() > 0) {
+			sb.append('+');
+		}
+		
+		sb.append(qualifier);
 	}
 	
 	@Override

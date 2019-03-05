@@ -3,6 +3,7 @@ package com.neaterbits.ide.common.ui.menus;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public abstract class MenuListEntry extends MenuEntry {
 
@@ -19,9 +20,23 @@ public abstract class MenuListEntry extends MenuEntry {
 		return Collections.unmodifiableList(entries);
 	}
 
+	public final void iterateItems(Consumer<MenuItemEntry> onMenuItem) {
+		
+		for (MenuEntry entry : entries) {
+			if (entry instanceof MenuItemEntry) {
+				onMenuItem.accept((MenuItemEntry)entry);
+			}
+			else if (entry instanceof MenuListEntry) {
+				((MenuListEntry)entry).iterateItems(onMenuItem);
+			}
+			else {
+				throw new UnsupportedOperationException();
+			}
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " [entries=" + entries + "]";
 	}
-
 }

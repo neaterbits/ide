@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.keys;
 
 import java.util.Objects;
 
-final class KeyCombination {
+public final class KeyCombination {
 
 	private final Key key;
 	private final KeyMask qualifiers;
@@ -15,7 +15,7 @@ final class KeyCombination {
 		this.qualifiers = null;
 	}
 
-	KeyCombination(Key key, KeyMask qualifiers) {
+	public KeyCombination(Key key, KeyMask qualifiers) {
 		
 		Objects.requireNonNull(key);
 		Objects.requireNonNull(qualifiers);
@@ -24,11 +24,11 @@ final class KeyCombination {
 		this.qualifiers = qualifiers;
 	}
 
-	Key getKey() {
+	public Key getKey() {
 		return key;
 	}
 
-	KeyMask getQualifiers() {
+	public KeyMask getQualifiers() {
 		return qualifiers;
 	}
 	
