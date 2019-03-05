@@ -34,6 +34,7 @@
 		<module>ide-common</module>
 		<module>ide-main</module>
 		<module>ide-swt</module>
+		<module>model-text</module>
 		<module>buildsystem-common</module>
 		<module>buildsystem-maven</module>
 		<module>build-common</module>

@@ -1,5 +1,7 @@
 package com.neaterbits.ide.component.common.language;
 
+import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
+
 public interface LanguageComponent {
 
 	Iterable<String> getFileSuffixes();
@@ -7,5 +9,7 @@ public interface LanguageComponent {
 	LanguageName getLanguageName();
 	
 	LanguageStyling getStyling();
+	
+	ParseableLanguage getParseableLanguage();
 	
 }

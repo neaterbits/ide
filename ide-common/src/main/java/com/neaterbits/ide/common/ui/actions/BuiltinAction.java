@@ -10,6 +10,10 @@ import com.neaterbits.ide.common.ui.actions.types.entity.NewDialogAction;
 import com.neaterbits.ide.common.ui.actions.types.entity.NewPopupAction;
 import com.neaterbits.ide.common.ui.actions.types.navigate.OpenTypeAction;
 import com.neaterbits.ide.common.ui.actions.types.navigate.ShowInProjectsAction;
+import com.neaterbits.ide.common.ui.actions.types.source.CodeCompletionAction;
+import com.neaterbits.ide.common.ui.actions.types.source.MoveAction;
+import com.neaterbits.ide.common.ui.actions.types.source.RenameAction;
+import com.neaterbits.ide.common.ui.actions.types.source.TypeHierarchyAction;
 import com.neaterbits.ide.common.ui.translation.Translateable;
 import com.neaterbits.ide.common.ui.translation.TranslationNamespaces;
 
@@ -28,7 +32,14 @@ public enum BuiltinAction implements Translateable {
 	
 		
 	CLOSE_EDITED(CloseEditedAction.class),
-	MIN_MAX_EDITORS(MinMaxEditorsAction.class);
+	MIN_MAX_EDITORS(MinMaxEditorsAction.class),
+	
+	RENAME(RenameAction.class),
+	MOVE(MoveAction.class),
+	CODE_COMPLETION(CodeCompletionAction.class),
+	
+	TYPE_HIERARCHY(TypeHierarchyAction.class)
+	;
 	
 	private final Class<? extends Action> actionClass;
 	private final Action action;

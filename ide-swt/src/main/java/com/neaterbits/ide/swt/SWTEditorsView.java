@@ -11,8 +11,9 @@ import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
-import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
+import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.common.ui.view.EditorsView;
 import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
@@ -47,7 +48,7 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 	}
 
 	@Override
-	public EditorView displayFile(SourceFileResourcePath sourceFile, TextStylingModel textStylingModel) {
+	public EditorView displayFile(SourceFileResourcePath sourceFile, TextStylingModel textStylingModel, EditorSourceActionContextProvider editorSourceActionContextProvider) {
 
 		Objects.requireNonNull(sourceFile);
 		
@@ -55,7 +56,13 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 		
 		if (editorView == null) {
 				
-			editorView = new SWTStyledTextEditorView(viewList, this.tabFolder, config, textStylingModel, sourceFile);
+			editorView = new SWTStyledTextEditorView(
+					viewList,
+					this.tabFolder,
+					config,
+					textStylingModel,
+					sourceFile,
+					editorSourceActionContextProvider);
 			
 			editorViews.put(sourceFile, editorView);
 		}

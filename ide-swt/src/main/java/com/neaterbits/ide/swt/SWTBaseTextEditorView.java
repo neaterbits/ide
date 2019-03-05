@@ -21,8 +21,10 @@ import com.neaterbits.ide.common.ui.actions.contexts.ClipboardPasteableContext;
 import com.neaterbits.ide.common.ui.actions.contexts.ClipboardSelectionContext;
 import com.neaterbits.ide.common.ui.actions.contexts.EditorContext;
 import com.neaterbits.ide.common.ui.actions.contexts.EditorSelectionContext;
-import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
+import com.neaterbits.ide.common.ui.view.CursorPositionListener;
+import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.Text;
 
@@ -35,6 +37,8 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	
 	private final SourceFileResourcePath sourceFile;
 
+	private final EditorSourceActionContextProvider editorSourceActionContextProvider;
+	
 	abstract void setWidgetText(String text);
 	abstract void setCursorPos(int pos);
 	abstract int getCursorPos();
@@ -43,13 +47,21 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	
 	abstract void addKeyListener(KeyListener keyListener);
 	abstract void addTextSelectionListener(TextSelectionListener textSelectionListener);
+	abstract void addCursorPositionListener(CursorPositionListener cursorPositionListener);
+	
 	abstract boolean hasSelectedText();
 	
-	SWTBaseTextEditorView(TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
+	SWTBaseTextEditorView(
+			TabFolder composite,
+			TextEditorConfig config,
+			SourceFileResourcePath sourceFile,
+			EditorSourceActionContextProvider editorSourceActionContextProvider) {
 
 		this.composite = composite;
 
 		this.sourceFile = sourceFile;
+		
+		this.editorSourceActionContextProvider = editorSourceActionContextProvider;
 		
 		this.tabItem = new TabItem(composite, SWT.NONE);
 
@@ -64,13 +76,19 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	@Override
 	public final Collection<ActionContext> getActiveActionContexts() {
 
-		return getActiveActionContexts(hasSelectedText());
+		return getActiveActionContexts(hasSelectedText(), getCursorPos());
 	}
 
-	private Collection<ActionContext> getActiveActionContexts(boolean hasSelectedText) {
+	private Collection<ActionContext> getActiveActionContexts(boolean hasSelectedText, long cursorPos) {
 		
 		final List<ActionContext> actionContexts = new ArrayList<>();
 		
+		final Collection<ActionContext> providerActionContexts = editorSourceActionContextProvider.getActionContexts(cursorPos);
+		
+		if (providerActionContexts != null) {
+			actionContexts.addAll(providerActionContexts);
+		}
+
 		actionContexts.add(new EditorContext(sourceFile));
 		actionContexts.add(new ClipboardPasteableContext(Arrays.asList(ClipboardDataType.TEXT)));
 		
@@ -145,9 +163,10 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	}
 	
 	@Override
-	public void addActionContextListener(ActionContextListener listener) {
+	public final void addActionContextListener(ActionContextListener listener) {
 
-		addTextSelectionListener(hasSelectedText -> listener.onUpdated(getActiveActionContexts(hasSelectedText)));
+		addTextSelectionListener(hasSelectedText -> listener.onUpdated(getActiveActionContexts(hasSelectedText, getCursorPos())));
+		addCursorPositionListener(cursorPos -> listener.onUpdated(getActiveActionContexts(hasSelectedText(), cursorPos)));
 	}
 	
 	private void indentOnNewline(String text, int cursorPos) {

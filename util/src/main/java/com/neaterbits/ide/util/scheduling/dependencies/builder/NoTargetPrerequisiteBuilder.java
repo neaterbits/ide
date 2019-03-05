@@ -6,4 +6,5 @@ public interface NoTargetPrerequisiteBuilder<CONTEXT extends TaskContext, PREREQ
 
 	void buildBy(Consumer<TypedSubTargetBuilder<CONTEXT, PREREQUISITE>> prerequisiteTargets);
 
+	
 }

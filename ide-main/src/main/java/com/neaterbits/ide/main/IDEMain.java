@@ -8,10 +8,10 @@ import com.neaterbits.ide.common.tasks.InitialScanContext;
 import com.neaterbits.ide.common.tasks.TargetBuilderInitialScan;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootImpl;
+import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.controller.IDEController;
-import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.component.common.IDEComponents;
-import com.neaterbits.ide.component.java.language.JavaCompileableLanguage;
+import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
 import com.neaterbits.ide.swt.SWTUI;
@@ -78,7 +78,7 @@ public class IDEMain {
 	private static void startIDEScanJobs(BuildRoot buildRoot) {
 	
 		final TargetBuilderInitialScan initialScan = new TargetBuilderInitialScan();
-		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaCompileableLanguage());
+		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaLanguage());
 		
 		initialScan.execute(context, new PrintlnTargetExecutorLogger(), null);
 	}

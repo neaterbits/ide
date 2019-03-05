@@ -14,7 +14,9 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.view.CursorPositionListener;
+import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.TextChangeListener;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.StringText;
@@ -28,8 +30,15 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	
 	private int textChangeEventsSinceSetWidgetText = 0;
 	
-	SWTStyledTextEditorView(SWTViewList viewList, TabFolder composite, TextEditorConfig config, TextStylingModel textStylingModel, SourceFileResourcePath sourceFile) {
-		super(composite, config, sourceFile);
+	SWTStyledTextEditorView(
+			SWTViewList viewList,
+			TabFolder composite,
+			TextEditorConfig config,
+			TextStylingModel textStylingModel,
+			SourceFileResourcePath sourceFile,
+			EditorSourceActionContextProvider editorSourceActionContextProvider) {
+		
+		super(composite, config, sourceFile, editorSourceActionContextProvider);
 
 		this.textWidget = new StyledText(composite, SWT.NONE);
 		
@@ -115,6 +124,13 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 				textSelectionListener.onTextSelectionChange(hasSelectedText());
 			}
 		});
+	}
+
+	@Override
+	void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
+
+		textWidget.addCaretListener(event -> cursorPositionListener.onCursorPositionChanged(event.caretOffset));
+		
 	}
 
 	@Override

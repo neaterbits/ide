@@ -74,7 +74,10 @@ public final class SWTUIView implements UIViewAndSubViews {
 		
 		this.display = display;
 		
-		this.window = new Shell(display); 
+		this.window = new Shell(display);
+		
+		window.setLocation(350, 350);
+		
 		window.setLayout(new FillLayout());
 		
 		final Menu menu = buildMenus(window, menus, mapMenuItem, uiParameters.getTranslator());

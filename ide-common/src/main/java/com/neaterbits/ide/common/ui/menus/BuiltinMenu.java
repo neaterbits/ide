@@ -9,6 +9,7 @@ public enum BuiltinMenu implements Translateable {
 	EDIT,
 	SOURCE,
 	REFACTOR,
+	NAVIGATE,
 	SEARCH;
 
 	@Override

@@ -1,5 +1,7 @@
 package com.neaterbits.ide.common.ui.actions.types.source;
 
-public abstract class SourceAction {
+import com.neaterbits.ide.common.ui.actions.Action;
+
+public abstract class SourceAction extends Action {
 
 }

@@ -23,6 +23,14 @@ final class IDETranslator implements Translator {
 				translation = "&Edit";
 				break;
 				
+			case "refactor":
+				translation = "Refac&tor";
+				break;
+				
+			case "navigate":
+				translation = "&Navigate";
+				break;
+				
 			default:
 				throw new UnsupportedOperationException();
 			}
@@ -34,7 +42,6 @@ final class IDETranslator implements Translator {
 				translation = "New";
 				break;
 				
-			
 			case "delete":
 				translation = "Delete";
 				break;
@@ -49,6 +56,18 @@ final class IDETranslator implements Translator {
 				
 			case "paste":
 				translation = "Paste";
+				break;
+				
+			case "rename":
+				translation = "Re&name";
+				break;
+				
+			case "move":
+				translation = "&Move";
+				break;
+				
+			case "type_hierarchy":
+				translation = "Type &hierarchy";
 				break;
 				
 			default:

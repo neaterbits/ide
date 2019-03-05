@@ -6,11 +6,11 @@ import java.util.Objects;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
-import com.neaterbits.ide.common.ui.model.text.StringTextModel;
-import com.neaterbits.ide.common.ui.model.text.UnixLineDelimiter;
 import com.neaterbits.ide.common.ui.view.UIView;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.component.common.IDEComponents;
+import com.neaterbits.ide.model.text.StringTextModel;
+import com.neaterbits.ide.model.text.UnixLineDelimiter;
 import com.neaterbits.ide.util.IOUtil;
 import com.neaterbits.ide.util.PathUtil;
 

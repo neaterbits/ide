@@ -2,8 +2,8 @@ package com.neaterbits.ide.common.ui.controller;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.keys.KeyBindings;
-import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.translation.Translator;
 
 public final class UIParameters {

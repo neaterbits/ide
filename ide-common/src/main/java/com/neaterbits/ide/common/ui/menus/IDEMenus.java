@@ -15,7 +15,13 @@ public class IDEMenus {
 			.addSubMenu(BuiltinMenu.EDIT, b -> b
 					.addBuiltinAction(BuiltinAction.CUT)
 					.addBuiltinAction(BuiltinAction.COPY)
-					.addBuiltinAction(BuiltinAction.PASTE));
+					.addBuiltinAction(BuiltinAction.PASTE))
+					
+			.addSubMenu(BuiltinMenu.REFACTOR,  b -> b
+					.addBuiltinAction(BuiltinAction.RENAME)
+					.addBuiltinAction(BuiltinAction.MOVE))
+			.addSubMenu(BuiltinMenu.NAVIGATE, b -> b
+					.addBuiltinAction(BuiltinAction.TYPE_HIERARCHY));
 
 		return new Menus(builder.build());
 	}

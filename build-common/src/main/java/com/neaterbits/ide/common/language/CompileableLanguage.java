@@ -22,7 +22,5 @@ public interface CompileableLanguage {
 	CompiledFileResourcePath getCompiledFilePath(TargetDirectoryResourcePath targetDirectory, SourceFileResourcePath sourceFile);
 
 	boolean canReadCodeMapFromCompiledCode();
-
-	
 	
 }

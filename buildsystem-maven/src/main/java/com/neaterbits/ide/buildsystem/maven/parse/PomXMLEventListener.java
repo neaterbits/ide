@@ -32,8 +32,10 @@ public final class PomXMLEventListener implements XMLEventListener<Void> {
 		return new Context(
 				file.getPath(),
 				event.getLocation().getLineNumber(),
+				event.getLocation().getColumnNumber(),
 				event.getLocation().getCharacterOffset(),
 				event.getLocation().getLineNumber(),
+				event.getLocation().getColumnNumber(),
 				event.getLocation().getCharacterOffset(),
 				null);
 		

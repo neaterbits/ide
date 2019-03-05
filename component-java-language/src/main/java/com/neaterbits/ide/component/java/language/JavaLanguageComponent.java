@@ -10,6 +10,7 @@ import com.neaterbits.ide.component.common.NewableType;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.component.common.language.LanguageStyling;
+import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 
 public class JavaLanguageComponent
 	implements ComponentProvider, LanguageComponent {
@@ -23,6 +24,8 @@ public class JavaLanguageComponent
 	private static final List<String> FILE_SUFFIXES = Arrays.asList("java");
 	
 	private static final LanguageStyling STYLING = new JavaLanguageStyling();
+
+	private static final JavaLanguage JAVA_LANGUAGE = new JavaLanguage();
 	
 	@Override
 	public List<NewableCategory> getNewables() {
@@ -48,5 +51,10 @@ public class JavaLanguageComponent
 	@Override
 	public LanguageStyling getStyling() {
 		return STYLING;
+	}
+
+	@Override
+	public ParseableLanguage getParseableLanguage() {
+		return JAVA_LANGUAGE;
 	}
 }

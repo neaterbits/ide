@@ -11,7 +11,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Text;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.ui.model.text.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.config.TextEditorConfig;
+import com.neaterbits.ide.common.ui.view.CursorPositionListener;
+import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.TextChangeListener;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.StringText;
@@ -23,9 +25,14 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 
 	private com.neaterbits.ide.util.ui.text.Text currentText;
 	
-	SWTTextEditorView(SWTViewList viewList, TabFolder composite, TextEditorConfig config, SourceFileResourcePath sourceFile) {
+	SWTTextEditorView(
+			SWTViewList viewList,
+			TabFolder composite,
+			TextEditorConfig config,
+			SourceFileResourcePath sourceFile,
+			EditorSourceActionContextProvider editorSourceActionContextProvider) {
 
-		super(composite, config, sourceFile);
+		super(composite, config, sourceFile, editorSourceActionContextProvider);
 
 		this.textWidget = new Text(composite, SWT.MULTI|SWT.BORDER);
 		
@@ -96,6 +103,11 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 				textSelectionListener.onTextSelectionChange(hasSelectedText());
 			}
 		});
+	}
+
+	@Override
+	void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
+		
 	}
 
 	@Override
