@@ -94,6 +94,7 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	final PrerequisiteSpec<CONTEXT, TARGET, ?> build() {
 		return new PrerequisiteSpec<>(
+				null,
 				description,
 				productType,
 				itemType,

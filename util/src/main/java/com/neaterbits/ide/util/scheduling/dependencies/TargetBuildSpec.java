@@ -1,5 +1,6 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
@@ -11,26 +12,40 @@ public abstract class TargetBuildSpec<CONTEXT extends TaskContext> {
 
 	protected abstract void buildSpec(TargetBuilder<CONTEXT> targetBuilder);
 	
+	public List<TargetSpec<CONTEXT, ?, ?>> buildTargetSpecs() {
+
+		final TargetBuilderImpl<CONTEXT> builderImpl = new TargetBuilderImpl<>();
+		
+		buildSpec(builderImpl);
+
+		return builderImpl.build();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final void execute(CONTEXT context, TargetExecutorLogger logger, Consumer<TargetBuildResult> onResult) {
 		
-		final TargetBuilderImpl<CONTEXT> builderImpl = new TargetBuilderImpl<>();
-		buildSpec(builderImpl);
-		
-		final TargetSpec<CONTEXT, ?, ?> targetSpec = builderImpl.build();
-		
-		final AsyncExecutor asyncExecutor = new AsyncExecutor();
-		
-		final TargetFinder targetFinder = new TargetFinder(asyncExecutor);
-		
-		final TargetFinderLogger targetFinderLogger = null; // new PrintlnTargetFinderLogger();
-		
-		targetFinder.computeTargets(targetSpec, context, targetFinderLogger, target -> {
+		try {
+			final List<TargetSpec<CONTEXT, ?, ?>> targetSpecs = buildTargetSpecs();
 			
-			// target.printTargets();
+			final AsyncExecutor asyncExecutor = new AsyncExecutor();
 			
-			final TargetExecutor targetExecutor = new TargetExecutor(asyncExecutor);
+			final TargetFinder targetFinder = new TargetFinder(asyncExecutor);
 			
-			targetExecutor.runTargets(context, target, logger, onResult);
-		});
+			final TargetFinderLogger targetFinderLogger = null; // new PrintlnTargetFinderLogger();
+			
+			targetFinder.computeTargets((List)targetSpecs, context, targetFinderLogger, target -> {
+				
+				// target.printTargets();
+				
+				final TargetExecutor targetExecutor = new TargetExecutor(asyncExecutor);
+				
+				targetExecutor.runTargets(context, target, logger, onResult);
+			});
+		}
+		catch (Throwable ex) {
+			ex.printStackTrace();
+			
+			throw ex;
+		}
 	}
 }

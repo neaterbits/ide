@@ -15,12 +15,14 @@ final class TargetFinder extends PrerequisitesFinder {
 	}
 
 	<CONTEXT extends TaskContext, TARGET, FILE_TARGET> void computeTargets(
-			TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec,
+			List<TargetSpec<CONTEXT, TARGET, FILE_TARGET>> targetSpecs,
 			CONTEXT context,
 			TargetFinderLogger logger,
 			Consumer<Target<TARGET>> rootTarget) {
 
-		findTargets(null, targetSpec, context, null, logger, 0, rootTarget);
+		for (TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec : targetSpecs) {
+			findTargets(null, targetSpec, context, null, logger, 0, rootTarget);
+		}
 
 		asyncExecutor.runQueuedRunnables();
 	}

@@ -1,6 +1,7 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -94,6 +95,43 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 		this(type, null, null, fileTargetType, getFileTarget, file, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
 	}
 
+	public TargetSpec(TargetSpec<CONTEXT, TARGET, FILE_TARGET> other, List<PrerequisiteSpec<CONTEXT, TARGET, ?>> additionalPrerequisites) {
+		
+		this(
+				other.type,
+				other.name,
+				other.qualifierName,
+				other.fileTargetType,
+				other.getFileTarget,
+				other.file,
+				other.description,
+				merge(other.prerequisites, additionalPrerequisites),
+				other.constraint,
+				other.actionFunction,
+				other.actionWithResult,
+				other.onResult);
+	}
+
+	private static <T> List<T> merge(List<T> list1, List<T> list2) {
+	
+		final List<T> list;
+		
+		if (list1 == null) {
+			list = list2;
+		}
+		else if (list2 == null) {
+			list = list1;
+		}
+		else {
+			list = new ArrayList<>(list1.size() + list2.size());
+		
+			list.addAll(list1);
+			list.addAll(list2);
+		}
+		
+		return list;
+	}
+	
 	Class<TARGET> getType() {
 		return type;
 	}

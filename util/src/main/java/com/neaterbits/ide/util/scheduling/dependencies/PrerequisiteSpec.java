@@ -11,6 +11,8 @@ import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 
 public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQUISITE> {
 
+	private final String named;
+	
 	private final String description;
 	private final Class<?> productType;
 	private final Class<?> itemType;
@@ -22,7 +24,12 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 	private final BuildSpec<CONTEXT, PREREQUISITE> action;
 	private final BiFunction<TARGET, List<?>, ?> collect;
 
+	public PrerequisiteSpec(String named) {
+		this(named, null, null, null, null, null, null, null, false, null, null);
+	}
+
 	public PrerequisiteSpec(
+			String named,
 			String description,
 			Class<?> productType,
 			Class<?> itemType,
@@ -34,13 +41,26 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 			BuildSpec<CONTEXT, PREREQUISITE> action,
 			BiFunction<TARGET, List<?>, ?> collect) {
 
-		Objects.requireNonNull(getPrerequisites);
+		if (named == null) {
+			Objects.requireNonNull(getPrerequisites);
+		}
+		else {
+			if (named.isEmpty()) {
+				throw new IllegalArgumentException();
+			}
+			
+			if (!named.trim().equals(named)) {
+				throw new IllegalArgumentException();
+			}
+		}
 		
 		if (recursiveBuild) {
 			Objects.requireNonNull(getSubPrerequisites);
 			Objects.requireNonNull(getDependencyFromPrerequisite);
 			Objects.requireNonNull(action);
 		}
+		
+		this.named = named;
 		
 		this.description = description;
 		
@@ -59,6 +79,10 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		this.collect = collect;
 	}
 	
+	String getNamed() {
+		return named;
+	}
+
 	String getDescription() {
 		return description;
 	}

@@ -4,8 +4,9 @@ import java.io.File;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
+import com.neaterbits.ide.common.tasks.ClassFileScanner;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
-import com.neaterbits.ide.common.tasks.TargetBuilderInitialScan;
+import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootImpl;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
@@ -77,10 +78,23 @@ public class IDEMain {
 
 	private static void startIDEScanJobs(BuildRoot buildRoot) {
 	
-		final TargetBuilderInitialScan initialScan = new TargetBuilderInitialScan();
-		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaLanguage());
+		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
+		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaLanguage(), new ClassFileScanner() {
+			
+			@Override
+			public void addLibraryFileToCodeMap(File compiledModuleFile) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void addClassFileToCodeMap(File classFile) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
-		initialScan.execute(context, new PrintlnTargetExecutorLogger(), null);
+		ideStartup.execute(context, new PrintlnTargetExecutorLogger(), null);
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {
