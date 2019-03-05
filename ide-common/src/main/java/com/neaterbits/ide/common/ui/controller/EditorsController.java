@@ -50,7 +50,11 @@ final class EditorsController {
 
 		@Override
 		public Collection<ActionContext> getActionContexts(long cursorOffset) {
-			return editorController.getActionContexts(cursorOffset);
+		
+			// Might be called while creating view so check for null
+			return editorController != null
+					? editorController.getActionContexts(cursorOffset)
+					: null;
 		}
 	}
 	
