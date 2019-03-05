@@ -4,9 +4,10 @@ import java.io.File;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
-import com.neaterbits.ide.common.tasks.ClassFileScanner;
+import com.neaterbits.ide.common.model.codemap.CodeMapGatherer;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
 import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
+import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootImpl;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
@@ -51,9 +52,11 @@ public class IDEMain {
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
+				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(new JavaBytecodeFormat());
+				
 				new IDEController(buildRoot, ui, config, ideComponents);
 				
-				startIDEScanJobs(buildRoot);
+				startIDEScanJobs(buildRoot, codeMapGatherer);
 				
 				ui.main();
 			}
@@ -76,23 +79,10 @@ public class IDEMain {
 	}
 	
 
-	private static void startIDEScanJobs(BuildRoot buildRoot) {
+	private static void startIDEScanJobs(BuildRoot buildRoot, CodeMapGatherer codeMapGatherer) {
 	
 		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
-		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaLanguage(), new ClassFileScanner() {
-			
-			@Override
-			public void addLibraryFileToCodeMap(File compiledModuleFile) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void addClassFileToCodeMap(File classFile) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaLanguage(), codeMapGatherer);
 		
 		ideStartup.execute(context, new PrintlnTargetExecutorLogger(), null);
 	}

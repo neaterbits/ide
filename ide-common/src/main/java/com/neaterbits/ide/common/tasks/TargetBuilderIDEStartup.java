@@ -12,12 +12,11 @@ public final class TargetBuilderIDEStartup extends TargetBuildSpec<InitialScanCo
 		targetBuilder.addTarget(new TargetBuilderGetSourceFolders());
 		
 		
-		/*
 		targetBuilder.addTarget(new TargetBuilderProjectModulesCodeMap())
 				
 				// Run after getting source folders so that IDE opens faster
-				.withNamedPrerequisite(TargetBuilderGetSourceFolders.NAME);
-		*/
+				// .withNamedPrerequisite(TargetBuilderGetSourceFolders.NAME)
+				;
 		
 		
 	}

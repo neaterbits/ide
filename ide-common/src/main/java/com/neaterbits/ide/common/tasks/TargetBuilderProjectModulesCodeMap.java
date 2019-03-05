@@ -47,7 +47,7 @@ public final class TargetBuilderProjectModulesCodeMap extends TargetBuildSpec<In
 												fileCompilation -> "Generate codemap for " + fileCompilation.getSourceFile().getPath())
 										
 										.action(Constraint.IO, (ctx, target, actionParameters) -> {
-											ctx.getClassFileScanner().addClassFileToCodeMap(target.getCompiledFile());
+											ctx.getCodeMapGatherer().addClassFile(target.getCompiledFile());
 										})
 								)
 					)

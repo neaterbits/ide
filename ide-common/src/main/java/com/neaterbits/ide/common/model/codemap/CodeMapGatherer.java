@@ -1,5 +1,7 @@
 package com.neaterbits.ide.common.model.codemap;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
@@ -48,6 +50,18 @@ public final class CodeMapGatherer extends InformationGatherer {
 	
 	public ClassLibs getClassLibs() {
 		return typeToDependencyFile;
+	}
+	
+	public void addClassFile(File file) {
+		
+		Objects.requireNonNull(file);
+		
+		try (FileInputStream inputStream = new FileInputStream(file)) {
+			bytecodeFormat.loadClassBytecode(inputStream);
+		}
+		catch (IOException|ClassFileException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public void loadAndAddToCodeMap(TypeName typeName) {
