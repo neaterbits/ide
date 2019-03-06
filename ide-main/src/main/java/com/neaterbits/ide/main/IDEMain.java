@@ -17,6 +17,7 @@ import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
 import com.neaterbits.ide.swt.SWTUI;
+import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.PrintlnTargetExecutorLogger;
 
 public class IDEMain {
@@ -56,6 +57,9 @@ public class IDEMain {
 				
 				new IDEController(buildRoot, ui, config, ideComponents);
 				
+				// Run events on event queue before async jobs send event on event queue
+				ui.runInitialEvents();
+				
 				startIDEScanJobs(buildRoot, codeMapGatherer);
 				
 				ui.main();
@@ -84,7 +88,9 @@ public class IDEMain {
 		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
 		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaLanguage(), codeMapGatherer);
 		
-		ideStartup.execute(context, new PrintlnTargetExecutorLogger(), null);
+		final AsyncExecutor asyncExecutor = new AsyncExecutor(true);
+		
+		ideStartup.execute(context, new PrintlnTargetExecutorLogger(), asyncExecutor, null);
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {

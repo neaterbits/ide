@@ -7,14 +7,15 @@ public final class AsyncExecutor implements Scheduler {
 
 	private int scheduledJobs;
 	
-	public AsyncExecutor() {
+	public AsyncExecutor(boolean scheduleAsynchronously) {
 		this.queue = new ThreadsafeQueue<>();
 
 		final ForwardToCaller forwardToCaller = runnable -> queue.add(runnable);
 
-		final SchedulerFactory schedulerFactory = 
-				new SynchronousSchedulerFactory(forwardToCaller);
-				// new AsynchronousSchedulerFactory(forwardToCaller);
+		final SchedulerFactory schedulerFactory =
+				scheduleAsynchronously
+					? new AsynchronousSchedulerFactory(forwardToCaller)
+					: new SynchronousSchedulerFactory(forwardToCaller);
 
 		this.scheduler = schedulerFactory.createScheduler();
 		

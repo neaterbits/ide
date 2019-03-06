@@ -22,14 +22,12 @@ public abstract class TargetBuildSpec<CONTEXT extends TaskContext> {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public final void execute(CONTEXT context, TargetExecutorLogger logger, Consumer<TargetBuildResult> onResult) {
+	public final void execute(CONTEXT context, TargetExecutorLogger logger, AsyncExecutor executor, Consumer<TargetBuildResult> onResult) {
 		
 		try {
 			final List<TargetSpec<CONTEXT, ?, ?>> targetSpecs = buildTargetSpecs();
 			
-			final AsyncExecutor asyncExecutor = new AsyncExecutor();
-			
-			final TargetFinder targetFinder = new TargetFinder(asyncExecutor);
+			final TargetFinder targetFinder = new TargetFinder(executor);
 			
 			final TargetFinderLogger targetFinderLogger = null; // new PrintlnTargetFinderLogger();
 			
@@ -37,7 +35,7 @@ public abstract class TargetBuildSpec<CONTEXT extends TaskContext> {
 				
 				// target.printTargets();
 				
-				final TargetExecutor targetExecutor = new TargetExecutor(asyncExecutor);
+				final TargetExecutor targetExecutor = new TargetExecutor(executor);
 				
 				targetExecutor.runTargets(context, target, logger, onResult);
 			});

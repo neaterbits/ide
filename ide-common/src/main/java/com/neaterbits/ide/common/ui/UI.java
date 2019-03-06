@@ -14,7 +14,9 @@ public interface UI {
 	SystemClipboard getSystemClipboard();
 	
 	UIViewAndSubViews makeUIView(UIParameters uiParameters, Menus menus, MapMenuItem mapMenuItem);
-	
+
+	void runInitialEvents();
+
 	void main();
 	
 	void addFocusListener(ViewFocusListener focusListener);

@@ -60,7 +60,8 @@ public final class CodeMapGatherer extends InformationGatherer {
 			bytecodeFormat.loadClassBytecode(inputStream);
 		}
 		catch (IOException|ClassFileException ex) {
-			ex.printStackTrace();
+			System.out.println("## error while reading " + file.getPath());
+			// ex.printStackTrace();
 		}
 	}
 
