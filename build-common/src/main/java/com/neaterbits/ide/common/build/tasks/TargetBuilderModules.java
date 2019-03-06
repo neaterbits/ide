@@ -2,14 +2,17 @@ package com.neaterbits.ide.common.build.tasks;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.common.build.compile.BuildException;
 import com.neaterbits.ide.common.build.compile.Compiler;
 import com.neaterbits.ide.common.build.compile.CompilerStatus;
 import com.neaterbits.ide.common.build.model.Dependency;
+import com.neaterbits.ide.common.build.model.compile.ExternalModuleDependencyList;
 import com.neaterbits.ide.common.build.model.compile.ModuleCompileList;
-import com.neaterbits.ide.common.build.model.compile.ModuleDependencyList;
+import com.neaterbits.ide.common.build.model.compile.ProjectModuleDependencyList;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
@@ -30,18 +33,18 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 					
 				.addFileSubTarget(ProjectModuleResourcePath.class,
 						CompiledModuleFileResourcePath.class,
-						
 						(context, module) -> context.getCompiledModuleFile(module),
 						CompiledModuleFileResourcePath::getFile,
 						module -> "Compile module  " + module.getName())
 
 					// collect dependencies in list for later
+				/*
 					.withPrerequisites("Module dependencies list")
 						.makingProduct(ModuleDependencyList.class)
 						.fromItemType(Dependency.class)
 						.fromIterating(null, ModuleBuilderUtil::transitiveProjectDependencies)
 						.collectToProduct((module, dependencyList) -> new ModuleDependencyList(module, dependencyList))
-
+				*/
 					// add targets for local module dependencies
 					.withPrerequisites(new PrerequisitesBuilderProjectDependencies())
 
@@ -54,14 +57,40 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 					
 					.action(Constraint.CPU, (context, target, actionParameters) -> {
 						
-						final ModuleCompileList moduleCompileList = actionParameters.getCollected(ModuleCompileList.class);
+						final ModuleCompileList moduleCompileList = actionParameters.getCollectedProduct(
+								target,
+								ModuleCompileList.class);
 						
+						final ExternalModuleDependencyList externalDependencyList = actionParameters.getCollectedProduct(
+								target,
+								ExternalModuleDependencyList.class);
+
+						final ProjectModuleDependencyList projectDependencyList = actionParameters.getCollectedProduct(
+								target,
+								ProjectModuleDependencyList.class);
+
+						
+						/*
+						System.out.println("## module compile list " + moduleCompileList);
+						
+						System.out.println("## external dependency list " + externalDependencyList);
+
+						System.out.println("## project dependency list " + projectDependencyList);
+						*/
+
+						if (moduleCompileList == null) {
+							throw new IllegalStateException();
+						}
+						
+						if (externalDependencyList == null) {
+							throw new IllegalStateException();
+						}
+
 						if (!moduleCompileList.getSourceFiles().isEmpty()) {
 						
 							final File targetDirectory = context.getBuildRoot().getTargetDirectory(target).getFile();
-							final ModuleDependencyList moduleDependencyList = actionParameters.getCollected(ModuleDependencyList.class);
 	
-							compileSourceFiles(context.compiler, moduleCompileList, targetDirectory, moduleDependencyList);
+							compileSourceFiles(context.compiler, moduleCompileList, targetDirectory, projectDependencyList, externalDependencyList);
 						}
 					})
 			);
@@ -69,12 +98,29 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 	}
 
 	
-	private static void compileSourceFiles(Compiler compiler, ModuleCompileList moduleCompileList, File targetDirectory, ModuleDependencyList moduleDependencyList) throws IOException, BuildException {
+	private static void compileSourceFiles(
+			Compiler compiler,
+			ModuleCompileList moduleCompileList,
+			File targetDirectory,
+			ProjectModuleDependencyList projectModuleDependencyList,
+			ExternalModuleDependencyList externalDependencyList) throws IOException, BuildException {
 
 		if (moduleCompileList == null) {
 			throw new IllegalStateException();
 		}
 
+		final List<File> dependencies = new ArrayList<>(
+				  projectModuleDependencyList.getDependencies().size()
+				+ externalDependencyList.getDependencies().size());
+
+		projectModuleDependencyList.getDependencies().stream()
+			.map(Dependency::getCompiledModuleFile)
+			.forEach(dependencies::add);
+
+		externalDependencyList.getDependencies().stream()
+			.map(Dependency::getCompiledModuleFile)
+			.forEach(dependencies::add);
+		
 		final CompilerStatus status = compiler.compile(
 
 				moduleCompileList.getSourceFiles().stream()
@@ -83,10 +129,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 					.collect(Collectors.toList()),
 					
 				targetDirectory,
-				
-				moduleDependencyList.getDependencies().stream()
-					.map(Dependency::getCompiledModuleFile)
-					.collect(Collectors.toList()));
+				dependencies);
 
 		if (!status.executedOk()) {
 			throw new BuildException(status.getIssues());

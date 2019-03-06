@@ -40,9 +40,9 @@ public class PrerequisitesBuilderModuleCompileList extends PrerequisitesBuildSpe
 								.from(FileCompilation::getSourcePath)
 								.withFile(FileCompilation::getSourceFile)
 						)
-						.collectToProduct((sourceFolder, fileCompilationList) -> new SourceFolderCompileList(sourceFolder, fileCompilationList))
+						.collectSubTargetsToProduct((sourceFolder, fileCompilationList) -> new SourceFolderCompileList(sourceFolder, fileCompilationList))
 			)
-			.collectToProduct((module, resultList) -> new ModuleCompileList(module, resultList));
+			.collectSubProductsToProduct((module, resultList) -> new ModuleCompileList(module, resultList));
 
 	}
 }

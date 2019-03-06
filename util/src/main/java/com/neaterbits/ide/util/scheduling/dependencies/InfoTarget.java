@@ -76,6 +76,6 @@ final class InfoTarget<TARGET> extends Target<TARGET> {
 
 	@Override
 	public String toString() {
-		return "NamedTarget [name=" + name + ", description=" + getDescription() + "]";
+		return "InfoTarget [name=" + name + ", description=" + getDescription() + "]";
 	}
 }

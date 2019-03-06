@@ -8,6 +8,8 @@ import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.dependencies.BuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.CollectSubProducts;
+import com.neaterbits.ide.util.scheduling.dependencies.CollectSubTargets;
 import com.neaterbits.ide.util.scheduling.dependencies.PrerequisiteSpec;
 
 final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUCT, ITEM> {
@@ -23,7 +25,8 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 	
 	private boolean recursiveBuild;
 	
-	private BiFunction<TARGET, List<ITEM>, PRODUCT> collect;
+	private BiFunction<TARGET, List<ITEM>, PRODUCT> collectSubTargets;
+	private BiFunction<TARGET, List<ITEM>, PRODUCT> collectSubProducts;
 
 	private BuildSpec<CONTEXT, ?> build;
 	
@@ -72,15 +75,26 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 		this.recursiveBuild = true;
 	}
 	
-	final void setCollect(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
+	final void setCollectSubTargets(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
 
 		Objects.requireNonNull(collect);
 		
-		if (this.collect != null) {
+		if (this.collectSubTargets != null) {
 			throw new IllegalStateException();
 		}
 		
-		this.collect = collect;
+		this.collectSubTargets = collect;
+	}
+
+	final void setCollectSubProducts(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
+
+		Objects.requireNonNull(collect);
+		
+		if (this.collectSubProducts != null) {
+			throw new IllegalStateException();
+		}
+		
+		this.collectSubProducts = collect;
 	}
 
 	final void setBuild(BuildSpec<CONTEXT, ?> build) {
@@ -104,6 +118,7 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 				(Function)getDependencyFromPrerequisite,
 				recursiveBuild,
 				build,
-				(BiFunction)collect);
+				collectSubTargets != null ? new CollectSubTargets<>(productType, (BiFunction)collectSubTargets) : null,
+				collectSubProducts != null ? new CollectSubProducts<>(productType, (BiFunction)collectSubProducts) : null);
 	}
 }

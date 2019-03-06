@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.ide.common.build.model.Dependency;
 import com.neaterbits.ide.common.build.model.DependencyType;
+import com.neaterbits.ide.common.build.model.compile.ExternalModuleDependencyList;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
@@ -18,6 +19,8 @@ final class PrerequisitesBuilderExternalDependencies extends PrerequisitesBuildS
 		
 		builder
 			.withPrerequisites("External dependencies")
+			.makingProduct(ExternalModuleDependencyList.class)
+			.fromItemType(Dependency.class)
 			
 			.fromIteratingAndBuildingRecursively(
 					Constraint.NETWORK,
@@ -48,7 +51,12 @@ final class PrerequisitesBuilderExternalDependencies extends PrerequisitesBuildS
 				.action(Constraint.NETWORK, (context, target, actionParams) -> {
 					context.getBuildRoot().downloadExternalDependencyAndAddToBuildModel(target);
 				});
-			});
+			})
+			.collectSubTargetsToProduct((module, dependencies) -> new ExternalModuleDependencyList(
+					module,
+					dependencies.stream()
+						.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
+						.collect(Collectors.toList())));
 
 	}
 	

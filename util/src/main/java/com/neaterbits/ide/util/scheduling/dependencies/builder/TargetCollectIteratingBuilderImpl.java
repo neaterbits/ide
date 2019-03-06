@@ -2,6 +2,7 @@ package com.neaterbits.ide.util.scheduling.dependencies.builder;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.Constraint;
 
@@ -25,6 +26,19 @@ class TargetCollectIteratingBuilderImpl<CONTEXT extends TaskContext, TARGET, FIL
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites) {
 		
 		prerequisiteBuilderState.setIterating(constraint, getPrerequisites);
+		
+		return new PrerequisiteCollectActionBuilderImpl<>(targetBuilderState, prerequisiteBuilderState);
+	}
+
+
+	@Override
+	public <PREREQUISITE, SUB_TARGET> PrerequisiteCollectActionBuilder<CONTEXT, TARGET, PREREQUISITE, PRODUCT, ITEM> fromIteratingAndBuildingRecursively(
+			Constraint constraint, Class<SUB_TARGET> subTargetType,
+			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
+			BiFunction<CONTEXT, SUB_TARGET, Collection<PREREQUISITE>> getSubPrerequisites,
+			Function<PREREQUISITE, SUB_TARGET> getDependencyFromPrerequisite) {
+
+		prerequisiteBuilderState.setIteratingAndBuildingRecursively(constraint, getPrerequisites, getSubPrerequisites, getDependencyFromPrerequisite);;
 		
 		return new PrerequisiteCollectActionBuilderImpl<>(targetBuilderState, prerequisiteBuilderState);
 	}

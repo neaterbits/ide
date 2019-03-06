@@ -121,10 +121,21 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		addTargetLogState(logEntry, logState);
 	}
 
+	
 	@Override
-	public void onCollect(Target<?> target, List<Object> targetObjects, Object collected, TargetExecutorLogState logState) {
+	public void onCollectProducts(Target<?> target, CollectedProducts subProducts, CollectedProduct collected,
+			TargetExecutorLogState logState) {
+
+		final LogEntry logEntry = addLogEntry(target, "Collected " + collected.getProductObject());
+
+		addTargetLogState(logEntry, logState);
+	}
+
+	@Override
+	public void onCollectTargetObjects(Target<?> target, CollectedTargetObjects targetObjects,
+			CollectedProduct collected, TargetExecutorLogState logState) {
 		
-		final LogEntry logEntry = addLogEntry(target, "Collected " + collected);
+		final LogEntry logEntry = addLogEntry(target, "Collected " + collected.getProductObject());
 
 		addTargetLogState(logEntry, logState);
 	}

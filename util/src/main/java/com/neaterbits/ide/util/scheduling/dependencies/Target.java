@@ -3,14 +3,12 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.ide.util.Indent;
-
 public abstract class Target<TARGET> extends BuildEntity {
 
 	private final Class<TARGET> type;
 	private final String description;
 	private final TARGET targetObject;
-	private final List<Prerequisites> prerequisites;
+	private List<Prerequisites> prerequisites;
 	private final Action<TARGET> action;
 	private final ActionWithResult<TARGET> actionWithResult;
 	private final TargetSpec<?, TARGET, ?> targetSpec;
@@ -33,8 +31,6 @@ public abstract class Target<TARGET> extends BuildEntity {
 		
 		Objects.requireNonNull(targetSpec);
 		
-		prerequisites.forEach(p -> p.setFromTarget(this));
-
 		this.type = type;
 		this.description = description;
 		this.targetObject = targetObject;
@@ -42,12 +38,18 @@ public abstract class Target<TARGET> extends BuildEntity {
 		this.action = action;
 		this.actionWithResult = actionWithResult;
 		this.targetSpec = targetSpec;
+		
+		setPrerequisites(prerequisites);
 	}
 
 	final Class<TARGET> getType() {
 		return type;
 	}
 
+	boolean isRoot() {
+		return fromPrerequisite == null;
+	}
+	
 	@Override
 	final BuildEntity getFromEntity() {
 		return fromPrerequisite;
@@ -78,6 +80,13 @@ public abstract class Target<TARGET> extends BuildEntity {
 		return prerequisites;
 	}
 
+	void setPrerequisites(List<Prerequisites> prerequisites) {
+
+		prerequisites.forEach(p -> p.setFromTarget(this));
+
+		this.prerequisites = prerequisites;
+	}
+
 	final Action<TARGET> getAction() {
 		return action;
 	}
@@ -94,8 +103,73 @@ public abstract class Target<TARGET> extends BuildEntity {
 		printTargets(0);
 	}
 	
+	private Target<?> getFromTarget() {
+		return fromPrerequisite != null
+				? fromPrerequisite.getFromPrerequisites().getFromTarget()
+				: null;
+	}
+	
+	public final boolean isRecursionSubTarget() {
+		return fromPrerequisite != null ? fromPrerequisite.getFromPrerequisites().isRecursiveBuild() : false;
+	}
+
+	
+	public final boolean isTopOfRecursion() {
+		
+		return getRecursionLevel() == 0;
+	}
+	
+	public final int getRecursionLevel() {
+		
+		int level = 0;
+		
+		for (Target<?> target = this;
+				   target != null
+				&& target.isRecursionSubTarget()
+				&& target.targetSpec == this.targetSpec;
+				
+				target = target.getFromTarget()) {
+			
+			++ level;
+		}
+		
+		return level;
+	}
+	
+	public static Target<?> findRecursionTop(Prerequisites prerequisites) {
+
+		if (!prerequisites.isRecursiveBuild()) {
+			throw new IllegalArgumentException();
+		}
+		
+		PrerequisiteSpec<?, ?, ?> spec = prerequisites.getSpec();
+		Prerequisites prq;
+
+		Target<?> initialTarget = null;
+
+		for (
+				prq = prerequisites;
+				prq.getSpec() == spec && prq.getFromTarget() != null;
+				prq = prq.getFromTarget().getFromPrerequisite().getFromPrerequisites()) {
+			
+			/*
+			System.out.println("## target " + prq.getFromTarget() + "/"
+						+ prq.getFromTarget().getFromPrerequisite().getFromPrerequisites().isRecursiveBuild());
+			
+			*/
+			initialTarget = prq.getFromTarget();
+		}
+
+		if (!initialTarget.isTopOfRecursion()) {
+			throw new IllegalStateException();
+		}
+		
+		return initialTarget;
+	}
+	
 	private void printTargets(int indent) {
-		System.out.println(Indent.indent(indent) + "Target " + this + ", prerequisites " + getPrerequisites() + ", action " + action);
+
+		// System.out.println(Indent.indent(indent) + "Target " + this + ", prerequisites " + getPrerequisites() + ", action " + action);
 		
 		for (Prerequisites prerequisites : getPrerequisites()) {
 			for (Prerequisite<?> prerequisite : prerequisites.getPrerequisites()) {

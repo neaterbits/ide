@@ -1,8 +1,6 @@
 package com.neaterbits.ide.util.scheduling.dependencies.builder;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import com.neaterbits.ide.util.scheduling.dependencies.BuildSpec;
@@ -37,13 +35,5 @@ class PrerequisiteCollectActionBuilderImpl<CONTEXT extends TaskContext, TARGET, 
 		prerequisiteBuilderState.setBuild(new BuildSpec<>(subTargetState.build()));
 		
 		return new PrerequisitesOrCollectBuilderImpl<>(targetBuilderState, prerequisiteBuilderState);
-	}
-
-	@Override
-	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> collectToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
-
-		prerequisiteBuilderState.setCollect(collect);
-		
-		return new PrerequisitesOrActionBuilderImpl<>(targetBuilderState);
 	}
 }

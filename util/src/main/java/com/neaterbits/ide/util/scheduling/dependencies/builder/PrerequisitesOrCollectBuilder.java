@@ -11,6 +11,8 @@ public interface PrerequisitesOrCollectBuilder<
 
 	extends PrerequisitesBuilder<CONTEXT, TARGET> {
 
-	PrerequisitesOrActionBuilder<CONTEXT, TARGET> collectToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect);
-	
+	PrerequisitesOrActionBuilder<CONTEXT, TARGET> collectSubTargetsToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect);
+
+	PrerequisitesOrActionBuilder<CONTEXT, TARGET> collectSubProductsToProduct(BiFunction<TARGET, List<ITEM>, PRODUCT> collect);
+
 }

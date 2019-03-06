@@ -6,7 +6,7 @@ import java.util.Objects;
 import com.neaterbits.ide.common.build.model.Dependency;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 
-public final class ModuleDependencyList {
+public class ModuleDependencyList {
 
 	private final ProjectModuleResourcePath module;
 	private final List<Dependency> dependencies;
@@ -26,5 +26,10 @@ public final class ModuleDependencyList {
 
 	public List<Dependency> getDependencies() {
 		return dependencies;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " [module=" + module + ", dependencies=" + dependencies + "]";
 	}
 }

@@ -1,14 +1,14 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
-import java.util.List;
-
 public interface TargetExecutorLogger {
 
 	void onScheduleTargets(int numScheduledJobs, TargetExecutorLogState logState);
 	
 	void onScheduleTarget(Target<?> target, Status hasCompletedPrerequisites, TargetExecutorLogState logState);
-	
-	void onCollect(Target<?> target, List<Object> targetObjects, Object collected, TargetExecutorLogState logState);
+
+	void onCollectProducts(Target<?> target, CollectedProducts subProducts, CollectedProduct collected, TargetExecutorLogState logState);
+
+	void onCollectTargetObjects(Target<?> target, CollectedTargetObjects targetObjects, CollectedProduct collected, TargetExecutorLogState logState);
 	
 	void onAction(Target<?> target, TargetExecutorLogState logState);
 	

@@ -1,6 +1,5 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
-import java.util.List;
 
 public final class PrintlnTargetExecutorLogger implements TargetExecutorLogger {
 
@@ -16,13 +15,21 @@ public final class PrintlnTargetExecutorLogger implements TargetExecutorLogger {
 		System.out.println("Schedule target " + target.targetToLogString() + ", status=" + status);
 		
 	}
+	
+	@Override
+	public void onCollectProducts(Target<?> target, CollectedProducts subProducts, CollectedProduct collected,
+			TargetExecutorLogState logState) {
+
+		System.out.println("Collect " + collected + " to target " + target.targetToLogString() + " from " + subProducts.getCollectedObjects());
+	}
 
 	@Override
-	public void onCollect(Target<?> target, List<Object> targetObjects, Object collected, TargetExecutorLogState logState) {
+	public void onCollectTargetObjects(Target<?> target, CollectedTargetObjects targetObjects,
+			CollectedProduct collected, TargetExecutorLogState logState) {
 
-		System.out.println("Collect " + collected + " to target " + target.targetToLogString() + " from " + targetObjects);
-		
+		System.out.println("Collect " + collected + " to target " + target.targetToLogString() + " from " + targetObjects.getCollectedObjects());
 	}
+
 
 	@Override
 	public void onAction(Target<?> target, TargetExecutorLogState logState) {

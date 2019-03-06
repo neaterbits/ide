@@ -71,10 +71,6 @@ final class Prerequisites extends BuildEntity {
 		return spec.isRecursiveBuild();
 	}
 
-	BiFunction<?, List<?>, ?> getCollect() {
-		return spec.getCollect();
-	}
-
 	@Override
 	public String toString() {
 		return prerequisites.toString();

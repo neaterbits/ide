@@ -1,7 +1,6 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -22,10 +21,11 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 	private final Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite;
 	private final boolean recursiveBuild;
 	private final BuildSpec<CONTEXT, PREREQUISITE> action;
-	private final BiFunction<TARGET, List<?>, ?> collect;
-
+	private final CollectSubTargets<TARGET> collectSubTargets;
+	private final CollectSubProducts<TARGET> collectSubProducts;
+	
 	public PrerequisiteSpec(String named) {
-		this(named, null, null, null, null, null, null, null, false, null, null);
+		this(named, null, null, null, null, null, null, null, false, null, null, null);
 	}
 
 	public PrerequisiteSpec(
@@ -39,7 +39,8 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite,
 			boolean recursiveBuild,
 			BuildSpec<CONTEXT, PREREQUISITE> action,
-			BiFunction<TARGET, List<?>, ?> collect) {
+			CollectSubTargets<TARGET> collectSubTargets,
+			CollectSubProducts<TARGET> collectSubProducts) {
 
 		if (named == null) {
 			Objects.requireNonNull(getPrerequisites);
@@ -76,7 +77,8 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		
 		this.action = action;
 		
-		this.collect = collect;
+		this.collectSubTargets = collectSubTargets;
+		this.collectSubProducts = collectSubProducts;
 	}
 	
 	String getNamed() {
@@ -127,7 +129,11 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		return action;
 	}
 
-	BiFunction<TARGET, List<?>, ?> getCollect() {
-		return collect;
+	CollectSubTargets<TARGET> getCollectSubTargets() {
+		return collectSubTargets;
+	}
+
+	CollectSubProducts<TARGET> getCollectSubProducts() {
+		return collectSubProducts;
 	}
 }
