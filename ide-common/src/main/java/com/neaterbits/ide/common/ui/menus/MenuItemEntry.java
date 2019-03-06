@@ -5,7 +5,7 @@ import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.keys.KeyCombination;
 
-public abstract class MenuItemEntry extends MenuEntry {
+public abstract class MenuItemEntry extends TextMenuEntry {
 
 	public abstract boolean isApplicableInContexts(
 			ActionApplicableParameters parameters,

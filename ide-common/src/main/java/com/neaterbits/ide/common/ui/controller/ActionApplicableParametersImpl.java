@@ -20,4 +20,10 @@ final class ActionApplicableParametersImpl implements ActionApplicableParameters
 	public Clipboard getClipboard() {
 		return executeState.getClipboard();
 	}
+
+	@Override
+	public UndoRedoBuffer getUndoRedoBuffer() {
+		return executeState.getUndoRedoBuffer();
+	}
+	
 }

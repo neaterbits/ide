@@ -95,6 +95,18 @@ public final class IDEController implements ComponentIDEAccess {
 				ideComponents,
 				uiView,
 				clipboard,
+				new UndoRedoBuffer() {
+					
+					@Override
+					public boolean hasUndoEntries() {
+						return true;
+					}
+					
+					@Override
+					public boolean hasRedoEntries() {
+						return false;
+					}
+				},
 				this,
 				buildRoot,
 				uiController);

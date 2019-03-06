@@ -28,7 +28,9 @@ import com.neaterbits.ide.common.ui.menus.MenuEntry;
 import com.neaterbits.ide.common.ui.menus.MenuItemEntry;
 import com.neaterbits.ide.common.ui.menus.MenuListEntry;
 import com.neaterbits.ide.common.ui.menus.Menus;
+import com.neaterbits.ide.common.ui.menus.SeparatorMenuEntry;
 import com.neaterbits.ide.common.ui.menus.SubMenuEntry;
+import com.neaterbits.ide.common.ui.menus.TextMenuEntry;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
 import com.neaterbits.ide.common.ui.translation.Translator;
@@ -180,6 +182,8 @@ public final class SWTUIView implements UIViewAndSubViews {
 			
 			final MenuItem menuItem;
 
+			final TextMenuEntry textMenuEntry;
+			
 			sb.setLength(0);
 			
 			if (entry instanceof SubMenuEntry) {
@@ -190,10 +194,16 @@ public final class SWTUIView implements UIViewAndSubViews {
 				menuItem.setMenu(subMenu);
 				
 				buildMenuList(shell, subMenu, (SubMenuEntry)entry, mapMenuItems, translator);
+				
+				textMenuEntry = (TextMenuEntry)entry;
+			}
+			else if (entry instanceof SeparatorMenuEntry){
+				menuItem = new MenuItem(menu, SWT.SEPARATOR);
+				
+				textMenuEntry = null;
 			}
 			else {
 				menuItem = new MenuItem(menu, SWT.PUSH);
-				
 				
 				final ViewMenuItem viewMenuItem = new ViewMenuItem() {
 					@Override
@@ -204,6 +214,8 @@ public final class SWTUIView implements UIViewAndSubViews {
 
 
 				final MenuItemEntry menuItemEntry = (MenuItemEntry)entry;
+				
+				textMenuEntry = menuItemEntry;
 				
 				final KeyCombination keyCombination = menuItemEntry.getKeyCombination();
 
@@ -225,11 +237,13 @@ public final class SWTUIView implements UIViewAndSubViews {
 				});
 			}
 
-			final String text = sb.length() == 0
-					? translator.translate(entry)
-					: translator.translate(entry) + '\t' + sb.toString();
-			
-			menuItem.setText(text);
+			if (textMenuEntry != null) {
+				final String text = sb.length() == 0
+						? translator.translate(textMenuEntry)
+						: translator.translate(textMenuEntry) + '\t' + sb.toString();
+				
+				menuItem.setText(text);
+			}
 		}
 	}
 	

@@ -4,7 +4,10 @@ import com.neaterbits.ide.common.ui.actions.types.clipboard.CopyAction;
 import com.neaterbits.ide.common.ui.actions.types.clipboard.CutAction;
 import com.neaterbits.ide.common.ui.actions.types.clipboard.PasteAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.CloseEditedAction;
+import com.neaterbits.ide.common.ui.actions.types.edit.FindReplaceAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.MinMaxEditorsAction;
+import com.neaterbits.ide.common.ui.actions.types.edit.RedoAction;
+import com.neaterbits.ide.common.ui.actions.types.edit.UndoAction;
 import com.neaterbits.ide.common.ui.actions.types.entity.DeleteAction;
 import com.neaterbits.ide.common.ui.actions.types.entity.NewDialogAction;
 import com.neaterbits.ide.common.ui.actions.types.entity.NewPopupAction;
@@ -23,13 +26,17 @@ public enum BuiltinAction implements Translateable {
 	NEW_DIALOG(NewDialogAction.class),
 	DELETE(DeleteAction.class),
 	
+	UNDO(UndoAction.class),
+	REDO(RedoAction.class),
+	
 	CUT(CutAction.class),
 	PASTE(PasteAction.class),
 	COPY(CopyAction.class),
 	
+	FIND_REPLACE(FindReplaceAction.class),
+	
 	OPEN_TYPE(OpenTypeAction.class),
 	SHOW_IN_PROJECTS(ShowInProjectsAction.class),
-	
 		
 	CLOSE_EDITED(CloseEditedAction.class),
 	MIN_MAX_EDITORS(MinMaxEditorsAction.class),

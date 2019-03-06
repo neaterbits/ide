@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class MenuListEntry extends MenuEntry {
+public abstract class MenuListEntry extends TextMenuEntry {
 
 	private final List<MenuEntry> entries;
 
@@ -28,6 +28,9 @@ public abstract class MenuListEntry extends MenuEntry {
 			}
 			else if (entry instanceof MenuListEntry) {
 				((MenuListEntry)entry).iterateItems(onMenuItem);
+			}
+			else if (entry instanceof SeparatorMenuEntry) {
+				
 			}
 			else {
 				throw new UnsupportedOperationException();

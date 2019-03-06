@@ -4,6 +4,7 @@ import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.controller.EditActions;
+import com.neaterbits.ide.common.ui.controller.UndoRedoBuffer;
 import com.neaterbits.ide.common.ui.view.UIDialogs;
 import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
@@ -18,6 +19,8 @@ public interface ActionExecuteParameters {
 	UIDialogs getUIDialogs();
 
 	Clipboard getClipboard();
+	
+	UndoRedoBuffer getUndoRedoBuffer();
 	
 	ComponentIDEAccess getComponentIDEAccess();
 	

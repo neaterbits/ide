@@ -47,6 +47,11 @@ final class ActionExecuteParametersImpl implements ActionExecuteParameters {
 	}
 
 	@Override
+	public UndoRedoBuffer getUndoRedoBuffer() {
+		return executeState.getUndoRedoBuffer();
+	}
+
+	@Override
 	public ComponentIDEAccess getComponentIDEAccess() {
 		return executeState.getComponentIDEAccess();
 	}

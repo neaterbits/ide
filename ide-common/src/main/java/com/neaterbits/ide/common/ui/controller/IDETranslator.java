@@ -43,7 +43,15 @@ final class IDETranslator implements Translator {
 				break;
 				
 			case "delete":
-				translation = "Delete";
+				translation = "&Delete";
+				break;
+
+			case "undo":
+				translation = "&Undo";
+				break;
+
+			case "redo":
+				translation = "&Redo";
 				break;
 				
 			case "cut":
@@ -56,6 +64,10 @@ final class IDETranslator implements Translator {
 				
 			case "paste":
 				translation = "Paste";
+				break;
+				
+			case "find_replace":
+				translation = "&Find/Replace";
 				break;
 				
 			case "rename":

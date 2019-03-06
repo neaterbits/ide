@@ -11,18 +11,32 @@ public class IDEMenus {
 		
 		builder
 			.addSubMenu(BuiltinMenu.FILE, b -> b
-					.addBuiltinAction(BuiltinAction.NEW_DIALOG))
-			
+					.addBuiltinAction(BuiltinAction.NEW_DIALOG)
+			)
 			.addSubMenu(BuiltinMenu.EDIT, b -> b
+					.addBuiltinAction(BuiltinAction.UNDO)
+					.addBuiltinAction(BuiltinAction.REDO)
+					
+					.addSeparator()
+					
 					.addBuiltinAction(BuiltinAction.CUT)
 					.addBuiltinAction(BuiltinAction.COPY)
-					.addBuiltinAction(BuiltinAction.PASTE))
+					.addBuiltinAction(BuiltinAction.PASTE)
+			
+					.addSeparator()
 					
+					.addBuiltinAction(BuiltinAction.DELETE)
+					
+					.addSeparator()
+					
+					.addBuiltinAction(BuiltinAction.FIND_REPLACE)
+			)
 			.addSubMenu(BuiltinMenu.REFACTOR,  b -> b
 					.addBuiltinAction(BuiltinAction.RENAME)
 					.addBuiltinAction(BuiltinAction.MOVE))
 			.addSubMenu(BuiltinMenu.NAVIGATE, b -> b
-					.addBuiltinAction(BuiltinAction.TYPE_HIERARCHY));
+					.addBuiltinAction(BuiltinAction.TYPE_HIERARCHY)
+			);
 
 		return new Menus(builder.build());
 	}

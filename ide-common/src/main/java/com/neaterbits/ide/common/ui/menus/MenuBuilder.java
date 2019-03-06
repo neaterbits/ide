@@ -33,6 +33,13 @@ final class MenuBuilder {
 		
 		return this;
 	}
+	
+	MenuBuilder addSeparator() {
+		
+		entries.add(new SeparatorMenuEntry());
+	
+		return this;
+	}
 
 	MenuBuilder addBuiltinAction(BuiltinAction action) {
 		

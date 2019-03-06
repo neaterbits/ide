@@ -13,6 +13,7 @@ final class ActionExecuteState {
 	private final IDEComponentsConstAccess components;
 	private final UIDialogs uiDialogs;
 	private final Clipboard clipboard;
+	private final UndoRedoBuffer undoRedoBuffer;
 	private final ComponentIDEAccess componentIDEAccess;
 	private final BuildRoot buildRoot;
 	private final EditActions editActions;
@@ -21,6 +22,7 @@ final class ActionExecuteState {
 			IDEComponentsConstAccess components,
 			UIDialogs uiDialogs,
 			Clipboard clipboard,
+			UndoRedoBuffer undoRedoBuffer,
 			ComponentIDEAccess componentIDEAccess,
 			BuildRoot buildRoot,
 			EditActions editActions) {
@@ -28,6 +30,7 @@ final class ActionExecuteState {
 		Objects.requireNonNull(components);
 		Objects.requireNonNull(uiDialogs);
 		Objects.requireNonNull(clipboard);
+		Objects.requireNonNull(undoRedoBuffer);
 		Objects.requireNonNull(componentIDEAccess);
 		Objects.requireNonNull(buildRoot);
 		Objects.requireNonNull(editActions);
@@ -35,6 +38,7 @@ final class ActionExecuteState {
 		this.components = components;
 		this.uiDialogs = uiDialogs;
 		this.clipboard = clipboard;
+		this.undoRedoBuffer = undoRedoBuffer;
 		this.componentIDEAccess = componentIDEAccess;
 		this.buildRoot = buildRoot;
 		this.editActions = editActions;
@@ -51,6 +55,10 @@ final class ActionExecuteState {
 
 	Clipboard getClipboard() {
 		return clipboard;
+	}
+
+	UndoRedoBuffer getUndoRedoBuffer() {
+		return undoRedoBuffer;
 	}
 
 	ComponentIDEAccess getComponentIDEAccess() {
