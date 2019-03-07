@@ -215,7 +215,6 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	@Override
 	public Collection<MavenDependency> getTransitiveExternalDependencies(MavenDependency dependency) throws ScanException {
 		
-		
 		Objects.requireNonNull(dependency);
 		
 		final File pomFile = repositoryExternalPomFile(dependency);

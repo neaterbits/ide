@@ -57,15 +57,13 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		return namespaceResource;
 	}
 	
-	
-	
 	@Override
 	public CompleteName getCompleteName(SourceFileResourcePath sourceFile) {
 
 		return new CompleteName(
 				new NamespaceReference(getNamespace(sourceFile).getNamespace()),
 				null,
-				classNameFromFile(sourceFile.getFile()));
+				classNameFromSourceFile(sourceFile.getFile()));
 	}
 	
 	@Override
@@ -86,8 +84,14 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		
 		return Strings.join(typeName.getNamespace(), '.');
 	}
+	
 
-	private static ClassName classNameFromFile(File file) {
+	@Override
+	public String getBinaryName(TypeName typeName) {
+		return typeName.getName() + ".class";
+	}
+
+	private static ClassName classNameFromSourceFile(File file) {
 		
 		final String name = file.getName();
 		

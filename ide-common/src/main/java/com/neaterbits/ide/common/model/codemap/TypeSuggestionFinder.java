@@ -8,6 +8,8 @@ abstract class TypeSuggestionFinder {
 
 	abstract boolean canRetrieveTypeVariant();
 	
+	abstract boolean hasSourceCode();
+	
 	abstract boolean findSuggestions(TypeNameMatcher matcher, Map<TypeName, TypeSuggestion> dst);
 	
 }

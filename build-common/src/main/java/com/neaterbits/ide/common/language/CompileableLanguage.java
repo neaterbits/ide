@@ -23,6 +23,8 @@ public interface CompileableLanguage {
 
 	String getNamespaceString(TypeName typeName);
 	
+	String getBinaryName(TypeName typeName);
+	
 	Set<TypeName> getTypesFromCompiledModuleFile(CompiledModuleFileResourcePath compiledModuleFileResourcePath) throws IOException;
 
 	Set<TypeName> getTypesFromLibraryFile(LibraryResourcePath libraryResourcePath) throws IOException;

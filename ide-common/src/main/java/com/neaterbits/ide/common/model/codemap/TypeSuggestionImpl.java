@@ -10,15 +10,17 @@ final class TypeSuggestionImpl implements TypeSuggestion {
 	private final TypeVariant typeVariant;
 	private final String namespace;
 	private final String name;
+	private final String binaryName;
 	private final SourceFileResourcePath sourceFile;
 
-	TypeSuggestionImpl(TypeVariant typeVariant, String namespace, String name, SourceFileResourcePath sourceFile) {
+	TypeSuggestionImpl(TypeVariant typeVariant, String namespace, String name, String binaryName, SourceFileResourcePath sourceFile) {
 		
 		Objects.requireNonNull(namespace);
-		Objects.requireNonNull(sourceFile);
+		Objects.requireNonNull(name);
 		
 		this.typeVariant = typeVariant;
 		this.name = name;
+		this.binaryName = binaryName;
 		this.namespace = namespace;
 		this.sourceFile = sourceFile;
 	}
@@ -36,6 +38,11 @@ final class TypeSuggestionImpl implements TypeSuggestion {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getBinaryName() {
+		return binaryName;
 	}
 
 	@Override

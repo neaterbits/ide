@@ -49,7 +49,7 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 					.withPrerequisites(new PrerequisitesBuilderProjectDependencies())
 
 					// for downloading external dependencies
-					.withPrerequisites(new PrerequisitesBuilderExternalDependencies())
+					.withPrerequisites(new PrerequisitesBuilderExternalDependencies<>())
 					
 					// must collect info on classes to compile into a list
 					// so can run compiler onto multiple files

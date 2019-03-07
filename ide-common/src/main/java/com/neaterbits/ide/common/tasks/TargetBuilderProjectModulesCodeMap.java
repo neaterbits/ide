@@ -24,9 +24,7 @@ public final class TargetBuilderProjectModulesCodeMap extends TargetBuildSpec<In
 							module ->"Codemap for module " + module.getName())
 					
 					.withPrerequisites("Module class files")
-					
 					.fromIterating(Constraint.IO, (context, module) -> context.getBuildRoot().getBuildSystemRootScan().findSourceFolders(module))
-			
 					.buildBy(st -> st
 							
 						.addInfoSubTarget(
@@ -34,11 +32,10 @@ public final class TargetBuilderProjectModulesCodeMap extends TargetBuildSpec<In
 								"compilelist",
 								sourceFolder -> sourceFolder.getModule().getName(),
 								sourceFolder -> "Class files for source folder " + sourceFolder.getName())
-						
+
 							.withPrerequisites("Source folder compilations")
-								.fromIterating(Constraint.IO, (ctx, sourceFolder) -> SourceFilesBuilderUtil.getSourceFiles(ctx, sourceFolder))
-												
-								.buildBy(sourceFileTarget -> sourceFileTarget
+							.fromIterating(Constraint.IO, (ctx, sourceFolder) -> SourceFilesBuilderUtil.getSourceFiles(ctx, sourceFolder))
+							.buildBy(sourceFileTarget -> sourceFileTarget
 										
 										.addInfoSubTarget(
 												FileCompilation.class,

@@ -52,6 +52,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		private final int typeNo;
 		private final TypeName typeName;
 		private final String namespace;
+		private final String binaryName;
 		private final TypeVariant typeVariant;
 		private final SourceFileResourcePath sourceFileResourcePath;
 
@@ -59,12 +60,14 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 				int typeNo,
 				TypeName typeName,
 				String namespace,
+				String binaryName,
 				SourceFileResourcePath sourceFileResourcePath,
 				ClassBytecode classByteCode) {
 			
 			this.typeNo = typeNo;
 			this.typeName = typeName;
 			this.namespace = namespace;
+			this.binaryName = binaryName;
 			this.typeVariant = classByteCode.getTypeVariant();
 			this.sourceFileResourcePath = sourceFileResourcePath;
 		}
@@ -89,6 +92,11 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		}
 
 		@Override
+		public String getBinaryName() {
+			return binaryName;
+		}
+
+		@Override
 		public SourceFileResourcePath getSourceFile() {
 			return sourceFileResourcePath;
 		}
@@ -109,7 +117,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		this.typeMap = new HashTypeMap<>(ClassInfo::getTypeNo);
 		this.codeMap = new IntCodeMap();
 		
-		final TypeSuggestionFinder typeSuggestionFinder = new TypeSuggestionFinder() {
+		final TypeSuggestionFinder typeMapSuggestionFinder = new TypeSuggestionFinder() {
 			@Override
 			boolean findSuggestions(TypeNameMatcher matcher, Map<TypeName, TypeSuggestion> dst) {
 				
@@ -121,27 +129,83 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			}
 			
 			@Override
+			boolean hasSourceCode() {
+				
+				// Might have source code if is project type
+				
+				return true;
+			}
+
+			@Override
 			boolean canRetrieveTypeVariant() {
 				return true;
 			}
 		};
 		
-		this.typeSuggestionFinders = Arrays.asList(new SourceFileScannerTypeSuggestionFinder(buildRoot));
+		final TypeSuggestionFinder dependencyFileSuggestionFinder = new TypeSuggestionFinder() {
+			
+			@Override
+			boolean findSuggestions(TypeNameMatcher matcher, Map<TypeName, TypeSuggestion> dst) {
+
+				typeToDependencyFile.forEachKeyValue((typeName, file) -> {
+					
+					final String namespaceString = language.getNamespaceString(typeName);
+					
+					final TypeName match = matcher.matches(typeName, null, namespaceString, typeName.getName());
+					
+					if (match != null) {
+						dst.put(typeName, new TypeSuggestionImpl(
+								null,
+								namespaceString,
+								typeName.getName(),
+								language.getBinaryName(typeName),
+								null));
+					}
+					
+				});
+				
+				return false;
+			}
+			
+			@Override
+			boolean hasSourceCode() {
+				return false;
+			}
+
+			@Override
+			boolean canRetrieveTypeVariant() {
+				return false;
+			}
+		};
+		
+		this.typeSuggestionFinders = Arrays.asList(
+				dependencyFileSuggestionFinder,
+				new SourceFileScannerTypeSuggestionFinder(buildRoot, language));
 	}
 	
 	
 	@Override
-	public TypeSuggestions findSuggestions(String searchText) {
+	public TypeSuggestions findSuggestions(String searchText, boolean onlyTypesWithSourceCode) {
 
 		final String searchTextLowerCase = searchText.toLowerCase();
 		
-		final TypeNameMatcher typeNameMatcher = (typeNameIfKnown, sourceFileResourcePath, namespace, name) -> 
-				Strings.startsWithToFindLowerCase(name, searchTextLowerCase)
+		final TypeNameMatcher typeNameMatcher = (typeNameIfKnown, sourceFileResourcePath, namespace, name) -> {
+		
+			final TypeName result;
+			
+			if (onlyTypesWithSourceCode && sourceFileResourcePath == null) {
+				result = null;
+			}
+			else {
+				result = Strings.startsWithToFindLowerCase(name, searchTextLowerCase)
 					? typeNameIfKnown != null
 							? typeNameIfKnown
 							: getTypeName(sourceFileResourcePath, namespace, name)
 					: null;
-		
+			}
+			
+			return result;
+		};
 		
 		// Map instead of List for distinct type suggestions
 		final Map<TypeName, TypeSuggestion> suggestions = new HashMap<>(10000);
@@ -150,6 +214,10 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		
 		for (TypeSuggestionFinder typeSuggestionFinder : typeSuggestionFinders) {
 
+			if (onlyTypesWithSourceCode && !typeSuggestionFinder.hasSourceCode()) {
+				continue;
+			}
+			
 			completeResult = typeSuggestionFinder.findSuggestions(typeNameMatcher, suggestions);
 			
 			if (completeResult) {
@@ -180,11 +248,11 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	}
 
 	public void addCompiledModuleFileTypes(CompiledModuleFileResourcePath module, Set<TypeName> types) {
-		typeToDependencyFile.addModuleDependencyTypes(new DependencyFile(module.getFile(), true), types);
+		typeToDependencyFile.mergeModuleDependencyTypes(new DependencyFile(module.getFile(), true), types);
 	}
 	
 	public void addLibraryFileTypes(LibraryResourcePath module, Set<TypeName> types) {
-		typeToDependencyFile.addLibraryDependencyTypes(new DependencyFile(module.getFile(), true), types);
+		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(module.getFile(), true), types);
 	}
 	
 	public CodeMapModel getModel() {
@@ -253,6 +321,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 						typeNo,
 						typeName,
 						language.getNamespaceString(typeName),
+						language.getBinaryName(typeName),
 						null,
 						classByteCode),
 				

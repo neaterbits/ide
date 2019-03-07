@@ -7,10 +7,15 @@ public interface TypeSuggestion {
 
 	TypeVariant getType();
 
-	String getName();
-
 	String getNamespace();
 
+	String getName();
+
+	String getBinaryName(); // eg. SomeType.class
+	
 	SourceFileResourcePath getSourceFile();
 
+	default boolean isSourceFile() {
+		return getSourceFile() != null;
+	}
 }

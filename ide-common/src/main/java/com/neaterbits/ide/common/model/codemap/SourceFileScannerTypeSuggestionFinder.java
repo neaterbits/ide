@@ -10,6 +10,7 @@ import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner.Namespace;
+import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
@@ -18,17 +19,25 @@ import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 final class SourceFileScannerTypeSuggestionFinder extends TypeSuggestionFinder {
 
 	private final BuildRoot buildRoot;
+	private final CompileableLanguage language;
 
-	SourceFileScannerTypeSuggestionFinder(BuildRoot buildRoot) {
+	SourceFileScannerTypeSuggestionFinder(BuildRoot buildRoot, CompileableLanguage language) {
 
 		Objects.requireNonNull(buildRoot);
+		Objects.requireNonNull(language);
 		
 		this.buildRoot = buildRoot;
+		this.language = language;
 	}
 	
 	@Override
 	boolean canRetrieveTypeVariant() {
 		return false;
+	}
+
+	@Override
+	boolean hasSourceCode() {
+		return true;
 	}
 
 	@Override
@@ -44,7 +53,7 @@ final class SourceFileScannerTypeSuggestionFinder extends TypeSuggestionFinder {
 		return false;
 	}
 	
-	private static void findSuggestions(SourceFolderResourcePath sourceFolder, TypeNameMatcher typeNameMatcher, Map<TypeName, TypeSuggestion> suggestions) {
+	private void findSuggestions(SourceFolderResourcePath sourceFolder, TypeNameMatcher typeNameMatcher, Map<TypeName, TypeSuggestion> suggestions) {
 
 		final List<SourceFileResourcePath> sourceFiles = new ArrayList<>();
 		
@@ -81,6 +90,7 @@ final class SourceFileScannerTypeSuggestionFinder extends TypeSuggestionFinder {
 							null,
 							namespace,
 							name,
+							language.getBinaryName(typeName),
 							sourceFile);
 					
 					suggestions.put(typeName, suggestion);

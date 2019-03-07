@@ -2,6 +2,7 @@ package com.neaterbits.ide.common.build.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.neaterbits.ide.common.build.model.Dependency;
 import com.neaterbits.ide.common.build.model.DependencyType;
@@ -10,7 +11,7 @@ import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 
 public class ModuleBuilderUtil {
 
-	static List<Dependency> transitiveProjectDependencies(ModulesBuildContext context, ProjectModuleResourcePath module) {
+	public static List<Dependency> transitiveProjectDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
 		
 		final List<Dependency> dependencies = new ArrayList<>();
 		
@@ -19,7 +20,7 @@ public class ModuleBuilderUtil {
 		return dependencies;
 	}
 
-	private static void transitiveProjectDependencies(ModulesBuildContext context, ProjectModuleResourcePath module, List<Dependency> dependencies) {
+	private static void transitiveProjectDependencies(TaskBuilderContext context, ProjectModuleResourcePath module, List<Dependency> dependencies) {
 		 
 		final List<Dependency> moduleDependencies = context.getBuildRoot().getDependenciesForProjectModule(module);
 		 
@@ -32,7 +33,26 @@ public class ModuleBuilderUtil {
 		}
 	}
 
-	static List<Dependency> transitiveDependencies(ModulesBuildContext context, Dependency module) {
+	public static List<Dependency> transitiveExternalDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
+
+		final List<Dependency> moduleDependencies = transitiveProjectDependencies(context, module);
+		
+		final List<Dependency> moduleExternalDependencies = moduleDependencies.stream()
+				.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
+				.collect(Collectors.toList());
+		
+		final List<Dependency> dependencies = new ArrayList<>();
+		
+		dependencies.addAll(moduleExternalDependencies);
+		
+		for (Dependency externalDependency : moduleExternalDependencies) {
+			transitiveDependencies(context, externalDependency, dependencies);
+		}
+
+		return dependencies;
+	}
+
+	static List<Dependency> transitiveDependencies(TaskBuilderContext context, Dependency module) {
 		
 		final List<Dependency> dependencies = new ArrayList<>();
 		
@@ -41,7 +61,7 @@ public class ModuleBuilderUtil {
 		return dependencies;
 	}
 
-	private static void transitiveDependencies(ModulesBuildContext context, Dependency dependency, List<Dependency> dependencies) {
+	private static void transitiveDependencies(TaskBuilderContext context, Dependency dependency, List<Dependency> dependencies) {
 
 		final List<Dependency> moduleDependencies;
 		
