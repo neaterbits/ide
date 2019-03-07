@@ -89,6 +89,7 @@ public class SourceFileScanner {
 	}
 	
 	public static Namespace getNamespaceResource(File sourceFolderFile, File sourceFile) {
+		
 		final File directory = sourceFile.getParentFile();
 		
 		String dirPath = PathUtil.removeDirectoryFromPath(sourceFolderFile, directory);

@@ -1,43 +1,184 @@
 package com.neaterbits.ide.common.model.codemap;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
-import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.bytecode.common.TypeToDependencyFile;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap;
+import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.LoadType;
 import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
+import com.neaterbits.compiler.common.loader.TypeVariant;
+import com.neaterbits.compiler.common.resolver.codemap.IntCodeMap;
+import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
+import com.neaterbits.ide.common.build.model.BuildRoot;
+import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.model.common.InformationGatherer;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
+import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
+import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 
-public final class CodeMapGatherer extends InformationGatherer {
+public final class CodeMapGatherer extends InformationGatherer implements CodeMapModel {
 
+	private final AsyncExecutor asyncExecutor;
+	private final CompileableLanguage language;
 	private final BytecodeFormat bytecodeFormat;
 	
 	private final TypeToDependencyFile typeToDependencyFile;
-	private final CodeMapModel model;
 	
-	private final HashTypeMap typeMap;
-	
-	public CodeMapGatherer(BytecodeFormat bytecodeFormat) {
+	private final HashTypeMap<ClassInfo> typeMap;
 
+	private final IntCodeMap codeMap;
+
+	private final List<TypeSuggestionFinder> typeSuggestionFinders;
+	
+	private boolean codeScanComplete;
+	
+	private static class ClassInfo implements TypeSuggestion {
+
+		private final int typeNo;
+		private final TypeName typeName;
+		private final String namespace;
+		private final TypeVariant typeVariant;
+		private final SourceFileResourcePath sourceFileResourcePath;
+
+		ClassInfo(
+				int typeNo,
+				TypeName typeName,
+				String namespace,
+				SourceFileResourcePath sourceFileResourcePath,
+				ClassBytecode classByteCode) {
+			
+			this.typeNo = typeNo;
+			this.typeName = typeName;
+			this.namespace = namespace;
+			this.typeVariant = classByteCode.getTypeVariant();
+			this.sourceFileResourcePath = sourceFileResourcePath;
+		}
+		
+		int getTypeNo() {
+			return typeNo;
+		}
+
+		@Override
+		public TypeVariant getType() {
+			return typeVariant;
+		}
+
+		@Override
+		public String getName() {
+			return typeName.getName();
+		}
+
+		@Override
+		public String getNamespace() {
+			return namespace;
+		}
+
+		@Override
+		public SourceFileResourcePath getSourceFile() {
+			return sourceFileResourcePath;
+		}
+	}
+	
+	public CodeMapGatherer(AsyncExecutor asyncExecutor, CompileableLanguage language, BytecodeFormat bytecodeFormat, BuildRoot buildRoot) {
+
+		Objects.requireNonNull(asyncExecutor);
+		Objects.requireNonNull(language);
 		Objects.requireNonNull(bytecodeFormat);
 		
+		this.asyncExecutor = asyncExecutor;
+		this.language = language;
 		this.bytecodeFormat = bytecodeFormat;
 		
 		this.typeToDependencyFile = new TypeToDependencyFile();
-		this.model = new CodeMapModel();
-		this.typeMap = new HashTypeMap();
+		
+		this.typeMap = new HashTypeMap<>(ClassInfo::getTypeNo);
+		this.codeMap = new IntCodeMap();
+		
+		final TypeSuggestionFinder typeSuggestionFinder = new TypeSuggestionFinder() {
+			@Override
+			boolean findSuggestions(TypeNameMatcher matcher, Map<TypeName, TypeSuggestion> dst) {
+				
+				typeMap.forEachKeyValueSynchronized((typeName, classInfo) -> {
+					
+				});
+				
+				return codeScanComplete;
+			}
+			
+			@Override
+			boolean canRetrieveTypeVariant() {
+				return true;
+			}
+		};
+		
+		this.typeSuggestionFinders = Arrays.asList(new SourceFileScannerTypeSuggestionFinder(buildRoot));
 	}
 	
+	
+	@Override
+	public TypeSuggestions findSuggestions(String searchText) {
+
+		final String searchTextLowerCase = searchText.toLowerCase();
+		
+		final TypeNameMatcher typeNameMatcher = (typeNameIfKnown, sourceFileResourcePath, namespace, name) -> 
+				Strings.startsWithToFindLowerCase(name, searchTextLowerCase)
+					? typeNameIfKnown != null
+							? typeNameIfKnown
+							: getTypeName(sourceFileResourcePath, namespace, name)
+					: null;
+		
+		
+		// Map instead of List for distinct type suggestions
+		final Map<TypeName, TypeSuggestion> suggestions = new HashMap<>(10000);
+		
+		boolean completeResult = false;
+		
+		for (TypeSuggestionFinder typeSuggestionFinder : typeSuggestionFinders) {
+
+			completeResult = typeSuggestionFinder.findSuggestions(typeNameMatcher, suggestions);
+			
+			if (completeResult) {
+				break;
+			}
+		}
+		
+		final List<TypeSuggestion> suggestionsList = new ArrayList<>(suggestions.values());
+		
+		
+		Collections.sort(suggestionsList, (t1, t2) -> t1.getName().compareTo(t2.getName()));
+
+		return new TypeSuggestions(suggestionsList, completeResult);
+	}
+	
+	private TypeName getTypeName(SourceFileResourcePath sourceFileResourcePath, String namespace, String name) {
+
+		final TypeName typeName;
+		
+		if (sourceFileResourcePath != null) {
+			typeName = language.getTypeName(sourceFileResourcePath);
+		}
+		else {
+			typeName = language.getTypeName(namespace, name);
+		}
+		
+		return typeName;
+	}
+
 	public void addCompiledModuleFileTypes(CompiledModuleFileResourcePath module, Set<TypeName> types) {
 		typeToDependencyFile.addModuleDependencyTypes(new DependencyFile(module.getFile(), true), types);
 	}
@@ -46,23 +187,43 @@ public final class CodeMapGatherer extends InformationGatherer {
 		typeToDependencyFile.addLibraryDependencyTypes(new DependencyFile(module.getFile(), true), types);
 	}
 	
-	public ClassLibs getClassLibs() {
-		return typeToDependencyFile;
+	public CodeMapModel getModel() {
+		return this;
+	}
+	
+	public void addClassFile(SourceFileResourcePath sourceFile) {
+		
+		Objects.requireNonNull(sourceFile);
+		
+		final TypeName typeName = language.getTypeName(sourceFile);
+		
+		try (FileInputStream inputStream = new FileInputStream(sourceFile.getFile())) {
+
+			loadAndAddToCodeMap(typeName, type -> {
+				ClassBytecode classBytecode = null;
+				
+				try {
+					classBytecode = bytecodeFormat.loadClassBytecode(inputStream);
+				} catch (IOException | ClassFileException ex) {
+					ex.printStackTrace();
+				}
+				catch (Exception ex) {
+					System.out.print("## error while reading " + sourceFile.getFile().getPath());
+				}
+				
+				return classBytecode;
+			});
+		}
+		catch (IOException ex) {
+			System.out.println("## error while reading " + sourceFile.getFile().getPath());
+			// ex.printStackTrace();
+		}
 	}
 
-	public void loadAndAddToCodeMap(TypeName typeName) {
+	// load classfile from local library
+	void loadAndAddToCodeMap(TypeName typeName) {
 		
-		Objects.requireNonNull(typeName);
-		
-		final TypeResult typeResult = new TypeResult();
-		
-		final CodeMap codeMap = model.getCodeMap();
-		
-		final ClassBytecode bytecode = typeMap.addOrGetType(
-				typeName,
-				codeMap,
-				typeResult,
-				type -> {
+		loadAndAddToCodeMap(typeName, type -> {
 					
 					ClassBytecode classBytecode = null;
 					
@@ -74,12 +235,36 @@ public final class CodeMapGatherer extends InformationGatherer {
 					
 					return classBytecode;
 				});
+
+	}
+
+	
+	private void loadAndAddToCodeMap(TypeName typeName, LoadType loadType) {
+		
+		Objects.requireNonNull(typeName);
+		
+		final TypeResult typeResult = new TypeResult();
+		
+		final ClassBytecode bytecode = typeMap.addOrGetType(
+				typeName,
+				codeMap,
+				typeResult,
+				(typeNo, classByteCode) -> new ClassInfo(
+						typeNo,
+						typeName,
+						language.getNamespaceString(typeName),
+						null,
+						classByteCode),
+				
+				loadType);
 		
 
 		if (bytecode != null) {
 			final int methodCount = bytecode.getMethodCount();
 		
 			synchronized (typeMap) {
+				System.out.println("## set method count " + methodCount);
+				
 				codeMap.setMethodCount(typeResult.type, methodCount);
 			}
 		}

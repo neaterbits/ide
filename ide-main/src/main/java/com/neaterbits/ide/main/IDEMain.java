@@ -4,9 +4,11 @@ import java.io.File;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
-import com.neaterbits.ide.common.tasks.ClassFileScanner;
+import com.neaterbits.ide.common.language.CompileableLanguage;
+import com.neaterbits.ide.common.model.codemap.CodeMapGatherer;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
 import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
+import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootImpl;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
@@ -16,6 +18,7 @@ import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
 import com.neaterbits.ide.swt.SWTUI;
+import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.PrintlnTargetExecutorLogger;
 
 public class IDEMain {
@@ -51,9 +54,18 @@ public class IDEMain {
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
-				new IDEController(buildRoot, ui, config, ideComponents);
+				final CompileableLanguage language = new JavaLanguage();
+
+				final AsyncExecutor asyncExecutor = new AsyncExecutor(false);
+
+				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(asyncExecutor, language, new JavaBytecodeFormat(), buildRoot);
 				
-				startIDEScanJobs(buildRoot);
+				new IDEController(buildRoot, ui, config, ideComponents, codeMapGatherer.getModel());
+				
+				// Run events on event queue before async jobs send event on event queue
+				ui.runInitialEvents();
+				
+				startIDEScanJobs(asyncExecutor, buildRoot, language, codeMapGatherer);
 				
 				ui.main();
 			}
@@ -76,25 +88,12 @@ public class IDEMain {
 	}
 	
 
-	private static void startIDEScanJobs(BuildRoot buildRoot) {
+	private static void startIDEScanJobs(AsyncExecutor asyncExecutor, BuildRoot buildRoot, CompileableLanguage language, CodeMapGatherer codeMapGatherer) {
 	
 		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
-		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaLanguage(), new ClassFileScanner() {
-			
-			@Override
-			public void addLibraryFileToCodeMap(File compiledModuleFile) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void addClassFileToCodeMap(File classFile) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		final InitialScanContext context = new InitialScanContext(buildRoot, language, codeMapGatherer);
 		
-		ideStartup.execute(context, new PrintlnTargetExecutorLogger(), null);
+		ideStartup.execute(context, new PrintlnTargetExecutorLogger(), asyncExecutor, null);
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {

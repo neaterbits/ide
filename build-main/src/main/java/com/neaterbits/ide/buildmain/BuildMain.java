@@ -15,6 +15,7 @@ import com.neaterbits.ide.common.build.tasks.TargetBuilderModules;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaCompiler;
+import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.StructuredTargetExecutorLogger;
 import com.neaterbits.structuredlog.model.Log;
 import com.neaterbits.structuredlog.model.LogIO;
@@ -59,7 +60,9 @@ public class BuildMain {
 				// final TargetExecutorLogger logger = new PrintlnTargetExecutorLogger();
 				final StructuredTargetExecutorLogger logger = new StructuredTargetExecutorLogger();
 
-				targetBuilderModules.execute(context, logger, result -> {
+				final AsyncExecutor asyncExecutor = new AsyncExecutor(false);
+
+				targetBuilderModules.execute(context, logger, asyncExecutor, result -> {
 
 					System.out.println("### completed execution");
 					

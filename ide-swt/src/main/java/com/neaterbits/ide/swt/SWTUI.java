@@ -88,6 +88,13 @@ public class SWTUI implements UI {
 		});
 	}
 
+	
+	@Override
+	public void runInitialEvents() {
+		while (display.readAndDispatch())
+			;
+	}
+
 	@Override
 	public void main() {
 

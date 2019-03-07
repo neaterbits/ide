@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 
+import com.neaterbits.ide.common.model.codemap.TypeSuggestion;
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.ui.controller.UIParameters;
@@ -32,7 +33,6 @@ import com.neaterbits.ide.common.ui.menus.SeparatorMenuEntry;
 import com.neaterbits.ide.common.ui.menus.SubMenuEntry;
 import com.neaterbits.ide.common.ui.menus.TextMenuEntry;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
-import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
 import com.neaterbits.ide.common.ui.translation.Translator;
 import com.neaterbits.ide.common.ui.view.EditorsView;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
