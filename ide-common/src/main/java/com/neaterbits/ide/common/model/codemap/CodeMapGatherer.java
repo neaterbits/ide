@@ -1,5 +1,6 @@
 package com.neaterbits.ide.common.model.codemap;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -254,7 +255,11 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	public void addLibraryFileTypes(LibraryResourcePath module, Set<TypeName> types) {
 		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(module.getFile(), true), types);
 	}
-	
+
+	public void addSystemLibraryFileTypes(File libraryFile, Set<TypeName> types) {
+		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(libraryFile, true), types);
+	}
+
 	public CodeMapModel getModel() {
 		return this;
 	}

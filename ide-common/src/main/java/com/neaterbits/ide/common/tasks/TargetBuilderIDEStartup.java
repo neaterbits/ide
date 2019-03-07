@@ -20,5 +20,7 @@ public final class TargetBuilderIDEStartup extends TargetBuildSpec<InitialScanCo
 		
 		targetBuilder.addTarget(new TargetBuilderAddLibraryTypesToCodeMap());
 		
+		targetBuilder.addTarget(new TargetBuilderAddSystemLibraryTypesToCodeMap());
+		
 	}
 }

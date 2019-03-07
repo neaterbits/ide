@@ -1,6 +1,8 @@
 package com.neaterbits.ide.common.language;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import com.neaterbits.compiler.common.TypeName;
@@ -19,6 +21,8 @@ public interface CompileableLanguage {
 		return getCompleteName(sourceFile).toTypeName();
 	}
 	
+	List<File> getSystemLibraries();
+	
 	TypeName getTypeName(String namespace, String name);
 
 	String getNamespaceString(TypeName typeName);
@@ -28,6 +32,8 @@ public interface CompileableLanguage {
 	Set<TypeName> getTypesFromCompiledModuleFile(CompiledModuleFileResourcePath compiledModuleFileResourcePath) throws IOException;
 
 	Set<TypeName> getTypesFromLibraryFile(LibraryResourcePath libraryResourcePath) throws IOException;
+
+	Set<TypeName> getTypesFromSystemLibraryFile(File systemLibraryPath) throws IOException;
 	
 	CompiledFileResourcePath getCompiledFilePath(TargetDirectoryResourcePath targetDirectory, SourceFileResourcePath sourceFile);
 

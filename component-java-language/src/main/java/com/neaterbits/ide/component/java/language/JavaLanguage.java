@@ -2,6 +2,8 @@ package com.neaterbits.ide.component.java.language;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -58,6 +60,18 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 	}
 	
 	@Override
+	public List<File> getSystemLibraries() {
+
+		final String jreDir = System.getProperty("java.home");
+		
+		System.out.println("## jre dir " + jreDir);
+		
+		final List<File> list = Arrays.asList(new File(jreDir + "/lib/rt.jar"));
+		
+		return list;
+	}
+
+	@Override
 	public CompleteName getCompleteName(SourceFileResourcePath sourceFile) {
 
 		return new CompleteName(
@@ -107,10 +121,20 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 	public Set<TypeName> getTypesFromLibraryFile(LibraryResourcePath libraryResourcePath) throws IOException {
 		return getTypesFromJarFile(libraryResourcePath);
 	}
+	
+	@Override
+	public Set<TypeName> getTypesFromSystemLibraryFile(File systemLibraryPath) throws IOException {
+
+		return getTypesFromJarFile(systemLibraryPath);
+	}
 
 	private Set<TypeName> getTypesFromJarFile(FileSystemResourcePath jarFileResourcePath) throws IOException {
+		return getTypesFromJarFile(jarFileResourcePath.getFile());
+	}
 
-		return bytecodeFormat.getTypesFromLibraryFile(jarFileResourcePath.getFile());
+	private Set<TypeName> getTypesFromJarFile(File file) throws IOException {
+
+		return bytecodeFormat.getTypesFromLibraryFile(file);
 	}
 
 	@Override
