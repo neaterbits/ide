@@ -18,7 +18,11 @@ public interface CompileableLanguage {
 	default TypeName getTypeName(SourceFileResourcePath sourceFile) {
 		return getCompleteName(sourceFile).toTypeName();
 	}
+	
+	TypeName getTypeName(String namespace, String name);
 
+	String getNamespaceString(TypeName typeName);
+	
 	Set<TypeName> getTypesFromCompiledModuleFile(CompiledModuleFileResourcePath compiledModuleFileResourcePath) throws IOException;
 
 	Set<TypeName> getTypesFromLibraryFile(LibraryResourcePath libraryResourcePath) throws IOException;

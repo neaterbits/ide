@@ -55,15 +55,17 @@ public class IDEMain {
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
 				final CompileableLanguage language = new JavaLanguage();
+
+				final AsyncExecutor asyncExecutor = new AsyncExecutor(false);
+
+				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(asyncExecutor, language, new JavaBytecodeFormat(), buildRoot);
 				
-				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(language, new JavaBytecodeFormat());
-				
-				new IDEController(buildRoot, ui, config, ideComponents);
+				new IDEController(buildRoot, ui, config, ideComponents, codeMapGatherer.getModel());
 				
 				// Run events on event queue before async jobs send event on event queue
 				ui.runInitialEvents();
 				
-				startIDEScanJobs(buildRoot, language, codeMapGatherer);
+				startIDEScanJobs(asyncExecutor, buildRoot, language, codeMapGatherer);
 				
 				ui.main();
 			}
@@ -86,12 +88,10 @@ public class IDEMain {
 	}
 	
 
-	private static void startIDEScanJobs(BuildRoot buildRoot, CompileableLanguage language, CodeMapGatherer codeMapGatherer) {
+	private static void startIDEScanJobs(AsyncExecutor asyncExecutor, BuildRoot buildRoot, CompileableLanguage language, CodeMapGatherer codeMapGatherer) {
 	
 		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
 		final InitialScanContext context = new InitialScanContext(buildRoot, language, codeMapGatherer);
-		
-		final AsyncExecutor asyncExecutor = new AsyncExecutor(false);
 		
 		ideStartup.execute(context, new PrintlnTargetExecutorLogger(), asyncExecutor, null);
 	}

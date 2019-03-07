@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
+import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.view.UIDialogs;
@@ -64,5 +65,10 @@ final class ActionExecuteParametersImpl implements ActionExecuteParameters {
 	@Override
 	public EditActions getEditActions() {
 		return executeState.getEditActions();
+	}
+
+	@Override
+	public CodeMapModel getCodeMap() {
+		return executeState.getCodeMap();
 	}
 }

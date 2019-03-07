@@ -1,9 +1,9 @@
 package com.neaterbits.ide.common.ui.model.dialogs;
 
-import java.util.Collection;
+import com.neaterbits.ide.common.model.codemap.TypeSuggestions;
 
 public interface OpenTypeDialogModel {
 
-	Collection<TypeSuggestion> getSuggestions(String searchText);
+	TypeSuggestions getSuggestions(String searchText);
 	
 }

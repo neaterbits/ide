@@ -1,7 +1,6 @@
 package com.neaterbits.ide.swt;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ListViewer;
@@ -18,8 +17,9 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.neaterbits.ide.common.model.codemap.TypeSuggestion;
+import com.neaterbits.ide.common.model.codemap.TypeSuggestions;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
-import com.neaterbits.ide.common.ui.model.dialogs.TypeSuggestion;
 
 final class SWTOpenTypeDialog extends Dialog {
 
@@ -95,17 +95,17 @@ final class SWTOpenTypeDialog extends Dialog {
 	}
 	
 	private void updateSuggestions(Text text, List list) {
-		final Collection<TypeSuggestion> suggestions = model.getSuggestions(text.getText().trim());
+		final TypeSuggestions suggestions = model.getSuggestions(text.getText().trim());
 		
-		this.suggestions = new ArrayList<>(suggestions);
+		this.suggestions = new ArrayList<>(suggestions.getTypeSuggestions());
 		
 		list.removeAll();
 		
-		for (TypeSuggestion suggestion : suggestions) {
+		for (TypeSuggestion suggestion : this.suggestions) {
 			list.add(suggestion.getName());
 		}
 		
-		if (!suggestions.isEmpty()) {
+		if (!this.suggestions.isEmpty()) {
 			list.setSelection(0);
 		}
 	}

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
+import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.ui.view.UIDialogs;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.IDEComponentsConstAccess;
@@ -16,6 +17,7 @@ final class ActionExecuteState {
 	private final ComponentIDEAccess componentIDEAccess;
 	private final BuildRoot buildRoot;
 	private final EditActions editActions;
+	private final CodeMapModel codeMap;
 
 	ActionExecuteState(
 			IDEComponentsConstAccess components,
@@ -23,7 +25,8 @@ final class ActionExecuteState {
 			Clipboard clipboard,
 			ComponentIDEAccess componentIDEAccess,
 			BuildRoot buildRoot,
-			EditActions editActions) {
+			EditActions editActions,
+			CodeMapModel codeMap) {
 	
 		Objects.requireNonNull(components);
 		Objects.requireNonNull(uiDialogs);
@@ -31,6 +34,7 @@ final class ActionExecuteState {
 		Objects.requireNonNull(componentIDEAccess);
 		Objects.requireNonNull(buildRoot);
 		Objects.requireNonNull(editActions);
+		Objects.requireNonNull(codeMap);
 		
 		this.components = components;
 		this.uiDialogs = uiDialogs;
@@ -38,7 +42,7 @@ final class ActionExecuteState {
 		this.componentIDEAccess = componentIDEAccess;
 		this.buildRoot = buildRoot;
 		this.editActions = editActions;
-		
+		this.codeMap = codeMap;
 	}
 
 	IDEComponentsConstAccess getComponents() {
@@ -57,11 +61,15 @@ final class ActionExecuteState {
 		return componentIDEAccess;
 	}
 
-	public BuildRoot getBuildRoot() {
+	BuildRoot getBuildRoot() {
 		return buildRoot;
 	}
 
-	public EditActions getEditActions() {
+	EditActions getEditActions() {
 		return editActions;
+	}
+
+	CodeMapModel getCodeMap() {
+		return codeMap;
 	}
 }

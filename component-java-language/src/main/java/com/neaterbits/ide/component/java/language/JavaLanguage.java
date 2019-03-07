@@ -2,6 +2,7 @@ package com.neaterbits.ide.component.java.language;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
@@ -11,6 +12,7 @@ import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.model.ObjectProgramModel;
+import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
@@ -55,6 +57,8 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		return namespaceResource;
 	}
 	
+	
+	
 	@Override
 	public CompleteName getCompleteName(SourceFileResourcePath sourceFile) {
 
@@ -64,6 +68,25 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 				classNameFromFile(sourceFile.getFile()));
 	}
 	
+	@Override
+	public TypeName getTypeName(String namespace, String name) {
+
+		final String [] parts = namespace != null && !namespace.isEmpty()
+					? Strings.split(namespace, '.')
+					: null; 
+					
+		return new TypeName(parts, null, name);
+	}
+	
+	@Override
+	public String getNamespaceString(TypeName typeName) {
+		
+		Objects.requireNonNull(typeName);
+		Objects.requireNonNull(typeName.getNamespace());
+		
+		return Strings.join(typeName.getNamespace(), '.');
+	}
+
 	private static ClassName classNameFromFile(File file) {
 		
 		final String name = file.getName();

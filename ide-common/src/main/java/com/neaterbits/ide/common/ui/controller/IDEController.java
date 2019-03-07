@@ -12,6 +12,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
+import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.resource.NamespaceResource;
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileHolderResourcePath;
@@ -56,7 +57,12 @@ public final class IDEController implements ComponentIDEAccess {
 	
 	private View focusedView;
 	
-	public IDEController(BuildRoot buildRoot, UI ui, TextEditorConfig config, IDEComponents ideComponents) {
+	public IDEController(
+			BuildRoot buildRoot,
+			UI ui,
+			TextEditorConfig config,
+			IDEComponents ideComponents,
+			CodeMapModel codeMapModel) {
 
 		Objects.requireNonNull(buildRoot);
 		
@@ -94,7 +100,8 @@ public final class IDEController implements ComponentIDEAccess {
 				clipboard,
 				this,
 				buildRoot,
-				uiController);
+				uiController,
+				codeMapModel);
 
 		this.actionApplicableParameters = new ActionApplicableParametersImpl(actionExecuteState);
 		
