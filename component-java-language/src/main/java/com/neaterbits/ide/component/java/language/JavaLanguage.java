@@ -13,11 +13,13 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.model.ObjectProgramModel;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
+import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.resource.FileSystemResourcePath;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.NamespaceResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.ide.common.resource.SourceFolderResource;
 import com.neaterbits.ide.common.resource.compile.CompiledFileResource;
 import com.neaterbits.ide.common.resource.compile.CompiledFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
@@ -35,12 +37,29 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		this.bytecodeFormat = new JavaBytecodeFormat();
 	}
 	
+	private static NamespaceResource getNamespace(SourceFileResourcePath sourceFile) {
+		
+		
+		final NamespaceResource namespaceResource;
+		
+		if (sourceFile.getFromLast(1) instanceof NamespaceResource) {
+			namespaceResource = (NamespaceResource)sourceFile.getFromLast(1);
+		}
+		else {
+			
+			final SourceFolderResource sourceFolder = (SourceFolderResource)sourceFile.getFromLast(1);
+			
+			namespaceResource = SourceFileScanner.getNamespaceResource(sourceFolder.getFile(), sourceFile.getFile()).getNamespace();
+		}
+		
+		return namespaceResource;
+	}
+	
 	@Override
 	public CompleteName getCompleteName(SourceFileResourcePath sourceFile) {
-		final NamespaceResource namespaceResource = (NamespaceResource)sourceFile.getFromLast(1);
-	
+
 		return new CompleteName(
-				new NamespaceReference(namespaceResource.getNamespace()),
+				new NamespaceReference(getNamespace(sourceFile).getNamespace()),
 				null,
 				classNameFromFile(sourceFile.getFile()));
 	}

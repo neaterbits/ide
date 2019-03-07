@@ -14,7 +14,11 @@ import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 public interface CompileableLanguage {
 	
 	CompleteName getCompleteName(SourceFileResourcePath sourceFile);
-	
+
+	default TypeName getTypeName(SourceFileResourcePath sourceFile) {
+		return getCompleteName(sourceFile).toTypeName();
+	}
+
 	Set<TypeName> getTypesFromCompiledModuleFile(CompiledModuleFileResourcePath compiledModuleFileResourcePath) throws IOException;
 
 	Set<TypeName> getTypesFromLibraryFile(LibraryResourcePath libraryResourcePath) throws IOException;

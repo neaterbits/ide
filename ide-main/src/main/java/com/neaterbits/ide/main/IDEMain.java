@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
+import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.model.codemap.CodeMapGatherer;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
 import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
@@ -53,14 +54,16 @@ public class IDEMain {
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
-				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(new JavaBytecodeFormat());
+				final CompileableLanguage language = new JavaLanguage();
+				
+				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(language, new JavaBytecodeFormat());
 				
 				new IDEController(buildRoot, ui, config, ideComponents);
 				
 				// Run events on event queue before async jobs send event on event queue
 				ui.runInitialEvents();
 				
-				startIDEScanJobs(buildRoot, codeMapGatherer);
+				startIDEScanJobs(buildRoot, language, codeMapGatherer);
 				
 				ui.main();
 			}
@@ -83,12 +86,12 @@ public class IDEMain {
 	}
 	
 
-	private static void startIDEScanJobs(BuildRoot buildRoot, CodeMapGatherer codeMapGatherer) {
+	private static void startIDEScanJobs(BuildRoot buildRoot, CompileableLanguage language, CodeMapGatherer codeMapGatherer) {
 	
 		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
-		final InitialScanContext context = new InitialScanContext(buildRoot, new JavaLanguage(), codeMapGatherer);
+		final InitialScanContext context = new InitialScanContext(buildRoot, language, codeMapGatherer);
 		
-		final AsyncExecutor asyncExecutor = new AsyncExecutor(true);
+		final AsyncExecutor asyncExecutor = new AsyncExecutor(false);
 		
 		ideStartup.execute(context, new PrintlnTargetExecutorLogger(), asyncExecutor, null);
 	}
