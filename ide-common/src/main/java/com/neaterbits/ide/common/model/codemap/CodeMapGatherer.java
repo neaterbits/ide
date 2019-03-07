@@ -133,7 +133,6 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			boolean hasSourceCode() {
 				
 				// Might have source code if is project type
-				
 				return true;
 			}
 
@@ -184,7 +183,6 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 				new SourceFileScannerTypeSuggestionFinder(buildRoot, language));
 	}
 	
-	
 	@Override
 	public TypeSuggestions findSuggestions(String searchText, boolean onlyTypesWithSourceCode) {
 
@@ -228,7 +226,6 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		
 		final List<TypeSuggestion> suggestionsList = new ArrayList<>(suggestions.values());
 		
-		
 		Collections.sort(suggestionsList, (t1, t2) -> t1.getName().compareTo(t2.getName()));
 
 		return new TypeSuggestions(suggestionsList, completeResult);
@@ -260,6 +257,28 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(libraryFile, true), types);
 	}
 
+	public void addSystemLibraryFile(File file) {
+		
+		Set<TypeName> typeNames = null;
+		
+		try {
+			typeNames = language.getTypesFromSystemLibraryFile(file);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		
+		if (typeNames != null) {
+			for (TypeName typeName : typeNames) {
+				try {
+					bytecodeFormat.loadClassBytecode(typeToDependencyFile, typeName);
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	public CodeMapModel getModel() {
 		return this;
 	}
