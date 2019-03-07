@@ -40,6 +40,7 @@ import com.neaterbits.ide.common.ui.view.MapMenuItem;
 import com.neaterbits.ide.common.ui.view.MenuSelectionListener;
 import com.neaterbits.ide.common.ui.view.NewableSelection;
 import com.neaterbits.ide.common.ui.view.BuildIssuesView;
+import com.neaterbits.ide.common.ui.view.CompiledFileView;
 import com.neaterbits.ide.common.ui.view.ProjectView;
 import com.neaterbits.ide.common.ui.view.SearchResultsView;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
@@ -68,6 +69,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 	private final SWTProjectView projectView;
 	private final SWTEditorsView editorsView;
 	private final SWTBuildIssuesView buildIssuesView;
+	private final SWTCompiledFileView compiledFileView;
 	
 	private final SWTUIContext uiContext;
 	
@@ -81,7 +83,8 @@ public final class SWTUIView implements UIViewAndSubViews {
 		
 		this.window = new Shell(display);
 		
-		window.setLocation(350, 350);
+		window.setLocation(350, 50);
+		window.setSize(1280, 1024);
 		
 		window.setLayout(new FillLayout());
 		
@@ -142,12 +145,15 @@ public final class SWTUIView implements UIViewAndSubViews {
 		detailsGridData.horizontalSpan = 3;
 		detailsGridData.horizontalAlignment = SWT.FILL;
 		detailsGridData.verticalSpan = 1;
+		detailsGridData.heightHint = 350;
 		
 		this.detailsTabFolder = new TabFolder(composite, SWT.NONE);
 		
 		detailsTabFolder.setLayoutData(detailsGridData);
 
 		this.buildIssuesView = new SWTBuildIssuesView(viewList, detailsTabFolder);
+		
+		this.compiledFileView = new SWTCompiledFileView(detailsTabFolder);
 		
 		window.addDisposeListener(event -> System.exit(0));
 		
@@ -363,6 +369,11 @@ public final class SWTUIView implements UIViewAndSubViews {
 	public SearchResultsView getSearchView() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public CompiledFileView getCompiledFileView() {
+		return compiledFileView;
 	}
 
 	@Override

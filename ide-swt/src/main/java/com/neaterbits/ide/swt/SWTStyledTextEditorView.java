@@ -43,7 +43,6 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		this.textWidget = new StyledText(composite, SWT.NONE);
 		
 		final Font font = new Font(composite.getDisplay(), new FontData("Monospace", 10, SWT.NONE));
-		
 		textWidget.addDisposeListener(event -> font.dispose());
 		textWidget.setFont(font);
 
@@ -127,7 +126,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
-	void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
+	public void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
 
 		textWidget.addCaretListener(event -> cursorPositionListener.onCursorPositionChanged(event.caretOffset));
 		

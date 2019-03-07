@@ -9,4 +9,6 @@ public interface EditorView extends View {
 	void setCurrentText(Text text);
 
 	void addTextChangeListener(TextChangeListener listener);
+
+	void addCursorPositionListener(CursorPositionListener cursorPositionListener);
 }

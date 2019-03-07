@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
+import com.neaterbits.ide.common.ui.view.CompiledFileView;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.common.ui.view.EditorsView;
@@ -17,14 +18,16 @@ import com.neaterbits.ide.model.text.TextModel;
 final class EditorsController {
 
 	private final EditorsView editorsView;
+	private final CompiledFileView compiledFileView;
 	private final Languages languages;
 	
-	EditorsController(EditorsView editorsView, Languages languages) {
+	EditorsController(EditorsView editorsView, CompiledFileView compiledFileView, Languages languages) {
 
 		Objects.requireNonNull(editorsView);
 		Objects.requireNonNull(languages);
 		
 		this.editorsView = editorsView;
+		this.compiledFileView = compiledFileView;
 		this.languages = languages;
 	}
 
@@ -67,12 +70,12 @@ final class EditorsController {
 		
 		final EditorView editorView = editorsView.displayFile(
 				sourceFile,
-				TextStylingHelper.makeTextStylingModel(languageComonent, textModel),
+				null, // TextStylingHelper.makeTextStylingModel(languageComonent, textModel),
 				editorControllerDelegator);
 		
 		final ParseableLanguage parseableLanguage = languageComonent.getParseableLanguage();
 		
-		final EditorController editorController = new EditorController(editorView, textModel, parseableLanguage);
+		final EditorController editorController = new EditorController(editorView, compiledFileView, textModel, parseableLanguage);
 		
 		editorControllerDelegator.editorController = editorController;
 		

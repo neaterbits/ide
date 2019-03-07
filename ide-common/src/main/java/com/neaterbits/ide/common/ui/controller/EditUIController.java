@@ -33,7 +33,7 @@ public final class EditUIController implements EditActions {
 		this.uiView = uiView;
 		this.ideComponents = ideComponents;
 		
-		this.editorsController 	= new EditorsController(uiView.getEditorsView(), ideComponents.getLanguages());
+		this.editorsController 	= new EditorsController(uiView.getEditorsView(), uiView.getCompiledFileView(), ideComponents.getLanguages());
 		this.projectsController = new ProjectsController(projectsModel, uiView.getProjectView(), this);
 	}
 

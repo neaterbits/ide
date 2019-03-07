@@ -106,7 +106,7 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
-	void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
+	public void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
 		
 	}
 

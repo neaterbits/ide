@@ -10,6 +10,8 @@ public interface UIViewAndSubViews extends UIView {
 	
 	SearchResultsView getSearchView();
 	
+	CompiledFileView getCompiledFileView();
+	
 	ViewList getViewList();
 
 }

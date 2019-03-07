@@ -6,6 +6,7 @@ import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.model.ISourceToken;
 import com.neaterbits.compiler.common.model.IType;
 import com.neaterbits.compiler.common.model.ProgramModel;
+import com.neaterbits.compiler.common.model.SourceTokenVisitor;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 
 public final class CompilerSourceFileModel implements SourceFileModel {
@@ -24,6 +25,11 @@ public final class CompilerSourceFileModel implements SourceFileModel {
 		if (this.sourceFile == null) {
 			throw new IllegalArgumentException();
 		}
+	}
+
+	@Override
+	public void iterate(SourceTokenVisitor visitor) {
+		programModel.iterate(sourceFile, visitor);
 	}
 
 	@Override

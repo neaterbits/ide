@@ -5,8 +5,11 @@ import java.util.List;
 
 import com.neaterbits.compiler.common.model.ISourceToken;
 import com.neaterbits.compiler.common.model.IType;
+import com.neaterbits.compiler.common.model.SourceTokenVisitor;
 
 public interface SourceFileModel {
+
+	void iterate(SourceTokenVisitor visitor);
 
 	ISourceToken getSourceTokenAt(long offset);
 

@@ -23,7 +23,6 @@ import com.neaterbits.ide.common.ui.actions.contexts.EditorContext;
 import com.neaterbits.ide.common.ui.actions.contexts.EditorSelectionContext;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
-import com.neaterbits.ide.common.ui.view.CursorPositionListener;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.Text;
@@ -47,7 +46,6 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	
 	abstract void addKeyListener(KeyListener keyListener);
 	abstract void addTextSelectionListener(TextSelectionListener textSelectionListener);
-	abstract void addCursorPositionListener(CursorPositionListener cursorPositionListener);
 	
 	abstract boolean hasSelectedText();
 	
