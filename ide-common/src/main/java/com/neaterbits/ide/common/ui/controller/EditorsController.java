@@ -3,32 +3,26 @@ package com.neaterbits.ide.common.ui.controller;
 import java.util.Collection;
 import java.util.Objects;
 
+import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.common.ui.view.EditorsView;
-import com.neaterbits.ide.component.common.language.LanguageComponent;
-import com.neaterbits.ide.component.common.language.LanguageName;
-import com.neaterbits.ide.component.common.language.Languages;
-import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 import com.neaterbits.ide.model.text.TextModel;
 
 final class EditorsController {
 
 	private final EditorsView editorsView;
 	private final CompiledFileView compiledFileView;
-	private final Languages languages;
 	
-	EditorsController(EditorsView editorsView, CompiledFileView compiledFileView, Languages languages) {
+	EditorsController(EditorsView editorsView, CompiledFileView compiledFileView) {
 
 		Objects.requireNonNull(editorsView);
-		Objects.requireNonNull(languages);
 		
 		this.editorsView = editorsView;
 		this.compiledFileView = compiledFileView;
-		this.languages = languages;
 	}
 
 	void closeFile(SourceFileResourcePath sourceFile) {
@@ -61,21 +55,17 @@ final class EditorsController {
 		}
 	}
 	
-	EditorView displayFile(SourceFileResourcePath sourceFile, TextModel textModel, LanguageName language) {
-
-		final LanguageComponent languageComonent = languages.getLanguageComponent(language);
+	EditorView displayFile(SourceFileInfo sourceFile, TextModel textModel) {
 
 		final EditorControllerDelegator editorControllerDelegator = new EditorControllerDelegator();
 		
 		
 		final EditorView editorView = editorsView.displayFile(
-				sourceFile,
+				sourceFile.getPath(),
 				null, // TextStylingHelper.makeTextStylingModel(languageComonent, textModel),
 				editorControllerDelegator);
 		
-		final ParseableLanguage parseableLanguage = languageComonent.getParseableLanguage();
-		
-		final EditorController editorController = new EditorController(editorView, compiledFileView, textModel, parseableLanguage);
+		final EditorController editorController = new EditorController(editorView, compiledFileView, textModel, sourceFile);
 		
 		editorControllerDelegator.editorController = editorController;
 		

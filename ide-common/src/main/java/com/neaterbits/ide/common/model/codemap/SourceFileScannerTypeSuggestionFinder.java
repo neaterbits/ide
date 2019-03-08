@@ -53,6 +53,11 @@ final class SourceFileScannerTypeSuggestionFinder extends TypeSuggestionFinder {
 		return false;
 	}
 	
+	@Override
+	boolean hasType(TypeName typeName) {
+		return false;
+	}
+
 	private void findSuggestions(SourceFolderResourcePath sourceFolder, TypeNameMatcher typeNameMatcher, Map<TypeName, TypeSuggestion> suggestions) {
 
 		final List<SourceFileResourcePath> sourceFiles = new ArrayList<>();

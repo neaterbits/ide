@@ -14,6 +14,7 @@ import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.model.ObjectProgramModel;
+import com.neaterbits.compiler.common.model.ResolvedTypes;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
@@ -42,7 +43,6 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 	}
 	
 	private static NamespaceResource getNamespace(SourceFileResourcePath sourceFile) {
-		
 		
 		final NamespaceResource namespaceResource;
 		
@@ -166,12 +166,12 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 	}
 
 	@Override
-	public SourceFileModel parse(String string) {
+	public SourceFileModel parse(String string, ResolvedTypes resolvedTypes) {
 
 		final Java8AntlrParser parser = new Java8AntlrParser(false);
 
 		final CompilationUnit compilationUnit = parser.parse(string, false);
 		
-		return new CompilerSourceFileModel(new ObjectProgramModel(), compilationUnit);
+		return new CompilerSourceFileModel(new ObjectProgramModel(), compilationUnit, resolvedTypes);
 	}
 }

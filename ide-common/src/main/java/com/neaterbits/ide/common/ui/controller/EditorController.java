@@ -5,13 +5,13 @@ import java.util.Collection;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.model.ISourceToken;
+import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.actions.contexts.source.SourceTokenContext;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.component.common.language.model.ISourceTokenProperties;
-import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.text.Text;
@@ -23,20 +23,24 @@ public final class EditorController implements EditorSourceActionContextProvider
 	
 	private SourceFileModel sourceFileModel;
 	
-	public EditorController(EditorView editorView, CompiledFileView compiledFileView, TextModel textModel, ParseableLanguage parseableLanguage) {
+	public EditorController(
+			EditorView editorView,
+			CompiledFileView compiledFileView,
+			TextModel textModel,
+			SourceFileInfo sourceFile) {
 
 		Objects.requireNonNull(editorView);
 		
 		this.editorView = editorView;
 		this.textModel = textModel;
 
-		updateSourceFileModel(textModel, compiledFileView, parseableLanguage);
+		updateSourceFileModel(textModel, compiledFileView, sourceFile);
 		
 		editorView.addTextChangeListener((start, length, newText) -> {
 
 			this.textModel.replaceTextRange(start, length, newText);
 
-			updateSourceFileModel(textModel, compiledFileView, parseableLanguage);
+			updateSourceFileModel(textModel, compiledFileView, sourceFile);
 		});
 		
 		if (compiledFileView != null) {
@@ -44,8 +48,10 @@ public final class EditorController implements EditorSourceActionContextProvider
 		}
 	}
 	
-	private void updateSourceFileModel(TextModel textModel, CompiledFileView compiledFileView, ParseableLanguage parseableLanguage) {
-		this.sourceFileModel = parseableLanguage.parse(textModel.getText().asString());
+	private void updateSourceFileModel(TextModel textModel, CompiledFileView compiledFileView, SourceFileInfo sourceFile) {
+		this.sourceFileModel = sourceFile.getLanguage().getParseableLanguage().parse(
+				textModel.getText().asString(),
+				sourceFile.getResolvedTypes());
 		
 		if (compiledFileView != null) {
 			compiledFileView.setSourceFileModel(sourceFileModel);

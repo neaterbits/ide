@@ -3,12 +3,15 @@ package com.neaterbits.ide.common.ui.controller;
 import java.io.IOException;
 import java.util.Objects;
 
+import com.neaterbits.ide.common.model.codemap.CodeMapModel;
+import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.view.UIView;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.component.common.IDEComponents;
+import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.model.text.StringTextModel;
 import com.neaterbits.ide.model.text.UnixLineDelimiter;
 import com.neaterbits.ide.util.IOUtil;
@@ -21,19 +24,24 @@ public final class EditUIController implements EditActions {
 	
 	private final EditorsController editorsController;
 	private final ProjectsController projectsController;
+	private final CodeMapModel codeMapModel;
 	
 	EditUIController(
 			UIViewAndSubViews uiView,
 			ProjectsModel projectsModel,
-			IDEComponents ideComponents) {
+			IDEComponents ideComponents,
+			CodeMapModel codeMapModel) {
 		
 		Objects.requireNonNull(uiView);
 		Objects.requireNonNull(ideComponents);
+		Objects.requireNonNull(codeMapModel);
 		
 		this.uiView = uiView;
 		this.ideComponents = ideComponents;
 		
-		this.editorsController 	= new EditorsController(uiView.getEditorsView(), uiView.getCompiledFileView(), ideComponents.getLanguages());
+		this.codeMapModel = codeMapModel;
+		
+		this.editorsController 	= new EditorsController(uiView.getEditorsView(), uiView.getCompiledFileView());
 		this.projectsController = new ProjectsController(projectsModel, uiView.getProjectView(), this);
 	}
 
@@ -53,13 +61,15 @@ public final class EditUIController implements EditActions {
 	}
 	
 	@Override
-	public void openSourceFileForEditing(SourceFileResourcePath sourceFile) {
+	public void openSourceFileForEditing(SourceFileResourcePath sourceFilePath) {
 	
-		Objects.requireNonNull(sourceFile);
+		Objects.requireNonNull(sourceFilePath);
+		
+		final LanguageName languageName = ideComponents.getLanguages().detectLanguage(sourceFilePath);
 		
 		String text = null;
 		try {
-			text = IOUtil.readAll(sourceFile.getFile());
+			text = IOUtil.readAll(sourceFilePath.getFile());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -68,9 +78,15 @@ public final class EditUIController implements EditActions {
 		if (text != null) {
 			final StringTextModel textModel = new StringTextModel(UnixLineDelimiter.INSTANCE, text);
 			
-			uiView.setWindowTitle(makeTitle(sourceFile));
+			uiView.setWindowTitle(makeTitle(sourceFilePath));
 			
-			editorsController.displayFile(sourceFile, textModel, ideComponents.getLanguages().detectLanguage(sourceFile));
+			final SourceFileInfo sourceFile = new SourceFileInfo(
+					sourceFilePath,
+					ideComponents.getLanguages().getLanguageComponent(languageName),
+					codeMapModel);
+			
+			
+			editorsController.displayFile(sourceFile, textModel);
 		}
 	}
 	

@@ -12,4 +12,5 @@ abstract class TypeSuggestionFinder {
 	
 	abstract boolean findSuggestions(TypeNameMatcher matcher, Map<TypeName, TypeSuggestion> dst);
 	
+	abstract boolean hasType(TypeName typeName);
 }

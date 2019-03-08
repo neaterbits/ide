@@ -20,6 +20,7 @@ import com.neaterbits.compiler.bytecode.common.TypeToDependencyFile;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.LoadType;
 import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.TypeVariant;
 import com.neaterbits.compiler.common.resolver.codemap.IntCodeMap;
 import com.neaterbits.compiler.common.util.Strings;
@@ -34,14 +35,12 @@ import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 
 public final class CodeMapGatherer extends InformationGatherer implements CodeMapModel {
 
-	private final AsyncExecutor asyncExecutor;
 	private final CompileableLanguage language;
 	private final BytecodeFormat bytecodeFormat;
 	
 	private final TypeToDependencyFile typeToDependencyFile;
 	
 	private final HashTypeMap<ClassInfo> typeMap;
-
 	private final IntCodeMap codeMap;
 
 	private final List<TypeSuggestionFinder> typeSuggestionFinders;
@@ -109,7 +108,6 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		Objects.requireNonNull(language);
 		Objects.requireNonNull(bytecodeFormat);
 		
-		this.asyncExecutor = asyncExecutor;
 		this.language = language;
 		this.bytecodeFormat = bytecodeFormat;
 		
@@ -131,7 +129,6 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			
 			@Override
 			boolean hasSourceCode() {
-				
 				// Might have source code if is project type
 				return true;
 			}
@@ -139,6 +136,11 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			@Override
 			boolean canRetrieveTypeVariant() {
 				return true;
+			}
+
+			@Override
+			boolean hasType(TypeName typeName) {
+				return typeMap.hasType(typeName);
 			}
 		};
 		
@@ -176,9 +178,15 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			boolean canRetrieveTypeVariant() {
 				return false;
 			}
+
+			@Override
+			boolean hasType(TypeName typeName) {
+				return typeToDependencyFile.hasType(typeName);
+			}
 		};
 		
 		this.typeSuggestionFinders = Arrays.asList(
+				typeMapSuggestionFinder,
 				dependencyFileSuggestionFinder,
 				new SourceFileScannerTypeSuggestionFinder(buildRoot, language));
 	}
@@ -231,6 +239,55 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		return new TypeSuggestions(suggestionsList, completeResult);
 	}
 	
+	@Override
+	public TypeName lookup(ScopedName scopedName) {
+
+		TypeName result;
+		
+		if (scopedName.hasScope()) {
+		
+			result = null;
+			
+			final String [] parts = scopedName.getParts();
+			
+			// Try all combinations of type names
+			for (int numOuterTypes = 0; numOuterTypes < parts.length - 1; ++ numOuterTypes) {
+				final TypeName typeName = new TypeName(
+						numOuterTypes == parts.length - 1
+							? null
+							: Arrays.copyOf(parts, parts.length - 1 - numOuterTypes),
+							
+						numOuterTypes == 0
+							? null
+							: Arrays.copyOfRange(parts, parts.length - 1 - numOuterTypes, parts.length - 1),
+						
+						parts[parts.length - 1]);
+		
+				if (hasType(typeName)) {
+					result = typeName;
+					break;
+				}
+			}
+		}
+		else {
+			// not fully scoped so cannot resolve
+			result = null;
+		}
+		
+		return result;
+	}
+	
+	private boolean hasType(TypeName typeName) {
+		
+		for (TypeSuggestionFinder typeSuggestionFinder : typeSuggestionFinders) {
+			if (typeSuggestionFinder.hasType(typeName)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 	private TypeName getTypeName(SourceFileResourcePath sourceFileResourcePath, String namespace, String name) {
 
 		final TypeName typeName;
@@ -351,13 +408,10 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 				
 				loadType);
 		
-
 		if (bytecode != null) {
 			final int methodCount = bytecode.getMethodCount();
 		
 			synchronized (typeMap) {
-				System.out.println("## set method count " + methodCount);
-				
 				codeMap.setMethodCount(typeResult.type, methodCount);
 			}
 		}

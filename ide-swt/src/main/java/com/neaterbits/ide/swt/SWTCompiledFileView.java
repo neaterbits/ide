@@ -1,8 +1,6 @@
 package com.neaterbits.ide.swt;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.swt.SWT;
@@ -20,7 +18,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import com.neaterbits.compiler.common.model.ISourceToken;
-import com.neaterbits.compiler.common.model.SourceTokenVisitor;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
@@ -29,11 +26,13 @@ import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 public final class SWTCompiledFileView implements CompiledFileView {
 
 	private final StyledText textWidget;
+	private final Label cursorOffsetLabel;
+	private final Label tokenTypeLabel;
+	private final Label tokenTypeNameLabel;
 	
 	private long editorCursorOffset;
+	private ISourceToken curToken;
 	private SourceFileModel sourceFileModel;
-	
-	private Label cursorOffsetLabel;
 	
 	public SWTCompiledFileView(TabFolder tabFolder) {
 
@@ -61,13 +60,17 @@ public final class SWTCompiledFileView implements CompiledFileView {
 		
 		final GridData infoCompositeData = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
 		
+		infoCompositeData.widthHint = 350;
+		
 		infoComposite.setLayoutData(infoCompositeData);
 		
 		infoComposite.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		this.cursorOffsetLabel = new Label(infoComposite, SWT.NONE);
+		this.tokenTypeLabel = new Label(infoComposite, SWT.NONE);
+		this.tokenTypeNameLabel = new Label(infoComposite, SWT.NONE);
 		
-		updateCursorPosLabel(false);
+		updateCursorPosLabels(false);
 		
 		final Font font = new Font(tabFolder.getDisplay(), new FontData("Monospace", 10, SWT.NONE));
 		textWidget.addDisposeListener(event -> font.dispose());
@@ -83,9 +86,8 @@ public final class SWTCompiledFileView implements CompiledFileView {
 		
 		updateViewText(true);
 		
-		updateCursorPosLabel(true);
+		updateCursorPosLabels(true);
 	}
-
 
 	@Override
 	public void setSourceFileModel(SourceFileModel model) {
@@ -95,131 +97,25 @@ public final class SWTCompiledFileView implements CompiledFileView {
 		this.sourceFileModel = model;
 		
 		updateViewText(false);
+		
+		updateCursorPosLabels(true);
 	}
 
-	private static class Element {
-		private final ISourceToken token;
-		private final int textOffset;
-
-		public Element(ISourceToken token, int textOffset) {
-			
-			Objects.requireNonNull(token);
-			
-			this.token = token;
-			this.textOffset = textOffset;
-		}
-	}
 	
-	private static class TextVisitor implements SourceTokenVisitor {
+	private void updateCursorPosLabels(boolean showValue) {
 		
-		private final StringBuilder sb;
-		private final long editorCursorOffset;
-
-		private final List<Element> tokens;
-
-		private int indent;
-		
-		private int stringBuilderLengthAtCursorOffset = -1;
-		private int stringBuilderLineAtCursorOffset = 0;
-		private Element foundCursorElement;
-		
-		private int foundLength;
-
-				
-		public TextVisitor(StringBuilder sb, long editorCursorOffset) {
-
-			Objects.requireNonNull(sb);
-			
-			this.sb = sb;
-			this.editorCursorOffset = editorCursorOffset;
-			
-			this.tokens = new ArrayList<>();
-		}
-
-		@Override
-		public void onToken(ISourceToken token) {
-			
-			Objects.requireNonNull(token);
-			
-			for (int i = 0; i < indent; ++ i) {
-				sb.append("  ");
-			}
-			
-			if (stringBuilderLengthAtCursorOffset == -1) {
-				if (token.getStartOffset() > editorCursorOffset) {
-					stringBuilderLengthAtCursorOffset = sb.length();
-				}
-				
-				++ stringBuilderLineAtCursorOffset;
-			}
-
-			
-			sb.append(token.getTokenTypeDebugName())
-				.append(" [").append(token.getStartOffset()).append(", ").append(token.getLength()).append("]\n");
-		}
-
-		@Override
-		public void onPush(ISourceToken token) {
-			indent ++;
-			
-			if (foundCursorElement == null) {
-
-				// Any earlier token found? If so clear since this is further towards a leaf token
-				
-				if (tokens.size() != indent - 1) {
-					throw new IllegalStateException("mismatch " + tokens.size() + "/" + (indent - 1));
-				}
-				
-				for (int i = 0; i < tokens.size() - 1; ++ i) {
-					tokens.set(i, null);
-				}
-			
-				final ISourceToken matchingToken;
-				
-				if (token.getStartOffset() <= editorCursorOffset && token.getStartOffset() + token.getLength() >= editorCursorOffset) {
-					
-					System.out.println("## matching token " + token.getTokenTypeDebugName());
-					
-					matchingToken = token;
-				}
-				else {
-					matchingToken = null;
-				}
-				
-				tokens.add(matchingToken != null ? new Element(matchingToken, sb.length()) : null);
-			}
-		}
-
-		@Override
-		public void onPop(ISourceToken token) {
-
-			if (foundCursorElement == null) {
-				if (indent > 0 && tokens.get(tokens.size() - 1) != null) {
-					// leaf token
-					foundCursorElement = tokens.get(tokens.size() - 1);
-					
-					foundLength = sb.length() - foundCursorElement.textOffset;
-				}
-
-				tokens.remove(tokens.size() - 1);
-			}
-
-			-- indent;
-
-		}
-	}
-
-	private void updateCursorPosLabel(boolean showValue) {
-		
-		cursorOffsetLabel.setText("Cursor offset:" + (showValue ? (" " + editorCursorOffset) : "            "));
-		
+		cursorOffsetLabel.setText("Cursor offset:" + (showValue ? (" " + editorCursorOffset) : ""));
+		tokenTypeLabel.setText("Token:" + (curToken != null ? (" " + curToken.getTokenType().name()) : ""));
+		tokenTypeNameLabel.setText("Token type:" + (curToken != null && curToken.getTypeName() != null
+																? (" " + curToken.getTypeName().toDebugString())
+																: ""));
 	}
 	
 	private void updateViewText(boolean updateCursorOnly) {
 
 		final StringBuilder sb = new StringBuilder();
 
-		final TextVisitor visitor = new TextVisitor(sb, editorCursorOffset);
+		final SWTCompiledFileViewMakeTextVisitor visitor = new SWTCompiledFileViewMakeTextVisitor(sb, editorCursorOffset);
 		
 		sourceFileModel.iterate(visitor);
 		
@@ -227,11 +123,8 @@ public final class SWTCompiledFileView implements CompiledFileView {
 			textWidget.setText(sb.toString());
 		}
 
-		// System.out.println("## set textwidget pos to " + visitor.stringBuilderLengthAtCursorOffset + " of " + sb.length());
-		// textWidget.setCaretOffset(visitor.stringBuilderLengthAtCursorOffset);
-		
-		final int topIndex = visitor.stringBuilderLineAtCursorOffset > 10
-					? visitor.stringBuilderLineAtCursorOffset - 10
+		final int topIndex = visitor.getStringBuilderLineAtCursorOffset() > 10
+					? visitor.getStringBuilderLineAtCursorOffset() - 10
 					: 0;
 		
 		
@@ -241,17 +134,18 @@ public final class SWTCompiledFileView implements CompiledFileView {
 
 		textWidget.setStyleRange(new StyleRange(0, textWidget.getText().length(), null, null));
 
-		if (visitor.foundCursorElement != null) {
-			
-			System.out.println("## found cursor token " + visitor.foundCursorElement.token.	getTokenDebugString());
+		this.curToken = visitor.getFoundCursorToken();
 
+		if (visitor.getFoundCursorToken() != null) {
+			
+			System.out.println("## found cursor token " + visitor.getFoundCursorToken().getTokenDebugString());
+			
 			textWidget.setStyleRange(new StyleRange(
-					(int)visitor.foundCursorElement.textOffset,
-					(int)visitor.foundLength,
+					(int)visitor.getFoundStringBuilderTextOffset(),
+					(int)visitor.getFoundLength(),
 					new Color(null, 0x30, 0xA0, 0x30),
 					null));
 		}
-		
 	}
 
 

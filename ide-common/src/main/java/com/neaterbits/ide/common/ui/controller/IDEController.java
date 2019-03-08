@@ -93,7 +93,7 @@ public final class IDEController implements ComponentIDEAccess {
 			return menuListener;
 		});
 		
-		this.uiController = new EditUIController(uiView, projectModel, ideComponents);
+		this.uiController = new EditUIController(uiView, projectModel, ideComponents, codeMapModel);
 		
 		final Clipboard clipboard = new ClipboardImpl(ui.getSystemClipboard());
 		
