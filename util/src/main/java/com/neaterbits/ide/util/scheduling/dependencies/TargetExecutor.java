@@ -368,55 +368,5 @@ final class TargetExecutor {
 		
 		return new PrerequisiteCompletion(Status.SUCCESS);
 	}
-
-	/*
-	private <CONTEXT extends TaskContext> void collectComputedTargets(TargetExecutionContext<CONTEXT> context, Target<?> target) {
-
-		for (Prerequisites prerequisites : target.getPrerequisites()) {
-
-			final List<Object> targetObjects = new ArrayList<>(prerequisites.getPrerequisites().size());
-			
-			for (Prerequisite<?> prerequisite : prerequisites.getPrerequisites()) {
-
-				final Target<?> subTarget = prerequisite.getSubTarget();
-
-				if (subTarget != null) {
-					
-					final Object subCollected = context.state.getCollectedProduct(subTarget);
-					
-					if (subCollected != null) {
-						targetObjects.add(subCollected);
-					}
-					else if (subTarget.getTargetObject() != null) {
-						targetObjects.add(subTarget.getTargetObject());
-					}
-				}
-				else {
-					
-					if (prerequisite.getItem() == null) {
-						throw new IllegalStateException();
-					}
-					
-					targetObjects.add(prerequisite.getItem());
-				}
-			}
-			
-			if (prerequisites.getCollect() != null) {
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				final BiFunction<Object, List<Object>, Object> collect = (BiFunction)prerequisites.getCollect();
-				
-				final Object collected = collect.apply(target.getTargetObject(), targetObjects);
-				
-				if (context.logger != null) {
-					context.logger.onCollect(target, targetObjects, collected, context.state);
-				}
-				
-				if (collected != null) {
-					context.state.addCollectedProduct(target, collected);
-				}
-			}
-		}
-	}
-	*/
 }
 
