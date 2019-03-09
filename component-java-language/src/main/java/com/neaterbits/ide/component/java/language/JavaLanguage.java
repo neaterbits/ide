@@ -6,8 +6,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
+import com.neaterbits.compiler.bytecode.common.ClassLibs;
+import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
@@ -17,6 +20,7 @@ import com.neaterbits.compiler.common.model.ObjectProgramModel;
 import com.neaterbits.compiler.common.model.ResolvedTypes;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
+import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.language.CompileableLanguage;
@@ -58,17 +62,33 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		
 		return namespaceResource;
 	}
+
+	
+	public static File getSystemJarFilePath(String libName) {
+		
+		final String jreDir = System.getProperty("java.home");
+		
+		return new File(jreDir + "/lib/" + libName);
+	}
 	
 	@Override
-	public List<File> getSystemLibraries() {
+	public ClassLibs getSystemLibraries() {
 
 		final String jreDir = System.getProperty("java.home");
 		
 		System.out.println("## jre dir " + jreDir);
 		
-		final List<File> list = Arrays.asList(new File(jreDir + "/lib/rt.jar"));
+		final List<String> fileNames = Arrays.asList("rt.jar", "charsets.jar");
 		
-		return list;
+		final List<String> list = fileNames.stream()
+			.map(fileName -> jreDir + "/lib/" + fileName)
+			.collect(Collectors.toList());
+		
+		try {
+			return new JavaClassLibs(list);
+		} catch (IOException ex) {
+			throw new IllegalStateException(ex);
+		}
 	}
 
 	@Override
@@ -101,6 +121,14 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 	
 
 	@Override
+	public String getCompleteNameString(TypeName typeName) {
+
+		Objects.requireNonNull(typeName);
+		
+		return typeName.join('.');
+	}
+
+	@Override
 	public String getBinaryName(TypeName typeName) {
 		return typeName.getName() + ".class";
 	}
@@ -123,9 +151,9 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 	}
 	
 	@Override
-	public Set<TypeName> getTypesFromSystemLibraryFile(File systemLibraryPath) throws IOException {
+	public Set<TypeName> getTypesFromSystemLibraryFile(DependencyFile systemLibraryPath) throws IOException {
 
-		return getTypesFromJarFile(systemLibraryPath);
+		return getTypesFromJarFile(systemLibraryPath.getFile());
 	}
 
 	private Set<TypeName> getTypesFromJarFile(FileSystemResourcePath jarFileResourcePath) throws IOException {

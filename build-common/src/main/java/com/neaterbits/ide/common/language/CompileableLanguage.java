@@ -1,10 +1,10 @@
 package com.neaterbits.ide.common.language;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
+import com.neaterbits.compiler.bytecode.common.ClassLibs;
+import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
@@ -21,11 +21,13 @@ public interface CompileableLanguage {
 		return getCompleteName(sourceFile).toTypeName();
 	}
 	
-	List<File> getSystemLibraries();
+	ClassLibs getSystemLibraries();
 	
 	TypeName getTypeName(String namespace, String name);
 
 	String getNamespaceString(TypeName typeName);
+	
+	String getCompleteNameString(TypeName typeName);
 	
 	String getBinaryName(TypeName typeName);
 	
@@ -33,7 +35,7 @@ public interface CompileableLanguage {
 
 	Set<TypeName> getTypesFromLibraryFile(LibraryResourcePath libraryResourcePath) throws IOException;
 
-	Set<TypeName> getTypesFromSystemLibraryFile(File systemLibraryPath) throws IOException;
+	Set<TypeName> getTypesFromSystemLibraryFile(DependencyFile systemLibraryPath) throws IOException;
 	
 	CompiledFileResourcePath getCompiledFilePath(TargetDirectoryResourcePath targetDirectory, SourceFileResourcePath sourceFile);
 

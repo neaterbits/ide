@@ -8,9 +8,7 @@ public final class TargetBuilderIDEStartup extends TargetBuildSpec<InitialScanCo
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {
 
-		
 		targetBuilder.addTarget(new TargetBuilderGetSourceFolders());
-		
 		
 		targetBuilder.addTarget(new TargetBuilderProjectModulesCodeMap())
 				
@@ -21,6 +19,6 @@ public final class TargetBuilderIDEStartup extends TargetBuildSpec<InitialScanCo
 		targetBuilder.addTarget(new TargetBuilderAddLibraryTypesToCodeMap());
 		
 		targetBuilder.addTarget(new TargetBuilderAddSystemLibraryTypeNamesToCodeMap());
-		// targetBuilder.addTarget(new TargetBuilderAddSystemLibraryTypesToCodeMap());
+		targetBuilder.addTarget(new TargetBuilderAddSystemLibraryTypesToCodeMap());
 	}
 }

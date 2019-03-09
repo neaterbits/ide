@@ -15,13 +15,16 @@ import java.util.Set;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
+import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.bytecode.common.TypeToDependencyFile;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap;
+import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.CreateType;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.LoadType;
+import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
+import com.neaterbits.compiler.bytecode.common.loader.LoadClassParameters;
 import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.ast.ScopedName;
-import com.neaterbits.compiler.common.loader.TypeVariant;
 import com.neaterbits.compiler.common.resolver.codemap.IntCodeMap;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
@@ -44,63 +47,10 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	private final IntCodeMap codeMap;
 
 	private final List<TypeSuggestionFinder> typeSuggestionFinders;
+
+	private final CreateType<ClassInfo> createType;
 	
 	private boolean codeScanComplete;
-	
-	private static class ClassInfo implements TypeSuggestion {
-
-		private final int typeNo;
-		private final TypeName typeName;
-		private final String namespace;
-		private final String binaryName;
-		private final TypeVariant typeVariant;
-		private final SourceFileResourcePath sourceFileResourcePath;
-
-		ClassInfo(
-				int typeNo,
-				TypeName typeName,
-				String namespace,
-				String binaryName,
-				SourceFileResourcePath sourceFileResourcePath,
-				ClassBytecode classByteCode) {
-			
-			this.typeNo = typeNo;
-			this.typeName = typeName;
-			this.namespace = namespace;
-			this.binaryName = binaryName;
-			this.typeVariant = classByteCode.getTypeVariant();
-			this.sourceFileResourcePath = sourceFileResourcePath;
-		}
-		
-		int getTypeNo() {
-			return typeNo;
-		}
-
-		@Override
-		public TypeVariant getType() {
-			return typeVariant;
-		}
-
-		@Override
-		public String getName() {
-			return typeName.getName();
-		}
-
-		@Override
-		public String getNamespace() {
-			return namespace;
-		}
-
-		@Override
-		public String getBinaryName() {
-			return binaryName;
-		}
-
-		@Override
-		public SourceFileResourcePath getSourceFile() {
-			return sourceFileResourcePath;
-		}
-	}
 	
 	public CodeMapGatherer(AsyncExecutor asyncExecutor, CompileableLanguage language, BytecodeFormat bytecodeFormat, BuildRoot buildRoot) {
 
@@ -189,6 +139,14 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 				typeMapSuggestionFinder,
 				dependencyFileSuggestionFinder,
 				new SourceFileScannerTypeSuggestionFinder(buildRoot, language));
+		
+		this.createType = (typeName, typeNo, classByteCode) -> new ClassInfo(
+				typeNo,
+				typeName,
+				language.getNamespaceString(typeName),
+				language.getBinaryName(typeName),
+				null,
+				classByteCode);
 	}
 	
 	@Override
@@ -314,8 +272,10 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(libraryFile, true), types);
 	}
 
-	public void addSystemLibraryFile(File file) {
+	public void addSystemLibraryFile(DependencyFile file) {
 		
+		final long start = System.currentTimeMillis();
+
 		Set<TypeName> typeNames = null;
 		
 		try {
@@ -324,23 +284,31 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			ex.printStackTrace();
 		}
 		
+		final ClassLibs systemLibraries = language.getSystemLibraries();
+		
 		if (typeNames != null) {
 			for (TypeName typeName : typeNames) {
 				try {
-					bytecodeFormat.loadClassBytecode(typeToDependencyFile, typeName);
+					final boolean addedType = loadClassAndBaseClassesAndAddToCodeMap(systemLibraries, typeName);
+					
+					if (!addedType) {
+						System.out.println("## already added " + typeName.toDebugString());
+					}
 				}
 				catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		}
+
+		System.out.println("Loading files took " + ((System.currentTimeMillis() - start) / 1000));
 	}
 	
 	public CodeMapModel getModel() {
 		return this;
 	}
 	
-	public void addClassFile(SourceFileResourcePath sourceFile) {
+	public void addClassFile(SourceFileResourcePath sourceFile) throws IOException, ClassFileException {
 		
 		Objects.requireNonNull(sourceFile);
 		
@@ -370,7 +338,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	}
 
 	// load classfile from local library
-	void loadAndAddToCodeMap(TypeName typeName) {
+	void loadAndAddToCodeMap(TypeName typeName) throws IOException, ClassFileException {
 		
 		loadAndAddToCodeMap(typeName, type -> {
 					
@@ -387,8 +355,21 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 
 	}
 
+	private boolean loadClassAndBaseClassesAndAddToCodeMap(ClassLibs classLibs, TypeName typeName) throws IOException, ClassFileException {
+		
+		final LoadClassParameters<File, ClassInfo, Void> parameters = new LoadClassParameters<>(
+				typeMap,
+				codeMap,
+				createType,
+				null,
+				type -> bytecodeFormat.loadClassBytecode(classLibs, type));
+		
+		final ClassBytecode addedByteCode = LoadClassHelper.loadClassAndBaseTypesAndAddToCodeMap(typeName, new TypeResult(), parameters);
+		
+		return addedByteCode != null;
+	}
 	
-	private void loadAndAddToCodeMap(TypeName typeName, LoadType loadType) {
+	private void loadAndAddToCodeMap(TypeName typeName, LoadType loadType) throws IOException, ClassFileException {
 		
 		Objects.requireNonNull(typeName);
 		
@@ -397,16 +378,12 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		final ClassBytecode bytecode = typeMap.addOrGetType(
 				typeName,
 				codeMap,
+				false,
 				typeResult,
-				(typeNo, classByteCode) -> new ClassInfo(
-						typeNo,
-						typeName,
-						language.getNamespaceString(typeName),
-						language.getBinaryName(typeName),
-						null,
-						classByteCode),
-				
+				createType,
 				loadType);
+		
+		// System.out.println("## added type " + language.getCompleteNameString(typeName) + " with typeNo " + typeResult.type);
 		
 		if (bytecode != null) {
 			final int methodCount = bytecode.getMethodCount();
