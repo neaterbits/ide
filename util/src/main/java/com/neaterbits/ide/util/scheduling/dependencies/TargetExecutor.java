@@ -79,7 +79,11 @@ final class TargetExecutor {
 
 					Collector.collectFromSubTargetsAndSubProducts(context, target);
 
-					runAnyActionsAndCallOnCompleted(context, target);
+					runAnyActionsAndCallOnCompleted(context, target, (exception, async) -> {
+							addRecursiveBuildTargetsIfAny(context.state, context.context, target); 
+
+							onCompletedTarget(context, target, exception, async);
+						});
 				}
 				else if (status.getStatus() == Status.FAILED) {
 					context.state.moveTargetFromToExecuteToFailed(target);
@@ -105,27 +109,12 @@ final class TargetExecutor {
 		}
 	}
 	
-	private <CONTEXT extends TaskContext> void runAnyActionsAndCallOnCompleted(TargetExecutionContext<CONTEXT> context, Target<?> target) {
+	private <CONTEXT extends TaskContext> void runAnyActionsAndCallOnCompleted(
+					TargetExecutionContext<CONTEXT> context, Target<?> target,
+					BiConsumer<Exception, Boolean> onCompleted) {
 		
 		final Action<?> action = target.getAction();
 		final ActionWithResult<?> actionWithResult = target.getActionWithResult();
-		
-		final BiConsumer<Exception, Boolean> onCompleted = (exception, async) -> {
-
-			if (target.getFromPrerequisite() != null) {
-				final Prerequisites fromPrerequisites = target.getFromPrerequisite().getFromPrerequisites();
-	
-				if (fromPrerequisites == null) {
-					throw new IllegalStateException("## no prerequisites for target " + target.getTargetObject());
-				}
-				
-				if (fromPrerequisites.isRecursiveBuild()) {
-					addRecursiveBuildTargets(context.state, context.context, fromPrerequisites, target);
-				}
-			}
-				
-			onCompletedTarget(context, target, exception, async);
-		};
 
 		if (action != null) {
 			Actions.runOrScheduleAction(context, action, target, onCompleted);
@@ -138,6 +127,32 @@ final class TargetExecutor {
 		}
 	}
 	
+	private static boolean addRecursiveBuildTargetsIfAny(ExecutorState targetState, TaskContext context, Target<?> target) {
+
+		final boolean added;
+		
+		if (target.getFromPrerequisite() != null) {
+			final Prerequisites fromPrerequisites = target.getFromPrerequisite().getFromPrerequisites();
+
+			if (fromPrerequisites == null) {
+				throw new IllegalStateException("## no prerequisites for target " + target.getTargetObject());
+			}
+			
+			if (fromPrerequisites.isRecursiveBuild()) {
+				addRecursiveBuildTargets(targetState, context, fromPrerequisites, target);
+
+				added = true;
+			}
+			else {
+				added = false;
+			}
+		}
+		else {
+			added = false;
+		}
+		
+		return added;
+	}
 	
 	private static void addRecursiveBuildTargets(ExecutorState targetState, TaskContext context, Prerequisites fromPrerequisites, Target<?> target) {
 
