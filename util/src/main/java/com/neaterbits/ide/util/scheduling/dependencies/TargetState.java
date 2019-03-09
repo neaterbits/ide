@@ -40,6 +40,33 @@ final class TargetState {
 		setStatus(Status.SCHEDULED);
 	}
 
+	void moveTargetFromToScheduledToActionPerformedCollect() {
+		
+		if (status != Status.SCHEDULED) {
+			throw new IllegalStateException();
+		}
+		
+		setStatus(Status.ACTION_PERFORMED_COLLECTING_SUBTARGETS);
+	}
+
+	void moveTargetFromActionPerformedCollectToComplete() {
+		
+		if (status != Status.ACTION_PERFORMED_COLLECTING_SUBTARGETS) {
+			throw new IllegalStateException();
+		}
+		
+		setStatus(Status.SUCCESS);
+	}
+
+	void moveTargetFromActionPerformedCollectToFailed() {
+		
+		if (status != Status.ACTION_PERFORMED_COLLECTING_SUBTARGETS) {
+			throw new IllegalStateException();
+		}
+		
+		setStatus(Status.FAILED);
+	}
+
 	void moveTargetFromToExecuteToFailed() {
 		
 		if (status != Status.TO_EXECUTE) {

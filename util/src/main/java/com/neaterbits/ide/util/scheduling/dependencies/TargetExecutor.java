@@ -61,6 +61,21 @@ final class TargetExecutor {
 		
 		for (;;) {
 
+			// Check any targets that collect info from subtargets
+			for (Target<?> target : context.state.getActionPerformedCollectTargets()) {
+
+				final PrerequisiteCompletion status = hasCompletedPrerequisites(context.state, target);
+				
+				if (status.getStatus() == Status.SUCCESS) {
+					Collector.collectFromSubTargetsAndSubProducts(context, target);
+
+					context.state.moveTargetFromActionPerformedCollectToComplete(target);
+				}
+				else if (status.getStatus() == Status.FAILED) {
+					context.state.moveTargetFromActionPerformedCollectToFailed(target);
+				}
+			}
+			
 			int targetsLeft = context.state.getNumExecuteTargets();
 			
 			final List<Target<?>> targets = new ArrayList<>(context.state.getToExecuteTargets());
@@ -80,9 +95,15 @@ final class TargetExecutor {
 					Collector.collectFromSubTargetsAndSubProducts(context, target);
 
 					runAnyActionsAndCallOnCompleted(context, target, (exception, async) -> {
-							addRecursiveBuildTargetsIfAny(context.state, context.context, target); 
-
-							onCompletedTarget(context, target, exception, async);
+						
+							final boolean targetsAdded = addRecursiveBuildTargetsIfAny(context.state, context.context, target);
+							
+							if (targetsAdded) {
+								context.state.moveTargetFromToScheduledToActionPerformedCollect(target);
+							}
+							else {
+								onCompletedTarget(context, target, exception, async);
+							}
 						});
 				}
 				else if (status.getStatus() == Status.FAILED) {

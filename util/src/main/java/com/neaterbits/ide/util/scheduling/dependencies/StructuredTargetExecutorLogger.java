@@ -99,6 +99,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 
 		addTargetLogState(logEntry, "toExecute", logState.getToExecuteTargets());
 		addTargetLogState(logEntry, "scheduled", logState.getScheduledTargets());
+		addTargetLogState(logEntry, "collect", logState.getActionPerformedCollectTargets());
 		addTargetLogState(logEntry, "completed", logState.getCompletedTargets());
 		addTargetLogState(logEntry, "failed", logState.getFailedTargets().keySet());
 		

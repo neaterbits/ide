@@ -194,6 +194,11 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		return targetsInState(Status.SCHEDULED);
 	}
 
+	@Override
+	public Set<Target<?>> getActionPerformedCollectTargets() {
+		return targetsInState(Status.ACTION_PERFORMED_COLLECTING_SUBTARGETS);
+	}
+
 	Status getTargetCompletionStatus(Target<?> target) {
 		return targetState(target).getStatus();
 	}
@@ -220,6 +225,27 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		Objects.requireNonNull(target);
 		
 		targetState(target).moveTargetFromToExecuteToScheduled();
+	}
+
+	void moveTargetFromToScheduledToActionPerformedCollect(Target<?> target) {
+		
+		Objects.requireNonNull(target);
+		
+		targetState(target).moveTargetFromToScheduledToActionPerformedCollect();
+	}
+
+	void moveTargetFromActionPerformedCollectToComplete(Target<?> target) {
+		
+		Objects.requireNonNull(target);
+		
+		targetState(target).moveTargetFromActionPerformedCollectToComplete();
+	}
+
+	void moveTargetFromActionPerformedCollectToFailed(Target<?> target) {
+		
+		Objects.requireNonNull(target);
+		
+		targetState(target).moveTargetFromActionPerformedCollectToFailed();
 	}
 
 	void moveTargetFromToExecuteToFailed(Target<?> target) {
