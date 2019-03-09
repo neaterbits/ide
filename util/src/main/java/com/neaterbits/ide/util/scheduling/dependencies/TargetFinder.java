@@ -14,13 +14,13 @@ final class TargetFinder extends PrerequisitesFinder {
 		super(asyncExecutor);
 	}
 
-	<CONTEXT extends TaskContext, TARGET, FILE_TARGET> void computeTargets(
-			List<TargetSpec<CONTEXT, TARGET, FILE_TARGET>> targetSpecs,
+	<CONTEXT extends TaskContext, TARGET> void computeTargets(
+			List<TargetSpec<CONTEXT, TARGET>> targetSpecs,
 			CONTEXT context,
 			TargetFinderLogger logger,
 			Consumer<Target<TARGET>> rootTarget) {
 
-		for (TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec : targetSpecs) {
+		for (TargetSpec<CONTEXT, TARGET> targetSpec : targetSpecs) {
 			findTargets(null, targetSpec, context, null, logger, 0, rootTarget);
 		}
 
@@ -28,10 +28,10 @@ final class TargetFinder extends PrerequisitesFinder {
 	}
 
 	@Override
-	<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
+	<CONTEXT extends TaskContext, TARGET>
 		void findTargets(
 				Prerequisites fromPrerequisites,
-				TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec,
+				TargetSpec<CONTEXT, TARGET> targetSpec,
 				CONTEXT context,
 				TARGET target,
 				TargetFinderLogger logger,
@@ -64,7 +64,7 @@ final class TargetFinder extends PrerequisitesFinder {
 
 	private <CONTEXT extends TaskContext, TARGET, FILE_TARGET, PREREQUISITE> void findPrerequisites(
 			CONTEXT context,
-			TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec,
+			TargetSpec<CONTEXT, TARGET> targetSpec,
 			TARGET target,
 			List<PrerequisiteSpec<CONTEXT, TARGET, ?>> prerequisiteSpecs,
 			TargetFinderLogger logger,

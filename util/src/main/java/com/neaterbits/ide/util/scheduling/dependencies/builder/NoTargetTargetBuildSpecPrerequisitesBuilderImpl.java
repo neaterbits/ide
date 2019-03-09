@@ -9,11 +9,11 @@ import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
 final class NoTargetTargetBuildSpecPrerequisitesBuilderImpl<CONTEXT extends TaskContext>
 	implements NoTargetTargetBuildSpecPrerequisitesBuilder {
 
-	private final List<TargetSpec<CONTEXT, ?, ?>> targetSpecs;
+	private final List<TargetSpec<CONTEXT, ?>> targetSpecs;
 
 	private List<String> namedPrerequisites;
 	
-	NoTargetTargetBuildSpecPrerequisitesBuilderImpl(List<TargetSpec<CONTEXT, ?, ?>> targetSpecs) {
+	NoTargetTargetBuildSpecPrerequisitesBuilderImpl(List<TargetSpec<CONTEXT, ?>> targetSpecs) {
 		
 		Objects.requireNonNull(targetSpecs);
 		
@@ -50,7 +50,7 @@ final class NoTargetTargetBuildSpecPrerequisitesBuilderImpl<CONTEXT extends Task
 		return namedPrerequisites;
 	}
 
-	List<TargetSpec<CONTEXT, ?, ?>> getTargetSpecs() {
+	List<TargetSpec<CONTEXT, ?>> getTargetSpecs() {
 		return targetSpecs;
 	}
 }

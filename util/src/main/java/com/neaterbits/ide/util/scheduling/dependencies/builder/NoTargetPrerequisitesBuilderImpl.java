@@ -36,7 +36,7 @@ final class NoTargetPrerequisitesBuilderImpl<CONTEXT extends TaskContext>
 		throw new UnsupportedOperationException();
 	}
 	
-	TargetSpec<CONTEXT, ?, ?> build() {
+	TargetSpec<CONTEXT, ?> build() {
 		return targetBuilderState.build();
 	}
 }

@@ -11,7 +11,7 @@ public abstract class Target<TARGET> extends BuildEntity {
 	private List<Prerequisites> prerequisites;
 	private final Action<TARGET> action;
 	private final ActionWithResult<TARGET> actionWithResult;
-	private final TargetSpec<?, TARGET, ?> targetSpec;
+	private final TargetSpec<?, TARGET> targetSpec;
 
 	private Prerequisite<?> fromPrerequisite;
 	
@@ -27,7 +27,7 @@ public abstract class Target<TARGET> extends BuildEntity {
 			List<Prerequisites> prerequisites,
 			Action<TARGET> action,
 			ActionWithResult<TARGET> actionWithResult,
-			TargetSpec<?, TARGET, ?> targetSpec) {
+			TargetSpec<?, TARGET> targetSpec) {
 		
 		Objects.requireNonNull(targetSpec);
 		
@@ -95,7 +95,7 @@ public abstract class Target<TARGET> extends BuildEntity {
 		return actionWithResult;
 	}
 
-	TargetSpec<?, TARGET, ?> getTargetSpec() {
+	TargetSpec<?, TARGET> getTargetSpec() {
 		return targetSpec;
 	}
 

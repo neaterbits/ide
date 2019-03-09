@@ -1,6 +1,5 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,16 +11,9 @@ import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
-public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> {
+public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 
 	private final Class<TARGET> type;
-
-	private final String name;
-	private final Function<TARGET, String> qualifierName;
-
-	private final Class<FILE_TARGET> fileTargetType;
-	private final BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget;
-	private final Function<FILE_TARGET, File> file;
 
 	private final Function<TARGET, String> description;
 	
@@ -33,13 +25,12 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 	private BiFunction<CONTEXT, TARGET, ?> actionWithResult;
 	private ProcessResult<CONTEXT, TARGET, ?> onResult;
 
-	private TargetSpec(
+	abstract Target<TARGET> createTarget(CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList);
+
+	public abstract TargetSpec<CONTEXT, TARGET> addPrerequisiteSpecs(List<PrerequisiteSpec<CONTEXT, TARGET, ?>> additionalPrerequisites);
+	
+	TargetSpec(
 			Class<TARGET> type,
-			String name,
-			Function<TARGET, String> qualifierName,
-			Class<FILE_TARGET> fileTargetType,
-			BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget,
-			Function<FILE_TARGET, File> file,
 			Function<TARGET, String> description,
 			List<PrerequisiteSpec<CONTEXT, TARGET, ?>> prerequisites,
 			Constraint constraint,
@@ -47,17 +38,8 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 			BiFunction<CONTEXT, TARGET, ?> actionWithResult,
 			ProcessResult<CONTEXT, TARGET, ?> onResult) {
 		
-		if (type == null && name == null) {
-			throw new IllegalArgumentException("type == null && name == null");
-		}
-		
 		this.type = type;
-		this.name = name;
-		this.qualifierName = qualifierName;
 		
-		this.fileTargetType = fileTargetType;
-		this.getFileTarget = getFileTarget;
-		this.file = file;
 		this.description = description;
 		this.prerequisites = prerequisites != null ? Collections.unmodifiableList(prerequisites) : null;
 		
@@ -68,42 +50,14 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 		this.onResult = onResult;
 	}
 
-	public TargetSpec(
-			Class<TARGET> type,
-			String name,
-			Function<TARGET, String> qualifierName,
-			Function<TARGET, String> description,
-			List<PrerequisiteSpec<CONTEXT, TARGET, ?>> prerequisites,
-			Constraint constraint,
-			ActionFunction<CONTEXT, TARGET> actionFunction,
-			BiFunction<CONTEXT, TARGET, ?> actionWithResult,
-			ProcessResult<CONTEXT, TARGET, ?> onResult) {
-		this(type, name, qualifierName, null, null, null, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
+	final String getDescription(TARGET target) {
+		return description.apply(target);
 	}
-
-	public TargetSpec(
-			Class<TARGET> type,
-			Class<FILE_TARGET> fileTargetType,
-			BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget,
-			Function<FILE_TARGET, File> file,
-			Function<TARGET, String> description,
-			List<PrerequisiteSpec<CONTEXT, TARGET, ?>> prerequisites,
-			Constraint constraint,
-			ActionFunction<CONTEXT, TARGET> actionFunction,
-			BiFunction<CONTEXT, TARGET, ?> actionWithResult,
-			ProcessResult<CONTEXT, TARGET, ?> onResult) {
-		this(type, null, null, fileTargetType, getFileTarget, file, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
-	}
-
-	public TargetSpec(TargetSpec<CONTEXT, TARGET, FILE_TARGET> other, List<PrerequisiteSpec<CONTEXT, TARGET, ?>> additionalPrerequisites) {
+	
+	TargetSpec(TargetSpec<CONTEXT, TARGET> other, List<PrerequisiteSpec<CONTEXT, TARGET, ?>> additionalPrerequisites) {
 		
 		this(
 				other.type,
-				other.name,
-				other.qualifierName,
-				other.fileTargetType,
-				other.getFileTarget,
-				other.file,
 				other.description,
 				merge(other.prerequisites, additionalPrerequisites),
 				other.constraint,
@@ -136,22 +90,6 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 		return type;
 	}
 
-	String getName() {
-		return name;
-	}
-	
-	Class<FILE_TARGET> getFileTargetType() {
-		return fileTargetType;
-	}
-
-	BiFunction<CONTEXT, TARGET, FILE_TARGET> getFileTarget() {
-		return getFileTarget;
-	}
-
-	Function<FILE_TARGET, File> getFile() {
-		return file;
-	}
-
 	List<PrerequisiteSpec<CONTEXT, TARGET, ?>> getPrerequisiteSpecs() {
 		return prerequisites;
 	}
@@ -168,54 +106,13 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 				: null;
 	}
 
-	Target<TARGET> createTarget(CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList) {
-
-		final Target<TARGET> createdTarget;
-		
-		final String description = this.description.apply(target);
-		
-		if (name != null) {
-			createdTarget = new InfoTarget<>(
-					type,
-					name,
-					qualifierName != null ? qualifierName.apply(target) : null,
-					description,
-					target,
-					prerequisitesList,
-					makeAction(),
-					makeActionWithResult(),
-					this);
-		}
-		else if (file != null) {
-			
-			final FILE_TARGET fileTarget = getFileTarget.apply(context, target);
-			
-			createdTarget = new FileTarget<>(
-					type,
-					file.apply(fileTarget),
-					description,
-					target,
-					prerequisitesList,
-					makeAction(),
-					makeActionWithResult(),
-					this);
-		}
-		else {
-			throw new UnsupportedOperationException();
-		}
-
-		return createdTarget;
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -225,12 +122,7 @@ public final class TargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET> 
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TargetSpec<?, ?, ?> other = (TargetSpec<?, ?, ?>) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
+		final TargetSpec<?, ?> other = (TargetSpec<?, ?>) obj;
 		if (type == null) {
 			if (other.type != null)
 				return false;

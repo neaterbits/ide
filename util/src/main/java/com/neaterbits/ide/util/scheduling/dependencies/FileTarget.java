@@ -16,7 +16,7 @@ final class FileTarget<TARGET> extends Target<TARGET> {
 			List<Prerequisites> prerequisites,
 			Action<TARGET> action,
 			ActionWithResult<TARGET> actionWithResult,
-			TargetSpec<?, TARGET, ?> targetSpec) {
+			FileTargetSpec<?, TARGET, ?> targetSpec) {
 		
 		super(type, description, targetObject, prerequisites, action, actionWithResult, targetSpec);
 

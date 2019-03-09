@@ -42,9 +42,9 @@ public final class TargetBuilderImpl<CONTEXT extends TaskContext> implements Tar
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<TargetSpec<CONTEXT, ?, ?>> build() {
+	public List<TargetSpec<CONTEXT, ?>> build() {
 		
-		final List<TargetSpec<CONTEXT, ?, ?>> targets = new ArrayList<>();
+		final List<TargetSpec<CONTEXT, ?>> targets = new ArrayList<>();
 		
 		for (NoTargetTargetBuildSpecPrerequisitesBuilderImpl<CONTEXT> builder : targetBuildSpecs) {
 
@@ -57,7 +57,7 @@ public final class TargetBuilderImpl<CONTEXT extends TaskContext> implements Tar
 						.collect(Collectors.toList());
 
 
-				builder.getTargetSpecs().forEach(targetSpec -> targets.add(new TargetSpec<>(targetSpec, (List)prerequisiteSpecs)));
+				builder.getTargetSpecs().forEach(targetSpec -> targets.add(targetSpec.addPrerequisiteSpecs((List)prerequisiteSpecs)));
 			}
 			else {
 				builder.getTargetSpecs().forEach(targets::add);

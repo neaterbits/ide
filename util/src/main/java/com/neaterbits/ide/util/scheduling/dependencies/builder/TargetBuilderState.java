@@ -8,6 +8,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.Constraint;
+import com.neaterbits.ide.util.scheduling.dependencies.FileTargetSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.InfoTargetSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.PrerequisiteSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
@@ -97,7 +99,7 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 	}
 	
 
-	final TargetSpec<CONTEXT, TARGET, FILE_TARGET> build() {
+	final TargetSpec<CONTEXT, TARGET> build() {
 		
 		final List<PrerequisiteSpec<CONTEXT, TARGET, ?>> prerequisites = new ArrayList<>(this.prerequisites.size());
 		
@@ -106,7 +108,27 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 		}
 		
 		return targetName != null
-				? new TargetSpec<>(targetType, targetName, qualifierName, description, prerequisites, constraint, actionFunction, actionWithResult, onResult)
-				: new TargetSpec<>(targetType, fileTargetType, getFileTarget, file, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);
+				? new InfoTargetSpec<>(
+						targetType,
+						targetName,
+						qualifierName,
+						description,
+						prerequisites,
+						constraint,
+						actionFunction,
+						actionWithResult,
+						onResult)
+				: new FileTargetSpec<>(
+						
+						targetType,
+						fileTargetType,
+						getFileTarget,
+						file,
+						description,
+						prerequisites,
+						constraint,
+						actionFunction,
+						actionWithResult,
+						onResult);
 	}
 }

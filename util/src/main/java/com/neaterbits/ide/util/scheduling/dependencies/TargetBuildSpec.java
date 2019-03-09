@@ -12,7 +12,7 @@ public abstract class TargetBuildSpec<CONTEXT extends TaskContext> {
 
 	protected abstract void buildSpec(TargetBuilder<CONTEXT> targetBuilder);
 	
-	public List<TargetSpec<CONTEXT, ?, ?>> buildTargetSpecs() {
+	public List<TargetSpec<CONTEXT, ?>> buildTargetSpecs() {
 
 		final TargetBuilderImpl<CONTEXT> builderImpl = new TargetBuilderImpl<>();
 		
@@ -25,7 +25,7 @@ public abstract class TargetBuildSpec<CONTEXT extends TaskContext> {
 	public final void execute(CONTEXT context, TargetExecutorLogger logger, AsyncExecutor executor, Consumer<TargetBuildResult> onResult) {
 		
 		try {
-			final List<TargetSpec<CONTEXT, ?, ?>> targetSpecs = buildTargetSpecs();
+			final List<TargetSpec<CONTEXT, ?>> targetSpecs = buildTargetSpecs();
 			
 			final TargetFinder targetFinder = new TargetFinder(executor);
 			

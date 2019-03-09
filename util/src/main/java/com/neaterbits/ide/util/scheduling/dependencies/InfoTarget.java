@@ -17,14 +17,10 @@ final class InfoTarget<TARGET> extends Target<TARGET> {
 			List<Prerequisites> prerequisites,
 			Action<TARGET> action,
 			ActionWithResult<TARGET> actionWithResult,
-			TargetSpec<?, TARGET, ?> targetSpec) {
+			InfoTargetSpec<?, TARGET> targetSpec) {
 		super(type, description, targetObject, prerequisites, action, actionWithResult, targetSpec);
 		
 		Objects.requireNonNull(name);
-		
-		if (targetSpec.getFile() != null) {
-			throw new IllegalArgumentException();
-		}
 		
 		this.name = name;
 		this.qualifierName = qualifierName;

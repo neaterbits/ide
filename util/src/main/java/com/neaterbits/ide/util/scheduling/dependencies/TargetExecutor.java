@@ -235,7 +235,7 @@ final class TargetExecutor {
 		*/
 		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		final TargetSpec<TaskContext, Object, Object> targetSpec = (TargetSpec)target.getTargetSpec();
+		final TargetSpec<TaskContext, Object> targetSpec = (TargetSpec)target.getTargetSpec();
 
 		final List<Prerequisite<?>> targetPrerequisitesList = new ArrayList<>(targetPrerequisites.size());
 		

@@ -20,10 +20,10 @@ abstract class PrerequisitesFinder {
 		this.asyncExecutor = asyncExecutor;
 	}
 
-	abstract <CONTEXT extends TaskContext, TARGET, FILE_TARGET>
+	abstract <CONTEXT extends TaskContext, TARGET>
 	void findTargets(
 			Prerequisites fromPrerequisites,
-			TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec,
+			TargetSpec<CONTEXT, TARGET> targetSpec,
 			CONTEXT context,
 			TARGET target,
 			TargetFinderLogger logger,
@@ -34,7 +34,7 @@ abstract class PrerequisitesFinder {
 	void getPrerequisites(
 			CONTEXT context,
 			Prerequisites fromPrerequisites,
-			TargetSpec<CONTEXT, TARGET, ?> targetSpec,
+			TargetSpec<CONTEXT, TARGET> targetSpec,
 			TARGET target,
 			PrerequisiteSpec<CONTEXT, TARGET, PREREQUISITE> prerequisiteSpec,
 			TargetFinderLogger logger,
@@ -78,7 +78,7 @@ abstract class PrerequisitesFinder {
 	void getPrerequisites(
 			CONTEXT context,
 			Prerequisites fromPrerequisites,
-			TargetSpec<CONTEXT, TARGET, FILE_TARGET> targetSpec,
+			TargetSpec<CONTEXT, TARGET> targetSpec,
 			TARGET target,
 			PrerequisiteSpec<CONTEXT, TARGET, PREREQUISITE> prerequisiteSpec,
 			Collection<PREREQUISITE> sub,
@@ -101,7 +101,7 @@ abstract class PrerequisitesFinder {
 				
 				if (prerequisiteSpec.getAction() != null) {
 					
-					final TargetSpec<CONTEXT, PREREQUISITE, ?> subTargetSpec = prerequisiteSpec.getAction().getSubTarget();
+					final TargetSpec<CONTEXT, PREREQUISITE> subTargetSpec = prerequisiteSpec.getAction().getSubTarget();
 					
 					findTargets(
 							fromPrerequisites,
