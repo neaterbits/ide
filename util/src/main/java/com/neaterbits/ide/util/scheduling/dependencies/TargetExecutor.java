@@ -110,7 +110,7 @@ final class TargetExecutor {
 					context.state.moveTargetFromToExecuteToFailed(target);
 					
 					if (context.logger != null) {
-						context.logger.onComplete(target, status.getException(), context.state);
+						context.logger.onTargetDone(target, status.getException(), context.state);
 					}
 				}
 			}
@@ -264,7 +264,7 @@ final class TargetExecutor {
 
 		
 		if (context.logger != null) {
-			context.logger.onComplete(target, exception, context.state);
+			context.logger.onTargetDone(target, exception, context.state);
 		}
 		
 		context.state.onCompletedTarget(target, exception);

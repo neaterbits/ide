@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
@@ -26,7 +27,7 @@ public final class FileTargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARG
 			List<PrerequisiteSpec<CONTEXT, TARGET, ?>> prerequisites,
 			Constraint constraint,
 			ActionFunction<CONTEXT, TARGET> actionFunction,
-			BiFunction<CONTEXT, TARGET, ?> actionWithResult,
+			ActionWithResultFunction<CONTEXT, TARGET, ?> actionWithResult,
 			ProcessResult<CONTEXT, TARGET, ?> onResult) {
 		
 		super(type, description, prerequisites, constraint, actionFunction, actionWithResult, onResult);

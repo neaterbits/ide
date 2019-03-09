@@ -29,6 +29,8 @@ public final class TargetBuilderAddSystemLibraryTypeNamesToCodeMap extends Targe
 					final Set<TypeName> types = context.getLanguage().getTypesFromSystemLibraryFile(target);
 
 					context.getCodeMapGatherer().addSystemLibraryFileTypes(target.getFile(), types);
+					
+					return null;
 				}));
 		
 	}

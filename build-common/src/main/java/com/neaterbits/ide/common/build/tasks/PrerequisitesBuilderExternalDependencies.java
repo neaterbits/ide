@@ -50,6 +50,8 @@ public final class PrerequisitesBuilderExternalDependencies<CONTEXT extends Task
 	
 				.action(Constraint.NETWORK, (context, target, actionParams) -> {
 					context.getBuildRoot().downloadExternalDependencyAndAddToBuildModel(target);
+					
+					return null;
 				});
 			})
 			.collectSubTargetsToProduct((module, dependencies) -> new ExternalModuleDependencyList(

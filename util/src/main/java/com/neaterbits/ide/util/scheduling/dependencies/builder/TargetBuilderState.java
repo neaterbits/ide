@@ -32,7 +32,7 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 	
 	private ActionFunction<CONTEXT, TARGET> actionFunction;
 
-	private BiFunction<CONTEXT, TARGET, ?> actionWithResult;
+	private ActionWithResultFunction<CONTEXT, TARGET, ?> actionWithResult;
 	private ProcessResult<CONTEXT, TARGET, ?> onResult;
 	
 	TargetBuilderState(Class<TARGET> type, String targetName, Function<TARGET, String> qualifierName, Function<TARGET, String> description) {
@@ -83,7 +83,7 @@ final class TargetBuilderState<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 		this.actionFunction = actionFunction;
 	}
 
-	final void setActionWithResult(Constraint constraint, BiFunction<CONTEXT, TARGET, ?> actionWithResult) {
+	final void setActionWithResult(Constraint constraint, ActionWithResultFunction<CONTEXT, TARGET, ?> actionWithResult) {
 		
 		Objects.requireNonNull(constraint);
 		Objects.requireNonNull(actionWithResult);

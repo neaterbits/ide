@@ -1,6 +1,7 @@
 package com.neaterbits.structuredlog.swt;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -11,6 +12,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -28,12 +30,15 @@ public final class LogUI {
 	
 	private final Shell window;
 	private final Composite composite;
+	private Table table;
 
 	private final List dataTypeList;
 	private final Text dataListSearchText;
 	private final List dataList;
 
 	private String selectedDataType;
+	
+	private java.util.List<LogEntry> tableLogEntries;
 	
 	LogUI(Log log) {
 
@@ -51,14 +56,42 @@ public final class LogUI {
 		composite.setLayout(new GridLayout(2, false));
 
 		// window.addDisposeListener(event -> window.close());
-		
-		final Table table = createLogTable(composite, log);
 
+		final Composite tableComposite = new Composite(composite, SWT.NONE);
+		
+		tableComposite.setLayout(new GridLayout(1, true));
+		
+		final GridData tableCompositeGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		
+		tableCompositeGridData.horizontalSpan = 1;
+		tableCompositeGridData.verticalSpan = 1;
+		
+		tableComposite.setLayoutData(tableCompositeGridData);
+
+		final Text pathSearchText = new Text(tableComposite, SWT.BORDER);
+		final GridData pathSearchTextGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
+		pathSearchTextGridData.widthHint = 200;
+		pathSearchText.setLayoutData(pathSearchTextGridData);
+		pathSearchText.addModifyListener(e -> {
+
+			updateTableLogEntries(log, pathSearchText.getText());
+			
+			table.redraw();
+		});
+		
+		final Label pathLabel = new Label(tableComposite, SWT.NONE);
+		final GridData pathLabelGridData = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
+		pathLabel.setLayoutData(pathLabelGridData);
+
+		final Label messageLabel = new Label(tableComposite, SWT.WRAP);
+		final GridData messageLabelGridData = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
+		messageLabelGridData.heightHint = 75;
+		messageLabel.setLayoutData(messageLabelGridData);
+		
 		final GridData tableGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		
-		tableGridData.horizontalSpan = 1;
-		tableGridData.verticalSpan = 1;
-		
+		this.table = createLogTable(tableComposite, log);
+
 		table.setLayoutData(tableGridData);
 
 		final Composite listsComposite = new Composite(composite, SWT.NONE);
@@ -106,7 +139,6 @@ public final class LogUI {
 		dataListSearchText.setLayoutData(dataListSearchGridData);
 		
 		dataListSearchText.addModifyListener(event -> {
-
 			updateDataList(log, getSelectedLogData(log, table));
 		});
 
@@ -139,21 +171,27 @@ public final class LogUI {
 			public void widgetSelected(SelectionEvent event) {
 				
 				final TableItem tableItem = (TableItem)event.item;
-				final LogEntry logEntry = log.getEntries().get(table.indexOf(tableItem));
+				final LogEntry logEntry = tableLogEntries.get(table.indexOf(tableItem));
 				
 				updateDataTypeList(log, logEntry);
+
+				updateLabels(pathLabel, messageLabel, log, logEntry);
 			}
 		});
 		
 		if (log.getEntries() != null && log.getEntries().size() > 0) {
 			table.setSelection(0);
+
 			updateDataTypeList(log, log.getEntries().get(0));
+			
+			updateTableLogEntries(log, null);
 		}
 		
 		table.setFocus();
 		
 		window.open();
 	}
+	
 	
 	private LogData getSelectedLogData(Log log, Table table) {
 		
@@ -166,7 +204,6 @@ public final class LogUI {
 	}
 	
 	private static String makePath(Log log, LogEntry logEntry) {
-		
 		return makePath(log, logEntry.getPathIndex());
 	}
 
@@ -189,6 +226,15 @@ public final class LogUI {
 		return sb.toString();
 	}
 
+	private void updateLabels(Label pathLabel, Label messageLabel, Log log, LogEntry logEntry) {
+
+		final String pathText = logEntry.getPathIndex() != null ? makePath(log, logEntry) : null;
+		
+		pathLabel.setText("Path:" + (pathText != null ? " " + pathText : ""));
+		
+		messageLabel.setText("Message:" + (logEntry.getLogMessage() != null ? " " + logEntry.getLogMessage() : ""));
+	}
+	
 	private void updateDataTypeList(Log log, LogEntry logEntry) {
 
 		dataTypeList.removeAll();
@@ -222,6 +268,30 @@ public final class LogUI {
 		}
 	}
 	
+	private void updateTableLogEntries(Log log, String pathFilter) {
+		
+		if (pathFilter == null || pathFilter.trim().isEmpty()) {
+			tableLogEntries = log.getEntries();
+		}
+		else {
+			final String trimmed = pathFilter.trim();
+
+			tableLogEntries = log.getEntries().stream()
+					.filter(entry -> {
+						
+						final String path = entry.getPathIndex() != null ? makePath(log, entry) : null;
+						
+						return path != null ? path.contains(trimmed) : false;
+					})
+					.collect(Collectors.toList());
+
+			System.out.println("## table log entries " + tableLogEntries.size() + " from " + log.getEntries().size());
+		}
+
+		table.setItemCount(0);
+		table.setItemCount(tableLogEntries.size());
+	}
+	
 	private void updateDataList(Log log, LogData logData) {
 
 		dataList.removeAll();
@@ -248,8 +318,6 @@ public final class LogUI {
 		
 		// final List list = new List(composite, SWT.NONE);
 		
-		table.setItemCount(log.getEntries().size());
-
 		final TableColumn pathColumn = new TableColumn(table, SWT.BEGINNING);
 		pathColumn.setText("Path");
 		pathColumn.setWidth(650);
@@ -268,7 +336,7 @@ public final class LogUI {
 				
 				final TableItem item = (TableItem)event.item;
 				
-				final LogEntry logEntry = log.getEntries().get(table.indexOf(item));
+				final LogEntry logEntry = tableLogEntries.get(table.indexOf(item));
 				
 				item.setText(new String [] {
 						logEntry.getPathIndex() != null ? makePath(log, logEntry) : "",

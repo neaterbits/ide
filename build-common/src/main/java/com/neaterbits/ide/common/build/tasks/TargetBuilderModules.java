@@ -17,6 +17,7 @@ import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionLog;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 
 public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
@@ -86,19 +87,26 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 							throw new IllegalStateException();
 						}
 
+						final ActionLog actionLog;
+						
 						if (!moduleCompileList.getSourceFiles().isEmpty()) {
 						
 							final File targetDirectory = context.getBuildRoot().getTargetDirectory(target).getFile();
 	
-							compileSourceFiles(context.compiler, moduleCompileList, targetDirectory, projectDependencyList, externalDependencyList);
+							actionLog = compileSourceFiles(context.compiler, moduleCompileList, targetDirectory, projectDependencyList, externalDependencyList);
 						}
+						else {
+							actionLog = null;
+						}
+						
+						return actionLog;
 					})
 			);
 		
 	}
 
 	
-	private static void compileSourceFiles(
+	private static ActionLog compileSourceFiles(
 			Compiler compiler,
 			ModuleCompileList moduleCompileList,
 			File targetDirectory,
@@ -133,6 +141,9 @@ public class TargetBuilderModules extends TargetBuildSpec<ModulesBuildContext> {
 
 		if (!status.executedOk()) {
 			throw new BuildException(status.getIssues());
+		}
+		else {
+			return new ActionLog(status.getCommandLine(), status.getExitCode());
 		}
 	}
 }

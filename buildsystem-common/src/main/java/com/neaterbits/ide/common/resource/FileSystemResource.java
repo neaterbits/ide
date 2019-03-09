@@ -24,7 +24,7 @@ public class FileSystemResource extends Resource {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((file == null) ? 0 : file.hashCode());
@@ -32,7 +32,7 @@ public class FileSystemResource extends Resource {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (!super.equals(obj))

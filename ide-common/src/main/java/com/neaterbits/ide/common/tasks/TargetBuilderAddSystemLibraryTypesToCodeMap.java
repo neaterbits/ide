@@ -24,6 +24,8 @@ public final class TargetBuilderAddSystemLibraryTypesToCodeMap extends TargetBui
 				.action(Constraint.IO, (context, target, parameters) -> {
 					
 					context.getCodeMapGatherer().addSystemLibraryFile(target);
+					
+					return null;
 				}));
 		
 	}

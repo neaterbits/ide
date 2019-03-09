@@ -47,6 +47,8 @@ public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuildSpec
 							final Set<TypeName> types = context.getLanguage().getTypesFromLibraryFile(libraryResourcePath);
 							
 							context.getCodeMapGatherer().addLibraryFileTypes(libraryResourcePath, types);
+							
+							return null;
 						});
 					}));
 		

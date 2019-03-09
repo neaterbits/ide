@@ -16,9 +16,9 @@ public final class TargetBuilderIDEStartup extends TargetBuildSpec<InitialScanCo
 				// .withNamedPrerequisite(TargetBuilderGetSourceFolders.NAME)
 				;
 		
-		targetBuilder.addTarget(new TargetBuilderAddLibraryTypesToCodeMap());
+		// targetBuilder.addTarget(new TargetBuilderAddLibraryTypesToCodeMap());
 		
-		targetBuilder.addTarget(new TargetBuilderAddSystemLibraryTypeNamesToCodeMap());
-		targetBuilder.addTarget(new TargetBuilderAddSystemLibraryTypesToCodeMap());
+		// targetBuilder.addTarget(new TargetBuilderAddSystemLibraryTypeNamesToCodeMap());
+		// targetBuilder.addTarget(new TargetBuilderAddSystemLibraryTypesToCodeMap());
 	}
 }

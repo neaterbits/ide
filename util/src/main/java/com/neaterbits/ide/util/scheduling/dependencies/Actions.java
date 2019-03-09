@@ -4,6 +4,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionLog;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionResult;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
@@ -41,7 +43,7 @@ class Actions {
 		
 		if (actionWithResult.getConstraint() == null) {
 			
-			final ActionResult result = performActionWithResult(context, actionWithResult, target);
+			final Result result = performActionWithResult(context, actionWithResult, target);
 			
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			final ProcessResult<CONTEXT, Object, Object> processResult = (ProcessResult)actionWithResult.getOnResult();
@@ -76,42 +78,53 @@ class Actions {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final ActionFunction<CONTEXT, Object> actionFunction = (ActionFunction)action.getActionFunction();
 		
-		if (context.logger != null) {
-			context.logger.onAction(target, context.state);
-		}
-		
 		try {
-			actionFunction.perform(context.context, target.getTargetObject(), context.state);
-			
+			final ActionLog actionLog = actionFunction.perform(context.context, target.getTargetObject(), context.state);
+
+			if (context.logger != null) {
+				context.logger.onActionCompleted(target, context.state, actionLog);
+			}
+
 		} catch (Exception ex) {
+			if (context.logger != null) {
+				context.logger.onActionException(target, context.state, ex);
+			}
+
 			return ex;
 		}
-		
+
+
 		return null;
 	}
 
-	private static <CONTEXT extends TaskContext> ActionResult performActionWithResult(
+	private static <CONTEXT extends TaskContext> Result performActionWithResult(
 			TargetExecutionContext<CONTEXT> context,
 			ActionWithResult<?> action,
 			Target<?> target) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<CONTEXT, Object, Object> actionFunction = (BiFunction)action.getActionWithResult();
-		
-		if (context.logger != null) {
-			context.logger.onAction(target, context.state);
-		}
 
 		Exception exception = null;
 		Object result = null;
 		
 		try {
-			result = actionFunction.apply(context.context, target.getTargetObject());
+			@SuppressWarnings("unchecked")
+			final ActionResult<Object> actionResult = (ActionResult<Object>)actionFunction.apply(context.context, target.getTargetObject());
+
+			if (context.logger != null) {
+				context.logger.onActionCompleted(target, context.state, actionResult.getLog());
+			}
+			
+			result = actionResult.getResult();
 		}
 		catch (Exception ex) {
+			if (context.logger != null) {
+				context.logger.onActionException(target, context.state, ex);
+			}
 			exception = ex;
 		}
 
-		return new ActionResult(result, exception);
+		return new Result(result, exception);
 	}
 }

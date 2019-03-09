@@ -1,19 +1,18 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
-import java.util.function.BiFunction;
-
 import com.neaterbits.ide.util.scheduling.Constraint;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
 final class ActionWithResult<TARGET> {
 
 	private final Constraint constraint;
-	private final BiFunction<?, TARGET, ?> actionWithResult;
+	private final ActionWithResultFunction<?, TARGET, ?> actionWithResult;
 	private final ProcessResult<?, TARGET, ?> onResult;
 
 	ActionWithResult(
 			Constraint constraint,
-			BiFunction<?, TARGET, ?> actionWithResult,
+			ActionWithResultFunction<?, TARGET, ?> actionWithResult,
 			ProcessResult<?, TARGET, ?> onResult) {
 		this.constraint = constraint;
 		this.actionWithResult = actionWithResult;
@@ -24,7 +23,7 @@ final class ActionWithResult<TARGET> {
 		return constraint;
 	}
 
-	BiFunction<?, TARGET, ?> getActionWithResult() {
+	ActionWithResultFunction<?, TARGET, ?> getActionWithResult() {
 		return actionWithResult;
 	}
 

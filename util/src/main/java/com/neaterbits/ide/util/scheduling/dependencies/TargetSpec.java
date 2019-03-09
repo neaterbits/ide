@@ -3,11 +3,11 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
@@ -22,7 +22,7 @@ public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 	private final Constraint constraint;
 	private final ActionFunction<CONTEXT, TARGET> actionFunction;
 	
-	private BiFunction<CONTEXT, TARGET, ?> actionWithResult;
+	private ActionWithResultFunction<CONTEXT, TARGET, ?> actionWithResult;
 	private ProcessResult<CONTEXT, TARGET, ?> onResult;
 
 	abstract Target<TARGET> createTarget(CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList);
@@ -35,7 +35,7 @@ public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 			List<PrerequisiteSpec<CONTEXT, TARGET, ?>> prerequisites,
 			Constraint constraint,
 			ActionFunction<CONTEXT, TARGET> actionFunction,
-			BiFunction<CONTEXT, TARGET, ?> actionWithResult,
+			ActionWithResultFunction<CONTEXT, TARGET, ?> actionWithResult,
 			ProcessResult<CONTEXT, TARGET, ?> onResult) {
 		
 		this.type = type;

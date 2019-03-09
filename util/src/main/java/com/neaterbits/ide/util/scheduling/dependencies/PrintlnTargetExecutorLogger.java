@@ -1,5 +1,6 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionLog;
 
 public final class PrintlnTargetExecutorLogger implements TargetExecutorLogger {
 
@@ -32,14 +33,21 @@ public final class PrintlnTargetExecutorLogger implements TargetExecutorLogger {
 
 
 	@Override
-	public void onAction(Target<?> target, TargetExecutorLogState logState) {
+	public void onActionCompleted(Target<?> target, TargetExecutorLogState logState, ActionLog actionLog) {
 
 		System.out.println("Action " + target);
 		
 	}
+	
+	
 
 	@Override
-	public void onComplete(Target<?> target, Exception exception, TargetExecutorLogState logState) {
+	public void onActionException(Target<?> target, TargetExecutorLogState logState, Exception exception) {
+		System.out.println("Action failed " + target);
+	}
+
+	@Override
+	public void onTargetDone(Target<?> target, Exception exception, TargetExecutorLogState logState) {
 		
 		if (exception == null) {
 			System.out.println("Complete " + target.targetToLogString());

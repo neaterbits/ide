@@ -199,13 +199,14 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		return targetsInState(Status.ACTION_PERFORMED_COLLECTING_SUBTARGETS);
 	}
 
-	Status getTargetCompletionStatus(Target<?> target) {
+	@Override
+	public Status getTargetStatus(Target<?> target) {
 		return targetState(target).getStatus();
 	}
 	
 	PrerequisiteCompletion getTargetCompletion(Target<?> target) {
 
-		final Status status = getTargetCompletionStatus(target);
+		final Status status = getTargetStatus(target);
 		
 		return status != Status.FAILED
 				? new PrerequisiteCompletion(status)

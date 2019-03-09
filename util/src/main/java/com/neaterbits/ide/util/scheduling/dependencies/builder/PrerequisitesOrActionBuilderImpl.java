@@ -42,7 +42,7 @@ final class PrerequisitesOrActionBuilderImpl<CONTEXT extends TaskContext, TARGET
 	@Override
 	public <R> ResultProcessor<CONTEXT, TARGET, R> actionWithResult(
 			Constraint constraint,
-			BiFunction<CONTEXT, TARGET, R> function) {
+			ActionWithResultFunction<CONTEXT, TARGET, R> function) {
 
 		getTargetBuilderState().setActionWithResult(constraint, function);
 		

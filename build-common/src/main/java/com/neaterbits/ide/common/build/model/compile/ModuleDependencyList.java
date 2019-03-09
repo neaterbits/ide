@@ -2,11 +2,13 @@ package com.neaterbits.ide.common.build.model.compile;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.neaterbits.ide.common.build.model.Dependency;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
+import com.neaterbits.ide.util.scheduling.dependencies.CollectedObject;
 
-public class ModuleDependencyList {
+public class ModuleDependencyList implements CollectedObject {
 
 	private final ProjectModuleResourcePath module;
 	private final List<Dependency> dependencies;
@@ -31,5 +33,17 @@ public class ModuleDependencyList {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " [module=" + module + ", dependencies=" + dependencies + "]";
+	}
+
+	@Override
+	public final String getName() {
+		return module.getName();
+	}
+
+	@Override
+	public final List<String> getCollected() {
+		return dependencies.stream()
+				.map(dependency -> dependency.getCompiledModuleFile().getName())
+				.collect(Collectors.toList());
 	}
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionLog;
 import com.neaterbits.structuredlog.model.Log;
 import com.neaterbits.structuredlog.model.LogData;
 import com.neaterbits.structuredlog.model.LogDataEntry;
@@ -25,10 +26,29 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		this.paths = new HashMap<>();
 	}
 	
-	private LogEntry addLogEntry(BuildEntity buildEntity, String message) {
+	private LogEntry addLogEntry(BuildEntity buildEntity, Object entityObj, String state, String message) {
 
+		final List<String> path;
+		
+		if (buildEntity != null) {
+			path = buildEntity.getPath();
+		
+			path.add(String.format("%08x", System.identityHashCode(buildEntity)));
+			
+			if (entityObj != null) {
+				path.add(String.format("%08x", System.identityHashCode(entityObj)));
+			}
+			
+			if (state != null) {
+				path.add(state);
+			}
+		}
+		else {
+			path = null;
+		}
+		
 		final LogEntry logEntry = new LogEntry(
-				buildEntity != null ? makePath(buildEntity.getPath()) : null,
+				path != null ? makePath(path) : null,
 				message);
 		
 		if (log.getEntries() == null) {
@@ -109,7 +129,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	@Override
 	public void onScheduleTargets(int numScheduledJobs, TargetExecutorLogState logState) {
 		
-		final LogEntry logEntry = addLogEntry(null, "Schedule more targets numScheduledJobs=" + numScheduledJobs);
+		final LogEntry logEntry = addLogEntry(null, null, null, "Schedule more targets numScheduledJobs=" + numScheduledJobs);
 
 		addTargetLogState(logEntry, logState);
 	}
@@ -117,17 +137,44 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	@Override
 	public void onScheduleTarget(Target<?> target, Status hasCompletedPrerequisites, TargetExecutorLogState logState) {
 
-		final LogEntry logEntry = addLogEntry(target, "Schedule target " + target.getDebugString());
+		final LogEntry logEntry = addLogEntry(
+				target,
+				target.getTargetObject(),
+				logState.getTargetStatus(target).name(),
+				"Schedule target " + target.getDebugString() + " with prerequisites status " + hasCompletedPrerequisites);
 
 		addTargetLogState(logEntry, logState);
 	}
 
+	private String getCollectedLogString(Object collected) {
+		
+		final String string;
+		
+		if (collected instanceof CollectedObject) {
+			final CollectedObject collectedObject = (CollectedObject)collected;
+			
+			string = collectedObject.getClass().getSimpleName() + " " + collectedObject.getName() + " " + collectedObject.getCollected();
+		}
+		else if (collected != null) {
+			string = collected.toString();
+		}
+		else {
+			string = "null";
+		}
+		
+		return string;
+	}
+	
 	
 	@Override
 	public void onCollectProducts(Target<?> target, CollectedProducts subProducts, CollectedProduct collected,
 			TargetExecutorLogState logState) {
 
-		final LogEntry logEntry = addLogEntry(target, "Collected " + collected.getProductObject());
+		final LogEntry logEntry = addLogEntry(
+				target,
+				target.getTargetObject(),
+				logState.getTargetStatus(target).name(),
+				"Collected " + getCollectedLogString(collected.getProductObject()));
 
 		addTargetLogState(logEntry, logState);
 	}
@@ -136,26 +183,52 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	public void onCollectTargetObjects(Target<?> target, CollectedTargetObjects targetObjects,
 			CollectedProduct collected, TargetExecutorLogState logState) {
 		
-		final LogEntry logEntry = addLogEntry(target, "Collected " + collected.getProductObject());
+		final LogEntry logEntry = addLogEntry(
+				target,
+				target.getTargetObject(),
+				logState.getTargetStatus(target).name(),
+				"Collected targets " + getCollectedLogString(collected.getProductObject()));
 
 		addTargetLogState(logEntry, logState);
 	}
 
 	@Override
-	public void onAction(Target<?> target, TargetExecutorLogState logState) {
-		
-		final LogEntry logEntry = addLogEntry(target, "Executed action to build " + target.getDebugString());
-
-		addTargetLogState(logEntry, logState);
-	}
-
-	@Override
-	public void onComplete(Target<?> target, Exception exception, TargetExecutorLogState logState) {
+	public void onActionCompleted(Target<?> target, TargetExecutorLogState logState, ActionLog actionLog) {
 		
 		final LogEntry logEntry = addLogEntry(
 				target,
+				target.getTargetObject(),
+				logState.getTargetStatus(target).name(),
+				"Executed action to build " + target.getDebugString()
+			+ (actionLog != null ? ": " + actionLog.getCommandLine() : ""));
+
+		addTargetLogState(logEntry, logState);
+	}
+
+	@Override
+	public void onActionException(Target<?> target, TargetExecutorLogState logState, Exception exception) {
+
+		final LogEntry logEntry = addLogEntry(
+				target,
+				target.getTargetObject(),
+				logState.getTargetStatus(target).name(),
+				"Failed build action on " + target.getDebugString()
+			+ " " + exception.getClass().getName());
+
+		addTargetLogState(logEntry, logState);
+	}
+
+	@Override
+	public void onTargetDone(Target<?> target, Exception exception, TargetExecutorLogState logState) {
+		
+		final LogEntry logEntry = addLogEntry(
+				target,
+				target.getTargetObject(),
+				logState.getTargetStatus(target).name(),
 				(exception == null ? "Completed" : "Failed") 
-					+ " target " + target.getDebugString());
+					+ " target "
+							+ (target.getTargetObject() != null ? target.getTargetObject().getClass().getSimpleName() + " " : "" )
+							+ target.getDebugString());
 
 		if (exception != null) {
 			System.out.println("## exception class " + exception);
@@ -164,5 +237,4 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		
 		addTargetLogState(logEntry, logState);
 	}
-
 }

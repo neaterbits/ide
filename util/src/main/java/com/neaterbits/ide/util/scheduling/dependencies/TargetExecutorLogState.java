@@ -9,4 +9,6 @@ interface TargetExecutorLogState extends TargetBuildResult {
 	Set<Target<?>> getScheduledTargets();
 	
 	Set<Target<?>> getActionPerformedCollectTargets();
+	
+	Status getTargetStatus(Target<?> target);
 }

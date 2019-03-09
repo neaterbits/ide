@@ -102,7 +102,9 @@ public final class JavaCompiler implements Compiler {
 			throw new IOException(ex);
 		}
 		
-		return new CompilerStatus(exitCode == 0, issues);
+		System.out.println("## compile to " + targetDirectory.getPath() + " completed with exit code " + exitCode + " and issues " + issues.size());
+		
+		return new CompilerStatus(Strings.join(arguments, ' '), exitCode, exitCode == 0, issues);
 	}
 	
 	private static BuildIssue makeBuildIssue(String line, List<SourceFileResourcePath> sourceFiles) {
