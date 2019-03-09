@@ -12,9 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
-import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
-import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
 final class TargetExecutor {
 	
@@ -36,7 +34,13 @@ final class TargetExecutor {
 			Consumer<TargetBuildResult> onResult) {
 		
 		final ExecutorState state = ExecutorState.createFromTargetTree(rootTarget);
-		final TargetExecutionContext<CONTEXT> targetExecutionContext = new TargetExecutionContext<CONTEXT>(context, state, logger, onResult);
+
+		final TargetExecutionContext<CONTEXT> targetExecutionContext = new TargetExecutionContext<CONTEXT>(
+				context,
+				state,
+				asyncExecutor,
+				logger, 
+				onResult);
 		
 		scheduleTargets(targetExecutionContext);
 	}
@@ -106,109 +110,34 @@ final class TargetExecutor {
 		final Action<?> action = target.getAction();
 		final ActionWithResult<?> actionWithResult = target.getActionWithResult();
 		
-		final BiConsumer<Exception, Boolean> onCompleted = (exception, async) -> onCompletedTarget(context, target, exception, async);
+		final BiConsumer<Exception, Boolean> onCompleted = (exception, async) -> {
+
+			if (target.getFromPrerequisite() != null) {
+				final Prerequisites fromPrerequisites = target.getFromPrerequisite().getFromPrerequisites();
+	
+				if (fromPrerequisites == null) {
+					throw new IllegalStateException("## no prerequisites for target " + target.getTargetObject());
+				}
+				
+				if (fromPrerequisites.isRecursiveBuild()) {
+					addRecursiveBuildTargets(context.state, context.context, fromPrerequisites, target);
+				}
+			}
+				
+			onCompletedTarget(context, target, exception, async);
+		};
 
 		if (action != null) {
-			runOrScheduleAction(context, action, target, onCompleted);
+			Actions.runOrScheduleAction(context, action, target, onCompleted);
 		}
 		else if (actionWithResult != null) {
-			runOrScheduleActionWithResult(context, actionWithResult, target, onCompleted);
+			Actions.runOrScheduleActionWithResult(context, actionWithResult, target, onCompleted);
 		}
 		else {
 			onCompleted.accept(null, false);
 		}
 	}
 	
-	private <CONTEXT extends TaskContext> void runOrScheduleAction(
-			TargetExecutionContext<CONTEXT> context,
-			Action<?> action,
-			Target<?> target,
-			BiConsumer<Exception, Boolean> onCompleted) {
-		
-		if (action.getConstraint() == null) {
-			final Exception exception = performAction(context, action, target);
-			
-			onCompleted.accept(exception, false);
-		}
-		else {
-			asyncExecutor.schedule(
-					action.getConstraint(),
-					null,
-					param -> {
-						return performAction(context, action, target);
-					},
-					(param, exception) -> {
-						onCompleted.accept(exception, true);
-					} );
-		}
-	}
-	
-	private <CONTEXT extends TaskContext> void runOrScheduleActionWithResult(
-			TargetExecutionContext<CONTEXT> context,
-			ActionWithResult<?> actionWithResult,
-			Target<?> target,
-			BiConsumer<Exception, Boolean> onCompleted) {
-		
-		if (actionWithResult.getConstraint() == null) {
-			
-			final Result result = performActionWithResult(context, actionWithResult, target);
-			
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-			final ProcessResult<CONTEXT, Object, Object> processResult = (ProcessResult)actionWithResult.getOnResult();
-			
-			processResult.process(context.context, target.getTargetObject(), result.result);
-			
-			onCompleted.accept(result.exception, false);
-		}
-		else {
-			asyncExecutor.schedule(
-					actionWithResult.getConstraint(),
-					null,
-					param -> {
-						return performActionWithResult(context, actionWithResult, target);
-					},
-					(param, result) -> {
-						@SuppressWarnings({ "unchecked", "rawtypes" })
-						final ProcessResult<CONTEXT, Object, Object> processResult = (ProcessResult)actionWithResult.getOnResult();
-						
-						processResult.process(context.context, target.getTargetObject(), result.result);
-						
-						onCompleted.accept(result.exception, true);
-					});
-		}
-	}
-	
-	private <CONTEXT extends TaskContext> Exception performAction(
-			TargetExecutionContext<CONTEXT> context,
-			Action<?> action,
-			Target<?> target) {
-
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		final ActionFunction<CONTEXT, Object> actionFunction = (ActionFunction)action.getActionFunction();
-		
-		if (context.logger != null) {
-			context.logger.onAction(target, context.state);
-		}
-		
-		try {
-			actionFunction.perform(context.context, target.getTargetObject(), context.state);
-			
-			final Prerequisites fromPrerequisites = target.getFromPrerequisite().getFromPrerequisites();
-
-			if (fromPrerequisites == null) {
-				throw new IllegalStateException("## no prerequisites for target " + target.getTargetObject());
-			}
-			
-			if (fromPrerequisites.isRecursiveBuild()) {
-				addRecursiveBuildTargets(context.state, context.context, fromPrerequisites, target);
-			}
-			
-		} catch (Exception ex) {
-			return ex;
-		}
-		
-		return null;
-	}
 	
 	private static void addRecursiveBuildTargets(ExecutorState targetState, TaskContext context, Prerequisites fromPrerequisites, Target<?> target) {
 
@@ -289,42 +218,6 @@ final class TargetExecutor {
 		*/
 		
 	}
-	
-	private static class Result {
-		private final Object result;
-		private final Exception exception;
-
-		public Result(Object result, Exception exception) {
-			this.result = result;
-			this.exception = exception;
-		}
-	}
-
-	private <CONTEXT extends TaskContext> Result performActionWithResult(
-			TargetExecutionContext<CONTEXT> context,
-			ActionWithResult<?> action,
-			Target<?> target) {
-
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		final BiFunction<CONTEXT, Object, Object> actionFunction = (BiFunction)action.getActionWithResult();
-		
-		if (context.logger != null) {
-			context.logger.onAction(target, context.state);
-		}
-
-		Exception exception = null;
-		Object result = null;
-		
-		try {
-			result = actionFunction.apply(context.context, target.getTargetObject());
-		}
-		catch (Exception ex) {
-			exception = ex;
-		}
-
-		return new Result(result, exception);
-	}
-
 	
 	private <CONTEXT extends TaskContext>
 	void onCompletedTarget(
