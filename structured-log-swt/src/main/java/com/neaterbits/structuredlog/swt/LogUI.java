@@ -41,7 +41,7 @@ public final class LogUI {
 		
 		this.window = new Shell();
 		
-		window.setSize(1500, 850);
+		window.setSize(1850, 850);
 		
 		window.setLayout(new FillLayout());
 		
@@ -54,30 +54,21 @@ public final class LogUI {
 		
 		final Table table = createLogTable(composite, log);
 
-		final GridData tableGridData = new GridData();
+		final GridData tableGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		
-		tableGridData.grabExcessHorizontalSpace = true;
 		tableGridData.horizontalSpan = 1;
 		tableGridData.verticalSpan = 1;
-		tableGridData.grabExcessVerticalSpace = true;
-		tableGridData.horizontalAlignment = SWT.FILL;
-		tableGridData.grabExcessVerticalSpace = true;
-		tableGridData.verticalAlignment = SWT.FILL;
 		
 		table.setLayoutData(tableGridData);
 
 		final Composite listsComposite = new Composite(composite, SWT.NONE);
 		
-		final GridData listsGridData = new GridData();
+		final GridData listsGridData = new GridData(SWT.BEGINNING, SWT.FILL, false, true);
 		
-		listsGridData.grabExcessHorizontalSpace = false;
 		listsGridData.horizontalSpan = 1;
 		listsGridData.verticalSpan = 1;
-		listsGridData.horizontalAlignment = SWT.BEGINNING;
-		listsGridData.grabExcessVerticalSpace = true;
-		listsGridData.verticalAlignment = SWT.FILL;
 
-		listsGridData.widthHint = 500;
+		listsGridData.widthHint = 650;
 		
 		listsComposite.setLayoutData(listsGridData);
 		
@@ -95,29 +86,21 @@ public final class LogUI {
 		
 		this.dataTypeList = new List(listsComposite, SWT.BORDER);
 
-		final GridData dataTypeListGridData = new GridData();
+		final GridData dataTypeListGridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		
-		dataTypeListGridData.grabExcessHorizontalSpace = true;
 		dataTypeListGridData.verticalIndent = 0;
 		dataTypeListGridData.horizontalSpan = 1;
 		// dataTypeListGridData.verticalSpan = 1;
-		dataTypeListGridData.horizontalAlignment = SWT.FILL;
-		dataTypeListGridData.grabExcessVerticalSpace = false;
-		dataTypeListGridData.verticalAlignment = SWT.BEGINNING;
 		dataTypeListGridData.heightHint = 250;
 
 		dataTypeList.setLayoutData(dataTypeListGridData);
 		
 		this.dataListSearchText = new Text(listsComposite, SWT.BORDER);
 		
-		final GridData dataListSearchGridData = new GridData();
+		final GridData dataListSearchGridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		
-		dataListSearchGridData.grabExcessHorizontalSpace = true;
 		dataListSearchGridData.horizontalSpan = 1;
 		// dataListSearchGridData.verticalSpan = 1;
-		dataListSearchGridData.horizontalAlignment = SWT.FILL;
-		dataListSearchGridData.grabExcessVerticalSpace = false;
-		dataListSearchGridData.verticalAlignment = SWT.BEGINNING;
 		dataListSearchGridData.heightHint = 20;
 		
 		dataListSearchText.setLayoutData(dataListSearchGridData);
@@ -127,14 +110,10 @@ public final class LogUI {
 			updateDataList(log, getSelectedLogData(log, table));
 		});
 
-		final GridData dataListGridData = new GridData();
+		final GridData dataListGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		
-		dataListGridData.grabExcessHorizontalSpace = true;
 		dataListGridData.horizontalSpan = 1;
 		// dataListGridData.verticalSpan = 1;
-		dataListGridData.horizontalAlignment = SWT.FILL;
-		dataListGridData.grabExcessVerticalSpace = true;
-		dataListGridData.verticalAlignment = SWT.FILL;
 		// dataListGridData.heightHint = 500;
 		
 		this.dataList = new List(listsComposite, SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL);
