@@ -80,6 +80,7 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		return targets.values().stream().anyMatch(state -> state.getStatus() == status);
 	}
 	
+	
 	private int numTargets(Status status) {
 		
 		Objects.requireNonNull(status);
@@ -106,6 +107,10 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 					return false;
 				})
 				.count();
+	}
+	
+	public boolean hasUnfinishedTargets() {
+		return numTargets(Status.SUCCESS, Status.FAILED) < targets.size();
 	}
 
 	boolean hasTarget(Target<?> target) {

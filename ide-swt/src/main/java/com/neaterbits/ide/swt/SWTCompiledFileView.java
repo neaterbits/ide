@@ -113,38 +113,40 @@ public final class SWTCompiledFileView implements CompiledFileView {
 	
 	private void updateViewText(boolean updateCursorOnly) {
 
-		final StringBuilder sb = new StringBuilder();
-
-		final SWTCompiledFileViewMakeTextVisitor visitor = new SWTCompiledFileViewMakeTextVisitor(sb, editorCursorOffset);
-		
-		sourceFileModel.iterate(visitor);
-		
-		if (!updateCursorOnly) {
-			textWidget.setText(sb.toString());
-		}
-
-		final int topIndex = visitor.getStringBuilderLineAtCursorOffset() > 10
-					? visitor.getStringBuilderLineAtCursorOffset() - 10
-					: 0;
-		
-		
-		System.out.println("## set textwidget pos to " + topIndex + " of " + sb.length());
-		
-		textWidget.setTopIndex(topIndex);
-
-		textWidget.setStyleRange(new StyleRange(0, textWidget.getText().length(), null, null));
-
-		this.curToken = visitor.getFoundCursorToken();
-
-		if (visitor.getFoundCursorToken() != null) {
+		if (sourceFileModel != null) {
+			final StringBuilder sb = new StringBuilder();
+	
+			final SWTCompiledFileViewMakeTextVisitor visitor = new SWTCompiledFileViewMakeTextVisitor(sb, editorCursorOffset);
 			
-			System.out.println("## found cursor token " + visitor.getFoundCursorToken().getTokenDebugString());
+			sourceFileModel.iterate(visitor);
 			
-			textWidget.setStyleRange(new StyleRange(
-					(int)visitor.getFoundStringBuilderTextOffset(),
-					(int)visitor.getFoundLength(),
-					new Color(null, 0x30, 0xA0, 0x30),
-					null));
+			if (!updateCursorOnly) {
+				textWidget.setText(sb.toString());
+			}
+	
+			final int topIndex = visitor.getStringBuilderLineAtCursorOffset() > 10
+						? visitor.getStringBuilderLineAtCursorOffset() - 10
+						: 0;
+			
+			
+			System.out.println("## set textwidget pos to " + topIndex + " of " + sb.length());
+			
+			textWidget.setTopIndex(topIndex);
+	
+			textWidget.setStyleRange(new StyleRange(0, textWidget.getText().length(), null, null));
+	
+			this.curToken = visitor.getFoundCursorToken();
+	
+			if (visitor.getFoundCursorToken() != null) {
+				
+				System.out.println("## found cursor token " + visitor.getFoundCursorToken().getTokenDebugString());
+				
+				textWidget.setStyleRange(new StyleRange(
+						(int)visitor.getFoundStringBuilderTextOffset(),
+						(int)visitor.getFoundLength(),
+						new Color(null, 0x30, 0xA0, 0x30),
+						null));
+			}
 		}
 	}
 

@@ -1,5 +1,7 @@
 package com.neaterbits.ide.swt;
 
+import java.util.Objects;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -13,7 +15,7 @@ import com.neaterbits.ide.common.ui.view.MapMenuItem;
 import com.neaterbits.ide.common.ui.view.SystemClipboard;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.common.ui.view.View;
-import com.neaterbits.ide.util.scheduling.ForwardToCaller;
+import com.neaterbits.ide.util.scheduling.ForwardResultToCaller;
 
 public class SWTUI implements UI {
 
@@ -21,16 +23,18 @@ public class SWTUI implements UI {
 	
 	private final SWTSystemClipboard systemClipboard;
 	
-	public SWTUI() {
+	public SWTUI(Display display) {
 	
-		this.display = Display.getDefault();
+		Objects.requireNonNull(display);
+		
+		this.display = display;
 
 		this.systemClipboard = new SWTSystemClipboard(display);
 	}
 	
 	@Override
-	public ForwardToCaller getIOForwardToCaller() {
-		return new ForwardToCaller() {
+	public ForwardResultToCaller getIOForwardToCaller() {
+		return new ForwardResultToCaller() {
 			
 			@Override
 			public void forward(Runnable runnable) {

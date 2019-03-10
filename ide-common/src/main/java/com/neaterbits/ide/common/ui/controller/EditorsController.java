@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
+import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
@@ -15,13 +16,16 @@ import com.neaterbits.ide.model.text.TextModel;
 final class EditorsController {
 
 	private final EditorsView editorsView;
+	private final SourceFilesModel sourceFilesModel;
 	private final CompiledFileView compiledFileView;
 	
-	EditorsController(EditorsView editorsView, CompiledFileView compiledFileView) {
+	EditorsController(EditorsView editorsView, SourceFilesModel sourceFilesModel, CompiledFileView compiledFileView) {
 
 		Objects.requireNonNull(editorsView);
+		Objects.requireNonNull(sourceFilesModel);
 		
 		this.editorsView = editorsView;
+		this.sourceFilesModel = sourceFilesModel;
 		this.compiledFileView = compiledFileView;
 	}
 
@@ -65,7 +69,7 @@ final class EditorsController {
 				null, // TextStylingHelper.makeTextStylingModel(languageComonent, textModel),
 				editorControllerDelegator);
 		
-		final EditorController editorController = new EditorController(editorView, compiledFileView, textModel, sourceFile);
+		final EditorController editorController = new EditorController(editorView, compiledFileView, textModel, sourceFilesModel, sourceFile);
 		
 		editorControllerDelegator.editorController = editorController;
 		

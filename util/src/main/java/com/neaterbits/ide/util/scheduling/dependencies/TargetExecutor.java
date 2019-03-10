@@ -55,7 +55,7 @@ final class TargetExecutor {
 			context.logger.onScheduleTargets(asyncExecutor.getNumScheduledJobs(), context.state);
 		}
 		
-		asyncExecutor.runQueuedRunnables();
+		asyncExecutor.runQueuedResultRunnables();
 
 		final int priorToExecuteOrScheduled = context.state.getNumExecuteOrScheduledTargets();
 		
@@ -269,7 +269,7 @@ final class TargetExecutor {
 		
 		context.state.onCompletedTarget(target, exception);
 		
-		if (async) {
+		if (async && context.state.hasUnfinishedTargets()) {
 			scheduleTargets(context);
 		}
 	}

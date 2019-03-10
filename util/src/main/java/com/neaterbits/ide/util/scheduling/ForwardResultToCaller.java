@@ -1,6 +1,6 @@
 package com.neaterbits.ide.util.scheduling;
 
-public interface ForwardToCaller {
+public interface ForwardResultToCaller {
 
 	void forward(Runnable runnable);
 	

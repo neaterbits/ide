@@ -9,7 +9,7 @@ public class AsynchronousSchedulerFactory implements SchedulerFactory {
 	private final ThreadIOSchedulerImpl ioScheduler;
 	private final CPUScheduler cpuScheduler;
 	
-	public AsynchronousSchedulerFactory(ForwardToCaller forwardToCaller) {
+	public AsynchronousSchedulerFactory(ForwardResultToCaller forwardToCaller) {
 		this.ioScheduler = new ThreadIOSchedulerImpl(forwardToCaller);
 		this.cpuScheduler = new ThreadCPUScheduler(forwardToCaller);
 	}

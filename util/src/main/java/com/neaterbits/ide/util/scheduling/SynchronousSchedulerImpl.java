@@ -4,9 +4,9 @@ import java.util.Objects;
 
 final class SynchronousSchedulerImpl implements Scheduler {
 
-	private final ForwardToCaller forwardToCaller;
+	private final ForwardResultToCaller forwardToCaller;
 	
-	SynchronousSchedulerImpl(ForwardToCaller forwardToCaller) {
+	SynchronousSchedulerImpl(ForwardResultToCaller forwardToCaller) {
 		
 		Objects.requireNonNull(forwardToCaller);
 		

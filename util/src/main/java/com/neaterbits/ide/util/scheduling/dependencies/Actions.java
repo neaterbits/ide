@@ -1,11 +1,11 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionLog;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionResult;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 
@@ -102,15 +102,15 @@ class Actions {
 			ActionWithResult<?> action,
 			Target<?> target) {
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		final BiFunction<CONTEXT, Object, Object> actionFunction = (BiFunction)action.getActionWithResult();
+		@SuppressWarnings({ "unchecked" })
+		final ActionWithResultFunction<CONTEXT, Object, Object> actionFunction
+				= (ActionWithResultFunction<CONTEXT, Object, Object>)action.getActionWithResult();
 
 		Exception exception = null;
 		Object result = null;
 		
 		try {
-			@SuppressWarnings("unchecked")
-			final ActionResult<Object> actionResult = (ActionResult<Object>)actionFunction.apply(context.context, target.getTargetObject());
+			final ActionResult<Object> actionResult = actionFunction.perform(context.context, target.getTargetObject());
 
 			if (context.logger != null) {
 				context.logger.onActionCompleted(target, context.state, actionResult.getLog());

@@ -2,9 +2,9 @@ package com.neaterbits.ide.util.scheduling;
 
 public final class SynchronousSchedulerFactory implements SchedulerFactory {
 
-	private final ForwardToCaller forwardToCaller;
+	private final ForwardResultToCaller forwardToCaller;
 	
-	public SynchronousSchedulerFactory(ForwardToCaller forwardToCaller) {
+	public SynchronousSchedulerFactory(ForwardResultToCaller forwardToCaller) {
 		this.forwardToCaller = forwardToCaller;
 	}
 

@@ -5,15 +5,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import com.neaterbits.ide.util.scheduling.ForwardToCaller;
+import com.neaterbits.ide.util.scheduling.ForwardResultToCaller;
 
 public final class ThreadCPUScheduler implements CPUScheduler {
 
-	private final ForwardToCaller forwardToCaller;
+	private final ForwardResultToCaller forwardToCaller;
 	
 	private final ThreadPoolExecutor executor;
 	
-	public ThreadCPUScheduler(ForwardToCaller forwardToCaller) {
+	public ThreadCPUScheduler(ForwardResultToCaller forwardToCaller) {
 		this.forwardToCaller = forwardToCaller;
 		this.executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
 	}

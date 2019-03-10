@@ -2,7 +2,7 @@ package com.neaterbits.ide.util.scheduling.io;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.util.scheduling.ForwardToCaller;
+import com.neaterbits.ide.util.scheduling.ForwardResultToCaller;
 import com.neaterbits.ide.util.scheduling.ScheduleFunction;
 import com.neaterbits.ide.util.scheduling.ScheduleListener;
 
@@ -19,7 +19,7 @@ final class ThreadIOScheduler<T, R> implements IOScheduler<T, R> {
 	ThreadIOScheduler(
 			ScheduleFunction<T, R> ioFunction,
 			ScheduleFunction<T, R> getCached,
-			ForwardToCaller forwardToCaller) {
+			ForwardResultToCaller forwardToCaller) {
 		
 		Objects.requireNonNull(ioFunction);
 		Objects.requireNonNull(forwardToCaller);

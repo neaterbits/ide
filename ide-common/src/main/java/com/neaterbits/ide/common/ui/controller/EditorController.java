@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.model.ISourceToken;
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
+import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.actions.contexts.source.SourceTokenContext;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
@@ -27,6 +28,7 @@ public final class EditorController implements EditorSourceActionContextProvider
 			EditorView editorView,
 			CompiledFileView compiledFileView,
 			TextModel textModel,
+			SourceFilesModel sourceFilesModel,
 			SourceFileInfo sourceFile) {
 
 		Objects.requireNonNull(editorView);
@@ -34,13 +36,13 @@ public final class EditorController implements EditorSourceActionContextProvider
 		this.editorView = editorView;
 		this.textModel = textModel;
 
-		updateSourceFileModel(textModel, compiledFileView, sourceFile);
+		updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile);
 		
 		editorView.addTextChangeListener((start, length, newText) -> {
 
 			this.textModel.replaceTextRange(start, length, newText);
 
-			updateSourceFileModel(textModel, compiledFileView, sourceFile);
+			updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile);
 		});
 		
 		if (compiledFileView != null) {
@@ -48,14 +50,28 @@ public final class EditorController implements EditorSourceActionContextProvider
 		}
 	}
 	
-	private void updateSourceFileModel(TextModel textModel, CompiledFileView compiledFileView, SourceFileInfo sourceFile) {
-		this.sourceFileModel = sourceFile.getLanguage().getParseableLanguage().parse(
-				textModel.getText().asString(),
-				sourceFile.getResolvedTypes());
+	private void updateSourceFileModel(
+			TextModel textModel,
+			CompiledFileView compiledFileView,
+			SourceFilesModel sourceFilesModel,
+			SourceFileInfo sourceFile) {
+
+		sourceFilesModel.parseOnChange(
+				sourceFile,
+				textModel.getText(),
+				updatedModel -> {
+					
+					if (updatedModel == null) {
+						throw new IllegalStateException();
+					}
+					
+					sourceFileModel = updatedModel;
+
+					if (compiledFileView != null) {
+						compiledFileView.setSourceFileModel(updatedModel);
+					}
+				});
 		
-		if (compiledFileView != null) {
-			compiledFileView.setSourceFileModel(sourceFileModel);
-		}
 	}
 	
 	@Override

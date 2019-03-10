@@ -2,10 +2,14 @@ package com.neaterbits.ide.main;
 
 import java.io.File;
 
+import org.eclipse.swt.widgets.Display;
+
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.ScanException;
 import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.model.codemap.CodeMapGatherer;
+import com.neaterbits.ide.common.model.source.SourceFilesModel;
+import com.neaterbits.ide.common.scheduling.IDESchedulerImpl;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
 import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
@@ -18,6 +22,7 @@ import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
 import com.neaterbits.ide.swt.SWTUI;
+import com.neaterbits.ide.ui.swt.SWTAsyncExecutor;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.PrintlnTargetExecutorLogger;
 
@@ -42,7 +47,11 @@ public class IDEMain {
 				usage();
 			}
 			else {
-				final SWTUI ui = new SWTUI();
+				
+				final Display display = Display.getDefault();
+				final AsyncExecutor asyncExecutor = new SWTAsyncExecutor(display);
+				
+				final SWTUI ui = new SWTUI(display);
 				
 				final BuildSystems buildSystems = new BuildSystems(); 
 
@@ -56,11 +65,11 @@ public class IDEMain {
 				
 				final CompileableLanguage language = new JavaLanguage();
 
-				final AsyncExecutor asyncExecutor = new AsyncExecutor(false);
-
+				final SourceFilesModel sourceFilesModel = new SourceFilesModel(new IDESchedulerImpl(asyncExecutor));
+				
 				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(asyncExecutor, language, new JavaBytecodeFormat(), buildRoot);
 				
-				new IDEController(buildRoot, ui, config, ideComponents, codeMapGatherer.getModel());
+				new IDEController(buildRoot, ui, config, ideComponents, sourceFilesModel, codeMapGatherer.getModel());
 				
 				// Run events on event queue before async jobs send event on event queue
 				ui.runInitialEvents();

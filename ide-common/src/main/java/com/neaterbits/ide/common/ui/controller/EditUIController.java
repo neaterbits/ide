@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
+import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
@@ -30,6 +31,7 @@ public final class EditUIController implements EditActions {
 			UIViewAndSubViews uiView,
 			ProjectsModel projectsModel,
 			IDEComponents ideComponents,
+			SourceFilesModel sourceFilesModel,
 			CodeMapModel codeMapModel) {
 		
 		Objects.requireNonNull(uiView);
@@ -41,7 +43,7 @@ public final class EditUIController implements EditActions {
 		
 		this.codeMapModel = codeMapModel;
 		
-		this.editorsController 	= new EditorsController(uiView.getEditorsView(), uiView.getCompiledFileView());
+		this.editorsController 	= new EditorsController(uiView.getEditorsView(), sourceFilesModel, uiView.getCompiledFileView());
 		this.projectsController = new ProjectsController(projectsModel, uiView.getProjectView(), this);
 	}
 

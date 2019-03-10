@@ -13,6 +13,7 @@ import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
+import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.resource.NamespaceResource;
 import com.neaterbits.ide.common.resource.NamespaceResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileHolderResourcePath;
@@ -64,6 +65,7 @@ public final class IDEController implements ComponentIDEAccess {
 			UI ui,
 			TextEditorConfig config,
 			IDEComponents ideComponents,
+			SourceFilesModel sourceFilesModel,
 			CodeMapModel codeMapModel) {
 
 		Objects.requireNonNull(buildRoot);
@@ -93,7 +95,7 @@ public final class IDEController implements ComponentIDEAccess {
 			return menuListener;
 		});
 		
-		this.uiController = new EditUIController(uiView, projectModel, ideComponents, codeMapModel);
+		this.uiController = new EditUIController(uiView, projectModel, ideComponents, sourceFilesModel, codeMapModel);
 		
 		final Clipboard clipboard = new ClipboardImpl(ui.getSystemClipboard());
 		

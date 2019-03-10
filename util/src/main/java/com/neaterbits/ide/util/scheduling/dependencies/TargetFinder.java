@@ -24,7 +24,7 @@ final class TargetFinder extends PrerequisitesFinder {
 			findTargets(null, targetSpec, context, null, logger, 0, rootTarget);
 		}
 
-		asyncExecutor.runQueuedRunnables();
+		asyncExecutor.runQueuedResultRunnables();
 	}
 
 	@Override

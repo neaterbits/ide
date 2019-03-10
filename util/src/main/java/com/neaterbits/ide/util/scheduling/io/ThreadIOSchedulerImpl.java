@@ -2,19 +2,19 @@ package com.neaterbits.ide.util.scheduling.io;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.util.scheduling.ForwardToCaller;
+import com.neaterbits.ide.util.scheduling.ForwardResultToCaller;
 import com.neaterbits.ide.util.scheduling.ScheduleFunction;
 import com.neaterbits.ide.util.scheduling.ScheduleListener;
 
 public final class ThreadIOSchedulerImpl {
 	
-	private final ForwardToCaller forwardToCaller;
+	private final ForwardResultToCaller forwardToCaller;
 	
 	private final ThreadIOQueue<Object, Object> queue;
 
 	private Thread thread;
 	
-	public ThreadIOSchedulerImpl(ForwardToCaller forwardToCaller) {
+	public ThreadIOSchedulerImpl(ForwardResultToCaller forwardToCaller) {
 		
 		Objects.requireNonNull(forwardToCaller);
 
