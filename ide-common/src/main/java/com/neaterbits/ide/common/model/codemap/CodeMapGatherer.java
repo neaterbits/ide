@@ -23,6 +23,7 @@ import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.CreateType;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.LoadType;
 import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
+import com.neaterbits.compiler.codemap.DynamicMethodOverrideMap;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
@@ -64,7 +65,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		this.typeToDependencyFile = new TypeToDependencyFile();
 		
 		this.typeMap = new HashTypeMap<>(ClassInfo::getTypeNo);
-		this.codeMap = new IntCodeMap();
+		this.codeMap = new IntCodeMap(new DynamicMethodOverrideMap());
 		
 		final TypeSuggestionFinder typeMapSuggestionFinder = new TypeSuggestionFinder() {
 			@Override
