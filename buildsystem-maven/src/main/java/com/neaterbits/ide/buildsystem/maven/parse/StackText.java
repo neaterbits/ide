@@ -2,7 +2,7 @@ package com.neaterbits.ide.buildsystem.maven.parse;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.util.Context;
 
 abstract class StackText extends StackBase {
 

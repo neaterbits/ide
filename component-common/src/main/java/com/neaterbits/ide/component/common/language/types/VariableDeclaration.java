@@ -1,7 +1,7 @@
 package com.neaterbits.ide.component.common.language.types;
 
-import com.neaterbits.compiler.common.model.IType;
-import com.neaterbits.compiler.common.model.VariableScope;
+import com.neaterbits.compiler.util.model.IType;
+import com.neaterbits.compiler.util.model.VariableScope;
 
 public interface VariableDeclaration {
 

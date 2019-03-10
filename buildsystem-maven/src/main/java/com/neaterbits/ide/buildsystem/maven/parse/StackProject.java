@@ -3,7 +3,7 @@ package com.neaterbits.ide.buildsystem.maven.parse;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.ide.buildsystem.maven.MavenModuleId;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenBuild;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenDependency;

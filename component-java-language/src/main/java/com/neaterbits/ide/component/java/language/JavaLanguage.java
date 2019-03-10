@@ -8,20 +8,17 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.ast.CompilationUnit;
-import com.neaterbits.compiler.common.ast.NamespaceReference;
-import com.neaterbits.compiler.common.ast.type.CompleteName;
-import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
-import com.neaterbits.compiler.common.model.ObjectProgramModel;
-import com.neaterbits.compiler.common.model.ResolvedTypes;
-import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
+import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
+import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.resource.FileSystemResourcePath;
@@ -92,12 +89,12 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 	}
 
 	@Override
-	public CompleteName getCompleteName(SourceFileResourcePath sourceFile) {
+	public TypeName getTypeName(SourceFileResourcePath sourceFile) {
 
-		return new CompleteName(
-				new NamespaceReference(getNamespace(sourceFile).getNamespace()),
+		return new TypeName(
+				getNamespace(sourceFile).getNamespace(),
 				null,
-				classNameFromSourceFile(sourceFile.getFile()));
+				classNameStringFromSourceFile(sourceFile.getFile()));
 	}
 	
 	@Override
@@ -133,11 +130,11 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		return typeName.getName() + ".class";
 	}
 
-	private static ClassName classNameFromSourceFile(File file) {
+	private static String classNameStringFromSourceFile(File file) {
 		
 		final String name = file.getName();
 		
-		return new ClassName(name.substring(0, name.length() - ".java".length()));
+		return name.substring(0, name.length() - ".java".length());
 	}
 
 	@Override

@@ -2,8 +2,8 @@ package com.neaterbits.ide.common.ui.actions.contexts.source;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.model.ISourceToken;
-import com.neaterbits.compiler.common.model.SourceTokenType;
+import com.neaterbits.compiler.util.model.ISourceToken;
+import com.neaterbits.compiler.util.model.SourceTokenType;
 import com.neaterbits.ide.component.common.language.model.ISourceTokenProperties;
 
 public class SourceTokenContext extends SourceContext {

@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.model.codemap;
 
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 
 @FunctionalInterface

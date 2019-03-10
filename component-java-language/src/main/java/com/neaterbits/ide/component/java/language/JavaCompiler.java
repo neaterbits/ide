@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.ide.common.build.compile.Compiler;
 import com.neaterbits.ide.common.build.compile.CompilerStatus;
 import com.neaterbits.ide.common.build.model.compile.BuildIssue;

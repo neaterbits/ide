@@ -3,7 +3,7 @@ package com.neaterbits.ide.common.tasks;
 import java.util.Set;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;

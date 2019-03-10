@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import com.neaterbits.compiler.common.model.ISourceToken;
+import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;

@@ -3,7 +3,7 @@ package com.neaterbits.ide.common.model.common;
 import java.io.File;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.model.ResolvedTypes;
+import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
 

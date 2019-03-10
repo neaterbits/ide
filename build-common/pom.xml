@@ -9,11 +9,6 @@
   <dependencies>
   	<dependency>
   		<groupId>com.neaterbits.compiler</groupId>
-  		<artifactId>compiler-common</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.neaterbits.compiler</groupId>
   		<artifactId>bytecode-common</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenDependency;
 
 final class StackDependencies extends StackBase {

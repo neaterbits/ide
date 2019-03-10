@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import com.neaterbits.compiler.common.util.Files;
-import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.util.Files;
+import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.ide.common.resource.NamespaceResource;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileHolderResourcePath;

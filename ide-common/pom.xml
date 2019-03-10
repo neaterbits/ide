@@ -42,5 +42,10 @@
   		<artifactId>bytecode-loader</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.neaterbits.compiler</groupId>
+  		<artifactId>codemap</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
   </dependencies>
 </project>

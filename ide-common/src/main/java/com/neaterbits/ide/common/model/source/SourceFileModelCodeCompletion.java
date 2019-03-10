@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.model.ISourceToken;
+import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.text.Text;

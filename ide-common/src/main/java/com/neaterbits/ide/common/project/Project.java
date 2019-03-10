@@ -3,7 +3,7 @@ package com.neaterbits.ide.common.project;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ModuleId;
+import com.neaterbits.compiler.util.modules.ModuleId;
 
 public class Project {
 

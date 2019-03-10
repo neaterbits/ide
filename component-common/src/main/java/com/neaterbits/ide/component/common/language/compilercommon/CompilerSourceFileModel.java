@@ -2,12 +2,12 @@ package com.neaterbits.ide.component.common.language.compilercommon;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ast.CompilationUnit;
-import com.neaterbits.compiler.common.model.ISourceToken;
-import com.neaterbits.compiler.common.model.IType;
-import com.neaterbits.compiler.common.model.ProgramModel;
-import com.neaterbits.compiler.common.model.ResolvedTypes;
-import com.neaterbits.compiler.common.model.SourceTokenVisitor;
+import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.util.model.ISourceToken;
+import com.neaterbits.compiler.util.model.IType;
+import com.neaterbits.compiler.util.model.ProgramModel;
+import com.neaterbits.compiler.util.model.ResolvedTypes;
+import com.neaterbits.compiler.util.model.SourceTokenVisitor;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 
 public final class CompilerSourceFileModel implements SourceFileModel {

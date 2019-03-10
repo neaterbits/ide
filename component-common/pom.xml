@@ -12,5 +12,10 @@
   		<artifactId>build-common</artifactId>
   		<version>${project.version}</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.neaterbits.compiler</groupId>
+  		<artifactId>compiler-ast</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
   </dependencies>
 </project>

@@ -10,7 +10,7 @@ import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.ide.buildsystem.maven.xml.XMLEventListener;
 
 public final class PomXMLEventListener implements XMLEventListener<Void> {

@@ -3,9 +3,9 @@ package com.neaterbits.ide.component.common.language.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.neaterbits.compiler.common.model.ISourceToken;
-import com.neaterbits.compiler.common.model.IType;
-import com.neaterbits.compiler.common.model.SourceTokenVisitor;
+import com.neaterbits.compiler.util.model.ISourceToken;
+import com.neaterbits.compiler.util.model.IType;
+import com.neaterbits.compiler.util.model.SourceTokenVisitor;
 
 public interface SourceFileModel {
 

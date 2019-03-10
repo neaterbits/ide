@@ -1,6 +1,6 @@
 package com.neaterbits.ide.buildsystem.maven.parse;
 
-import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.ide.buildsystem.maven.MavenModuleId;
 
 abstract class StackEntity extends StackBase implements EntitySetter {

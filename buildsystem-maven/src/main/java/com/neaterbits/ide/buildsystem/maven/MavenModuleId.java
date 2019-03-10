@@ -2,7 +2,7 @@ package com.neaterbits.ide.buildsystem.maven;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ModuleId;
+import com.neaterbits.compiler.util.modules.ModuleId;
 
 public final class MavenModuleId extends ModuleId {
 

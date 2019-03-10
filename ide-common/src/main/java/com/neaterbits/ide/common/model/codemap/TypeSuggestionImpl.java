@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.model.codemap;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.loader.TypeVariant;
+import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 
 final class TypeSuggestionImpl implements TypeSuggestion {

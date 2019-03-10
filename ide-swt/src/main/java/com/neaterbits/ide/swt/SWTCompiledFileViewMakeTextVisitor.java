@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.model.ISourceToken;
-import com.neaterbits.compiler.common.model.SourceTokenVisitor;
+import com.neaterbits.compiler.util.model.ISourceToken;
+import com.neaterbits.compiler.util.model.SourceTokenVisitor;
 
 final class SWTCompiledFileViewMakeTextVisitor implements SourceTokenVisitor {
 	

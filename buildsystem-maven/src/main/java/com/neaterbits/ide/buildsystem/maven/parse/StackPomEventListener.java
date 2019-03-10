@@ -3,9 +3,9 @@ package com.neaterbits.ide.buildsystem.maven.parse;
 import java.io.File;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ArrayStack;
-import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.Stack;
+import com.neaterbits.compiler.util.ArrayStack;
+import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenBuild;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenDependency;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenExtension;

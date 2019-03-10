@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.model.codemap;
 
 import java.util.Map;
 
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 
 abstract class TypeSuggestionFinder {
 

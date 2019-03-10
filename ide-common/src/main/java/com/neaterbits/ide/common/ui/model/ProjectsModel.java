@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.neaterbits.compiler.common.util.Files;
+import com.neaterbits.compiler.util.Files;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootListener;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;

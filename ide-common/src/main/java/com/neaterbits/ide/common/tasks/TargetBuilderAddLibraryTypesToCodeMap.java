@@ -3,7 +3,7 @@ package com.neaterbits.ide.common.tasks;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.ide.common.build.model.Dependency;
 import com.neaterbits.ide.common.build.model.DependencyType;
 import com.neaterbits.ide.common.build.tasks.ModuleBuilderUtil;
