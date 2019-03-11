@@ -60,7 +60,7 @@ public final class EditorController implements EditorSourceActionContextProvider
 				sourceFile,
 				textModel.getText(),
 				updatedModel -> {
-					
+
 					if (updatedModel == null) {
 						throw new IllegalStateException();
 					}

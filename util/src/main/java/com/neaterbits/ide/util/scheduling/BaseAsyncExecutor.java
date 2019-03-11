@@ -37,7 +37,20 @@ public abstract class BaseAsyncExecutor<QUEUE> implements AsyncExecutor {
 
 		final long threadNo = Thread.currentThread().getId();
 		
-		scheduler.schedule(constraint, parameter, function, (param, result) -> {
+		scheduler.schedule(
+				constraint,
+				parameter,
+				param -> {
+					try {
+						return function.perform(param);
+					}
+					catch (Throwable ex) {
+						System.out.println("Exception in scheduled function");
+						ex.printStackTrace();
+						throw ex;
+					}
+				},
+				(param, result) -> {
 			
 			if (threadNo != Thread.currentThread().getId()) {
 				throw new IllegalStateException();

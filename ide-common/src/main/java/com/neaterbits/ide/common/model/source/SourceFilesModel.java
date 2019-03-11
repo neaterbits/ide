@@ -73,6 +73,7 @@ public final class SourceFilesModel {
 					return sourceFileModel;
 				},
 				(file, sourceFileModel) -> {
+
 					parsedSourceFiles.put(sourceFile, sourceFileModel);
 					
 					onUpdatedModel.accept(sourceFileModel);
