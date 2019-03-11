@@ -254,7 +254,7 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 			}
 		}
 
-		resolveParsedModule(modulePath, dependencies, compilationUnits.values());
+		resolveParsedModule(modulePath, dependencies, compilationUnits.values(), resolvedTypes);
 		
 		return sourceFileModels;
 	}
@@ -269,7 +269,7 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		try {
 			parsed = parseFile(parser, inputStream, sourceFilePath.getFile(), new ObjectProgramModel(), resolvedTypes);
 			
-			resolveParsedFiles(Arrays.asList(ProgramLoader.makeCompiledFile(parsed.parsedFile)));
+			resolveParsedFiles(Arrays.asList(ProgramLoader.makeCompiledFile(parsed.parsedFile)), resolvedTypes);
 			
 		} catch (IOException ex) {
 			throw new IllegalStateException(ex);
@@ -307,7 +307,11 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		return new ParsedUnit(parsedFile, sourceFileModel);
 	}
 
-	private static void resolveParsedModule(ModuleResourcePath modulePath, List<ModuleResourcePath> dependencies, Collection<ParsedFile> compilationUnits) {
+	private static void resolveParsedModule(
+			ModuleResourcePath modulePath,
+			List<ModuleResourcePath> dependencies,
+			Collection<ParsedFile> compilationUnits,
+			ResolvedTypes resolvedTypes) {
 		
 		final ModuleSpec moduleSpec = new SourceModuleSpec(
 				modulePath.getModuleId(),
@@ -322,18 +326,22 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 
 		final Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles = ProgramLoader.getCompiledFiles(program);
 		
-		resolveParsedFiles(allFiles);
+		resolveParsedFiles(allFiles, resolvedTypes);
 	}
 	
 
-	private static void resolveParsedFiles(Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles) {
+	private static void resolveParsedFiles(Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles, ResolvedTypes resolvedTypes) {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 
 		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName> logger = new ResolveLogger<>(System.out);
 
 		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName> filesResolver
-			= new FilesResolver<>(logger, JavaTypes.getBuiltinTypes(), astModel);
+			= new FilesResolver<>(
+					logger,
+					JavaTypes.getBuiltinTypes(),
+					scopedName -> resolvedTypes.lookup(scopedName),
+					astModel);
 		
 		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = filesResolver.resolveFiles(allFiles);
 		
