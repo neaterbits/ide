@@ -46,10 +46,12 @@ final class TargetExecutor {
 	}
 	
 	private <CONTEXT extends TaskContext> void scheduleTargets(TargetExecutionContext<CONTEXT> context) {
-		
+
+		/*
 		if (!context.state.hasExecuteTargets()) {
 			throw new IllegalStateException();
 		}
+		*/
 
 		if (context.logger != null) {
 			context.logger.onScheduleTargets(asyncExecutor.getNumScheduledJobs(), context.state);
