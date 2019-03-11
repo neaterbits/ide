@@ -26,6 +26,7 @@ public class IDEMenus {
 					.addSeparator()
 					
 					.addBuiltinAction(BuiltinAction.DELETE)
+					.addBuiltinAction(BuiltinAction.SELECT_ALL)
 					
 					.addSeparator()
 					

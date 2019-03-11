@@ -77,7 +77,6 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 		textWidget.addKeyListener(keyListener);
 	}
 	
-	
 	@Override
 	public void addTextChangeListener(TextChangeListener listener) {
 		
@@ -107,6 +106,12 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 
 	@Override
 	public void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
+		textWidget.setSelection(0, textWidget.getText().length());
+	}
+	
+	@Override
+	public void selectAll() {
+		// TODO Auto-generated method stub
 		
 	}
 

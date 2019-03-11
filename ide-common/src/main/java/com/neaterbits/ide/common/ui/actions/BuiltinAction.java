@@ -8,6 +8,7 @@ import com.neaterbits.ide.common.ui.actions.types.edit.FindReplaceAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.MinMaxEditorsAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.RedoAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.UndoAction;
+import com.neaterbits.ide.common.ui.actions.types.edit.SelectAllAction;
 import com.neaterbits.ide.common.ui.actions.types.entity.DeleteAction;
 import com.neaterbits.ide.common.ui.actions.types.entity.NewDialogAction;
 import com.neaterbits.ide.common.ui.actions.types.entity.NewPopupAction;
@@ -32,6 +33,7 @@ public enum BuiltinAction implements Translateable {
 	CUT(CutAction.class),
 	PASTE(PasteAction.class),
 	COPY(CopyAction.class),
+	SELECT_ALL(SelectAllAction.class),
 	
 	FIND_REPLACE(FindReplaceAction.class),
 	

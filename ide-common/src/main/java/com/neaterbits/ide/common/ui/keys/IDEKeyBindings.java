@@ -18,7 +18,9 @@ public class IDEKeyBindings {
 			.addBuiltinAction(BuiltinAction.CUT, 'x', QualifierKey.CTRL)
 			.addBuiltinAction(BuiltinAction.COPY, 'c', QualifierKey.CTRL)
 			.addBuiltinAction(BuiltinAction.PASTE, 'v', QualifierKey.CTRL)
-			
+
+			.addBuiltinAction(BuiltinAction.SELECT_ALL, 'a', QualifierKey.CTRL)
+
 			.addBuiltinAction(BuiltinAction.FIND_REPLACE, 'f', QualifierKey.CTRL)
 			
 			.addBuiltinAction(BuiltinAction.OPEN_TYPE, 't', QualifierKey.SHIFT, QualifierKey.CTRL)

@@ -148,6 +148,11 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
+	public void selectAll() {
+		textWidget.setSelection(0, textWidget.getCharCount());
+	}
+
+	@Override
 	boolean hasSelectedText() {
 		return textWidget.isTextSelected();
 	}

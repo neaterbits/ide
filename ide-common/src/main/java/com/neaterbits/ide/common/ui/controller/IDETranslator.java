@@ -66,6 +66,10 @@ final class IDETranslator implements Translator {
 				translation = "Paste";
 				break;
 				
+			case "select_all":
+				translation = "Select &All";
+				break;
+				
 			case "find_replace":
 				translation = "&Find/Replace";
 				break;

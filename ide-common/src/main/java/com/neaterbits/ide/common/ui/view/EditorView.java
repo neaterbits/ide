@@ -11,4 +11,6 @@ public interface EditorView extends View {
 	void addTextChangeListener(TextChangeListener listener);
 
 	void addCursorPositionListener(CursorPositionListener cursorPositionListener);
+	
+	void selectAll();
 }
