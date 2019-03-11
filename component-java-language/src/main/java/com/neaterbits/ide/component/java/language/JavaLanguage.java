@@ -330,11 +330,12 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>> logger = new ResolveLogger<>(System.out);
+		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName> logger = new ResolveLogger<>(System.out);
 
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>> filesResolver = new FilesResolver<>(logger, JavaTypes.getBuiltinTypes(), astModel);
+		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName> filesResolver
+			= new FilesResolver<>(logger, JavaTypes.getBuiltinTypes(), astModel);
 		
-		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>> resolveResult = filesResolver.resolveFiles(allFiles);
+		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = filesResolver.resolveFiles(allFiles);
 		
 		final UnresolvedDependencies unresolved = resolveResult.getUnresolvedDependencies();
 		if (!unresolved.isEmpty()) {
