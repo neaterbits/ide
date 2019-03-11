@@ -1,8 +1,10 @@
 package com.neaterbits.ide.component.java.language;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -214,6 +216,17 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		return true;
 	}
 
+	private static class ParsedUnit {
+		
+		private final ParsedFile parsedFile;
+		private final SourceFileModel sourceFileModel;
+
+		ParsedUnit(ParsedFile parsedFile, SourceFileModel sourceFileModel) {
+			this.parsedFile = parsedFile;
+			this.sourceFileModel = sourceFileModel;
+		}
+	}
+	
 	@Override
 	public Map<SourceFileResourcePath, SourceFileModel> parseModule(
 			ModuleResourcePath modulePath,
@@ -224,7 +237,6 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		final Java8AntlrParser parser = new Java8AntlrParser(false);
 
 		final Map<SourceFileResourcePath, SourceFileModel> sourceFileModels = new HashMap<>(files.size());
-		
 		final Map<SourceFileResourcePath, ParsedFile> compilationUnits = new HashMap<>(files.size());
 		
 		final ObjectProgramModel programModel = new ObjectProgramModel();
@@ -235,32 +247,67 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 			
 			try (FileInputStream inputStream = new FileInputStream(file)) {
 			
-				final List<ParseError> errors = new ArrayList<>();
+				final ParsedUnit parsed = parseFile(parser, inputStream, file, programModel, resolvedTypes);
 				
-				final CompilationUnit compilationUnit = parser.parse(inputStream, errors, file.getName(), null);
-				
-				if (compilationUnit == null) {
-					throw new IllegalStateException();
-				}
-				
-				final List<CompileError> compileErrors = errors.stream().map(error -> (CompileError)error).collect(Collectors.toList());
-				
-				final ParsedFile parsedFile = new ParsedFile(
-						new SourceFile(file),
-						compileErrors,
-						null,
-						compilationUnit);
-				
-				compilationUnits.put(path, parsedFile);
-				
-				final SourceFileModel sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), resolvedTypes);
-				
-				sourceFileModels.put(path, sourceFileModel);
+				compilationUnits.put(path, parsed.parsedFile);
+				sourceFileModels.put(path, parsed.sourceFileModel);
 			}
 		}
 
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>> logger = new ResolveLogger<>(System.out);
+		resolveParsedModule(modulePath, dependencies, compilationUnits.values());
 		
+		return sourceFileModels;
+	}
+
+	@Override
+	public SourceFileModel parseAndResolveChangedFile(SourceFileResourcePath sourceFilePath, String string, ResolvedTypes resolvedTypes) {
+
+		final Java8AntlrParser parser = new Java8AntlrParser(false);
+		final ByteArrayInputStream inputStream = new ByteArrayInputStream(string.getBytes());
+		
+		final ParsedUnit parsed;
+		try {
+			parsed = parseFile(parser, inputStream, sourceFilePath.getFile(), new ObjectProgramModel(), resolvedTypes);
+			
+			resolveParsedFiles(Arrays.asList(ProgramLoader.makeCompiledFile(parsed.parsedFile)));
+			
+		} catch (IOException ex) {
+			throw new IllegalStateException(ex);
+		}
+		
+		return parsed.sourceFileModel;
+	}
+
+	private static ParsedUnit parseFile(
+			Java8AntlrParser parser,
+			InputStream inputStream,
+			File file,
+			ObjectProgramModel programModel,
+			ResolvedTypes resolvedTypes) throws IOException {
+		
+		final List<ParseError> errors = new ArrayList<>();
+		
+		final CompilationUnit compilationUnit = parser.parse(inputStream, errors, file.getName(), null);
+		
+		if (compilationUnit == null) {
+			throw new IllegalStateException();
+		}
+		
+		final List<CompileError> compileErrors = errors.stream().map(error -> (CompileError)error).collect(Collectors.toList());
+		
+		final ParsedFile parsedFile = new ParsedFile(
+				new SourceFile(file),
+				compileErrors,
+				null,
+				compilationUnit);
+		
+		
+		final SourceFileModel sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), compileErrors, resolvedTypes);
+		
+		return new ParsedUnit(parsedFile, sourceFileModel);
+	}
+
+	private static void resolveParsedModule(ModuleResourcePath modulePath, List<ModuleResourcePath> dependencies, Collection<ParsedFile> compilationUnits) {
 		
 		final ModuleSpec moduleSpec = new SourceModuleSpec(
 				modulePath.getModuleId(),
@@ -268,16 +315,24 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 					.map(dependency -> new SourceModuleSpec(dependency.getModuleId(), null, dependency.getFile()))
 					.collect(Collectors.toList()),
 				modulePath.getFile());
-
-		final ASTModelImpl astModel = new ASTModelImpl();
-
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>> filesResolver = new FilesResolver<>(logger, JavaTypes.getBuiltinTypes(), astModel);
 		
-		final Module module = new Module(moduleSpec, compilationUnits.values());
+		final Module module = new Module(moduleSpec, compilationUnits);
 		
 		final Program program = new Program(module);
 
 		final Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles = ProgramLoader.getCompiledFiles(program);
+		
+		resolveParsedFiles(allFiles);
+	}
+	
+
+	private static void resolveParsedFiles(Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles) {
+
+		final ASTModelImpl astModel = new ASTModelImpl();
+
+		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>> logger = new ResolveLogger<>(System.out);
+
+		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>> filesResolver = new FilesResolver<>(logger, JavaTypes.getBuiltinTypes(), astModel);
 		
 		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>> resolveResult = filesResolver.resolveFiles(allFiles);
 		
@@ -287,18 +342,10 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		}
 		
 		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
-
-		
-		return null;
-	}
-
-	@Override
-	public SourceFileModel parseFile(String string, ResolvedTypes resolvedTypes) {
-
-		final Java8AntlrParser parser = new Java8AntlrParser(false);
-
-		final CompilationUnit compilationUnit = parser.parse(string, false);
-		
-		return new CompilerSourceFileModel(new ObjectProgramModel(), compilationUnit, resolvedTypes);
 	}
 }
+
+
+
+
+

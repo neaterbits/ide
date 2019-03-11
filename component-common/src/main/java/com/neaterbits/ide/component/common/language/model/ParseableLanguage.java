@@ -17,6 +17,6 @@ public interface ParseableLanguage {
 			List<SourceFileResourcePath> files,
 			ResolvedTypes resolvedTypes) throws IOException;
 	
-	SourceFileModel parseFile(String string, ResolvedTypes resolvedTypes);
+	SourceFileModel parseAndResolveChangedFile(SourceFileResourcePath sourceFilePath, String string, ResolvedTypes resolvedTypes);
 	
 }

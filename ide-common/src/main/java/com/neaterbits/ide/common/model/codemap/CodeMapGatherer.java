@@ -30,6 +30,7 @@ import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassParameters;
 import com.neaterbits.ide.common.build.model.BuildRoot;
+import com.neaterbits.ide.common.build.model.compile.FileCompilation;
 import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.model.common.InformationGatherer;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
@@ -309,13 +310,15 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		return this;
 	}
 	
-	public void addClassFile(SourceFileResourcePath sourceFile) throws IOException, ClassFileException {
+	public void addClassFile(FileCompilation fileCompilation) throws IOException, ClassFileException {
 		
-		Objects.requireNonNull(sourceFile);
+		Objects.requireNonNull(fileCompilation);
 		
-		final TypeName typeName = language.getTypeName(sourceFile);
+		final TypeName typeName = language.getTypeName(fileCompilation.getSourcePath());
 		
-		try (FileInputStream inputStream = new FileInputStream(sourceFile.getFile())) {
+		final File classFile = fileCompilation.getCompiledFile();
+		
+		try (FileInputStream inputStream = new FileInputStream(classFile)) {
 
 			loadAndAddToCodeMap(typeName, type -> {
 				ClassBytecode classBytecode = null;
@@ -326,15 +329,16 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 					ex.printStackTrace();
 				}
 				catch (Exception ex) {
-					System.out.print("## error while reading " + sourceFile.getFile().getPath());
+					System.out.print("## error while reading bytecode " + classFile.getPath());
+					ex.printStackTrace();
 				}
 				
 				return classBytecode;
 			});
 		}
 		catch (IOException ex) {
-			System.out.println("## error while reading " + sourceFile.getFile().getPath());
-			// ex.printStackTrace();
+			System.out.println("## error while reading " + classFile.getPath());
+			ex.printStackTrace();
 		}
 	}
 

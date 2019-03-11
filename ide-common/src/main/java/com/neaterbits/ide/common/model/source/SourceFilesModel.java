@@ -60,13 +60,15 @@ public final class SourceFilesModel {
 	
 	public void parseOnChange(SourceFileInfo sourceFile, Text text, Consumer<SourceFileModel> onUpdatedModel) {
 
+		// Called from IDE so schedule asynchronously
 		scheduler.scheduleTask(
 				"parse",
 				"Parse file " + sourceFile.getFile().getName(),
 				Constraint.CPU,
 				sourceFile,
 				file -> {
-					final SourceFileModel sourceFileModel  = file.getLanguage().getParseableLanguage().parseFile(
+					final SourceFileModel sourceFileModel  = file.getLanguage().getParseableLanguage().parseAndResolveChangedFile(
+							sourceFile.getPath(),
 							text.asString(),
 							sourceFile.getResolvedTypes());
 

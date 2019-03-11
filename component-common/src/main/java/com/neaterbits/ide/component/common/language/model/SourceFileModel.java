@@ -6,6 +6,7 @@ import java.util.List;
 import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.compiler.util.model.IType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
+import com.neaterbits.compiler.util.parse.CompileError;
 
 public interface SourceFileModel {
 
@@ -15,6 +16,8 @@ public interface SourceFileModel {
 
 	IType getVariableType(ISourceToken token);
 
+	List<CompileError> getParserErrors();
+	
 	public static ISourceTokenProperties getProperties(ISourceToken token) {
 
 		final List<SourceElementFlag> flags = new ArrayList<>();
