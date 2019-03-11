@@ -8,12 +8,11 @@ import java.util.Objects;
 import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.model.text.TextModel;
-import com.neaterbits.ide.util.ui.text.Text;
 
 public class SourceFileModelCodeCompletion implements CodeCompletion {
 
 	private final SourceFileModel sourceFileModel;
-	private final TextModel textModel;
+	// private final TextModel textModel;
 
 	public SourceFileModelCodeCompletion(SourceFileModel sourceFileModel, TextModel textModel) {
 
@@ -21,9 +20,10 @@ public class SourceFileModelCodeCompletion implements CodeCompletion {
 		Objects.requireNonNull(textModel);
 		
 		this.sourceFileModel = sourceFileModel;
-		this.textModel = textModel;
+		// this.textModel = textModel;
 	}
-	
+
+	/*
 	private Text getTokenText(ISourceToken token) {
 		return textModel.getTextRange(token.getStartOffset(), token.getLength());
 	}
@@ -31,6 +31,7 @@ public class SourceFileModelCodeCompletion implements CodeCompletion {
 	private String getTokenString(ISourceToken token) {
 		return getTokenText(token).asString();
 	}
+	*/
 
 	@Override
 	public List<CodeProposal> getProposals(long offset) {

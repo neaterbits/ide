@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRoot;
 import com.neaterbits.ide.common.resource.LibraryResource;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
@@ -19,8 +20,10 @@ import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 
 class BuildRootImplInit {
 
-	static <MODULE_ID, PROJECT, DEPENDENCY>
-	Map<MODULE_ID, ProjectModuleResourcePath> mapModuleIdToResourcePath(Map<MODULE_ID, PROJECT> projects, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
+	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY>
+	Map<MODULE_ID, ProjectModuleResourcePath> mapModuleIdToResourcePath(
+				Map<MODULE_ID, PROJECT> projects,
+				BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
 		final Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath = new HashMap<>(projects.size());
 		
@@ -30,8 +33,8 @@ class BuildRootImplInit {
 			for (PROJECT project = pom; project != null; project = projects.get(buildSystemRoot.getParentModuleId(project))) {
 				
 				final ModuleResource moduleResource = new ModuleResource(
-						buildSystemRoot.getRootDirectory(project),
-						buildSystemRoot.getNonScopedName(project));
+						buildSystemRoot.getModuleId(project),
+						buildSystemRoot.getRootDirectory(project));
 				
 				modules.addFirst(moduleResource);
 			}
@@ -42,7 +45,7 @@ class BuildRootImplInit {
 		return moduleIdToResourcePath;
 	}
 	
-	static <MODULE_ID, PROJECT, DEPENDENCY>
+	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY>
 	Map<ProjectModuleResourcePath, BuildProject<PROJECT>> makeBuildProjects(
 			Map<MODULE_ID, PROJECT> projects,
 			Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath,
@@ -70,7 +73,7 @@ class BuildRootImplInit {
 		return buildProjects;
 	}
 
-	private static <MODULE_ID, PROJECT, DEPENDENCY> List<Dependency> findDependencies(
+	private static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> List<Dependency> findDependencies(
 			PROJECT project,
 			Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath,
 			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
@@ -116,7 +119,9 @@ class BuildRootImplInit {
 		return dependencies;
 	}
 	
-	static <MODULE_ID, PROJECT, DEPENDENCY> Dependency makeExternalDependency(DEPENDENCY buildSystemDependency, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
+	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> Dependency makeExternalDependency(
+			DEPENDENCY buildSystemDependency,
+			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
 		final File repositoryJarFile = buildSystemRoot.repositoryJarFile(buildSystemDependency);
 
@@ -130,7 +135,7 @@ class BuildRootImplInit {
 				buildSystemDependency);
 	}
 	
-	private static <MODULE_ID, PROJECT, DEPENDENCY> File targetDirectoryJarFile(
+	private static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> File targetDirectoryJarFile(
 			ProjectModuleResourcePath dependencyPath,
 			DEPENDENCY mavenDependency,
 			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
@@ -138,7 +143,9 @@ class BuildRootImplInit {
 		return new File(getTargetDirectory(dependencyPath, buildSystemRoot).getFile(), buildSystemRoot.compiledFileName(mavenDependency));
 	}
 
-	static <MODULE_ID, PROJECT, DEPENDENCY> TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
+	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> TargetDirectoryResourcePath getTargetDirectory(
+			ProjectModuleResourcePath module,
+			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
 		final File targetDir = buildSystemRoot.getTargetDirectory(module.getFile());
 		
@@ -147,7 +154,7 @@ class BuildRootImplInit {
 		return new TargetDirectoryResourcePath(module, targetDirectoryResource);
 	}
 
-	static <MODULE_ID, PROJECT, DEPENDENCY>
+	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY>
 	CompiledModuleFileResourcePath getCompiledModuleFile(ProjectModuleResourcePath module, PROJECT project, BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 
 		final File compiledModuleFile = buildSystemRoot.getCompiledModuleFile(project, module.getFile());

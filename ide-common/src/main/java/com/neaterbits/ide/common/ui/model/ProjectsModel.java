@@ -56,7 +56,7 @@ public class ProjectsModel {
 	public ProjectModuleResourcePath getRoot() {
 		return buildRoot.getModules().stream()
 		.filter(module -> module.isAtRoot())
-		.map(module -> new ProjectModuleResourcePath(new ModuleResource(module.getFile(), ((ModuleResource)module.getLast()).getName())))
+		.map(module -> new ProjectModuleResourcePath(new ModuleResource(((ModuleResource)module.getLast()).getModuleId(), module.getFile())))
 		.findFirst()
 		.get();
 	}

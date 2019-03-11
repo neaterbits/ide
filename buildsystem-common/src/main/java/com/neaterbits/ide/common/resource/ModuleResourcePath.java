@@ -2,6 +2,8 @@ package com.neaterbits.ide.common.resource;
 
 import java.util.List;
 
+import com.neaterbits.compiler.util.modules.ModuleId;
+
 public abstract class ModuleResourcePath extends FileSystemResourcePath {
 
 	public ModuleResourcePath(List<? extends Resource> path) {
@@ -12,4 +14,7 @@ public abstract class ModuleResourcePath extends FileSystemResourcePath {
 		super(resources);
 	}
 	
+	public final ModuleId getModuleId() {
+		return ((ModuleResource)getLast()).getModuleId();
+	}
 }

@@ -3,7 +3,9 @@ package com.neaterbits.ide.common.buildsystem;
 import java.io.File;
 import java.util.Collection;
 
-public interface BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> extends BuildSystemRootScan {
+import com.neaterbits.compiler.util.modules.ModuleId;
+
+public interface BuildSystemRoot<MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> extends BuildSystemRootScan {
 
 	Collection<PROJECT> getProjects();
 	
@@ -14,7 +16,7 @@ public interface BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> extends BuildSy
 	File getRootDirectory(PROJECT project);
 	
 	String getNonScopedName(PROJECT project);
-	
+
 	String getDisplayName(PROJECT project);
 
 	Scope getDependencyScope(DEPENDENCY dependency);

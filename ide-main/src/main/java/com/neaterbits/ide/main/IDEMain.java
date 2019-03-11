@@ -9,6 +9,7 @@ import com.neaterbits.ide.common.buildsystem.ScanException;
 import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.model.codemap.CodeMapGatherer;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
+import com.neaterbits.ide.common.scheduling.IDEScheduler;
 import com.neaterbits.ide.common.scheduling.IDESchedulerImpl;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
 import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
@@ -65,9 +66,11 @@ public class IDEMain {
 				
 				final CompileableLanguage language = new JavaLanguage();
 
-				final SourceFilesModel sourceFilesModel = new SourceFilesModel(new IDESchedulerImpl(asyncExecutor));
-				
 				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(asyncExecutor, language, new JavaBytecodeFormat(), buildRoot);
+
+				final IDEScheduler ideScheduler = new IDESchedulerImpl(asyncExecutor);
+				
+				final SourceFilesModel sourceFilesModel = new SourceFilesModel(ideScheduler, ideComponents.getLanguages(), codeMapGatherer);
 				
 				new IDEController(buildRoot, ui, config, ideComponents, sourceFilesModel, codeMapGatherer.getModel());
 				

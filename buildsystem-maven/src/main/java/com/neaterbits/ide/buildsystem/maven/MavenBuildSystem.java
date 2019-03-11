@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.ide.buildsystem.maven.elements.MavenProject;
 import com.neaterbits.ide.common.buildsystem.BuildSystem;
 import com.neaterbits.ide.common.buildsystem.BuildSystemRoot;
@@ -23,7 +24,7 @@ public final class MavenBuildSystem implements BuildSystem {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <MODULE_ID, PROJECT, DEPENDENCY>
+	public <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY>
 	BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> scan(File rootDirectory) throws ScanException {
 		
 		final List<MavenProject> mavenProjects;
