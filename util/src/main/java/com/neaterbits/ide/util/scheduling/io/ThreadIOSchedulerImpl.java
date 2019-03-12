@@ -59,11 +59,11 @@ public final class ThreadIOSchedulerImpl {
 	}
 	
 	private void threadMain() {
-		System.out.println("## retrieve from queue: " + queue);
+		// System.out.println("## retrieve from queue: " + queue);
 		
 		final ThreadIOQueue<Object, Object>.ScheduleState scheduleState = queue.take();
 		
-		System.out.println("## got schedule state " + scheduleState.getDebugName());
+		// System.out.println("## got schedule state " + scheduleState.getDebugName());
 		
 		final Object result = scheduleState.getIOFunction().perform(scheduleState.getParameter());
 
@@ -71,7 +71,7 @@ public final class ThreadIOSchedulerImpl {
 
 			for (ScheduleListener<Object, Object> resultListener : scheduleState.getListeners()) {
 				
-				System.out.println("### forward to listener " + resultListener + " " + scheduleState.getDebugName());
+				// System.out.println("### forward to listener " + resultListener + " " + scheduleState.getDebugName());
 				
 				if (Thread.currentThread().getId() != scheduleState.getSchedulingThread()) {
 					throw new IllegalStateException();

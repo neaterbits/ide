@@ -254,7 +254,7 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 			}
 		}
 
-		resolveParsedModule(modulePath, dependencies, compilationUnits.values(), resolvedTypes);
+		resolveParsedModule(modulePath, dependencies, compilationUnits.values(), programModel, resolvedTypes);
 		
 		return sourceFileModels;
 	}
@@ -267,9 +267,12 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		
 		final ParsedUnit parsed;
 		try {
-			parsed = parseFile(parser, inputStream, sourceFilePath.getFile(), new ObjectProgramModel(), resolvedTypes);
 			
-			resolveParsedFiles(Arrays.asList(ProgramLoader.makeCompiledFile(parsed.parsedFile)), resolvedTypes);
+			final ObjectProgramModel programModel = new ObjectProgramModel();
+			
+			parsed = parseFile(parser, inputStream, sourceFilePath.getFile(), programModel, resolvedTypes);
+			
+			resolveParsedFiles(Arrays.asList(ProgramLoader.makeCompiledFile(parsed.parsedFile)), programModel, resolvedTypes);
 			
 		} catch (IOException ex) {
 			throw new IllegalStateException(ex);
@@ -311,6 +314,7 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 			ModuleResourcePath modulePath,
 			List<ModuleResourcePath> dependencies,
 			Collection<ParsedFile> compilationUnits,
+			ObjectProgramModel programModel,
 			ResolvedTypes resolvedTypes) {
 		
 		final ModuleSpec moduleSpec = new SourceModuleSpec(
@@ -324,23 +328,35 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		
 		final Program program = new Program(module);
 
-		final Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles = ProgramLoader.getCompiledFiles(program);
+		final Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);
 		
-		resolveParsedFiles(allFiles, resolvedTypes);
+		resolveParsedFiles(allFiles, programModel, resolvedTypes);
 	}
 	
 
-	private static void resolveParsedFiles(Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles, ResolvedTypes resolvedTypes) {
+	private static void resolveParsedFiles(
+			Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles,
+			ObjectProgramModel programModel,
+			ResolvedTypes resolvedTypes) {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName> logger = new ResolveLogger<>(System.out);
+		
+		
+		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> logger = new ResolveLogger<>(System.out);
 
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName> filesResolver
+		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
 			= new FilesResolver<>(
 					logger,
 					JavaTypes.getBuiltinTypes(),
-					scopedName -> resolvedTypes.lookup(scopedName),
+					scopedName -> {
+						
+						System.out.println("## lookup scoped name " + scopedName);
+						
+						return resolvedTypes.lookup(scopedName);
+						
+					},
+					programModel,
 					astModel);
 		
 		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = filesResolver.resolveFiles(allFiles);
@@ -353,8 +369,4 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
 	}
 }
-
-
-
-
 
