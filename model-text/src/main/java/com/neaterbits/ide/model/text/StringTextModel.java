@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.neaterbits.ide.util.ui.text.LineDelimiter;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.TextRange;
 
 public final class StringTextModel extends TextModel {
 
@@ -111,5 +112,12 @@ public final class StringTextModel extends TextModel {
 	@Override
 	public long getCharCount() {
 		return text.length();
+	}
+
+	@Override
+	public long find(Text searchText, long start, TextRange range, boolean forward, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
+		return forward
+					? text.findForward(searchText, start, range, caseSensitive, wrapSearch, wholeWord)
+					: text.findBackward(searchText, start, range, caseSensitive, wrapSearch, wholeWord);
 	}
 }

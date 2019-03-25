@@ -5,15 +5,14 @@ import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.actions.contexts.EditorContext;
-import com.neaterbits.ide.common.ui.view.EditorView;
 
 public final class SelectAllAction extends Action {
 
 	@Override
 	public void execute(ActionExecuteParameters parameters) {
-		final EditorView editorView = (EditorView)parameters.getFocusedView();
+
+		parameters.getFocusedEditor().selectAll();
 		
-		editorView.selectAll();
 	}
 
 	@Override

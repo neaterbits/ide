@@ -10,7 +10,7 @@ public class CloseEditedAction extends Action {
 	@Override
 	public void execute(ActionExecuteParameters parameters) {
 
-		parameters.getEditActions().closeCurrentEditedFile();
+		parameters.getEditorsActions().closeCurrentEditedFile();
 	}
 
 	@Override

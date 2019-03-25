@@ -18,7 +18,7 @@ import com.neaterbits.ide.model.text.UnixLineDelimiter;
 import com.neaterbits.ide.util.IOUtil;
 import com.neaterbits.ide.util.PathUtil;
 
-public final class EditUIController implements EditActions {
+public final class EditUIController implements EditorsActions {
 
 	private final UIView uiView;
 	private final IDEComponents ideComponents;
@@ -47,6 +47,10 @@ public final class EditUIController implements EditActions {
 		this.projectsController = new ProjectsController(projectsModel, uiView.getProjectView(), this);
 	}
 
+	EditorActions getCurrentEditor() {
+		return editorsController.getCurrentEditor();
+	}
+	
 	SourceFileResourcePath getCurrentEditedFile() {
 		return editorsController.getCurrentEditedFile();
 	}

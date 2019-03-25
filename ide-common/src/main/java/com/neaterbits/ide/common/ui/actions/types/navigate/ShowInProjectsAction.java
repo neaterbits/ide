@@ -8,7 +8,7 @@ public final class ShowInProjectsAction extends NavigateAction {
 
 	@Override
 	public void execute(ActionExecuteParameters parameters) {
-		parameters.getEditActions().showCurrentEditedInProjectView();
+		parameters.getEditorsActions().showCurrentEditedInProjectView();
 	}
 
 	@Override

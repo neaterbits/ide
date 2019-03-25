@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.ide.util.ui.text.LineDelimiter;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.TextRange;
 
 public abstract class TextModel {
 
@@ -42,4 +43,11 @@ public abstract class TextModel {
 	public final long getLineLengthWithoutAnyNewline(long lineIndex) {
 		return getLineWithoutAnyNewline(lineIndex).length();
 	}
+
+	public abstract long find(
+			Text searchText,
+			long startPos,
+			TextRange range,
+			boolean forward,
+			boolean caseSensitive, boolean wrapSearch, boolean wholeWord);
 }

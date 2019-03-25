@@ -9,6 +9,8 @@ import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.actions.contexts.source.SourceTokenContext;
+import com.neaterbits.ide.common.ui.model.dialogs.SearchDirection;
+import com.neaterbits.ide.common.ui.model.dialogs.SearchScope;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.EditorView;
@@ -16,8 +18,9 @@ import com.neaterbits.ide.component.common.language.model.ISourceTokenProperties
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.TextRange;
 
-public final class EditorController implements EditorSourceActionContextProvider {
+public final class EditorController implements EditorSourceActionContextProvider, EditorActions {
 
 	private final EditorView editorView;
 	private TextModel textModel;
@@ -103,6 +106,75 @@ public final class EditorController implements EditorSourceActionContextProvider
 		}
 		
 		return actionContexts;
+	}
+	
+	@Override
+	public long find(long pos, Text searchText, SearchDirection direction, SearchScope scope, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
+
+		final long startPos;
+		
+		final TextRange searchRange;
+		
+		switch (scope) {
+		case ALL:
+			startPos = pos == -1 ? editorView.getCursorPosition() : pos;
+			searchRange = null; // whole text
+			break;
+			
+		case SELECTED_LINES:
+			final TextRange selection = editorView.getSelection();
+			
+			if (selection == null) {
+				// select current line
+				final long cursorPos = editorView.getCursorPosition();
+				
+				final long lineNo = textModel.getLineAtOffset(cursorPos);
+				
+				startPos = textModel.getOffsetAtLine(lineNo);
+				final long length = textModel.getLineLengthWithoutAnyNewline(lineNo);
+				
+				searchRange = new TextRange(startPos, length);
+				
+				editorView.select(startPos, length);
+			}
+			else {
+				startPos = selection.getOffset();
+				
+				searchRange = selection;
+			}
+			break;
+			
+		default:
+			throw new UnsupportedOperationException();
+		}
+		
+		
+		final long foundPos = textModel.find(
+				searchText,
+				startPos,
+				searchRange,
+				direction == SearchDirection.FORWARD,
+				caseSensitive, wrapSearch, wholeWord);
+
+		if (foundPos >= 0) {
+			editorView.select(foundPos, searchText.length());
+		}
+		
+		return foundPos;
+	}
+
+	@Override
+	public void replace(long pos, long replaceLength, Text replacement) {
+		textModel.replaceTextRange(pos, replaceLength, replacement);
+		
+		updateText();
+
+		editorView.select(pos, replacement.length());
+	}
+	
+	@Override
+	public void selectAll() {
+		editorView.selectAll();
 	}
 
 	public void updateText() {

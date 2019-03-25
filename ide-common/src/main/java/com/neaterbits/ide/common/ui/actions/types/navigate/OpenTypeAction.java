@@ -20,7 +20,7 @@ public class OpenTypeAction extends NavigateAction {
 			});
 		
 		if (typeSuggestion != null) {
-			parameters.getEditActions().openSourceFileForEditing(typeSuggestion.getSourceFile());
+			parameters.getEditorsActions().openSourceFileForEditing(typeSuggestion.getSourceFile());
 		}
 	}
 

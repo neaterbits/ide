@@ -6,7 +6,7 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
-import com.neaterbits.ide.common.ui.view.NewableSelection;
+import com.neaterbits.ide.common.ui.model.dialogs.NewableSelection;
 import com.neaterbits.ide.component.common.NewableCategory;
 import com.neaterbits.ide.component.common.UIComponentProvider;
 

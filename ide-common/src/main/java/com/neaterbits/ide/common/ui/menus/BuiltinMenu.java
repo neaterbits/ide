@@ -1,9 +1,9 @@
 package com.neaterbits.ide.common.ui.menus;
 
-import com.neaterbits.ide.common.ui.translation.Translateable;
+import com.neaterbits.ide.common.ui.translation.EnumTranslateable;
 import com.neaterbits.ide.common.ui.translation.TranslationNamespaces;
 
-public enum BuiltinMenu implements Translateable {
+public enum BuiltinMenu implements EnumTranslateable<BuiltinMenu> {
 
 	FILE,
 	EDIT,
@@ -19,6 +19,6 @@ public enum BuiltinMenu implements Translateable {
 
 	@Override
 	public String getTranslationId() {
-		return name().toLowerCase();
+		return getTranslationId(this);
 	}
 }

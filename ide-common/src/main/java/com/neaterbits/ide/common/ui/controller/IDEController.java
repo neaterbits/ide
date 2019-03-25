@@ -187,6 +187,7 @@ public final class IDEController implements ComponentIDEAccess {
 		final ActionExecuteParameters parameters = new ActionExecuteParametersImpl(
 				actionExecuteState,
 				focusedView,
+				uiController.getCurrentEditor(),
 				uiController.getCurrentEditedFile());
 	
 		return parameters;

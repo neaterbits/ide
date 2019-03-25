@@ -37,6 +37,7 @@ abstract class BaseText implements Text {
 		}
 	}
 
+
 	@Override
 	public String toString() {
 		return "\"" + asString() + "\"";

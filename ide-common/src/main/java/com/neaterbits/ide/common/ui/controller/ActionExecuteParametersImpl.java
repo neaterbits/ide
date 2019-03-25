@@ -16,14 +16,20 @@ final class ActionExecuteParametersImpl implements ActionExecuteParameters {
 
 	private final ActionExecuteState executeState;
 	private final View focusedView;
+	private final EditorActions focusedEditor;
 	private final SourceFileResourcePath currentEditedFile;
 	
-	ActionExecuteParametersImpl(ActionExecuteState executeState, View focusedView, SourceFileResourcePath currentEditedFile) {
+	ActionExecuteParametersImpl(
+			ActionExecuteState executeState,
+			View focusedView,
+			EditorActions focusedEditor,
+			SourceFileResourcePath currentEditedFile) {
 
 		Objects.requireNonNull(executeState);
 		
 		this.executeState = executeState;
 		this.focusedView = focusedView;
+		this.focusedEditor = focusedEditor;
 		this.currentEditedFile = currentEditedFile;
 	}
 
@@ -68,8 +74,13 @@ final class ActionExecuteParametersImpl implements ActionExecuteParameters {
 	}
 
 	@Override
-	public EditActions getEditActions() {
-		return executeState.getEditActions();
+	public EditorsActions getEditorsActions() {
+		return executeState.getEditorsActions();
+	}
+	
+	@Override
+	public EditorActions getFocusedEditor() {
+		return focusedEditor;
 	}
 
 	@Override

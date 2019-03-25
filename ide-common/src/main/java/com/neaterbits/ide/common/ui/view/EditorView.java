@@ -1,6 +1,7 @@
 package com.neaterbits.ide.common.ui.view;
 
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.TextRange;
 
 public interface EditorView extends View {
 
@@ -8,9 +9,17 @@ public interface EditorView extends View {
 	
 	void setCurrentText(Text text);
 
-	void addTextChangeListener(TextChangeListener listener);
+	void addTextChangeListener(TextEditorChangeListener listener);
 
 	void addCursorPositionListener(CursorPositionListener cursorPositionListener);
 	
+	long getCursorPosition();
+	
+	TextRange getSelection();
+	
+	void addDisposeListener(ViewDisposeListener listener);
+	
 	void selectAll();
+	
+	void select(long offset, long length);
 }

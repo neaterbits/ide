@@ -1,6 +1,8 @@
 package com.neaterbits.ide.common.ui.controller;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
@@ -19,6 +21,8 @@ final class EditorsController {
 	private final SourceFilesModel sourceFilesModel;
 	private final CompiledFileView compiledFileView;
 	
+	private final Map<SourceFileResourcePath, EditorController> editorControllers;
+	
 	EditorsController(EditorsView editorsView, SourceFilesModel sourceFilesModel, CompiledFileView compiledFileView) {
 
 		Objects.requireNonNull(editorsView);
@@ -27,6 +31,8 @@ final class EditorsController {
 		this.editorsView = editorsView;
 		this.sourceFilesModel = sourceFilesModel;
 		this.compiledFileView = compiledFileView;
+		
+		this.editorControllers = new HashMap<>();
 	}
 
 	void closeFile(SourceFileResourcePath sourceFile) {
@@ -42,6 +48,12 @@ final class EditorsController {
 		}
 	}
 
+	EditorActions getCurrentEditor() {
+		final SourceFileResourcePath currentEditedFile = getCurrentEditedFile();
+
+		return currentEditedFile != null ? editorControllers.get(currentEditedFile) : null;
+	}
+	
 	SourceFileResourcePath getCurrentEditedFile() {
 		return editorsView.getCurrentEditedFile();
 	}
@@ -63,7 +75,6 @@ final class EditorsController {
 
 		final EditorControllerDelegator editorControllerDelegator = new EditorControllerDelegator();
 		
-		
 		final EditorView editorView = editorsView.displayFile(
 				sourceFile.getPath(),
 				null, // TextStylingHelper.makeTextStylingModel(languageComonent, textModel),
@@ -75,6 +86,10 @@ final class EditorsController {
 		
 		editorController.updateText();
 		
+		editorControllers.put(sourceFile.getPath(), editorController);
+		
+		editorView.addDisposeListener(() -> editorControllers.remove(sourceFile.getPath()));
+
 		return editorView;
 	}
 }

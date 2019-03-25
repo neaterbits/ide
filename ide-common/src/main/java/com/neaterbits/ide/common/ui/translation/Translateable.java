@@ -5,5 +5,4 @@ public interface Translateable {
 	String getTranslationNamespace();
 	
 	String getTranslationId();
-	
 }

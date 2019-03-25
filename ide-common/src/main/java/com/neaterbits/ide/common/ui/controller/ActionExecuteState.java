@@ -17,7 +17,7 @@ final class ActionExecuteState {
 	private final UndoRedoBuffer undoRedoBuffer;
 	private final ComponentIDEAccess componentIDEAccess;
 	private final BuildRoot buildRoot;
-	private final EditActions editActions;
+	private final EditorsActions editorsActions;
 	private final CodeMapModel codeMap;
 
 	ActionExecuteState(
@@ -27,7 +27,7 @@ final class ActionExecuteState {
 			UndoRedoBuffer undoRedoBuffer,
 			ComponentIDEAccess componentIDEAccess,
 			BuildRoot buildRoot,
-			EditActions editActions,
+			EditorsActions editorsActions,
 			CodeMapModel codeMap) {
 	
 		Objects.requireNonNull(components);
@@ -36,7 +36,7 @@ final class ActionExecuteState {
 		Objects.requireNonNull(undoRedoBuffer);
 		Objects.requireNonNull(componentIDEAccess);
 		Objects.requireNonNull(buildRoot);
-		Objects.requireNonNull(editActions);
+		Objects.requireNonNull(editorsActions);
 		Objects.requireNonNull(codeMap);
 		
 		this.components = components;
@@ -45,7 +45,7 @@ final class ActionExecuteState {
 		this.undoRedoBuffer = undoRedoBuffer;
 		this.componentIDEAccess = componentIDEAccess;
 		this.buildRoot = buildRoot;
-		this.editActions = editActions;
+		this.editorsActions = editorsActions;
 		this.codeMap = codeMap;
 	}
 
@@ -73,8 +73,8 @@ final class ActionExecuteState {
 		return buildRoot;
 	}
 
-	EditActions getEditActions() {
-		return editActions;
+	EditorsActions getEditorsActions() {
+		return editorsActions;
 	}
 
 	CodeMapModel getCodeMap() {

@@ -11,6 +11,7 @@ import com.neaterbits.ide.model.text.TextRemove;
 import com.neaterbits.ide.model.text.TextReplace;
 import com.neaterbits.ide.util.ui.text.LineDelimiter;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.TextRange;
 
 public final class DiffTextModel extends TextModel {
 
@@ -155,5 +156,11 @@ public final class DiffTextModel extends TextModel {
 	@Override
 	public long getCharCount() {
 		return diffOffsets.getCharCount(curTextLength, initialOffsets);
+	}
+
+
+	@Override
+	public long find(Text searchText, long start, TextRange range, boolean forward, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
+		throw new UnsupportedOperationException();
 	}
 }

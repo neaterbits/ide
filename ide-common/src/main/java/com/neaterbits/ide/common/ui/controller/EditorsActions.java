@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.controller;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 
-public interface EditActions {
+public interface EditorsActions {
 	
 	void openSourceFileForEditing(SourceFileResourcePath sourceFile);
 	

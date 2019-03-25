@@ -25,6 +25,7 @@ import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
+import com.neaterbits.ide.common.ui.view.ViewDisposeListener;
 import com.neaterbits.ide.util.ui.text.Text;
 
 abstract class SWTBaseTextEditorView extends SWTEditorView {
@@ -69,6 +70,12 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		Objects.requireNonNull(config);
 		
 		this.config = config;
+	}
+	
+	
+	@Override
+	public void addDisposeListener(ViewDisposeListener listener) {
+		tabItem.addDisposeListener(e -> listener.onDispose());
 	}
 	
 	@Override
@@ -291,6 +298,11 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		setTabs(config.getTabs());
 		
 		this.config = config;
+	}
+
+	@Override
+	public final long getCursorPosition() {
+		return getCursorPos();
 	}
 }
 

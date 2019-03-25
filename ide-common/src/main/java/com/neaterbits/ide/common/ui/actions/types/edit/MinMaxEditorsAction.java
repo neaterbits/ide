@@ -10,7 +10,7 @@ public class MinMaxEditorsAction extends Action {
 	@Override
 	public void execute(ActionExecuteParameters parameters) {
 
-		parameters.getEditActions().minMaxEditors();
+		parameters.getEditorsActions().minMaxEditors();
 	}
 
 	@Override

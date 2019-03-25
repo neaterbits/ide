@@ -4,7 +4,8 @@ import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.ui.controller.EditActions;
+import com.neaterbits.ide.common.ui.controller.EditorActions;
+import com.neaterbits.ide.common.ui.controller.EditorsActions;
 import com.neaterbits.ide.common.ui.controller.UndoRedoBuffer;
 import com.neaterbits.ide.common.ui.view.UIDialogs;
 import com.neaterbits.ide.common.ui.view.View;
@@ -27,9 +28,11 @@ public interface ActionExecuteParameters {
 	
 	BuildRoot getBuildRoot();
 	
-	EditActions getEditActions();
+	EditorsActions getEditorsActions();
 	
 	View getFocusedView();
+	
+	EditorActions getFocusedEditor();
 	
 	CodeMapModel getCodeMap();
 }

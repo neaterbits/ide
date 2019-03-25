@@ -11,16 +11,18 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.CursorPositionListener;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
-import com.neaterbits.ide.common.ui.view.TextChangeListener;
+import com.neaterbits.ide.common.ui.view.TextEditorChangeListener;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.TextRange;
 import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
 import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
@@ -99,13 +101,24 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		textWidget.setTabs(tabs);
 	}
 
+	
+	
 	@Override
 	void addKeyListener(KeyListener keyListener) {
 		textWidget.addKeyListener(keyListener);
 	}
 	
 	@Override
-	public void addTextChangeListener(TextChangeListener listener) {
+	public TextRange getSelection() {
+		final Point selection = textWidget.getSelection();
+		
+		return selection != null
+				? new TextRange(selection.x,  selection.y - selection.x + 1)
+				: null; 
+	}
+
+	@Override
+	public void addTextChangeListener(TextEditorChangeListener listener) {
 		
 		if (textChangeEventsSinceSetWidgetText > 0) {
 			textWidget.addExtendedModifyListener(event -> listener.onTextChange(event.start, event.length, new StringText(event.replacedText)));
@@ -150,6 +163,10 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	@Override
 	public void selectAll() {
 		textWidget.setSelection(0, textWidget.getCharCount());
+	}
+	@Override
+	public void select(long offset, long length) {
+		textWidget.setSelection((int)offset, (int)(offset + length));
 	}
 
 	@Override

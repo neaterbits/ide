@@ -2,6 +2,7 @@ package com.neaterbits.ide.swt;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,19 +33,21 @@ import com.neaterbits.ide.common.ui.menus.Menus;
 import com.neaterbits.ide.common.ui.menus.SeparatorMenuEntry;
 import com.neaterbits.ide.common.ui.menus.SubMenuEntry;
 import com.neaterbits.ide.common.ui.menus.TextMenuEntry;
+import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;
+import com.neaterbits.ide.common.ui.model.dialogs.NewableSelection;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.common.ui.translation.Translator;
 import com.neaterbits.ide.common.ui.view.EditorsView;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.MapMenuItem;
 import com.neaterbits.ide.common.ui.view.MenuSelectionListener;
-import com.neaterbits.ide.common.ui.view.NewableSelection;
 import com.neaterbits.ide.common.ui.view.BuildIssuesView;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
 import com.neaterbits.ide.common.ui.view.ProjectView;
 import com.neaterbits.ide.common.ui.view.SearchResultsView;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.common.ui.view.ViewMenuItem;
+import com.neaterbits.ide.common.ui.view.dialogs.FindReplaceDialog;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.Newable;
 import com.neaterbits.ide.component.common.NewableCategory;
@@ -56,6 +59,8 @@ public final class SWTUIView implements UIViewAndSubViews {
 
 	private final SWTViewList viewList;
 	private final Display display;
+	private final UIParameters uiParameters;
+	
 	private final Shell window;
 	
 	private final Composite composite;
@@ -73,6 +78,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 	
 	private final SWTUIContext uiContext;
 	
+	
 	private boolean editorsMaximized;
 	
 	SWTUIView(Display display, UIParameters uiParameters, Menus menus, MapMenuItem mapMenuItem) {
@@ -80,6 +86,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 		this.viewList = new SWTViewList();
 		
 		this.display = display;
+		this.uiParameters = uiParameters;
 		
 		this.window = new Shell(display);
 		
@@ -333,9 +340,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 
 		final CreateNewableDialog dialog = new CreateNewableDialog(window, categories);
 		
-		dialog.open();
-		
-		return dialog.getSelection();
+		return dialog.open() == SWT.OK ? dialog.getSelection() : null;
 	}
 	
 	@Override
@@ -348,6 +353,14 @@ public final class SWTUIView implements UIViewAndSubViews {
 			ComponentIDEAccess ideAccess) {
 
 		uiComponentProvider.openNewableDialog(uiContext, category, newable, sourceFolder, namespace, ideAccess);
+	}
+
+	@Override
+	public void askFindReplace(FindReplaceDialogModel lastModel, Consumer<FindReplaceDialog> onCreated) {
+		
+		final SWTFindReplaceDialog dialog = new SWTFindReplaceDialog(window, lastModel, uiParameters.getTranslator(), onCreated);
+
+		dialog.open();
 	}
 
 	@Override

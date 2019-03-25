@@ -18,10 +18,10 @@ import com.neaterbits.ide.common.ui.actions.types.source.CodeCompletionAction;
 import com.neaterbits.ide.common.ui.actions.types.source.MoveAction;
 import com.neaterbits.ide.common.ui.actions.types.source.RenameAction;
 import com.neaterbits.ide.common.ui.actions.types.source.TypeHierarchyAction;
-import com.neaterbits.ide.common.ui.translation.Translateable;
+import com.neaterbits.ide.common.ui.translation.EnumTranslateable;
 import com.neaterbits.ide.common.ui.translation.TranslationNamespaces;
 
-public enum BuiltinAction implements Translateable {
+public enum BuiltinAction implements EnumTranslateable<BuiltinAction> {
 
 	NEW_POPUP(NewPopupAction.class),
 	NEW_DIALOG(NewDialogAction.class),
@@ -77,6 +77,6 @@ public enum BuiltinAction implements Translateable {
 
 	@Override
 	public String getTranslationId() {
-		return name().toLowerCase();
+		return getTranslationId(this);
 	}
 }

@@ -67,7 +67,7 @@ public class CharText extends CharArray64Bit implements Text, TextBuilder  {
 		
 		return new CharTextSubstring(this, beginIndex, endIndex);
 	}
-
+	
 	@Override
 	public String asString() {
 		

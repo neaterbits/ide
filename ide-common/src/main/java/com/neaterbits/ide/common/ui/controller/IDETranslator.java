@@ -90,6 +90,84 @@ final class IDETranslator implements Translator {
 				throw new UnsupportedOperationException();
 			}
 		}
+		else if (nameSpace.equals(TranslationNamespaces.FIND_REPLACE)) {
+			switch (translateable.getTranslationId()) {
+			case "find_replace_title":
+				translation = "Find/Replace";
+				break;
+
+			case "find_text_label":
+				translation = "Find:";
+				break;
+
+			case "replace_with_text_label":
+				translation = "Replace with:";
+				break;
+
+			case "direction":
+				translation = "Direction";
+				break;
+
+			case "forward":
+				translation = "Forward";
+				break;
+
+			case "backward":
+				translation = "Backward";
+				break;
+
+			case "scope":
+				translation = "Scope";
+				break;
+
+			case "all":
+				translation = "All";
+				break;
+
+			case "selected_lines":
+				translation = "Selected lines";
+				break;
+
+			case "options":
+				translation = "Options";
+				break;
+
+			case "case_sensitive":
+				translation = "Case sensitive";
+				break;
+
+			case "wrap_search":
+				translation = "Wrap search";
+				break;
+
+			case "whole_word":
+				translation = "Whole word";
+				break;
+
+			case "find_button":
+				translation = "Find";
+				break;
+
+			case "replace_find_button":
+				translation = "Replace/Find";
+				break;
+
+			case "replace_button":
+				translation = "Replace";
+				break;
+
+			case "replace_all_button":
+				translation = "Replace All";
+				break;
+
+			case "close_button":
+				translation = "Close";
+				break;
+
+			default:
+				throw new UnsupportedOperationException();
+			}
+		}
 		else {
 			throw new UnsupportedOperationException();
 		}
