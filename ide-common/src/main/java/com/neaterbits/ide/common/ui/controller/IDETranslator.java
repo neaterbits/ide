@@ -73,7 +73,15 @@ final class IDETranslator implements Translator {
 			case "find_replace":
 				translation = "&Find/Replace";
 				break;
+
+			case "find_next":
+				translation = "Find &Next";
+				break;
 				
+			case "find_previous":
+				translation = "Find Pre&vious";
+				break;
+
 			case "rename":
 				translation = "Re&name";
 				break;

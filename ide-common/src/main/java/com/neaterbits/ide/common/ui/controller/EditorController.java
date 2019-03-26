@@ -117,7 +117,16 @@ public final class EditorController implements EditorSourceActionContextProvider
 		
 		switch (scope) {
 		case ALL:
-			startPos = pos == -1 ? editorView.getCursorPosition() : pos;
+			
+			if (pos == -1) {
+				final long cursorPosition = editorView.getCursorPosition();
+
+				startPos = direction == SearchDirection.FORWARD ? cursorPosition : cursorPosition - 1;
+			}
+			else {
+				startPos = pos;
+			}
+			
 			searchRange = null; // whole text
 			break;
 			
@@ -147,7 +156,6 @@ public final class EditorController implements EditorSourceActionContextProvider
 		default:
 			throw new UnsupportedOperationException();
 		}
-		
 		
 		final long foundPos = textModel.find(
 				searchText,

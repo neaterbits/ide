@@ -22,6 +22,8 @@ public class IDEKeyBindings {
 			.addBuiltinAction(BuiltinAction.SELECT_ALL, 'a', QualifierKey.CTRL)
 
 			.addBuiltinAction(BuiltinAction.FIND_REPLACE, 'f', QualifierKey.CTRL)
+			.addBuiltinAction(BuiltinAction.FIND_NEXT, 'k', QualifierKey.CTRL)
+			.addBuiltinAction(BuiltinAction.FIND_PREVIOUS, 'k', QualifierKey.CTRL, QualifierKey.SHIFT)
 			
 			.addBuiltinAction(BuiltinAction.OPEN_TYPE, 't', QualifierKey.SHIFT, QualifierKey.CTRL)
 			.addBuiltinAction(BuiltinAction.SHOW_IN_PROJECTS, 'w', QualifierKey.SHIFT, QualifierKey.ALT)

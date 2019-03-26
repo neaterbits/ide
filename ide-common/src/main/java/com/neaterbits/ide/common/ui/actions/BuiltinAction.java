@@ -4,6 +4,8 @@ import com.neaterbits.ide.common.ui.actions.types.clipboard.CopyAction;
 import com.neaterbits.ide.common.ui.actions.types.clipboard.CutAction;
 import com.neaterbits.ide.common.ui.actions.types.clipboard.PasteAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.CloseEditedAction;
+import com.neaterbits.ide.common.ui.actions.types.edit.FindNextAction;
+import com.neaterbits.ide.common.ui.actions.types.edit.FindPreviousAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.FindReplaceAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.MinMaxEditorsAction;
 import com.neaterbits.ide.common.ui.actions.types.edit.RedoAction;
@@ -36,6 +38,8 @@ public enum BuiltinAction implements EnumTranslateable<BuiltinAction> {
 	SELECT_ALL(SelectAllAction.class),
 	
 	FIND_REPLACE(FindReplaceAction.class),
+	FIND_NEXT(FindNextAction.class),
+	FIND_PREVIOUS(FindPreviousAction.class),
 	
 	OPEN_TYPE(OpenTypeAction.class),
 	SHOW_IN_PROJECTS(ShowInProjectsAction.class),

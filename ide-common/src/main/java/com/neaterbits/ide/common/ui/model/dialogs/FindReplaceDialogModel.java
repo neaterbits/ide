@@ -44,6 +44,10 @@ public final class FindReplaceDialogModel {
 		this.wholeWord = wholeWord;
 	}
 
+	public boolean hasSearchText() {
+		return !searchFor.isEmpty();
+	}
+
 	public String getSearchFor() {
 		return searchFor;
 	}

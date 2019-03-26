@@ -31,6 +31,8 @@ public class IDEMenus {
 					.addSeparator()
 					
 					.addBuiltinAction(BuiltinAction.FIND_REPLACE)
+					.addBuiltinAction(BuiltinAction.FIND_NEXT)
+					.addBuiltinAction(BuiltinAction.FIND_PREVIOUS)
 			)
 			.addSubMenu(BuiltinMenu.REFACTOR,  b -> b
 					.addBuiltinAction(BuiltinAction.RENAME)

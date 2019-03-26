@@ -304,5 +304,10 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 	public final long getCursorPosition() {
 		return getCursorPos();
 	}
+
+	@Override
+	public void setCursorPosition(long offset) {
+		setCursorPos((int)offset);
+	}
 }
 

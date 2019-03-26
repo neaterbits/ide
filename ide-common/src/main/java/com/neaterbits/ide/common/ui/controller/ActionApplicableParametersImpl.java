@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
+import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;
 
 final class ActionApplicableParametersImpl implements ActionApplicableParameters {
 
@@ -25,5 +26,9 @@ final class ActionApplicableParametersImpl implements ActionApplicableParameters
 	public UndoRedoBuffer getUndoRedoBuffer() {
 		return executeState.getUndoRedoBuffer();
 	}
-	
+
+	@Override
+	public FindReplaceDialogModel getFindReplaceModel() {
+		return executeState.getFindReplaceModel();
+	}
 }

@@ -7,6 +7,7 @@ import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
+import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;
 import com.neaterbits.ide.common.ui.view.UIDialogs;
 import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
@@ -86,5 +87,15 @@ final class ActionExecuteParametersImpl implements ActionExecuteParameters {
 	@Override
 	public CodeMapModel getCodeMap() {
 		return executeState.getCodeMap();
+	}
+
+	@Override
+	public FindReplaceDialogModel getFindReplaceModel() {
+		return executeState.getFindReplaceModel();
+	}
+
+	@Override
+	public void storeFindReplaceModel(FindReplaceDialogModel findReplaceModel) {
+		executeState.setFindReplaceModel(findReplaceModel);
 	}
 }

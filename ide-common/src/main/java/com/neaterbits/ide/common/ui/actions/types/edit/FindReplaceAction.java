@@ -26,25 +26,25 @@ public final class FindReplaceAction extends Action {
 		
 		parameters.getUIDialogs().askFindReplace(curDialogModel, dialog -> {
 
-			dialog.addFindTextChangeListener(text -> updateModelAndButtonState(dialog, curFound));
+			dialog.addFindTextChangeListener(text -> updateModelAndButtonState(dialog, curFound, parameters));
 			dialog.addFindTextEnterKeyListener(() -> {
 				
-				updateModelAndButtonState(dialog, curFound);
+				updateModelAndButtonState(dialog, curFound, parameters);
 				
-				if (hasSearchText(curDialogModel)) {
+				if (curDialogModel.hasSearchText()) {
 					findText(parameters, dialog, curFound);
 				}
 			});
 
-			dialog.addReplaceWithTextListener(text -> updateModel(dialog));
+			dialog.addReplaceWithTextListener(text -> updateModel(dialog, parameters));
 			
-			dialog.addDirectionForwardListener(() -> updateModel(dialog));
-			dialog.addDirectionBackwardListener(() -> updateModel(dialog));
-			dialog.addScopeAllListener(() -> updateModel(dialog));
-			dialog.addScopeSelectedLinesListener(() -> updateModel(dialog));
-			dialog.addOptionsCaseSensitiveListener(() -> updateModel(dialog));
-			dialog.addOptionsWrapSearchListener(() -> updateModel(dialog));
-			dialog.addOptionsWholeWordListener(() -> updateModel(dialog));
+			dialog.addDirectionForwardListener(() -> updateModel(dialog, parameters));
+			dialog.addDirectionBackwardListener(() -> updateModel(dialog, parameters));
+			dialog.addScopeAllListener(() -> updateModel(dialog, parameters));
+			dialog.addScopeSelectedLinesListener(() -> updateModel(dialog, parameters));
+			dialog.addOptionsCaseSensitiveListener(() -> updateModel(dialog, parameters));
+			dialog.addOptionsWrapSearchListener(() -> updateModel(dialog, parameters));
+			dialog.addOptionsWholeWordListener(() -> updateModel(dialog, parameters));
 
 			updateDialogButtonState(curDialogModel, dialog, curFound);
 			
@@ -111,21 +111,24 @@ public final class FindReplaceAction extends Action {
 		
 	}
 
-	private void updateModel(FindReplaceDialog dialog) {
+	private void updateModel(FindReplaceDialog dialog, ActionExecuteParameters parameters) {
 
 		this.curDialogModel = dialog.getModel();
+		
+		// For Find Next/Previous
+		parameters.storeFindReplaceModel(curDialogModel);
 	}
 
-	private void updateModelAndButtonState(FindReplaceDialog dialog, Value<Long> curFound) {
+	private void updateModelAndButtonState(FindReplaceDialog dialog, Value<Long> curFound, ActionExecuteParameters parameters) {
 		
-		updateModel(dialog);
+		updateModel(dialog, parameters);
 		
 		updateDialogButtonState(curDialogModel, dialog, curFound);
 	}
 	
 	private void updateDialogButtonState(FindReplaceDialogModel model, FindReplaceDialog dialog, Value<Long> curFound) {
 		
-		final boolean hasSearchText = hasSearchText(model);
+		final boolean hasSearchText = model.hasSearchText();
 		
 		dialog.setFindButtonEnabled(hasSearchText);
 		
@@ -140,9 +143,5 @@ public final class FindReplaceAction extends Action {
 			ActionContexts allContexts) {
 
 		return focusedContexts.hasOfType(EditorContext.class);
-	}
-
-	private static boolean hasSearchText(FindReplaceDialogModel model) {
-		return !model.getSearchFor().isEmpty();
 	}
 }

@@ -14,6 +14,8 @@ public interface EditorView extends View {
 	void addCursorPositionListener(CursorPositionListener cursorPositionListener);
 	
 	long getCursorPosition();
+
+	void setCursorPosition(long offset);
 	
 	TextRange getSelection();
 	

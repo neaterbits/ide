@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
+import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;
 import com.neaterbits.ide.common.ui.view.UIDialogs;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.IDEComponentsConstAccess;
@@ -19,6 +20,7 @@ final class ActionExecuteState {
 	private final BuildRoot buildRoot;
 	private final EditorsActions editorsActions;
 	private final CodeMapModel codeMap;
+	private FindReplaceDialogModel findReplaceModel;
 
 	ActionExecuteState(
 			IDEComponentsConstAccess components,
@@ -79,5 +81,16 @@ final class ActionExecuteState {
 
 	CodeMapModel getCodeMap() {
 		return codeMap;
+	}
+
+	FindReplaceDialogModel getFindReplaceModel() {
+		return findReplaceModel;
+	}
+
+	void setFindReplaceModel(FindReplaceDialogModel findReplaceModel) {
+		
+		Objects.requireNonNull(findReplaceModel);
+		
+		this.findReplaceModel = findReplaceModel;
 	}
 }
