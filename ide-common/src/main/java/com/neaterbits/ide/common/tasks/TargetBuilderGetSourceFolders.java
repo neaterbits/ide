@@ -5,11 +5,11 @@ import java.util.List;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionResult;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 
-public class TargetBuilderGetSourceFolders extends TargetBuildSpec<InitialScanContext> {
+public class TargetBuilderGetSourceFolders extends TargetBuilderSpec<InitialScanContext> {
 
 	public static final String NAME = "sourcefolders";
 	

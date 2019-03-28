@@ -38,6 +38,7 @@
 		<module>buildsystem-common</module>
 		<module>buildsystem-maven</module>
 		<module>build-common</module>
+		<module>build-language-java-jdk</module>
 		<module>build-main</module>
 		<module>component-common</module>
 		<module>component-java-language</module>

@@ -1,9 +1,9 @@
 package com.neaterbits.ide.common.tasks;
 
-import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 
-public final class TargetBuilderIDEStartup extends TargetBuildSpec<InitialScanContext> {
+public final class TargetBuilderIDEStartup extends TargetBuilderSpec<InitialScanContext> {
 
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {

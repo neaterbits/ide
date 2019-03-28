@@ -10,11 +10,11 @@ import com.neaterbits.ide.common.build.tasks.ModuleBuilderUtil;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 
 // Add type names from eg. jar file index
-public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuildSpec<InitialScanContext> {
+public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuilderSpec<InitialScanContext> {
 
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {
@@ -44,7 +44,7 @@ public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuildSpec
 						.action(Constraint.IO, (context, target, parameters) -> {
 							
 							final LibraryResourcePath libraryResourcePath = (LibraryResourcePath)target.getResourcePath();
-							final Set<TypeName> types = context.getLanguage().getTypesFromLibraryFile(libraryResourcePath);
+							final Set<TypeName> types = context.getCompileableLanguage().getTypesFromLibraryFile(libraryResourcePath);
 							
 							context.getCodeMapGatherer().addLibraryFileTypes(libraryResourcePath, types);
 							

@@ -7,10 +7,10 @@ import com.neaterbits.ide.common.build.model.DependencyType;
 import com.neaterbits.ide.common.build.model.compile.ProjectModuleDependencyList;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
-import com.neaterbits.ide.util.scheduling.dependencies.PrerequisitesBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.PrerequisitesBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.PrerequisitesBuilder;
 
-final class PrerequisitesBuilderProjectDependencies extends PrerequisitesBuildSpec<ModulesBuildContext, ProjectModuleResourcePath> {
+final class PrerequisitesBuilderProjectDependencies extends PrerequisitesBuilderSpec<ModulesBuildContext, ProjectModuleResourcePath> {
 
 	@Override
 	public void buildSpec(PrerequisitesBuilder<ModulesBuildContext, ProjectModuleResourcePath> builder) {

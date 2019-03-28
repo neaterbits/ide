@@ -52,16 +52,12 @@ import com.neaterbits.ide.common.resource.ModuleResourcePath;
 import com.neaterbits.ide.common.resource.NamespaceResource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResource;
-import com.neaterbits.ide.common.resource.compile.CompiledFileResource;
-import com.neaterbits.ide.common.resource.compile.CompiledFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
-import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 import com.neaterbits.ide.component.common.language.compilercommon.CompilerSourceFileModel;
 import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
-import com.neaterbits.ide.util.PathUtil;
 
-public final class JavaLanguage implements CompileableLanguage, ParseableLanguage {
+public final class JavaLanguage extends JavaBuildableLanguage implements CompileableLanguage, ParseableLanguage {
 
 	private final BytecodeFormat bytecodeFormat;
 	
@@ -186,29 +182,6 @@ public final class JavaLanguage implements CompileableLanguage, ParseableLanguag
 	private Set<TypeName> getTypesFromJarFile(File file) throws IOException {
 
 		return bytecodeFormat.getTypesFromLibraryFile(file);
-	}
-
-	@Override
-	public CompiledFileResourcePath getCompiledFilePath(TargetDirectoryResourcePath targetDirectory, SourceFileResourcePath sourceFile) {
-		
-		final File sourceFolder = sourceFile.getSourceFolder();
-
-		final String path = PathUtil.removeDirectoryFromPath(sourceFolder, sourceFile.getFile());
-
-		final String classFilePath;
-		
-		if (path.endsWith(".java")) {
-			classFilePath = path.substring(0, path.length() - ".java".length()) + ".class";
-		}
-		else {
-			classFilePath = path;
-		}
-		
-		final File classesDirectory = new File(targetDirectory.getFile(), "classes");
-		
-		final File classFile = new File(classesDirectory, classFilePath);
-
-		return new CompiledFileResourcePath(targetDirectory, new CompiledFileResource(classFile));
 	}
 
 	@Override

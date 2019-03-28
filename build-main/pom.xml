@@ -19,7 +19,7 @@
   	</dependency>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
-  		<artifactId>component-java-language</artifactId>
+  		<artifactId>build-language-java-jdk</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   </dependencies>

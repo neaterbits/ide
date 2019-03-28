@@ -9,7 +9,7 @@ public abstract class BaseAsyncExecutor<QUEUE> implements AsyncExecutor {
 	final QUEUE queue;
 
 	BaseAsyncExecutor(QUEUE queue, Function<QUEUE, ForwardResultToCaller> forwardResultToCallerFactory, boolean scheduleAsynchronously) {
-		this(forwardResultToCallerFactory.apply(queue), scheduleAsynchronously);
+		this(forwardResultToCallerFactory.apply(queue), scheduleAsynchronously, queue);
 	}
 
 	protected BaseAsyncExecutor(ForwardResultToCaller forwardResultToCaller, boolean scheduleAsynchronously) {

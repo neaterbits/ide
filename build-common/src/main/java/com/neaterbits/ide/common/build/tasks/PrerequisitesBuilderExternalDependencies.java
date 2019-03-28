@@ -8,11 +8,11 @@ import com.neaterbits.ide.common.build.model.compile.ExternalModuleDependencyLis
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.PrerequisitesBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.PrerequisitesBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.PrerequisitesBuilder;
 
 public final class PrerequisitesBuilderExternalDependencies<CONTEXT extends TaskBuilderContext>
-			extends PrerequisitesBuildSpec<CONTEXT, ProjectModuleResourcePath> {
+			extends PrerequisitesBuilderSpec<CONTEXT, ProjectModuleResourcePath> {
 
 	@Override
 	public void buildSpec(PrerequisitesBuilder<CONTEXT, ProjectModuleResourcePath> builder) {

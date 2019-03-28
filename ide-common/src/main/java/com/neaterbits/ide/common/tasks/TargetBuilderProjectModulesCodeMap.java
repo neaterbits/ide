@@ -5,10 +5,10 @@ import com.neaterbits.ide.common.build.tasks.SourceFilesBuilderUtil;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 
-public final class TargetBuilderProjectModulesCodeMap extends TargetBuildSpec<InitialScanContext> {
+public final class TargetBuilderProjectModulesCodeMap extends TargetBuilderSpec<InitialScanContext> {
 
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {

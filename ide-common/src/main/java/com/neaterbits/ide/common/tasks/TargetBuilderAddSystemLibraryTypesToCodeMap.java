@@ -2,10 +2,10 @@ package com.neaterbits.ide.common.tasks;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 
-public final class TargetBuilderAddSystemLibraryTypesToCodeMap extends TargetBuildSpec<InitialScanContext> {
+public final class TargetBuilderAddSystemLibraryTypesToCodeMap extends TargetBuilderSpec<InitialScanContext> {
 
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {
@@ -14,7 +14,7 @@ public final class TargetBuilderAddSystemLibraryTypesToCodeMap extends TargetBui
 		targetBuilder
 			.addTarget("systemlibrarytypes", "System library type names")
 			.withPrerequisites("System library files")
-			.fromIterating(context -> context.getLanguage().getSystemLibraries().getFiles())
+			.fromIterating(context -> context.getCompileableLanguage().getSystemLibraries().getFiles())
 			.buildBy(st -> st
 				.addInfoSubTarget(
 					DependencyFile.class,

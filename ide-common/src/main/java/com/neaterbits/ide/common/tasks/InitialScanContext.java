@@ -10,6 +10,7 @@ import com.neaterbits.ide.common.model.codemap.CodeMapGatherer;
 
 public final class InitialScanContext extends TaskBuilderContext {
 
+	private final CompileableLanguage compileableLanguage;
 	private final CodeMapGatherer codeMapGatherer;
 	
 	public InitialScanContext(BuildRoot buildRoot, CompileableLanguage language, CodeMapGatherer codeMapGatherer) {
@@ -17,15 +18,21 @@ public final class InitialScanContext extends TaskBuilderContext {
 	
 		Objects.requireNonNull(codeMapGatherer);
 		
+		this.compileableLanguage = language;
 		this.codeMapGatherer = codeMapGatherer;
 	}
 
-	public InitialScanContext(TaskBuilderContext context, CodeMapGatherer codeMapGatherer) {
+	public InitialScanContext(TaskBuilderContext context, CompileableLanguage language, CodeMapGatherer codeMapGatherer) {
 		super(context);
 
 		Objects.requireNonNull(codeMapGatherer);
 		
+		this.compileableLanguage = language;
 		this.codeMapGatherer = codeMapGatherer;
+	}
+
+	public CompileableLanguage getCompileableLanguage() {
+		return compileableLanguage;
 	}
 
 	public CodeMapGatherer getCodeMapGatherer() {

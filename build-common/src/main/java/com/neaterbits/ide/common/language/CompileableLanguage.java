@@ -8,11 +8,9 @@ import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.resource.compile.CompiledFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
-import com.neaterbits.ide.common.resource.compile.TargetDirectoryResourcePath;
 
-public interface CompileableLanguage {
+public interface CompileableLanguage extends BuildableLanguage {
 	
 	TypeName getTypeName(SourceFileResourcePath sourceFile);
 	
@@ -32,8 +30,6 @@ public interface CompileableLanguage {
 
 	Set<TypeName> getTypesFromSystemLibraryFile(DependencyFile systemLibraryPath) throws IOException;
 	
-	CompiledFileResourcePath getCompiledFilePath(TargetDirectoryResourcePath targetDirectory, SourceFileResourcePath sourceFile);
-
 	boolean canReadCodeMapFromCompiledCode();
 	
 }

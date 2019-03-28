@@ -8,7 +8,7 @@ import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilderImpl;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 
-public abstract class TargetBuildSpec<CONTEXT extends TaskContext> {
+public abstract class TargetBuilderSpec<CONTEXT extends TaskContext> {
 
 	protected abstract void buildSpec(TargetBuilder<CONTEXT> targetBuilder);
 	

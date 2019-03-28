@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.scheduling.dependencies.PrerequisiteSpec;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.TargetSpec;
 
 public final class TargetBuilderImpl<CONTEXT extends TaskContext> implements TargetBuilder<CONTEXT> {
@@ -31,7 +31,7 @@ public final class TargetBuilderImpl<CONTEXT extends TaskContext> implements Tar
 	
 	
 	@Override
-	public NoTargetTargetBuildSpecPrerequisitesBuilder addTarget(TargetBuildSpec<CONTEXT> subTarget) {
+	public NoTargetTargetBuildSpecPrerequisitesBuilder addTarget(TargetBuilderSpec<CONTEXT> subTarget) {
 
 		final NoTargetTargetBuildSpecPrerequisitesBuilderImpl<CONTEXT> builder
 			= new NoTargetTargetBuildSpecPrerequisitesBuilderImpl<>(subTarget.buildTargetSpecs());

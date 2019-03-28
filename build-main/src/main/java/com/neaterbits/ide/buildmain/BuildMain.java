@@ -13,7 +13,7 @@ import com.neaterbits.ide.common.build.model.BuildRootImpl;
 import com.neaterbits.ide.common.build.tasks.ModulesBuildContext;
 import com.neaterbits.ide.common.build.tasks.TargetBuilderModules;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
-import com.neaterbits.ide.component.java.language.JavaLanguage;
+import com.neaterbits.ide.component.java.language.JavaBuildableLanguage;
 import com.neaterbits.ide.component.java.language.JavaCompiler;
 import com.neaterbits.ide.util.scheduling.QueueAsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.StructuredTargetExecutorLogger;
@@ -53,7 +53,7 @@ public class BuildMain {
 				
 				final ModulesBuildContext context = new ModulesBuildContext(
 						buildRoot,
-						new JavaLanguage(),
+						new JavaBuildableLanguage(),
 						new JavaCompiler(),
 						null);
 

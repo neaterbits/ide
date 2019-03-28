@@ -3,16 +3,16 @@ package com.neaterbits.ide.common.build.tasks;
 import java.util.Collection;
 
 import com.neaterbits.ide.common.build.model.BuildRoot;
-import com.neaterbits.ide.common.language.CompileableLanguage;
+import com.neaterbits.ide.common.language.BuildableLanguage;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 
 public abstract class TaskBuilderContext extends TaskContext {
 	private final BuildRoot buildRoot;
-	private final CompileableLanguage language;
+	private final BuildableLanguage language;
 
-	protected TaskBuilderContext(BuildRoot buildRoot, CompileableLanguage language) {
+	protected TaskBuilderContext(BuildRoot buildRoot, BuildableLanguage language) {
 		this.buildRoot = buildRoot;
 		this.language = language;
 	}
@@ -25,7 +25,7 @@ public abstract class TaskBuilderContext extends TaskContext {
 		return buildRoot;
 	}
 
-	public final CompileableLanguage getLanguage() {
+	public final BuildableLanguage getLanguage() {
 		return language;
 	}
 

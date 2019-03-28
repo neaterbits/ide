@@ -6,10 +6,10 @@ import com.neaterbits.ide.common.build.model.compile.SourceFolderCompileList;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.PrerequisitesBuildSpec;
+import com.neaterbits.ide.util.scheduling.dependencies.PrerequisitesBuilderSpec;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.PrerequisitesBuilder;
 
-public class PrerequisitesBuilderModuleCompileList extends PrerequisitesBuildSpec<ModulesBuildContext, ProjectModuleResourcePath> {
+public class PrerequisitesBuilderModuleCompileList extends PrerequisitesBuilderSpec<ModulesBuildContext, ProjectModuleResourcePath> {
 
 	@Override
 	public void buildSpec(PrerequisitesBuilder<ModulesBuildContext, ProjectModuleResourcePath> builder) {
