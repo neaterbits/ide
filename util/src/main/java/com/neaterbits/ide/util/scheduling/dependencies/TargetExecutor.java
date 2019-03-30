@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
+import com.neaterbits.structuredlog.binary.logging.LogContext;
 
 final class TargetExecutor {
 	
@@ -184,10 +185,11 @@ final class TargetExecutor {
 			= (BiFunction)fromPrerequisites.getSubPrerequisitesFunction();
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-
 		final Function<Object, Object> getTargetFromPrerequisite = (Function)fromPrerequisites.getTargetFromSubPrerequisite();
 		
 		final Object targetObject = getTargetFromPrerequisite.apply(target.getTargetObject());
+		
+		final LogContext logContext = target.getLogContext();
 		
 		if (DEBUG) {
 			System.out.println("## got target object " + targetObject + " from " + target.getTargetObject() + " of " + target.getTargetObject().getClass());
@@ -215,18 +217,19 @@ final class TargetExecutor {
 			final Collection<Object> subPrerequisitesList = getSubPrerequisites.apply(context, subPrerequisiteObject);
 
 			final List<Prerequisite<?>> list = subPrerequisitesList.stream()
-					.map(sp -> new Prerequisite<>(sp, null))
+					.map(sp -> new Prerequisite<>(logContext, sp, null))
 					.collect(Collectors.toList());
 			
-			final Prerequisites subPrerequisites = new Prerequisites(list, fromPrerequisites.getSpec());
+			final Prerequisites subPrerequisites = new Prerequisites(logContext, list, fromPrerequisites.getSpec());
 			
 			final Target<Object> subTarget =
 					targetSpec.createTarget(
+							logContext,
 							context,
 							subPrerequisiteObject,
 							Arrays.asList(subPrerequisites));
 
-			targetPrerequisitesList.add(new Prerequisite<>(subPrerequisiteObject, subTarget));
+			targetPrerequisitesList.add(new Prerequisite<>(logContext, subPrerequisiteObject, subTarget));
 
 			if (DEBUG) {
 				System.out.println("## added subtarget " + subTarget + " from prerequisites " + targetPrerequisites + " from " + target.getTargetObject());
@@ -242,7 +245,7 @@ final class TargetExecutor {
 		}
 		
 		// Trigger fromPrerequisite to be set in sub targets
-		final Prerequisites updatedPrerequisites = new Prerequisites(targetPrerequisitesList, fromPrerequisites.getSpec());
+		final Prerequisites updatedPrerequisites = new Prerequisites(logContext, targetPrerequisitesList, fromPrerequisites.getSpec());
 		
 		target.setPrerequisites(Arrays.asList(updatedPrerequisites));
 		

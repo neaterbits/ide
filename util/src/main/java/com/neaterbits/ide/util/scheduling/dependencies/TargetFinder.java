@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
+import com.neaterbits.structuredlog.binary.logging.LogContext;
 
 final class TargetFinder extends PrerequisitesFinder {
 
@@ -16,12 +17,13 @@ final class TargetFinder extends PrerequisitesFinder {
 
 	<CONTEXT extends TaskContext, TARGET> void computeTargets(
 			List<TargetSpec<CONTEXT, TARGET>> targetSpecs,
+			LogContext logContext,
 			CONTEXT context,
 			TargetFinderLogger logger,
 			Consumer<Target<TARGET>> rootTarget) {
 
 		for (TargetSpec<CONTEXT, TARGET> targetSpec : targetSpecs) {
-			findTargets(null, targetSpec, context, null, logger, 0, rootTarget);
+			findTargets(null, targetSpec, logContext, context, null, logger, 0, rootTarget);
 		}
 
 		asyncExecutor.runQueuedResultRunnables();
@@ -32,6 +34,7 @@ final class TargetFinder extends PrerequisitesFinder {
 		void findTargets(
 				Prerequisites fromPrerequisites,
 				TargetSpec<CONTEXT, TARGET> targetSpec,
+				LogContext logContext,
 				CONTEXT context,
 				TARGET target,
 				TargetFinderLogger logger,
@@ -44,7 +47,7 @@ final class TargetFinder extends PrerequisitesFinder {
 
 		final Consumer<List<Prerequisites>> onFoundPrerequisites = (List<Prerequisites> prerequisites) -> {
 			
-			final Target<TARGET> createdTarget = targetSpec.createTarget(context, target, prerequisites);
+			final Target<TARGET> createdTarget = targetSpec.createTarget(logContext, context, target, prerequisites);
 			
 			if (logger != null) {
 				logger.onFoundPrerequisites(indent, createdTarget, prerequisites);
@@ -54,6 +57,7 @@ final class TargetFinder extends PrerequisitesFinder {
 		};
 		
 		findPrerequisites(
+				logContext,
 				context,
 				targetSpec,
 				target,
@@ -63,6 +67,7 @@ final class TargetFinder extends PrerequisitesFinder {
 	}
 
 	private <CONTEXT extends TaskContext, TARGET, FILE_TARGET, PREREQUISITE> void findPrerequisites(
+			LogContext logContext,
 			CONTEXT context,
 			TargetSpec<CONTEXT, TARGET> targetSpec,
 			TARGET target,
@@ -79,9 +84,11 @@ final class TargetFinder extends PrerequisitesFinder {
 		else {
 			for (PrerequisiteSpec<CONTEXT, TARGET, ?> prerequisiteSpec : prerequisiteSpecs) {
 	
-				getPrerequisites(context, null, targetSpec, target, prerequisiteSpec, logger, indent, prerequisitesList -> {
+				getPrerequisites(logContext, context, null, targetSpec, target, prerequisiteSpec, logger, indent, prerequisitesList -> {
 					
-					final Prerequisites prerequisites = new Prerequisites(prerequisitesList, prerequisiteSpec);
+					System.out.println("## find prerequisites for " + target);
+					
+					final Prerequisites prerequisites = new Prerequisites(logContext, prerequisitesList, prerequisiteSpec);
 					
 					list.add(prerequisites);
 	

@@ -17,8 +17,9 @@ import com.neaterbits.ide.component.java.language.JavaBuildableLanguage;
 import com.neaterbits.ide.component.java.language.JavaCompiler;
 import com.neaterbits.ide.util.scheduling.QueueAsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.StructuredTargetExecutorLogger;
-import com.neaterbits.structuredlog.model.Log;
-import com.neaterbits.structuredlog.model.LogIO;
+import com.neaterbits.structuredlog.binary.logging.LogContext;
+import com.neaterbits.structuredlog.xml.model.Log;
+import com.neaterbits.structuredlog.xml.model.LogIO;
 
 public class BuildMain {
 
@@ -60,9 +61,11 @@ public class BuildMain {
 				// final TargetExecutorLogger logger = new PrintlnTargetExecutorLogger();
 				final StructuredTargetExecutorLogger logger = new StructuredTargetExecutorLogger();
 
+				final LogContext logContext = new LogContext();
+				
 				final QueueAsyncExecutor asyncExecutor = new QueueAsyncExecutor(false);
 
-				targetBuilderModules.execute(context, logger, asyncExecutor, result -> {
+				targetBuilderModules.execute(logContext, context, logger, asyncExecutor, result -> {
 
 					System.out.println("### completed execution");
 					
@@ -73,6 +76,12 @@ public class BuildMain {
 					try (FileOutputStream outputStream = new FileOutputStream(new File("buildlog.xml"))) {
 						logIO.writeLog(log, outputStream);
 					} catch (IOException | JAXBException ex) {
+						throw new IllegalStateException(ex);
+					}
+
+					try (FileOutputStream outputStream = new FileOutputStream(new File("binarylog"))) {
+						logContext.writeLogBufferToOutput(outputStream);
+					} catch (IOException ex) {
 						throw new IllegalStateException(ex);
 					}
 				});

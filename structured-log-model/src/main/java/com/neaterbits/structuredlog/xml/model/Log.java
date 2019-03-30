@@ -1,4 +1,4 @@
-package com.neaterbits.structuredlog.model;
+package com.neaterbits.structuredlog.xml.model;
 
 import java.util.List;
 

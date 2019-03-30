@@ -10,6 +10,7 @@ import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
+import com.neaterbits.structuredlog.binary.logging.LogContext;
 
 public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 
@@ -25,7 +26,7 @@ public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 	private ActionWithResultFunction<CONTEXT, TARGET, ?> actionWithResult;
 	private ProcessResult<CONTEXT, TARGET, ?> onResult;
 
-	abstract Target<TARGET> createTarget(CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList);
+	abstract Target<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList);
 
 	public abstract TargetSpec<CONTEXT, TARGET> addPrerequisiteSpecs(List<PrerequisiteSpec<CONTEXT, TARGET, ?>> additionalPrerequisites);
 	
@@ -37,7 +38,7 @@ public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 			ActionFunction<CONTEXT, TARGET> actionFunction,
 			ActionWithResultFunction<CONTEXT, TARGET, ?> actionWithResult,
 			ProcessResult<CONTEXT, TARGET, ?> onResult) {
-		
+
 		this.type = type;
 		
 		this.description = description;

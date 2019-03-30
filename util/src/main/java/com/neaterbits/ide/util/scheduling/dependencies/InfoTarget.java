@@ -3,12 +3,23 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.structuredlog.binary.logging.LogContext;
+
 final class InfoTarget<TARGET> extends Target<TARGET> {
 
 	private final String name;
 	private final String qualifierName;
 
+	private static String getLogIdentifier(String name, String qualifierName) {
+		return name + (qualifierName != null ? "-" + qualifierName : "");
+	}
+
+	private static String getLogLocalIdentifier(String name) {
+		return name;
+	}
+
 	InfoTarget(
+			LogContext logContext,
 			Class<TARGET> type,
 			String name,
 			String qualifierName,
@@ -18,7 +29,17 @@ final class InfoTarget<TARGET> extends Target<TARGET> {
 			Action<TARGET> action,
 			ActionWithResult<TARGET> actionWithResult,
 			InfoTargetSpec<?, TARGET> targetSpec) {
-		super(type, description, targetObject, prerequisites, action, actionWithResult, targetSpec);
+		super(
+				logContext,
+				getLogIdentifier(name, qualifierName),
+				getLogLocalIdentifier(qualifierName),
+				type,
+				description,
+				targetObject,
+				prerequisites,
+				action,
+				actionWithResult,
+				targetSpec);
 		
 		Objects.requireNonNull(name);
 		
@@ -27,8 +48,18 @@ final class InfoTarget<TARGET> extends Target<TARGET> {
 	}
 
 	@Override
+	public String getLogIdentifier() {
+		return getLogIdentifier(name, qualifierName);
+	}
+
+	@Override
+	public String getLogLocalIdentifier() {
+		return getLogLocalIdentifier(name);
+	}
+
+	@Override
 	String getDebugString() {
-		return name + (qualifierName != null ? "-" + qualifierName : "");
+		return getLogIdentifier();
 	}
 
 	String getName() {

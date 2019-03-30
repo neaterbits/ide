@@ -4,11 +4,22 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.structuredlog.binary.logging.LogContext;
+
 final class FileTarget<TARGET> extends Target<TARGET> {
 
+	private static String getLogIdentifier(File file) {
+		return file.getPath();
+	}
+	
+	private static String getLogLocalIdentifier(File file) {
+		return file.getName();
+	}
+	
 	private final File file;
 	
 	public FileTarget(
+			LogContext logContext,
 			Class<TARGET> type,
 			File file,
 			String description,
@@ -18,7 +29,17 @@ final class FileTarget<TARGET> extends Target<TARGET> {
 			ActionWithResult<TARGET> actionWithResult,
 			FileTargetSpec<?, TARGET, ?> targetSpec) {
 		
-		super(type, description, targetObject, prerequisites, action, actionWithResult, targetSpec);
+		super(
+				logContext,
+				getLogIdentifier(file),
+				getLogLocalIdentifier(file),
+				type,
+				description,
+				targetObject,
+				prerequisites,
+				action,
+				actionWithResult,
+				targetSpec);
 
 		Objects.requireNonNull(file);
 		
@@ -27,6 +48,16 @@ final class FileTarget<TARGET> extends Target<TARGET> {
 		if (targetSpec.getFile() == null) {
 			throw new IllegalArgumentException();
 		}
+	}
+	
+	@Override
+	public String getLogIdentifier() {
+		return getLogIdentifier(file);
+	}
+	
+	@Override
+	public String getLogLocalIdentifier() {
+		return getLogLocalIdentifier(file);
 	}
 
 	@Override

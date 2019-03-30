@@ -10,25 +10,22 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import com.neaterbits.structuredlog.model.Log;
-import com.neaterbits.structuredlog.model.LogData;
-import com.neaterbits.structuredlog.model.LogDataEntry;
-import com.neaterbits.structuredlog.model.LogEntry;
+import com.neaterbits.structuredlog.xml.model.Log;
+import com.neaterbits.structuredlog.xml.model.LogData;
+import com.neaterbits.structuredlog.xml.model.LogDataEntry;
+import com.neaterbits.structuredlog.xml.model.LogEntry;
 
-public final class LogUI {
+public final class SWTXmlLogUI extends SWTBaseUI {
 	
-	private final Shell window;
 	private final Composite composite;
 	private Table table;
 
@@ -40,11 +37,9 @@ public final class LogUI {
 	
 	private java.util.List<LogEntry> tableLogEntries;
 	
-	LogUI(Log log) {
+	SWTXmlLogUI(Log log) {
 
 		Objects.requireNonNull(log);
-		
-		this.window = new Shell();
 		
 		window.setSize(1850, 850);
 		
@@ -345,14 +340,5 @@ public final class LogUI {
 		});
 		
 		return table;
-	}
-
-	void start() {
-
-		final Display display = window.getDisplay();
-		
-		while (display.readAndDispatch() && !window.isDisposed()) {
-			display.sleep();
-		}
 	}
 }

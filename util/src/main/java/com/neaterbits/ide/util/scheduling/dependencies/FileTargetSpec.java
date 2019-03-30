@@ -10,6 +10,7 @@ import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
+import com.neaterbits.structuredlog.binary.logging.LogContext;
 
 public final class FileTargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARGET>
 			extends TargetSpec<CONTEXT, TARGET> {
@@ -64,10 +65,11 @@ public final class FileTargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARG
 	}
 
 	@Override
-	Target<TARGET> createTarget(CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList) {
+	Target<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList) {
 		final FILE_TARGET fileTarget = getFileTarget.apply(context, target);
 		
 		return new FileTarget<>(
+				logContext,
 				getType(),
 				file.apply(fileTarget),
 				getDescription(target),

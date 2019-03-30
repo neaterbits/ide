@@ -7,6 +7,7 @@ import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilderImpl;
 import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
+import com.neaterbits.structuredlog.binary.logging.LogContext;
 
 public abstract class TargetBuilderSpec<CONTEXT extends TaskContext> {
 
@@ -22,7 +23,7 @@ public abstract class TargetBuilderSpec<CONTEXT extends TaskContext> {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public final void execute(CONTEXT context, TargetExecutorLogger logger, AsyncExecutor executor, Consumer<TargetBuildResult> onResult) {
+	public final void execute(LogContext logContext, CONTEXT context, TargetExecutorLogger logger, AsyncExecutor executor, Consumer<TargetBuildResult> onResult) {
 		
 		try {
 			final List<TargetSpec<CONTEXT, ?>> targetSpecs = buildTargetSpecs();
@@ -31,7 +32,9 @@ public abstract class TargetBuilderSpec<CONTEXT extends TaskContext> {
 			
 			final TargetFinderLogger targetFinderLogger = null; // new PrintlnTargetFinderLogger();
 			
-			targetFinder.computeTargets((List)targetSpecs, context, targetFinderLogger, target -> {
+			targetFinder.computeTargets((List)targetSpecs, logContext, context, targetFinderLogger, target -> {
+				
+				target.logRootObject(logContext);
 				
 				// target.printTargets();
 				

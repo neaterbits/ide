@@ -3,8 +3,15 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Target<TARGET> extends BuildEntity {
+import com.neaterbits.structuredlog.binary.logging.LogContext;
+import com.neaterbits.structuredlog.binary.logging.Loggable;
 
+public abstract class Target<TARGET> extends BuildEntity implements Loggable {
+
+	private static final String LOG_FIELD_PREREQUISITES = "prerequisites";
+	
+	private final LogContext logContext;
+	private final int constructorLogSequenceNo;
 	private final Class<TARGET> type;
 	private final String description;
 	private final TARGET targetObject;
@@ -19,8 +26,10 @@ public abstract class Target<TARGET> extends BuildEntity {
 
 	public abstract String targetToLogString();
 	
-	
 	Target(
+			LogContext logContext,
+			String logIdentifier,
+			String logLocalIdentifier,
 			Class<TARGET> type,
 			String description,
 			TARGET targetObject,
@@ -31,15 +40,27 @@ public abstract class Target<TARGET> extends BuildEntity {
 		
 		Objects.requireNonNull(targetSpec);
 		
+		this.constructorLogSequenceNo = logConstructor(logContext, Target.class, logIdentifier, logLocalIdentifier, description);
+		
+		this.logContext = logContext;
 		this.type = type;
 		this.description = description;
 		this.targetObject = targetObject;
-		this.prerequisites = prerequisites;
+		this.prerequisites = logConstructorListField(logContext, logIdentifier, LOG_FIELD_PREREQUISITES, prerequisites);
 		this.action = action;
 		this.actionWithResult = actionWithResult;
 		this.targetSpec = targetSpec;
 		
 		setPrerequisites(prerequisites);
+	}
+	
+	@Override
+	public final int getConstructorLogSequenceNo() {
+		return constructorLogSequenceNo;
+	}
+
+	final LogContext getLogContext() {
+		return logContext;
 	}
 
 	final Class<TARGET> getType() {
@@ -68,7 +89,8 @@ public abstract class Target<TARGET> extends BuildEntity {
 		this.fromPrerequisite = fromPrerequisite;
 	}
 
-	final String getDescription() {
+	@Override
+	public final String getDescription() {
 		return description;
 	}
 

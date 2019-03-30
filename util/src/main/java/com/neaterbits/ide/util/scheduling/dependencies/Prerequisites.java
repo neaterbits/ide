@@ -6,24 +6,62 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-final class Prerequisites extends BuildEntity {
+import com.neaterbits.structuredlog.binary.logging.LogContext;
+import com.neaterbits.structuredlog.binary.logging.Loggable;
 
+final class Prerequisites extends BuildEntity implements Loggable {
+
+	private static final String LOG_FIELD_PREREQUISITES = "prerequisitelist";
+	
+	private final int constructorLogSequenceNo; 
 	private final List<Prerequisite<?>> prerequisites;
 	private final PrerequisiteSpec<?, ?, ?> spec;
 
 	private Target<?> fromTarget;
 
-	Prerequisites(List<Prerequisite<?>> prerequisites, PrerequisiteSpec<?, ?, ?> spec) {
+	private static String getLogIdentifierValue() {
+		return null;
+	}
+
+	private static String getLogLocalIdentifierValue() {
+		return null;
+	}
+
+	Prerequisites(LogContext logContext, List<Prerequisite<?>> prerequisites, PrerequisiteSpec<?, ?, ?> spec) {
+		
+		final String identifier = getLogIdentifierValue();
+		
+		this.constructorLogSequenceNo = logConstructor(logContext, Prerequisites.class, identifier, getLogLocalIdentifierValue(), spec.getDescription());
 		
 		Objects.requireNonNull(prerequisites);
 		Objects.requireNonNull(spec);
 	
-		this.prerequisites = prerequisites;
+		this.prerequisites = logConstructorListField(logContext, identifier, LOG_FIELD_PREREQUISITES, prerequisites);
 		this.spec = spec;
 		
 		prerequisites.forEach(prerequisite -> prerequisite.setFromPrerequisites(this));
 	}
 	
+	@Override
+	public int getConstructorLogSequenceNo() {
+		return constructorLogSequenceNo;
+	}
+
+	@Override
+	public String getLogIdentifier() {
+		return getLogIdentifierValue();
+	}
+
+	@Override
+	public String getLogLocalIdentifier() {
+		return getLogLocalIdentifierValue();
+	}
+
+	@Override
+	public String getDescription() {
+		return spec.getDescription();
+	}
+
 	@Override
 	String getDebugString() {
 		return null;

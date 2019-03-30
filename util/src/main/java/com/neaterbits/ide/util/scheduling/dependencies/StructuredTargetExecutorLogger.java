@@ -9,11 +9,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionLog;
-import com.neaterbits.structuredlog.model.Log;
-import com.neaterbits.structuredlog.model.LogData;
-import com.neaterbits.structuredlog.model.LogDataEntry;
-import com.neaterbits.structuredlog.model.LogEntry;
-import com.neaterbits.structuredlog.model.LogPath;
+import com.neaterbits.structuredlog.xml.model.Log;
+import com.neaterbits.structuredlog.xml.model.LogData;
+import com.neaterbits.structuredlog.xml.model.LogDataEntry;
+import com.neaterbits.structuredlog.xml.model.LogEntry;
+import com.neaterbits.structuredlog.xml.model.LogPath;
 
 public final class StructuredTargetExecutorLogger implements TargetExecutorLogger {
 

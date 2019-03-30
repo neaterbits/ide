@@ -1,4 +1,4 @@
-package com.neaterbits.structuredlog.model;
+package com.neaterbits.structuredlog.xml.model;
 
 
 import javax.xml.bind.annotation.XmlElement;
