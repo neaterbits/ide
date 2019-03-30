@@ -1,20 +1,25 @@
 package com.neaterbits.ide.util.ui.text.styling;
 
-import java.util.Objects;
 
 public final class TextStyleOffset {
 
+	public static final TextColor SELECTED_BG_COLOR = new TextColor(0x60, 0x60, 0xD0);
+	
 	private final long start;
 	private final long length;
 	private final TextColor color;
+	private final TextColor bgColor;
 	
 	public TextStyleOffset(long start, long length, TextColor color) {
-		
-		Objects.requireNonNull(color);
-		
+		this(start, length, color, null);
+	}
+
+	public TextStyleOffset(long start, long length, TextColor color, TextColor bgColor) {
+
 		this.start = start;
 		this.length = length;
 		this.color = color;
+		this.bgColor = bgColor;
 	}
 
 	public long getStart() {
@@ -27,6 +32,10 @@ public final class TextStyleOffset {
 
 	public TextColor getColor() {
 		return color;
+	}
+	
+	public TextColor getBgColor() {
+		return bgColor;
 	}
 
 	@Override

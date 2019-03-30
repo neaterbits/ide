@@ -26,6 +26,8 @@ public class BinaryLogReader extends BaseBinaryLogIO {
 		final Map<Integer, LogObject> objectsByConstructorSequenceNo = new HashMap<>();
 		final List<Integer> logRoots = new ArrayList<>();
 		
+		final List<LogMessage> logMessages = new ArrayList<>();
+		
 		try (InputStream inputStream = new FileInputStream(file)) {
 			
 			final DataInputStream dataInput = new DataInputStream(inputStream);
@@ -81,8 +83,9 @@ public class BinaryLogReader extends BaseBinaryLogIO {
 
 					final LogObject logObject = readLogObject(sequenceNo, null, dataInput, typeNames);
 
-					if (logObject.getLogIdentifier() != null && objectsByConstructorSequenceNo.containsKey(logObject.getLogIdentifier())) {
-//						throw new IllegalStateException("Already contains " + identifier + " of type " + typeNames.get(typeId));
+					if (objectsByConstructorSequenceNo.containsKey(logObject.getConstructorLogSequenceNo())) {
+						throw new IllegalStateException("Already contains " + logObject.getConstructorLogSequenceNo()
+							+ " of type " + logObject.getType());
 					}
 
 					objectsByConstructorSequenceNo.put(logObject.getConstructorLogSequenceNo(), logObject);
@@ -157,7 +160,11 @@ public class BinaryLogReader extends BaseBinaryLogIO {
 
 					break;
 				}
-					
+
+				case DEBUG:
+					logMessages.add(readLogMessage(sequenceNo, Severity.DEBUG, dataInput, objectsByConstructorSequenceNo));
+					break;
+				
 				default:
 					throw new UnsupportedOperationException();
 				}
@@ -169,7 +176,16 @@ public class BinaryLogReader extends BaseBinaryLogIO {
 				.filter(object -> object != null)
 				.collect(Collectors.toList());
 		
-		return new LogModel(typeNames, fieldNames, objectsByConstructorSequenceNo, logRoots, rootObjects);
+		return new LogModel(typeNames, fieldNames, objectsByConstructorSequenceNo, logRoots, rootObjects, logMessages);
+	}
+	
+	private LogMessage readLogMessage(int sequenceNo, Severity severity, DataInput dataInput, Map<Integer, LogObject> objectsByConstructorSequenceNo) throws IOException {
+		
+		final int objectSequenceNo = readSequenceNo(dataInput);
+
+		final String message = dataInput.readUTF();
+		
+		return new LogMessage(sequenceNo, severity, objectsByConstructorSequenceNo.get(objectSequenceNo), message);
 	}
 
 	private LogObject readLogObjectFromReference(DataInput dataInput, Map<Integer, LogObject> objectsByConstructorSequenceNo) throws IOException {

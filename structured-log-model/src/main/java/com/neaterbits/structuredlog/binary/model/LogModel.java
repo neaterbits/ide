@@ -15,6 +15,8 @@ public final class LogModel {
 	private final Map<Integer, LogObject> objectsByConstructorLogSequenceNo;
 	private final List<LogObject> logRootObjects;
 	
+	private final List<LogMessage> messages;
+	
 	public LogModel(
 			Map<Integer, String> typeNames,
 			Map<Integer, String> fieldNames,
@@ -22,7 +24,9 @@ public final class LogModel {
 
 			List<Integer> logRoots,
 			
-			List<LogObject> logRootObjects) {
+			List<LogObject> logRootObjects,
+			
+			List<LogMessage> messages) {
 
 		if (logRoots.isEmpty()) {
 			throw new IllegalArgumentException();
@@ -37,6 +41,7 @@ public final class LogModel {
 		this.objectsByConstructorLogSequenceNo = Collections.unmodifiableMap(objectsByConstructorSequenceNo);
 		this.logRoots = Collections.unmodifiableList(logRoots);
 		this.logRootObjects = Collections.unmodifiableList(logRootObjects);
+		this.messages = Collections.unmodifiableList(messages);
 	}
 
 	public List<Integer> getLogRoots() {
@@ -49,6 +54,10 @@ public final class LogModel {
 
 	public Collection<LogObject> getLogObjects() {
 		return objectsByConstructorLogSequenceNo.values();
+	}
+
+	public List<LogMessage> getMessages() {
+		return messages;
 	}
 
 	public String getTypeName(int typeId) {

@@ -269,26 +269,24 @@ public final class LogContext extends BaseBinaryLogWriter {
 	
 	
 	void error(Loggable loggable, String message) {
-		final int sequenceNo = writeLogCommand(LogCommand.ERROR);
-
-		debugWrite(sequenceNo, LogCommand.ERROR, "message", message);
-
-		writeString(message);
+		writeLogMessage(LogCommand.ERROR, loggable, message);
 	}
 
 	void debug(Loggable loggable, String message) {
-		final int sequenceNo = writeLogCommand(LogCommand.DEBUG);
-
-		debugWrite(sequenceNo, LogCommand.DEBUG, "message", message);
-
-		writeString(message);
+		writeLogMessage(LogCommand.DEBUG, loggable, message);
 	}
 	
 	void trace(Loggable loggable, String message) {
-		final int sequenceNo = writeLogCommand(LogCommand.TRACE);
+		writeLogMessage(LogCommand.TRACE, loggable, message);
+	}
+	
+	private void writeLogMessage(LogCommand logCommand, Loggable loggable, String message) {
+		final int sequenceNo = writeLogCommand(logCommand);
 		
-		debugWrite(sequenceNo, LogCommand.TRACE, "message", message);
+		debugWrite(sequenceNo, logCommand, "message", message);
 
+		writeSequenceNo(loggable.getConstructorLogSequenceNo());
+		
 		writeString(message);
 	}
 	

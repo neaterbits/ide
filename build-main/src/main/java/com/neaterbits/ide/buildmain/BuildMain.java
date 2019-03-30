@@ -16,6 +16,8 @@ import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.component.java.language.JavaBuildableLanguage;
 import com.neaterbits.ide.component.java.language.JavaCompiler;
 import com.neaterbits.ide.util.scheduling.QueueAsyncExecutor;
+import com.neaterbits.ide.util.scheduling.dependencies.BinaryTargetExecutorLogger;
+import com.neaterbits.ide.util.scheduling.dependencies.DelegatingTargetExecutorLogger;
 import com.neaterbits.ide.util.scheduling.dependencies.StructuredTargetExecutorLogger;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 import com.neaterbits.structuredlog.xml.model.Log;
@@ -59,17 +61,23 @@ public class BuildMain {
 						null);
 
 				// final TargetExecutorLogger logger = new PrintlnTargetExecutorLogger();
-				final StructuredTargetExecutorLogger logger = new StructuredTargetExecutorLogger();
+				final StructuredTargetExecutorLogger structuredLogger = new StructuredTargetExecutorLogger();
 
 				final LogContext logContext = new LogContext();
 				
+				final BinaryTargetExecutorLogger binaryTargetExecutorLogger = new BinaryTargetExecutorLogger(logContext);
+				
+				final DelegatingTargetExecutorLogger delegatingLogger = new DelegatingTargetExecutorLogger(
+						structuredLogger,
+						binaryTargetExecutorLogger);
+				
 				final QueueAsyncExecutor asyncExecutor = new QueueAsyncExecutor(false);
 
-				targetBuilderModules.execute(logContext, context, logger, asyncExecutor, result -> {
+				targetBuilderModules.execute(logContext, context, delegatingLogger, asyncExecutor, result -> {
 
 					System.out.println("### completed execution");
 					
-					final Log log = logger.makeLog();
+					final Log log = structuredLogger.makeLog();
 					
 					final LogIO logIO = new LogIO();
 					
