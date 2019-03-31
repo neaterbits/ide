@@ -147,15 +147,29 @@ final class SWTBinaryLogOptions extends Composite {
 			}
 		});
 		
+		filterText.addSelectionListener(new SelectionAdapter() {
 
-		filterText.addModifyListener(event -> {
-			
-			if (list.getSelectionCount() > 0) {
-				list.setItem(list.getSelectionIndex(), filterText.getText());
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+				if (list.getSelectionCount() > 0) {
+					
+					final String trimmed = filterText.getText().trim();
+					
+					final int selectionIndex = list.getSelectionIndex();
+					
+					if (trimmed.isEmpty()) {
+						list.remove(selectionIndex);
+					}
+					else {
+						list.setItem(selectionIndex, trimmed);
+					}
 
-				onFiltersUpdated.accept(list.getItems());
+					onFiltersUpdated.accept(list.getItems());
+				}
 			}
 		});
+
 		
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override

@@ -70,6 +70,10 @@ public class LogWriteAndReadTest {
 			
 			this.sub = logConstructorListField(logContext, "sub", subLoggables);
 		}
+
+		public List<SubTestLoggable> getSub() {
+			return sub;
+		}
 	}
 
 	public static class SubTestLoggable extends BaseLoggable implements Loggable {

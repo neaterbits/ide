@@ -1,6 +1,5 @@
 package com.neaterbits.structuredlog.swt;
 
-
 import java.util.List;
 import java.util.Objects;
 
@@ -41,36 +40,7 @@ final class SWTBinaryLogTreeLabelProvider extends BaseLabelProvider implements I
 			final List<TextStyleOffset> textStyleOffsets = filteredTexts.getStyleOffsets(logObject);
 			
 			if (textStyleOffsets != null) {
-				text = new StyledString(labelText);
-				
-				for (TextStyleOffset textStyleOffset : textStyleOffsets) {
-					
-					
-					try {
-					text.setStyle(
-							(int)textStyleOffset.getStart(),
-							(int)textStyleOffset.getLength(),
-							new StyledString.Styler() {
-								
-								@Override
-								public void applyStyles(TextStyle textStyle) {
-									textStyle.foreground = textStyleOffset.getColor() != null
-											? convertColor(textStyleOffset.getColor())
-											: null;
-	
-									textStyle.background = textStyleOffset.getBgColor() != null
-											? convertColor(textStyleOffset.getBgColor())
-											: null;
-								}
-							});
-					}
-					catch (Exception ex) {
-
-						ex.printStackTrace(System.err);
-						
-						System.err.println("## set " + textStyleOffset.getStart() + "/" + textStyleOffset.getLength() + " in \"" + text.getString() + "\"");
-					}
-				}
+				text = makeStyledString(labelText, textStyleOffsets);
 			}
 			else {
 				text = new StyledString(labelText);
@@ -85,6 +55,41 @@ final class SWTBinaryLogTreeLabelProvider extends BaseLabelProvider implements I
 		}
 		else {
 			text = new StyledString(element.toString());
+		}
+		
+		return text;
+	}
+	
+	private static StyledString makeStyledString(String labelText, List<TextStyleOffset> textStyleOffsets) {
+		
+		final StyledString text = new StyledString(labelText);
+		
+		for (TextStyleOffset textStyleOffset : textStyleOffsets) {
+			
+			try {
+			text.setStyle(
+					(int)textStyleOffset.getStart(),
+					(int)textStyleOffset.getLength(),
+					new StyledString.Styler() {
+						
+						@Override
+						public void applyStyles(TextStyle textStyle) {
+							textStyle.foreground = textStyleOffset.getColor() != null
+									? convertColor(textStyleOffset.getColor())
+									: null;
+
+							textStyle.background = textStyleOffset.getBgColor() != null
+									? convertColor(textStyleOffset.getBgColor())
+									: null;
+						}
+					});
+			}
+			catch (Exception ex) {
+
+				ex.printStackTrace(System.err);
+				
+				System.err.println("## set " + textStyleOffset.getStart() + "/" + textStyleOffset.getLength() + " in \"" + text.getString() + "\"");
+			}
 		}
 		
 		return text;

@@ -31,14 +31,12 @@ final class SWTBinaryLogTreeContentProvider extends TreeContentAdapter {
 	private String [] showItems;
 	private String [] hideItems;
 	
-	
 	SWTBinaryLogTreeContentProvider(FilteredTexts filteredTexts) {
 
 		Objects.requireNonNull(filteredTexts);
 		
 		this.filteredTexts = filteredTexts;
 	}
-
 
 	void updateDisplayedTypes(Set<String> displayedTypes) {
 		this.displayedTypes = new HashSet<>(displayedTypes);
@@ -69,8 +67,6 @@ final class SWTBinaryLogTreeContentProvider extends TreeContentAdapter {
 	
 	@Override
 	public Object[] getElements(Object inputElement) {
-		
-		System.out.println("## get elements for " + inputElement);
 		
 		final Object [] objs;
 		
@@ -147,8 +143,6 @@ final class SWTBinaryLogTreeContentProvider extends TreeContentAdapter {
 			objs = null;
 		}
 
-		System.out.println("## return " + (objs != null ? Arrays.toString(objs) : null));
-		
 		return objs;
 	}
 	
@@ -159,6 +153,9 @@ final class SWTBinaryLogTreeContentProvider extends TreeContentAdapter {
 		final boolean visible = isElementVisible(element, (offset, length) -> {
 			
 			if (element instanceof LogObject) {
+				
+				System.out.println("## add text style from " + offset + "/" + length);
+				
 				offsets.add(new TextStyleOffset(offset, length, null, TextStyleOffset.SELECTED_BG_COLOR));
 			}
 		});
@@ -180,19 +177,12 @@ final class SWTBinaryLogTreeContentProvider extends TreeContentAdapter {
 		
 		return element;
 	}
-	
-	private Object [] checkElementVisibleWithSub(Object element) {
-		return null;
-	}
-	
 
 	private boolean shouldDisplayType(LogObject logObject) {
 		
 		return displayedTypes == null || displayedTypes.contains(logObject.getSimpleType());
 		
 	}
-
-	
 	
 	private boolean isElementVisible(Object element, BiConsumer<Integer, Integer> onRangeMatch) {
 
@@ -225,7 +215,6 @@ final class SWTBinaryLogTreeContentProvider extends TreeContentAdapter {
 		
 		return false;
 	}
-	
 	
 	private static boolean matchesFilters(Object element, String [] filters, BiConsumer<Integer, Integer> onRangeMatch) {
 		
@@ -278,7 +267,7 @@ final class SWTBinaryLogTreeContentProvider extends TreeContentAdapter {
 
 				if (idx >= 0) {
 					
-					onRangeMatch.accept(curIdx, filter.length());
+					onRangeMatch.accept(idx, filter.length());
 					
 					curIdx = idx + filter.length();
 					

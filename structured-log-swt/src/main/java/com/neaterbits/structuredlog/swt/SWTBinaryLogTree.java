@@ -1,5 +1,4 @@
 package com.neaterbits.structuredlog.swt;
-
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,6 +15,7 @@ import com.neaterbits.structuredlog.binary.model.LogObject;
 public final class SWTBinaryLogTree extends Composite {
 
 	private final TreeViewer treeViewer;
+	private final FilteredTexts filteredTexts;
 	private final SWTBinaryLogTreeContentProvider contentProvider;
 	private final IBaseLabelProvider labelProvider;
 
@@ -26,9 +26,9 @@ public final class SWTBinaryLogTree extends Composite {
 		
 		this.treeViewer = new TreeViewer(this);
 		
-		// treeViewer.setUseHashlookup(true);
+		treeViewer.setUseHashlookup(true);
 	
-		final FilteredTexts filteredTexts = new FilteredTexts();
+		this.filteredTexts = new FilteredTexts();
 		
 		this.contentProvider = new SWTBinaryLogTreeContentProvider(filteredTexts);
 		treeViewer.setContentProvider(contentProvider);	
@@ -41,20 +41,51 @@ public final class SWTBinaryLogTree extends Composite {
 		
 		Objects.requireNonNull(logModel);
 		
+		
 		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		
 		treeViewer.setInput(logModel);
-
+		
 		//treeViewer.setExpandedElements(new Object [] { logModel });
 	}
 
 	void updateDisplayedTypes(Set<String> displayedTypes) {
+		
 		contentProvider.updateDisplayedTypes(displayedTypes);
-		
+
+		treeViewer.getTree().setLayoutDeferred(true);
+
 		treeViewer.refresh();
-		
 		treeViewer.expandAll();
 	}
+	
+	/*
+	private Object [] getAllElements(Object root) {
+		
+		final List<Object> elements = new ArrayList<>();
+		
+		elements.add(root);
+		
+		getAllElements(root, elements);
+		
+		return elements.toArray(new Object[elements.size()]);
+	}
+	
+	private void getAllElements(Object element, List<Object> elements) {
+		
+		final Object [] sub = contentProvider.getElements(element);
+		
+		if (sub != null && sub.length > 0) {
+			for (Object o : sub) {
+				
+				elements.add(o);
+				
+				getAllElements(o, elements);
+			}
+		}
+	}
+	*/
+	
 	
 	void select(LogObject logObject) {
 		
@@ -64,14 +95,20 @@ public final class SWTBinaryLogTree extends Composite {
 	}
 	
 	void showItemsMatching(String [] filters) {
+		
+		filteredTexts.clear();
+		
 		contentProvider.showItemsMatching(filters);
 
 		treeViewer.refresh();
 		
-		treeViewer.expandAll();
+		// treeViewer.expandAll();
 	}
 	
 	void hideItemsMatching(String [] filters) {
+
+		filteredTexts.clear();
+
 		contentProvider.hideItemsMatching(filters);
 		
 		treeViewer.refresh();
