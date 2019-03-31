@@ -1,4 +1,4 @@
-package com.neaterbits.structuredlog.binary.logging;
+package com.neaterbits.structuredlog.binary.io;
 
 import java.io.DataOutput;
 import java.io.IOException;
@@ -6,7 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
+import com.neaterbits.structuredlog.binary.logging.LogCommand;
+import com.neaterbits.structuredlog.binary.logging.Loggable;
+import com.neaterbits.structuredlog.binary.logging.ScalarType;
+
+public abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
 
 	private static final Map<Class<?>, ScalarType> SCALAR_TYPES;
 	
@@ -21,9 +25,9 @@ abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
 	private int commandNo = 0;
 
 	
-	abstract DataOutput getDataStream();
+	protected abstract DataOutput getDataStream();
 	
-	final int writeHeader(LogCommand logCommand, Loggable loggable) {
+	protected final int writeHeader(LogCommand logCommand, Loggable loggable) {
 		
 		final int sequenceNo = writeLogCommand(logCommand);
 		
@@ -32,16 +36,16 @@ abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
 		return sequenceNo;
 	}
 
-	final int writeHeader(LogCommand logCommand, String identifier) {
+	protected final int writeFieldHeader(LogCommand logCommand, int objectSequenceNo) {
 		
 		final int sequenceNo = writeLogCommand(logCommand);
 
-		writeIdentifier(identifier);
+		writeSequenceNo(objectSequenceNo);
 		
 		return sequenceNo;
 	}
 
-	final int writeLogCommand(LogCommand logCommand) {
+	protected final int writeLogCommand(LogCommand logCommand) {
 		
 		try {
 			getDataStream().writeByte((logCommand.ordinal()));
@@ -52,7 +56,7 @@ abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
 		return commandNo ++;
 	}
 	
-	final void writeInteger(int integer) {
+	protected final void writeInteger(int integer) {
 		try {
 			getDataStream().writeInt(integer);
 		} catch (IOException ex) {
@@ -60,11 +64,11 @@ abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
 		}
 	}
 
-	final void writeTypeId(int typeId) {
+	protected final void writeTypeId(int typeId) {
 		writeInteger(typeId);
 	}
 	
-	 void writeString(String string) {
+	protected final void writeString(String string) {
 		try {
 			getDataStream().writeUTF(string);
 		} catch (IOException ex) {
@@ -72,24 +76,24 @@ abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
 		}
 	}
 	
-	final void writeIdentifier(Loggable loggable) {
+	 protected final void writeIdentifier(Loggable loggable) {
 		
 		final String identifier = loggable != null ? loggable.getLogIdentifier() : null;
 		
 		writeIdentifier(identifier);
 	}
 	
-	final void writeIdentifier(String identifier) {
+	protected final void writeIdentifier(String identifier) {
 		
 		writeString(identifier != null ? identifier : "");
 	}
 	
-	final void writeDescription(String descripion) {
+	protected final void writeDescription(String descripion) {
 		
 		writeString(descripion != null ? descripion : "");
 	}
 	
-	final void writeSequenceNo(int sequenceNo) {
+	protected final void writeSequenceNo(int sequenceNo) {
 		try {
 			getDataStream().writeInt(sequenceNo);
 		} catch (IOException ex) {
@@ -97,7 +101,7 @@ abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
 		}
 	}
 
-	final void writeScalar(Object value) {
+	protected final void writeScalar(Object value) {
 		
 		Objects.requireNonNull(value);
 		

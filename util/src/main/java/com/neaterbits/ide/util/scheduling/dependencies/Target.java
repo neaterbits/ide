@@ -46,7 +46,7 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 		this.type = type;
 		this.description = description;
 		this.targetObject = targetObject;
-		this.prerequisites = logConstructorListField(logContext, logIdentifier, LOG_FIELD_PREREQUISITES, prerequisites);
+		this.prerequisites = logConstructorListField(logContext, LOG_FIELD_PREREQUISITES, prerequisites);
 		this.action = action;
 		this.actionWithResult = actionWithResult;
 		this.targetSpec = targetSpec;

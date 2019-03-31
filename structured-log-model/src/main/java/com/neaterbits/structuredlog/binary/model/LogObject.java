@@ -10,6 +10,7 @@ import com.neaterbits.structuredlog.binary.logging.Loggable;
 
 public final class LogObject extends LogNode implements Loggable {
 
+	private final int constructorSequenceNo;
 	private final String type;
 	private final String identifier;
 	private final String localIdentifier;
@@ -17,9 +18,10 @@ public final class LogObject extends LogNode implements Loggable {
 	
 	private Map<String, LogField> fields;
 	
-	public LogObject(int sequenceNo, LogField parent, String type, String identifier, String localIdentifier, String description) {
-		super(sequenceNo, parent);
+	public LogObject(int logFilesequenceNo, int constructorSequenceNo, LogField parent, String type, String identifier, String localIdentifier, String description) {
+		super(logFilesequenceNo, parent);
 
+		this.constructorSequenceNo = constructorSequenceNo;
 		this.type = type;
 		this.identifier = identifier;
 		this.localIdentifier = localIdentifier;
@@ -81,6 +83,28 @@ public final class LogObject extends LogNode implements Loggable {
 	
 	public Collection<LogField> getFields() {
 		return fields != null ? fields.values() : null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + constructorSequenceNo;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LogObject other = (LogObject) obj;
+		if (constructorSequenceNo != other.constructorSequenceNo)
+			return false;
+		return true;
 	}
 
 	@Override

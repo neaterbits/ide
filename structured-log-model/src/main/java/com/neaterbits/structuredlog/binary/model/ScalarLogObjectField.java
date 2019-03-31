@@ -4,8 +4,8 @@ public final class ScalarLogObjectField extends LogField {
 
 	private Object value;
 
-	public ScalarLogObjectField(int sequenceNo, LogObject parent, String fieldName, Object value) {
-		super(sequenceNo, parent, fieldName);
+	public ScalarLogObjectField(int logFileSequenceNo, int constructorSequenceNo, LogObject parent, String fieldName, Object value) {
+		super(logFileSequenceNo, constructorSequenceNo, parent, fieldName);
 
 		this.value = value;
 	}

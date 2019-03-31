@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.structuredlog.binary.io.BaseBinaryLogWriter;
+
 public final class LogContext extends BaseBinaryLogWriter {
 
 	private final Map<Class<?>, ClassLogInfo> classes;
@@ -20,7 +22,7 @@ public final class LogContext extends BaseBinaryLogWriter {
 	private final DataOutput dataStream;
 	
 	@Override
-	DataOutput getDataStream() {
+	protected DataOutput getDataStream() {
 		return dataStream;
 	}
 
@@ -85,11 +87,16 @@ public final class LogContext extends BaseBinaryLogWriter {
 		outputStream.write(data);
 	}
 	
-	<T extends Loggable> T setLoggableField(Loggable loggable, String identifier, String field, T sub) {
+	<T extends Loggable> T setLoggableField(Loggable parent, String field, T sub) {
 
-		final int sequenceNo = writeHeader(LogCommand.SET_LOGGABLE_FIELD, identifier);
+		final int sequenceNo = writeFieldHeader(LogCommand.SET_LOGGABLE_FIELD, parent.getConstructorLogSequenceNo());
 		
-		debugWrite(sequenceNo, LogCommand.SET_LOGGABLE_FIELD, "identifier", identifier, "field", field, "sub", sub != null ? sub.toString() : null);
+		debugWrite(
+				sequenceNo,
+				LogCommand.SET_LOGGABLE_FIELD,
+				"objectSequenceNo", String.valueOf(parent.getConstructorLogSequenceNo()),
+				"field", field,
+				"sub", sub != null ? sub.toString() : null);
 		
 		writeGetOrAllocateFieldName(field);
 		
@@ -133,17 +140,17 @@ public final class LogContext extends BaseBinaryLogWriter {
 	}
 
 	
-	void logConstructorScalarField(LogContext logContext, String identifier, String field, Object value) {
+	void logConstructorScalarField(Loggable parent, String field, Object value) {
 		
 		
-		final int sequenceNo = writeHeader(LogCommand.CONSTRUCTOR_SCALAR_FIELD, identifier);
+		final int sequenceNo = writeFieldHeader(LogCommand.CONSTRUCTOR_SCALAR_FIELD, parent.getConstructorLogSequenceNo());
 		
 		final int fieldIdx = writeGetOrAllocateFieldName(field);
 
 		debugWrite(
 				sequenceNo,
 				LogCommand.CONSTRUCTOR_SCALAR_FIELD,
-				"identifier", identifier,
+				"objectSequenceNo", String.valueOf(parent.getConstructorLogSequenceNo()),
 				"field", field,
 				"fieldIdx", String.valueOf(fieldIdx),
 				"value", value != null ? value.toString() : null);
@@ -151,17 +158,17 @@ public final class LogContext extends BaseBinaryLogWriter {
 		writeScalar(value);
 	}
 
-	void logConstructorLoggableField(LogContext logContext, String identifier, String field, Loggable value) {
+	void logConstructorLoggableField(Loggable parent, String field, Loggable value) {
 		
 		if (value != null) {
-			final int sequenceNo = writeHeader(LogCommand.CONSTRUCTOR_LOGGABLE_FIELD, identifier);
+			final int sequenceNo = writeFieldHeader(LogCommand.CONSTRUCTOR_LOGGABLE_FIELD, parent.getConstructorLogSequenceNo());
 			
 			final int fieldIdx = writeGetOrAllocateFieldName(field);
 
 			debugWrite(
 					sequenceNo,
 					LogCommand.CONSTRUCTOR_LOGGABLE_FIELD,
-					"identifier", identifier,
+					"objectSequenceNo", String.valueOf(parent.getConstructorLogSequenceNo()),
 					"field", field,
 					"fieldIdx", String.valueOf(fieldIdx),
 					"value", value != null ? value.getLogDebugString() : null);
@@ -170,30 +177,30 @@ public final class LogContext extends BaseBinaryLogWriter {
 		}
 	}
 
-	<T extends Loggable> Collection<T> logConstructorCollectionField(LogContext logContext, String identifier, String field, Collection<T> values) {
+	<T extends Loggable> Collection<T> logConstructorCollectionField(Loggable parent, String field, Collection<T> values) {
 
-		writeConstructorCollectionField(identifier, field, values);
+		writeConstructorCollectionField(parent, field, values);
 		
 		return new CollectionWrapper<>(values);
 	}
 
-	<T extends Loggable> List<T> logConstructorListField(LogContext logContext, String identifier, String field, List<T> values) {
+	<T extends Loggable> List<T> logConstructorListField(Loggable parent, String field, List<T> values) {
 
-		writeConstructorCollectionField(identifier, field, values);
+		writeConstructorCollectionField(parent, field, values);
 		
 		return new ListWrapper<>(values);
 	}
 	
-	private void writeConstructorCollectionField(String identifier, String field, Collection<? extends Loggable> values) {
+	private void writeConstructorCollectionField(Loggable parent, String field, Collection<? extends Loggable> values) {
 		
-		final int sequenceNo = writeHeader(LogCommand.CONSTRUCTOR_COLLECTION_FIELD, identifier);
+		final int sequenceNo = writeFieldHeader(LogCommand.CONSTRUCTOR_COLLECTION_FIELD, parent.getConstructorLogSequenceNo());
 		
 		final int fieldIdx = writeGetOrAllocateFieldName(field);
 		
 		debugWrite(
 				sequenceNo,
 				LogCommand.CONSTRUCTOR_COLLECTION_FIELD,
-				"identifier", identifier,
+				"objectSequenceNo", String.valueOf(parent.getConstructorLogSequenceNo()),
 				"field", field,
 				"fieldIdx", String.valueOf(fieldIdx),
 				"numEntries", values != null ? String.valueOf(values.size()) : null);
@@ -202,16 +209,16 @@ public final class LogContext extends BaseBinaryLogWriter {
 	}
 	
 
-	void logSetScalarField(LogContext logContext, String identifier, String field, Object value) {
+	void logSetScalarField(Loggable parent, String field, Object value) {
 		
-		final int sequenceNo = writeHeader(LogCommand.SET_SCALAR_FIELD, identifier);
+		final int sequenceNo = writeFieldHeader(LogCommand.SET_SCALAR_FIELD, parent.getConstructorLogSequenceNo());
 		
 		final int fieldIdx = writeGetOrAllocateFieldName(field);
 
 		debugWrite(
 				sequenceNo,
 				LogCommand.SET_SCALAR_FIELD,
-				"identifier", identifier,
+				"objectSequenceNo", String.valueOf(parent.getConstructorLogSequenceNo()),
 				"field", field,
 				"fieldIdx", String.valueOf(fieldIdx),
 				"value", value != null ? value.toString() : null);
@@ -220,16 +227,16 @@ public final class LogContext extends BaseBinaryLogWriter {
 	}
 
 	
-	void logSetLoggableField(LogContext logContext, String identifier, String field, Loggable value) {
+	void logSetLoggableField(Loggable parent, String field, Loggable value) {
 		
-		final int sequenceNo = writeHeader(LogCommand.SET_LOGGABLE_FIELD, identifier);
+		final int sequenceNo = writeFieldHeader(LogCommand.SET_LOGGABLE_FIELD, parent.getConstructorLogSequenceNo());
 		
 		final int fieldIdx = writeGetOrAllocateFieldName(field);
 
 		debugWrite(
 				sequenceNo,
 				LogCommand.SET_LOGGABLE_FIELD,
-				"identifier", identifier,
+				"objectSequenceNo", String.valueOf(parent.getConstructorLogSequenceNo()),
 				"field", field,
 				"fieldIdx", String.valueOf(fieldIdx),
 				"value", value != null ? value.getLogDebugString() : null);

@@ -1,6 +1,6 @@
 package com.neaterbits.structuredlog.binary.model;
 
-enum Severity {
+public enum Severity {
 	ERROR,
 	WARNING,
 	DEBUG,

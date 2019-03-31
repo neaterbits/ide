@@ -13,41 +13,41 @@ public interface Loggable {
 		return logContext.logConstructor(type, identifier, localIdentifier, description);
 	}
 	
-	default <T> T logConstructorScalarField(LogContext logContext, String identifier, String field, T value) {
+	default <T> T logConstructorScalarField(LogContext logContext, String field, T value) {
 		
-		logContext.logConstructorScalarField(logContext, identifier, field, value);
+		logContext.logConstructorScalarField(this, field, value);
 		
 		return value;
 	}
 
 	default <T extends Loggable> T logConstructorLoggableField(LogContext logContext, String identifier, String field, T value) {
 		
-		logContext.logConstructorLoggableField(logContext, identifier, field, value);
+		logContext.logConstructorLoggableField(this, field, value);
 		
 		return value;
 	}
 
 	default <T extends Loggable>
-	Collection<T> logConstructorCollectionField(LogContext logContext, String identifier, String field, Collection<T> values) {
+	Collection<T> logConstructorCollectionField(LogContext logContext, String field, Collection<T> values) {
 		
-		return logContext.logConstructorCollectionField(logContext, identifier, field, values);
+		return logContext.logConstructorCollectionField(this, field, values);
 	}
 
 	default <T extends Loggable>
-	List<T> logConstructorListField(LogContext logContext, String identifier, String field, List<T> values) {
+	List<T> logConstructorListField(LogContext logContext, String field, List<T> values) {
 		
-		return logContext.logConstructorListField(logContext, identifier, field, values);
+		return logContext.logConstructorListField(this, field, values);
 	}
 
 	default void debug(LogContext logContext, String message) {
 		logContext.debug(this, message);
 	}
 
-	default <T extends Loggable> T logSetLoggableField(LogContext logContext, String identifier, String field, T value) {
-		return logContext.setLoggableField(this, identifier, field, value);
+	default <T extends Loggable> T logSetLoggableField(LogContext logContext, String field, T value) {
+		return logContext.setLoggableField(this, field, value);
 	}
 
-	default <T extends Loggable> Collection<T> logSetCollectionField(LogContext logContext, String identifier, String field, Collection<T> collection) {
+	default <T extends Loggable> Collection<T> logSetCollectionField(LogContext logContext, String field, Collection<T> collection) {
 		return logContext.logSetCollectionField(this, field, collection);
 	}
 

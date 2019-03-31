@@ -4,14 +4,24 @@ import java.util.Objects;
 
 public abstract class LogField extends LogNode {
 
+	private final int constructorSequenceNo;
 	private final String fieldName;
 
-	LogField(int sequenceNo, LogObject parent, String fieldName) {
-		super(sequenceNo, parent);
+	LogField(int logFileSequenceNo, int constructorSequenceNo, LogObject parent, String fieldName) {
+		super(logFileSequenceNo, parent);
 		
 		Objects.requireNonNull(fieldName);
+
+		if (constructorSequenceNo != parent.getConstructorLogSequenceNo()) {
+			throw new IllegalArgumentException();
+		}
 		
+		this.constructorSequenceNo = constructorSequenceNo;
 		this.fieldName = fieldName;
+	}
+
+	public final int getConstructorSequenceNo() {
+		return constructorSequenceNo;
 	}
 
 	public final String getFieldName() {
@@ -19,22 +29,25 @@ public abstract class LogField extends LogNode {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
+		result = prime * result + constructorSequenceNo;
 		result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		LogField other = (LogField) obj;
+		if (constructorSequenceNo != other.constructorSequenceNo)
+			return false;
 		if (fieldName == null) {
 			if (other.fieldName != null)
 				return false;

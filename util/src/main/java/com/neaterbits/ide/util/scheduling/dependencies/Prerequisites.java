@@ -36,7 +36,7 @@ final class Prerequisites extends BuildEntity implements Loggable {
 		Objects.requireNonNull(prerequisites);
 		Objects.requireNonNull(spec);
 	
-		this.prerequisites = logConstructorListField(logContext, identifier, LOG_FIELD_PREREQUISITES, prerequisites);
+		this.prerequisites = logConstructorListField(logContext, LOG_FIELD_PREREQUISITES, prerequisites);
 		this.spec = spec;
 		
 		prerequisites.forEach(prerequisite -> prerequisite.setFromPrerequisites(this));

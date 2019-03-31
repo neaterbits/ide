@@ -13,13 +13,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.neaterbits.structuredlog.binary.logging.BaseBinaryLogIO;
+import com.neaterbits.structuredlog.binary.io.BaseBinaryLogIO;
 import com.neaterbits.structuredlog.binary.logging.LogCommand;
 
 public class BinaryLogReader extends BaseBinaryLogIO {
 
 	public LogModel readLog(File file) throws IOException {
 		
+
+		final LogModel logModel;
+		
+		try (InputStream inputStream = new FileInputStream(file)) {
+			logModel = readLog(inputStream);
+		}
+
+		return logModel;
+	}
+	
+	public LogModel readLog(InputStream inputStream) throws IOException {
+			
 		final Map<Integer, String> typeNames = new HashMap<>();
 		final Map<Integer, String> fieldNames = new HashMap<>();
 		
@@ -27,147 +39,136 @@ public class BinaryLogReader extends BaseBinaryLogIO {
 		final List<Integer> logRoots = new ArrayList<>();
 		
 		final List<LogMessage> logMessages = new ArrayList<>();
-		
-		try (InputStream inputStream = new FileInputStream(file)) {
+
+		final DataInputStream dataInput = new DataInputStream(inputStream);
 			
-			final DataInputStream dataInput = new DataInputStream(inputStream);
+		int commandNo = 0;
+
+		for (;;) {
 			
-			LogObject curLogObject = null;
+			final byte logCommandOrdinal;
 			
-			int commandNo = 0;
-
-			for (;;) {
+			try {
+				logCommandOrdinal = dataInput.readByte();
 				
-				final byte logCommandOrdinal;
-				
-				try {
-					logCommandOrdinal = dataInput.readByte();
-					
-					if (logCommandOrdinal < 0) {
-						// EOF
-						break;
-					}
-				}
-				catch (EOFException ex) {
+				if (logCommandOrdinal < 0) {
+					// EOF
 					break;
 				}
+			}
+			catch (EOFException ex) {
+				break;
+			}
+			
+			final LogCommand logCommand = LogCommand.values()[logCommandOrdinal];
+			
+			final int sequenceNo = commandNo ++;
+			
+			switch (logCommand) {
+			
+			case ROOT_OBJECT: {
+				final int objectConstructorSequenceNo = readSequenceNo(dataInput);
+				final String identifier = readIdentifier(dataInput);
+				logRoots.add(objectConstructorSequenceNo);
+
+				debugRead(
+						sequenceNo,
+						LogCommand.ROOT_OBJECT,
+						"constructorSequenceNo", String.valueOf(objectConstructorSequenceNo),
+						"identifier", identifier);
+				break;
+			}
+			
+			case CONSTRUCTOR: {
 				
-				final LogCommand logCommand = LogCommand.values()[logCommandOrdinal];
+				final int constructorSequenceNo = readSequenceNo(dataInput);
 				
-				final int sequenceNo = commandNo ++;
-				
-				System.out.println("## read log command " + logCommand + " " + sequenceNo);
-				
-				switch (logCommand) {
-				
-				case ROOT_OBJECT: {
-					final int objectConstructorSequenceNo = readSequenceNo(dataInput);
-					final String identifier = readIdentifier(dataInput);
-					logRoots.add(objectConstructorSequenceNo);
-
-					debugRead(
-							sequenceNo,
-							LogCommand.ROOT_OBJECT,
-							"constructorSequenceNo", String.valueOf(objectConstructorSequenceNo),
-							"identifier", identifier);
-					break;
-				}
-				
-				case CONSTRUCTOR: {
-					
-					final int constructorSequenceNo = readSequenceNo(dataInput);
-					
-					if (sequenceNo != constructorSequenceNo) {
-						throw new IllegalStateException();
-					}
-
-					final LogObject logObject = readLogObject(sequenceNo, null, dataInput, typeNames);
-
-					if (objectsByConstructorSequenceNo.containsKey(logObject.getConstructorLogSequenceNo())) {
-						throw new IllegalStateException("Already contains " + logObject.getConstructorLogSequenceNo()
-							+ " of type " + logObject.getType());
-					}
-
-					objectsByConstructorSequenceNo.put(logObject.getConstructorLogSequenceNo(), logObject);
-					
-					debugRead(
-							sequenceNo,
-							LogCommand.CONSTRUCTOR,
-							"type", typeNames.get(logObject.getType()),
-							"typeId", String.valueOf(logObject.getType()),
-							"identifier", logObject.getLogIdentifier(),
-							"localIdentifier", logObject.getLogLocalIdentifier(),
-							"description", logObject.getDescription());
-
-					curLogObject = logObject;
-					break;
-				}
-				
-				case CONSTRUCTOR_LOGGABLE_FIELD: {
-					final String identifier = readIdentifier(dataInput);
-					
-					if (identifier != null && !identifier.equals(curLogObject.getLogIdentifier())) {
-						throw new IllegalStateException();
-					}
-
-					final int fieldIdx = readFieldIndex(dataInput, fieldNames);
-
-					final LogObject logObject = readLogObjectFromReference(dataInput, objectsByConstructorSequenceNo);
-					
-					debugRead(
-							sequenceNo,
-							LogCommand.CONSTRUCTOR_LOGGABLE_FIELD,
-							"identifier", identifier,
-							"field", fieldNames.get(fieldIdx),
-							"fieldIdx", String.valueOf(fieldIdx),
-							"value", logObject != null ? logObject.getLogDebugString() : null);
-
-					
-					curLogObject.addField(fieldNames.get(fieldIdx), new LoggableField(sequenceNo, curLogObject, fieldNames.get(fieldIdx), logObject));
-					break;
+				if (sequenceNo != constructorSequenceNo) {
+					throw new IllegalStateException();
 				}
 
-				case CONSTRUCTOR_COLLECTION_FIELD: {
-					final String identifier = readIdentifier(dataInput);
+				final LogObject logObject = readLogObject(sequenceNo, null, dataInput, typeNames);
 
-					if (identifier != null && !identifier.equals(curLogObject.getLogIdentifier())) {
-						throw new IllegalStateException();
-					}
-
-					final int fieldIdx = readFieldIndex(dataInput, fieldNames);
-					
-					final int numEntries = dataInput.readInt();
-
-					debugRead(
-							sequenceNo,
-							LogCommand.CONSTRUCTOR_COLLECTION_FIELD,
-							"identifier", identifier,
-							"field", fieldNames.get(fieldIdx),
-							"fieldIdx", String.valueOf(fieldIdx),
-							"numEntries", String.valueOf(numEntries));
-
-					final List<LogObject> collection = new ArrayList<>(numEntries);
-					
-					for (int i = 0; i < numEntries; ++ i) {
-						collection.add(readLogObjectFromReference(dataInput, objectsByConstructorSequenceNo));
-					}
-					
-					final LogCollectionField field = new LogCollectionField(sequenceNo, curLogObject, fieldNames.get(fieldIdx), collection);
-					
-					curLogObject.addField(fieldNames.get(fieldIdx), field);
-
-					System.out.println("## adding collection of " + collection.size() + " to " + curLogObject + " " + field);
-
-					break;
+				if (objectsByConstructorSequenceNo.containsKey(logObject.getConstructorLogSequenceNo())) {
+					throw new IllegalStateException("Already contains " + logObject.getConstructorLogSequenceNo()
+						+ " of type " + logObject.getType());
 				}
 
-				case DEBUG:
-					logMessages.add(readLogMessage(sequenceNo, Severity.DEBUG, dataInput, objectsByConstructorSequenceNo));
-					break;
+				objectsByConstructorSequenceNo.put(logObject.getConstructorLogSequenceNo(), logObject);
 				
-				default:
-					throw new UnsupportedOperationException();
+				debugRead(
+						sequenceNo,
+						LogCommand.CONSTRUCTOR,
+						"type", typeNames.get(logObject.getType()),
+						"typeId", String.valueOf(logObject.getType()),
+						"identifier", logObject.getLogIdentifier(),
+						"localIdentifier", logObject.getLogLocalIdentifier(),
+						"description", logObject.getDescription());
+				break;
+			}
+			
+			case CONSTRUCTOR_LOGGABLE_FIELD: {
+				final int objectSequenceNo = readSequenceNo(dataInput);
+				
+				final LogObject fieldInstance = objectsByConstructorSequenceNo.get(objectSequenceNo); 
+				
+				final int fieldIdx = readFieldIndex(dataInput, fieldNames);
+
+				final LogObject logObject = readLogObjectFromReference(dataInput, objectsByConstructorSequenceNo);
+				
+				debugRead(
+						sequenceNo,
+						LogCommand.CONSTRUCTOR_LOGGABLE_FIELD,
+						"objectSequenceNo", String.valueOf(objectSequenceNo),
+						"field", fieldNames.get(fieldIdx),
+						"fieldIdx", String.valueOf(fieldIdx),
+						"value", logObject != null ? logObject.getLogDebugString() : null);
+
+				
+				fieldInstance.addField(fieldNames.get(fieldIdx), new LoggableField(
+						sequenceNo,
+						objectSequenceNo,
+						fieldInstance,
+						fieldNames.get(fieldIdx),
+						logObject));
+				break;
+			}
+
+			case CONSTRUCTOR_COLLECTION_FIELD: {
+				final int objectSequenceNo = readSequenceNo(dataInput);
+
+				final LogObject fieldInstance = objectsByConstructorSequenceNo.get(objectSequenceNo); 
+
+				final int fieldIdx = readFieldIndex(dataInput, fieldNames);
+				
+				final int numEntries = dataInput.readInt();
+
+				debugRead(
+						sequenceNo,
+						LogCommand.CONSTRUCTOR_COLLECTION_FIELD,
+						"objectSequenceNo", String.valueOf(objectSequenceNo),
+						"field", fieldNames.get(fieldIdx),
+						"fieldIdx", String.valueOf(fieldIdx),
+						"numEntries", String.valueOf(numEntries));
+
+				final List<LogObject> collection = new ArrayList<>(numEntries);
+				
+				for (int i = 0; i < numEntries; ++ i) {
+					collection.add(readLogObjectFromReference(dataInput, objectsByConstructorSequenceNo));
 				}
+				
+				final LogCollectionField field = new LogCollectionField(sequenceNo, objectSequenceNo, fieldInstance, fieldNames.get(fieldIdx), collection);
+				
+				fieldInstance.addField(fieldNames.get(fieldIdx), field);
+				break;
+			}
+
+			case DEBUG:
+				logMessages.add(readLogMessage(sequenceNo, Severity.DEBUG, dataInput, objectsByConstructorSequenceNo));
+				break;
+			
+			default:
+				throw new UnsupportedOperationException();
 			}
 		}
 		
@@ -202,7 +203,7 @@ public class BinaryLogReader extends BaseBinaryLogIO {
 		final String itemLocalIdentifier = readIdentifier(dataInput);
 		final String description = readDescription(dataInput);
 		
-		return new LogObject(sequenceNo, parent, typeNames.get(typeId), itemIdentifier, itemLocalIdentifier, description);
+		return new LogObject(sequenceNo, sequenceNo, parent, typeNames.get(typeId), itemIdentifier, itemLocalIdentifier, description);
 	}
 	
 	
@@ -221,7 +222,6 @@ public class BinaryLogReader extends BaseBinaryLogIO {
 		
 		if ((indexFlag & (1 << 31)) != 0) {
 			
-			System.out.println("## read name " + indexFlag);
 			final String name = dataInput.readUTF();
 			
 			index = indexFlag & ~(1 << 31);
