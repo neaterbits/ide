@@ -62,11 +62,8 @@ public class BuildMain {
 
 				// final TargetExecutorLogger logger = new PrintlnTargetExecutorLogger();
 				final StructuredTargetExecutorLogger structuredLogger = new StructuredTargetExecutorLogger();
-
 				final LogContext logContext = new LogContext();
-				
 				final BinaryTargetExecutorLogger binaryTargetExecutorLogger = new BinaryTargetExecutorLogger(logContext);
-				
 				final DelegatingTargetExecutorLogger delegatingLogger = new DelegatingTargetExecutorLogger(
 						structuredLogger,
 						binaryTargetExecutorLogger);
@@ -75,8 +72,6 @@ public class BuildMain {
 
 				targetBuilderModules.execute(logContext, context, delegatingLogger, asyncExecutor, result -> {
 
-					System.out.println("### completed execution");
-					
 					final Log log = structuredLogger.makeLog();
 					
 					final LogIO logIO = new LogIO();

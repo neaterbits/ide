@@ -2,14 +2,27 @@ package com.neaterbits.ide.util.scheduling.dependencies;
 
 import java.util.Objects;
 
-final class TargetState {
+import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 
-	private Status status;
+final class TargetState<CONTEXT extends TaskContext> extends TargetStateMachine<CONTEXT> {
+
+	private final Target<?> target;
+	
+	// private Status status;
 	private Exception exception;
 	
+	TargetState(Target<?> target) {
+		super(target);
+		
+		Objects.requireNonNull(target);
+		
+		this.target = target;
+		
+		// this.status = Status.TO_EXECUTE;
+	}
 	
-	TargetState() {
-		this.status = Status.TO_EXECUTE;
+	Target<?> getTarget() {
+		return target;
 	}
 
 	Exception getException() {
@@ -17,9 +30,15 @@ final class TargetState {
 	}
 
 	Status getStatus() {
-		return status;
+		return getCurState().getStatus();
 	}
 
+	@Override
+	public String toString() {
+		return "TargetState [target=" + target.getDebugString() + ", state=" + getCurStateName() + "]";
+	}
+
+	/*
 	private void setStatus(Status status) {
 
 		Objects.requireNonNull(status);
@@ -97,4 +116,5 @@ final class TargetState {
 		
 		this.exception = exception;
 	}
+	*/
 }

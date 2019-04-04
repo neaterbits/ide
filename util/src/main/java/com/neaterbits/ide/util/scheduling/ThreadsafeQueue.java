@@ -71,7 +71,7 @@ public class ThreadsafeQueue<T> {
 				}
 			}
 		}
-
+		
 		return state;
 	}
 
