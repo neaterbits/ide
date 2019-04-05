@@ -1,6 +1,7 @@
 package com.neaterbits.ide.util.scheduling.dependencies;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,11 +13,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionParameters;
+import com.neaterbits.ide.util.scheduling.dependencies.builder.TaskContext;
 
-final class ExecutorState implements ActionParameters<Object>, TargetExecutorLogState {
+final class ExecutorState<CONTEXT extends TaskContext> implements ActionParameters<Object>, TargetExecutorLogState {
 
-	private final Map<Target<?>, TargetState> targets;
+	private final Map<Target<?>, TargetState<CONTEXT>> targets;
 	private final Map<Object, Target<?>> targetsByTargetObject;
+
+	private final List<TargetState<CONTEXT>> nonCompletedTargets;
+
 	
 	/*
 	private final Map<Target<?>, Object> collected;
@@ -28,7 +33,7 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 	// private final Map<Target<?>, CollectedTargetObject> collectedTargetObjects; 
 	private final Map<Target<?>, List<CollectedProduct>> collectedProductObjects;
 	
-	static ExecutorState createFromTargetTree(Target<?> rootTarget) {
+	static <CTX extends TaskContext> ExecutorState<CTX> createFromTargetTree(Target<?> rootTarget, TargetExecutor targetExecutor) {
 
 		final Set<Target<?>> toExecuteTargets = new HashSet<>();
 
@@ -36,7 +41,7 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		
 		getSubTargets(rootTarget, toExecuteTargets);
 		
-		final ExecutorState state = new ExecutorState(toExecuteTargets);
+		final ExecutorState<CTX> state = new ExecutorState<>(toExecuteTargets);
 		
 		return state;
 	}
@@ -44,9 +49,11 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 	private ExecutorState(Set<Target<?>> toExecuteTargets) {
 
 		this.targets = toExecuteTargets.stream()
-				.collect(Collectors.toMap(Function.identity(), target -> new TargetState()));
+				.collect(Collectors.toMap(Function.identity(), target -> new TargetState<CONTEXT>(target)));
 		
 		this.targetsByTargetObject = new HashMap<>(toExecuteTargets.size());
+		
+		this.nonCompletedTargets = new ArrayList<>(targets.values());
 		
 		for (Target<?> target : toExecuteTargets) {
 			
@@ -73,73 +80,14 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		this.collectedProductObjects = new HashMap<>();
 	}
 
-	private boolean hasTargets(Status status) {
-		
-		Objects.requireNonNull(status);
-	
-		return targets.values().stream().anyMatch(state -> state.getStatus() == status);
-	}
-	
-	
-	private int numTargets(Status status) {
-		
-		Objects.requireNonNull(status);
-
-		return (int)targets.values().stream()
-				.filter(state -> state.getStatus() == status)
-				.count();
-	}
-
-	private int numTargets(Status ... status) {
-
-		if (status.length == 0) {
-			throw new IllegalArgumentException();
-		}
-		
-		return (int)targets.values().stream()
-				.filter(state -> {
-					for (Status st : status) {
-						if (state.getStatus() == st) {
-							return true;
-						}
-					}
-					
-					return false;
-				})
-				.count();
-	}
-	
 	public boolean hasUnfinishedTargets() {
-		return numTargets(Status.SUCCESS, Status.FAILED) < targets.size();
+		return !nonCompletedTargets.isEmpty();
 	}
 
 	boolean hasTarget(Target<?> target) {
 		Objects.requireNonNull(target);
 		
 		return targets.containsKey(target);
-	}
-	
-	boolean hasExecuteTargets() {
-		return hasTargets(Status.TO_EXECUTE);
-	}
-	
-	int getNumExecuteTargets() {
-		return numTargets(Status.TO_EXECUTE);
-	}
-
-	int getNumExecuteOrScheduledTargets() {
-		return numTargets(Status.TO_EXECUTE, Status.SCHEDULED);
-	}
-
-	boolean hasScheduledTargets() {
-		return hasTargets(Status.SCHEDULED);
-	}
-	
-	boolean isCompletedSuccessfully(Target<?> target) {
-		
-		Objects.requireNonNull(target);
-		
-		return targets.get(target).getStatus() == Status.SUCCESS;
 	}
 	
 	void addTargetToExecute(Target<?> target) {
@@ -156,8 +104,12 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 			throw new IllegalStateException();
 		}
 
-		targets.put(target, new TargetState());
+		final TargetState<CONTEXT> targetState = new TargetState<>(target);
+		
+		targets.put(target, targetState);
 		targetsByTargetObject.put(targetObject, target);
+		
+		nonCompletedTargets.add(targetState);
 	}
 	
 	private Set<Target<?>> targetsInState(Status status) {
@@ -174,7 +126,11 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 	public Set<Target<?>> getToExecuteTargets() {
 		return targetsInState(Status.TO_EXECUTE);
 	}
-	
+
+	public Collection<TargetState<CONTEXT>> getNonCompletedTargets() {
+		return Collections.unmodifiableCollection(nonCompletedTargets);
+	}
+
 	@Override
 	public Set<Target<?>> getCompletedTargets() {
 		return targetsInState(Status.SUCCESS);
@@ -185,7 +141,7 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		
 		final Map<Target<?>, Exception> map = new HashMap<>();
 		
-		for (Map.Entry<Target<?>, TargetState> entry : targets.entrySet()) {
+		for (Map.Entry<Target<?>, TargetState<CONTEXT>> entry : targets.entrySet()) {
 			if (entry.getValue().getStatus() == Status.FAILED) {
 				map.put(entry.getKey(), entry.getValue().getException());
 			}
@@ -219,46 +175,11 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		
 	}
 	
-	private TargetState targetState(Target<?> target) {
+	private TargetState<CONTEXT> targetState(Target<?> target) {
 		
 		Objects.requireNonNull(target);
 		
 		return targets.get(target);
-	}
-	
-	void moveTargetFromToExecuteToScheduled(Target<?> target) {
-		
-		Objects.requireNonNull(target);
-		
-		targetState(target).moveTargetFromToExecuteToScheduled();
-	}
-
-	void moveTargetFromToScheduledToActionPerformedCollect(Target<?> target) {
-		
-		Objects.requireNonNull(target);
-		
-		targetState(target).moveTargetFromToScheduledToActionPerformedCollect();
-	}
-
-	void moveTargetFromActionPerformedCollectToComplete(Target<?> target) {
-		
-		Objects.requireNonNull(target);
-		
-		targetState(target).moveTargetFromActionPerformedCollectToComplete();
-	}
-
-	void moveTargetFromActionPerformedCollectToFailed(Target<?> target) {
-		
-		Objects.requireNonNull(target);
-		
-		targetState(target).moveTargetFromActionPerformedCollectToFailed();
-	}
-
-	void moveTargetFromToExecuteToFailed(Target<?> target) {
-		
-		Objects.requireNonNull(target);
-
-		targetState(target).moveTargetFromToExecuteToFailed();
 	}
 	
 	void addToRecursiveTargetCollected(Target<?> target, CollectedTargetObjects collected) {
@@ -290,16 +211,16 @@ final class ExecutorState implements ActionParameters<Object>, TargetExecutorLog
 		return recursiveTargetCollected.get(target);
 	}
 
-	void onCompletedTarget(Target<?> target, Exception exception) {
+	void onCompletedTarget(Target<?> target) {
 
-		final TargetState targetState = targetState(target);
+		final TargetState<CONTEXT> targetState = targetState(target);
 		
-		if (exception == null) {
-			targetState.moveTargetFromScheduledToSuccess();
+		if (targetState == null) {
+			throw new IllegalStateException();
 		}
-		else {
-			targetState.moveTargetFromScheduledToFailed(exception);
-		}
+
+		nonCompletedTargets.remove(targetState);
+		
 	}
 
 	/*

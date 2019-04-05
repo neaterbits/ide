@@ -32,7 +32,8 @@ class Collector {
 	}
 	*/
 	
-	private static CollectedTargetObjects getCollectedTargetsFromSub(Prerequisites withCollect, ExecutorState targetState) {
+	private static <CONTEXT extends TaskContext>
+	CollectedTargetObjects getCollectedTargetsFromSub(Prerequisites withCollect, ExecutorState<CONTEXT> targetState) {
 
 		final Set<CollectedTargetObject> targetObjects = new HashSet<>(withCollect.getPrerequisites().size());
 		
@@ -130,7 +131,8 @@ class Collector {
 		}
 	}
 
-	private static CollectedProducts getCollectedProductsFromSub(Target<?> target, Prerequisites withCollect, ExecutorState targetState) {
+	private static <CONTEXT extends TaskContext>
+	CollectedProducts getCollectedProductsFromSub(Target<?> target, Prerequisites withCollect, ExecutorState<CONTEXT> targetState) {
 
 		final Set<CollectedProduct> subProducts = new HashSet<>(withCollect.getPrerequisites().size());
 		

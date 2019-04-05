@@ -62,8 +62,6 @@ public final class BinaryTargetExecutorLogger implements TargetExecutorLogger {
 		}
 		else {
 			target.debug(logContext, "Failed " + target.targetToLogString());
-			
-			exception.printStackTrace();
 		}
 	}
 

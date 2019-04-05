@@ -230,11 +230,6 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 							+ (target.getTargetObject() != null ? target.getTargetObject().getClass().getSimpleName() + " " : "" )
 							+ target.getDebugString());
 
-		if (exception != null) {
-			System.out.println("## exception class " + exception);
-			exception.printStackTrace();
-		}
-		
 		addTargetLogState(logEntry, logState);
 	}
 }

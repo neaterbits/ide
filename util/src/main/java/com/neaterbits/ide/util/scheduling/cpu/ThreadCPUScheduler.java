@@ -27,8 +27,9 @@ public final class ThreadCPUScheduler implements CPUScheduler {
 				result = callable.apply(parameter);
 
 				forwardToCaller.forward(() -> completion.accept(parameter, result));
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception ex) {
+				System.err.println("Caught exception in scheduler " + ex);
+				ex.printStackTrace();
 			}
 		});
 		

@@ -86,7 +86,7 @@ final class TargetFinder extends PrerequisitesFinder {
 	
 				getPrerequisites(logContext, context, null, targetSpec, target, prerequisiteSpec, logger, indent, prerequisitesList -> {
 					
-					System.out.println("## find prerequisites for " + target);
+					// System.out.println("## find prerequisites for " + target);
 					
 					final Prerequisites prerequisites = new Prerequisites(logContext, prerequisitesList, prerequisiteSpec);
 					
