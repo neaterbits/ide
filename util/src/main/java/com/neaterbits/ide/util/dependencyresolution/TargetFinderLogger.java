@@ -2,6 +2,9 @@ package com.neaterbits.ide.util.dependencyresolution;
 
 import java.util.List;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.Prerequisite;
+import com.neaterbits.ide.util.dependencyresolution.executor.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.executor.Target;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 public interface TargetFinderLogger {

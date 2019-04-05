@@ -5,6 +5,9 @@ import java.util.function.Consumer;
 
 import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilder;
 import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilderImpl;
+import com.neaterbits.ide.util.dependencyresolution.executor.TargetBuildResult;
+import com.neaterbits.ide.util.dependencyresolution.executor.TargetExecutor;
+import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 import com.neaterbits.structuredlog.binary.logging.LogContext;

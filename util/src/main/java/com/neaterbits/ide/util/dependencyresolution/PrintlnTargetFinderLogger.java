@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.neaterbits.ide.util.Indent;
+import com.neaterbits.ide.util.dependencyresolution.executor.Prerequisite;
+import com.neaterbits.ide.util.dependencyresolution.executor.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.executor.Target;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 public class PrintlnTargetFinderLogger implements TargetFinderLogger {

@@ -5,6 +5,9 @@ import java.util.function.Function;
 
 import com.neaterbits.ide.util.dependencyresolution.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.builder.ActionWithResultFunction;
+import com.neaterbits.ide.util.dependencyresolution.executor.InfoTarget;
+import com.neaterbits.ide.util.dependencyresolution.executor.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.executor.Target;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
@@ -64,13 +67,12 @@ public final class InfoTargetSpec<CONTEXT extends TaskContext, TARGET> extends T
 				logContext,
 				getType(),
 				name,
-				qualifierName != null ? qualifierName.apply(target) : null,
-				getDescription(target),
+				qualifierName,
+				getDescriptionFunction(),
 				target,
 				prerequisitesList,
 				makeAction(),
-				makeActionWithResult(),
-				this);
+				makeActionWithResult());
 	}
 
 	@Override

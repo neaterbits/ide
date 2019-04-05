@@ -5,6 +5,10 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.CollectSubProducts;
+import com.neaterbits.ide.util.dependencyresolution.executor.CollectSubTargets;
+import com.neaterbits.ide.util.dependencyresolution.executor.Collectors;
+import com.neaterbits.ide.util.dependencyresolution.executor.RecursiveBuildInfo;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
@@ -17,15 +21,12 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 	private final Class<?> itemType;
 	private final Constraint constraint;
 	private final BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites;
-	private final BiFunction<CONTEXT, ?, Collection<PREREQUISITE>> getSubPrerequisites;
-	private final Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite;
-	private final boolean recursiveBuild;
+	private final RecursiveBuildInfo<CONTEXT, TARGET, PREREQUISITE> recursiveBuildInfo;
 	private final BuildSpec<CONTEXT, PREREQUISITE> action;
-	private final CollectSubTargets<TARGET> collectSubTargets;
-	private final CollectSubProducts<TARGET> collectSubProducts;
+	private final Collectors<TARGET> collectors;
 	
 	public PrerequisiteSpec(String named) {
-		this(named, null, null, null, null, null, null, null, false, null, null, null);
+		this(named, null, null, null, null, null, null, null, null);
 	}
 
 	public PrerequisiteSpec(
@@ -35,12 +36,9 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 			Class<?> itemType,
 			Constraint constraint,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
-			BiFunction<CONTEXT, ?, Collection<PREREQUISITE>> getSubPrerequisites,
-			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite,
-			boolean recursiveBuild,
+			RecursiveBuildInfo<CONTEXT, TARGET, PREREQUISITE> recursiveBuildInfo,
 			BuildSpec<CONTEXT, PREREQUISITE> action,
-			CollectSubTargets<TARGET> collectSubTargets,
-			CollectSubProducts<TARGET> collectSubProducts) {
+			Collectors<TARGET> collectors) {
 
 		if (named == null) {
 			Objects.requireNonNull(getPrerequisites);
@@ -55,9 +53,7 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 			}
 		}
 		
-		if (recursiveBuild) {
-			Objects.requireNonNull(getSubPrerequisites);
-			Objects.requireNonNull(getDependencyFromPrerequisite);
+		if (recursiveBuildInfo != null) {
 			Objects.requireNonNull(action);
 		}
 		
@@ -71,14 +67,11 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		this.constraint = constraint;
 		this.getPrerequisites = getPrerequisites;
 
-		this.getSubPrerequisites = getSubPrerequisites;
-		this.getDependencyFromPrerequisite = getDependencyFromPrerequisite;
-		this.recursiveBuild = recursiveBuild;
+		this.recursiveBuildInfo = recursiveBuildInfo;
 		
 		this.action = action;
-		
-		this.collectSubTargets = collectSubTargets;
-		this.collectSubProducts = collectSubProducts;
+
+		this.collectors = collectors;
 	}
 	
 	String getNamed() {
@@ -113,27 +106,35 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 	}
 	
 	BiFunction<CONTEXT, ?, Collection<PREREQUISITE>> getSubPrerequisitesFunction() {
-		return getSubPrerequisites;
+		return recursiveBuildInfo.getSubPrerequisitesFunction();
 	}
 	
 	Function<PREREQUISITE, TARGET> getTargetFromPrerequisiteFunction() {
 		
-		return getDependencyFromPrerequisite;
+		return recursiveBuildInfo.getTargetFromPrerequisiteFunction();
 	}
 
 	boolean isRecursiveBuild() {
-		return recursiveBuild;
+		return recursiveBuildInfo != null;
 	}
 
 	BuildSpec<CONTEXT, PREREQUISITE> getAction() {
 		return action;
 	}
 
+	Collectors<TARGET> getCollectors() {
+		return collectors;
+	}
+	
+	RecursiveBuildInfo<CONTEXT, TARGET, PREREQUISITE> getRecursiveBuildInfo() {
+		return recursiveBuildInfo;
+	}
+
 	CollectSubTargets<TARGET> getCollectSubTargets() {
-		return collectSubTargets;
+		return collectors.getCollectSubTargets();
 	}
 
 	CollectSubProducts<TARGET> getCollectSubProducts() {
-		return collectSubProducts;
+		return collectors.getCollectSubProducts();
 	}
 }

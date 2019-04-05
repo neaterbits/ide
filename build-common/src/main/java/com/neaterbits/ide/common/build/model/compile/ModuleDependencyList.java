@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.ide.common.build.model.Dependency;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
-import com.neaterbits.ide.util.dependencyresolution.CollectedObject;
+import com.neaterbits.ide.util.dependencyresolution.executor.CollectedObject;
 
 public class ModuleDependencyList implements CollectedObject {
 

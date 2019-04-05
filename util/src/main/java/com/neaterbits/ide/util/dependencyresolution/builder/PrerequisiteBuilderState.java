@@ -7,9 +7,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.neaterbits.ide.util.dependencyresolution.BuildSpec;
-import com.neaterbits.ide.util.dependencyresolution.CollectSubProducts;
-import com.neaterbits.ide.util.dependencyresolution.CollectSubTargets;
 import com.neaterbits.ide.util.dependencyresolution.PrerequisiteSpec;
+import com.neaterbits.ide.util.dependencyresolution.executor.CollectSubProducts;
+import com.neaterbits.ide.util.dependencyresolution.executor.CollectSubTargets;
+import com.neaterbits.ide.util.dependencyresolution.executor.Collectors;
+import com.neaterbits.ide.util.dependencyresolution.executor.RecursiveBuildInfo;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
@@ -115,11 +117,15 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 				itemType,
 				constraint,
 				(BiFunction)getPrerequisites,
-				(BiFunction)getSubPrerequisites,
-				(Function)getDependencyFromPrerequisite,
-				recursiveBuild,
+				recursiveBuild
+					? new RecursiveBuildInfo<>(
+							(BiFunction)getSubPrerequisites,
+							(Function)getDependencyFromPrerequisite)
+					: null
+,
 				build,
-				collectSubTargets != null ? new CollectSubTargets<>(productType, (BiFunction)collectSubTargets) : null,
-				collectSubProducts != null ? new CollectSubProducts<>(productType, (BiFunction)collectSubProducts) : null);
+				new Collectors<>(
+					collectSubTargets != null ? new CollectSubTargets<>(productType, (BiFunction)collectSubTargets) : null,
+					collectSubProducts != null ? new CollectSubProducts<>(productType, (BiFunction)collectSubProducts) : null));
 	}
 }

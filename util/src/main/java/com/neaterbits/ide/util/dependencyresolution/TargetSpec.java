@@ -7,6 +7,10 @@ import java.util.function.Function;
 
 import com.neaterbits.ide.util.dependencyresolution.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.builder.ActionWithResultFunction;
+import com.neaterbits.ide.util.dependencyresolution.executor.Action;
+import com.neaterbits.ide.util.dependencyresolution.executor.ActionWithResult;
+import com.neaterbits.ide.util.dependencyresolution.executor.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.executor.Target;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
@@ -55,6 +59,10 @@ public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 		return description.apply(target);
 	}
 	
+	final Function<TARGET, String> getDescriptionFunction() {
+		return description;
+	}
+	
 	TargetSpec(TargetSpec<CONTEXT, TARGET> other, List<PrerequisiteSpec<CONTEXT, TARGET, ?>> additionalPrerequisites) {
 		
 		this(
@@ -87,7 +95,7 @@ public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 		return list;
 	}
 	
-	Class<TARGET> getType() {
+	public Class<TARGET> getType() {
 		return type;
 	}
 
