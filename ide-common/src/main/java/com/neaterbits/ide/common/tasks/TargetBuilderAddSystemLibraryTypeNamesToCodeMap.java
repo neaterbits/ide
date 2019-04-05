@@ -4,8 +4,8 @@ import java.util.Set;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.ide.util.dependencyresolution.TargetBuilderSpec;
 import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilder;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.Constraint;
 
 public final class TargetBuilderAddSystemLibraryTypeNamesToCodeMap extends TargetBuilderSpec<InitialScanContext> {

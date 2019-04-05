@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.neaterbits.ide.util.dependencyresolution.PrerequisitesBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.PrerequisitesBuilderSpec;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 

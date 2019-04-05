@@ -8,7 +8,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.neaterbits.ide.util.dependencyresolution.TargetSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetSpec;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 

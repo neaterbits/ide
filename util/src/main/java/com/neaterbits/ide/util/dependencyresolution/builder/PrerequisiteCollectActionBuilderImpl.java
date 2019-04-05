@@ -3,7 +3,7 @@ package com.neaterbits.ide.util.dependencyresolution.builder;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.neaterbits.ide.util.dependencyresolution.BuildSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.BuildSpec;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 class PrerequisiteCollectActionBuilderImpl<CONTEXT extends TaskContext, TARGET, FILE_TARGET, PREREQUISITE, PRODUCT, ITEM>

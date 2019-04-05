@@ -7,10 +7,10 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.neaterbits.ide.util.dependencyresolution.FileTargetSpec;
-import com.neaterbits.ide.util.dependencyresolution.InfoTargetSpec;
-import com.neaterbits.ide.util.dependencyresolution.PrerequisiteSpec;
-import com.neaterbits.ide.util.dependencyresolution.TargetSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.FileTargetSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.InfoTargetSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.PrerequisiteSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetSpec;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;

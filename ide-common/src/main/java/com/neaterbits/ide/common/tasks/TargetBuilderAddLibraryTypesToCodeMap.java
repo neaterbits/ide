@@ -9,8 +9,8 @@ import com.neaterbits.ide.common.build.model.DependencyType;
 import com.neaterbits.ide.common.build.tasks.ModuleBuilderUtil;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
-import com.neaterbits.ide.util.dependencyresolution.TargetBuilderSpec;
 import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilder;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.Constraint;
 
 // Add type names from eg. jar file index

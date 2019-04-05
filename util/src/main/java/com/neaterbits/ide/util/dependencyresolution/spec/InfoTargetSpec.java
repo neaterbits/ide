@@ -1,4 +1,4 @@
-package com.neaterbits.ide.util.dependencyresolution;
+package com.neaterbits.ide.util.dependencyresolution.spec;
 
 import java.util.List;
 import java.util.function.Function;

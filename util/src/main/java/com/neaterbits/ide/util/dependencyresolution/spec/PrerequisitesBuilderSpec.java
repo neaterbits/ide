@@ -1,4 +1,4 @@
-package com.neaterbits.ide.util.dependencyresolution;
+package com.neaterbits.ide.util.dependencyresolution.spec;
 
 import com.neaterbits.ide.util.dependencyresolution.builder.PrerequisitesBuilder;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;

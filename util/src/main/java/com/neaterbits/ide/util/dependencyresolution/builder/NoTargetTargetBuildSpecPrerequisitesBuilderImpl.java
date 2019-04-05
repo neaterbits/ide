@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.ide.util.dependencyresolution.TargetSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetSpec;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 final class NoTargetTargetBuildSpecPrerequisitesBuilderImpl<CONTEXT extends TaskContext>

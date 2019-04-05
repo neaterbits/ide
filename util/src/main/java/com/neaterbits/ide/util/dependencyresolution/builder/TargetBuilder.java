@@ -1,6 +1,6 @@
 package com.neaterbits.ide.util.dependencyresolution.builder;
 
-import com.neaterbits.ide.util.dependencyresolution.TargetBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 public interface TargetBuilder<CONTEXT extends TaskContext> {

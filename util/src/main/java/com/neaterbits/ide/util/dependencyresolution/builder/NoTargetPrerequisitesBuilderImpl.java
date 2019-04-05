@@ -2,7 +2,7 @@ package com.neaterbits.ide.util.dependencyresolution.builder;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.util.dependencyresolution.TargetSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetSpec;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 final class NoTargetPrerequisitesBuilderImpl<CONTEXT extends TaskContext>

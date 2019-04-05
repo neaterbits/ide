@@ -1,6 +1,6 @@
 package com.neaterbits.ide.util.dependencyresolution.builder;
 
-import com.neaterbits.ide.util.dependencyresolution.PrerequisitesBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.PrerequisitesBuilderSpec;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 

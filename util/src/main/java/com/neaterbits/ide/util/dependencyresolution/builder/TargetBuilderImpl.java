@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.neaterbits.ide.util.dependencyresolution.PrerequisiteSpec;
-import com.neaterbits.ide.util.dependencyresolution.TargetBuilderSpec;
-import com.neaterbits.ide.util.dependencyresolution.TargetSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.PrerequisiteSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.TargetSpec;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 public final class TargetBuilderImpl<CONTEXT extends TaskContext> implements TargetBuilder<CONTEXT> {
