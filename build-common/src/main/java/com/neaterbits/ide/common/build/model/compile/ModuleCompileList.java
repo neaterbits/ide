@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
-import com.neaterbits.ide.util.scheduling.dependencies.CollectedObject;
+import com.neaterbits.ide.util.dependencyresolution.CollectedObject;
 
 public final class ModuleCompileList implements CollectedObject {
 

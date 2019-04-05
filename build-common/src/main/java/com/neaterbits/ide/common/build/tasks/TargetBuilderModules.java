@@ -15,10 +15,10 @@ import com.neaterbits.ide.common.build.model.compile.ModuleCompileList;
 import com.neaterbits.ide.common.build.model.compile.ProjectModuleDependencyList;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
+import com.neaterbits.ide.util.dependencyresolution.TargetBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.builder.ActionLog;
+import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetBuilderSpec;
-import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionLog;
-import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 
 public class TargetBuilderModules extends TargetBuilderSpec<ModulesBuildContext> {
 

@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
+import com.neaterbits.ide.util.dependencyresolution.TargetBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.builder.ActionResult;
+import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.dependencies.TargetBuilderSpec;
-import com.neaterbits.ide.util.scheduling.dependencies.builder.ActionResult;
-import com.neaterbits.ide.util.scheduling.dependencies.builder.TargetBuilder;
 
 public class TargetBuilderGetSourceFolders extends TargetBuilderSpec<InitialScanContext> {
 
