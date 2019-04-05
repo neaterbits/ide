@@ -4,8 +4,8 @@ import com.neaterbits.ide.common.build.model.compile.FileCompilation;
 import com.neaterbits.ide.common.build.tasks.SourceFilesBuilderUtil;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
-import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilder;
 import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.Constraint;
 
 public final class TargetBuilderProjectModulesCodeMap extends TargetBuilderSpec<InitialScanContext> {

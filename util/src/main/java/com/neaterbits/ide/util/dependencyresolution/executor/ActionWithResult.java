@@ -1,6 +1,6 @@
 package com.neaterbits.ide.util.dependencyresolution.executor;
 
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionWithResultFunction;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 

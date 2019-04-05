@@ -1,7 +1,7 @@
 package com.neaterbits.ide.util.dependencyresolution.executor;
 
 
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionFunction;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
 import com.neaterbits.ide.util.scheduling.Constraint;
 
 public final class Action<TARGET> {

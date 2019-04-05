@@ -2,10 +2,10 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 
 import java.util.function.BiConsumer;
 
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionFunction;
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionLog;
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionResult;
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionWithResultFunction;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionResult;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.task.ProcessResult;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 

@@ -2,12 +2,12 @@ package com.neaterbits.ide.util.dependencyresolution.executor.logger;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionLog;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProduct;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProducts;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedTargetObjects;
 import com.neaterbits.ide.util.dependencyresolution.executor.Status;
 import com.neaterbits.ide.util.dependencyresolution.executor.Target;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 
 public final class BinaryTargetExecutorLogger implements TargetExecutorLogger {

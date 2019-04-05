@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionLog;
 import com.neaterbits.ide.util.dependencyresolution.executor.BuildEntity;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedObject;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProduct;
@@ -16,6 +15,7 @@ import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProducts;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedTargetObjects;
 import com.neaterbits.ide.util.dependencyresolution.executor.Status;
 import com.neaterbits.ide.util.dependencyresolution.executor.Target;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 import com.neaterbits.structuredlog.xml.model.Log;
 import com.neaterbits.structuredlog.xml.model.LogData;
 import com.neaterbits.structuredlog.xml.model.LogDataEntry;

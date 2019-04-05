@@ -1,8 +1,8 @@
 package com.neaterbits.ide.common.tasks;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
-import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilder;
 import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.Constraint;
 
 public final class TargetBuilderAddSystemLibraryTypesToCodeMap extends TargetBuilderSpec<InitialScanContext> {

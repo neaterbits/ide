@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
-import com.neaterbits.ide.util.dependencyresolution.builder.ActionResult;
-import com.neaterbits.ide.util.dependencyresolution.builder.TargetBuilder;
 import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionResult;
+import com.neaterbits.ide.util.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.Constraint;
 
 public class TargetBuilderGetSourceFolders extends TargetBuilderSpec<InitialScanContext> {
