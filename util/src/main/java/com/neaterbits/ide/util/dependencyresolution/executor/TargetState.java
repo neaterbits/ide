@@ -2,6 +2,7 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 final class TargetState<CONTEXT extends TaskContext> extends TargetStateMachine<CONTEXT> {

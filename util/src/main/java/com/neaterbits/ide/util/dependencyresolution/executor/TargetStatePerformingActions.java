@@ -8,6 +8,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.dependencyresolution.spec.TargetSpec;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
@@ -88,10 +91,10 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<Object, Object, Collection<Object>> getSubPrerequisites
-			= (BiFunction)fromPrerequisites.getSubPrerequisitesFunction();
+			= (BiFunction)fromPrerequisites.getRecursiveBuildInfo().getSubPrerequisitesFunction();
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		final Function<Object, Object> getTargetFromPrerequisite = (Function)fromPrerequisites.getTargetFromSubPrerequisite();
+		final Function<Object, Object> getTargetFromPrerequisite = (Function)fromPrerequisites.getRecursiveBuildInfo().getTargetFromPrerequisiteFunction();
 		
 		final Object targetObject = getTargetFromPrerequisite.apply(target.getTargetObject());
 		
@@ -165,7 +168,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 				fromPrerequisites.getRecursiveBuildInfo(),
 				fromPrerequisites.getCollectors());
 		
-		target.setPrerequisites(Arrays.asList(updatedPrerequisites));
+		target.updatePrerequisites(Arrays.asList(updatedPrerequisites));
 		
 		/*
 		final Target<?> replaceTarget = targetSpec.createTarget(

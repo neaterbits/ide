@@ -1,7 +1,8 @@
-package com.neaterbits.ide.util.dependencyresolution.executor;
+package com.neaterbits.ide.util.dependencyresolution.model;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.BuildEntity;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 import com.neaterbits.structuredlog.binary.logging.Loggable;
 
@@ -56,11 +57,11 @@ public final class Prerequisite<PREREQUISITE> extends BuildEntity implements Log
 	}
 
 	@Override
-	BuildEntity getFromEntity() {
+	public BuildEntity getFromEntity() {
 		return fromPrerequisites;
 	}
 
-	Prerequisites getFromPrerequisites() {
+	public Prerequisites getFromPrerequisites() {
 		return fromPrerequisites;
 	}
 
@@ -77,7 +78,7 @@ public final class Prerequisite<PREREQUISITE> extends BuildEntity implements Log
 		return item;
 	}
 
-	Target<PREREQUISITE> getSubTarget() {
+	public Target<PREREQUISITE> getSubTarget() {
 		return subTarget;
 	}
 

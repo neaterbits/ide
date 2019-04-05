@@ -1,4 +1,4 @@
-package com.neaterbits.ide.util.dependencyresolution.executor;
+package com.neaterbits.ide.util.dependencyresolution.model;
 
 import java.io.File;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.Action;
+import com.neaterbits.ide.util.dependencyresolution.executor.ActionWithResult;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 
 public final class FileTarget<TARGET> extends Target<TARGET> {
@@ -53,7 +55,7 @@ public final class FileTarget<TARGET> extends Target<TARGET> {
 	}
 
 	@Override
-	<CONTEXT> Target<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target,
+	public <CONTEXT> Target<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target,
 			List<Prerequisites> prerequisitesList) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })

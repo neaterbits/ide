@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class BuildEntity {
 
-	abstract BuildEntity getFromEntity();
+	public abstract BuildEntity getFromEntity();
 	
 	public abstract String getDebugString();
 	

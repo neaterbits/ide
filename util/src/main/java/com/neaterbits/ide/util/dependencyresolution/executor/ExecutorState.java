@@ -13,6 +13,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogState;
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionParameters;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 

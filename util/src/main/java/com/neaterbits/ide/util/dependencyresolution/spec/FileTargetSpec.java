@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.neaterbits.ide.util.dependencyresolution.executor.FileTarget;
-import com.neaterbits.ide.util.dependencyresolution.executor.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.executor.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.FileTarget;
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.Constraint;

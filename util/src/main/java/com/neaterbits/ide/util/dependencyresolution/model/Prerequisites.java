@@ -1,11 +1,12 @@
-package com.neaterbits.ide.util.dependencyresolution.executor;
+package com.neaterbits.ide.util.dependencyresolution.model;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.BuildEntity;
+import com.neaterbits.ide.util.dependencyresolution.executor.Collectors;
+import com.neaterbits.ide.util.dependencyresolution.executor.RecursiveBuildInfo;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 import com.neaterbits.structuredlog.binary.logging.Loggable;
 
@@ -47,7 +48,9 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 		
 		Objects.requireNonNull(prerequisites);
 	
-		this.prerequisites = logConstructorListField(logContext, LOG_FIELD_PREREQUISITES, prerequisites);
+		final List<Prerequisite<?>> logged = logConstructorListField(logContext, LOG_FIELD_PREREQUISITES, prerequisites);
+		
+		this.prerequisites = logged != null ? Collections.unmodifiableList(logged) : null;
 		this.description = description;
 		this.recursiveBuildInfo = recursiveBuildInfo;
 		this.collectors = collectors;
@@ -81,11 +84,11 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 	}
 
 	@Override
-	BuildEntity getFromEntity() {
+	public BuildEntity getFromEntity() {
 		return fromTarget;
 	}
 
-	Target<?> getFromTarget() {
+	public Target<?> getFromTarget() {
 		return fromTarget;
 	}
 
@@ -96,28 +99,19 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 		this.fromTarget = fromTarget;
 	}
 
-	List<Prerequisite<?>> getPrerequisites() {
+	public List<Prerequisite<?>> getPrerequisites() {
 		return prerequisites;
 	}
 
-	RecursiveBuildInfo<?, ?, ?> getRecursiveBuildInfo() {
+	public RecursiveBuildInfo<?, ?, ?> getRecursiveBuildInfo() {
 		return recursiveBuildInfo;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	BiFunction<?, ?, Collection<?>> getSubPrerequisitesFunction() {
-		return (BiFunction)recursiveBuildInfo.getSubPrerequisitesFunction();
-	}
-
-	Function<?, ?> getTargetFromSubPrerequisite() {
-		return recursiveBuildInfo.getTargetFromPrerequisiteFunction();
-	}
-
-	boolean isRecursiveBuild() {
+	public boolean isRecursiveBuild() {
 		return recursiveBuildInfo != null;
 	}
 
-	Collectors<?> getCollectors() {
+	public Collectors<?> getCollectors() {
 		return collectors;
 	}
 	

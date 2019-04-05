@@ -7,7 +7,7 @@ import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProduct;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProducts;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedTargetObjects;
 import com.neaterbits.ide.util.dependencyresolution.executor.Status;
-import com.neaterbits.ide.util.dependencyresolution.executor.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 
 public final class DelegatingTargetExecutorLogger implements TargetExecutorLogger {

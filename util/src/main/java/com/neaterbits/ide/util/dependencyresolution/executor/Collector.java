@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 class Collector {

@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 

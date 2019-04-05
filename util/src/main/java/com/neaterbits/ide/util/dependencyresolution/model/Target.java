@@ -1,8 +1,13 @@
-package com.neaterbits.ide.util.dependencyresolution.executor;
+package com.neaterbits.ide.util.dependencyresolution.model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.Action;
+import com.neaterbits.ide.util.dependencyresolution.executor.ActionWithResult;
+import com.neaterbits.ide.util.dependencyresolution.executor.BuildEntity;
+import com.neaterbits.ide.util.dependencyresolution.executor.RecursiveBuildInfo;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 import com.neaterbits.structuredlog.binary.logging.Loggable;
 
@@ -25,7 +30,7 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 
 	public abstract String targetToLogString();
 
-	abstract <CONTEXT> Target<TARGET> createTarget(
+	public abstract <CONTEXT> Target<TARGET> createTarget(
 			LogContext logContext,
 			CONTEXT context,
 			TARGET target,
@@ -58,7 +63,7 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 		this.action = action;
 		this.actionWithResult = actionWithResult;
 		
-		setPrerequisites(prerequisites);
+		updatePrerequisites(prerequisites);
 	}
 	
 	@Override
@@ -66,7 +71,7 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 		return constructorLogSequenceNo;
 	}
 
-	final LogContext getLogContext() {
+	public final LogContext getLogContext() {
 		return logContext;
 	}
 
@@ -74,16 +79,16 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 		return type;
 	}
 
-	boolean isRoot() {
+	public final boolean isRoot() {
 		return fromPrerequisite == null;
 	}
 	
 	@Override
-	final BuildEntity getFromEntity() {
+	public final BuildEntity getFromEntity() {
 		return fromPrerequisite;
 	}
 
-	final Prerequisite<?> getFromPrerequisite() {
+	public final Prerequisite<?> getFromPrerequisite() {
 		return fromPrerequisite;
 	}
 
@@ -109,22 +114,22 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 		return targetObject;
 	}
 
-	final List<Prerequisites> getPrerequisites() {
+	public final List<Prerequisites> getPrerequisites() {
 		return prerequisites;
 	}
 
-	void setPrerequisites(List<Prerequisites> prerequisites) {
+	public void updatePrerequisites(List<Prerequisites> prerequisites) {
 
 		prerequisites.forEach(p -> p.setFromTarget(this));
 
-		this.prerequisites = prerequisites;
+		this.prerequisites = Collections.unmodifiableList(prerequisites);
 	}
 
-	final Action<TARGET> getAction() {
+	public final Action<TARGET> getAction() {
 		return action;
 	}
 
-	final ActionWithResult<TARGET> getActionWithResult() {
+	public final ActionWithResult<TARGET> getActionWithResult() {
 		return actionWithResult;
 	}
 

@@ -7,8 +7,8 @@ import java.util.function.Function;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.Action;
 import com.neaterbits.ide.util.dependencyresolution.executor.ActionWithResult;
-import com.neaterbits.ide.util.dependencyresolution.executor.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.executor.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.Constraint;

@@ -1,9 +1,11 @@
-package com.neaterbits.ide.util.dependencyresolution.executor;
+package com.neaterbits.ide.util.dependencyresolution.model;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.Action;
+import com.neaterbits.ide.util.dependencyresolution.executor.ActionWithResult;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 
 public final class InfoTarget<TARGET> extends Target<TARGET> {
@@ -51,7 +53,7 @@ public final class InfoTarget<TARGET> extends Target<TARGET> {
 	}
 	
 	@Override
-	<CONTEXT> Target<TARGET> createTarget(
+	public <CONTEXT> Target<TARGET> createTarget(
 			LogContext logContext,
 			CONTEXT context,
 			TARGET target,

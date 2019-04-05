@@ -2,6 +2,7 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 
 import java.util.function.BiConsumer;
 
+import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionResult;
