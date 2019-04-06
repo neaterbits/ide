@@ -10,7 +10,7 @@ final class TargetState<CONTEXT extends TaskContext> extends TargetStateMachine<
 	private final Target<?> target;
 	
 	// private Status status;
-	private Exception exception;
+	// private Exception exception;
 	
 	TargetState(Target<?> target) {
 		super(target);
@@ -27,7 +27,7 @@ final class TargetState<CONTEXT extends TaskContext> extends TargetStateMachine<
 	}
 
 	Exception getException() {
-		return exception;
+		return getCurState().getException();
 	}
 
 	Status getStatus() {

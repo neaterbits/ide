@@ -16,6 +16,10 @@ public abstract class BaseTargetState<CONTEXT extends TaskContext>
 
 	abstract Status getStatus();
 	
+	Exception getException() {
+		throw new IllegalStateException();
+	}
+	
 	public BaseTargetState(Target<?> target) {
 		Objects.requireNonNull(target);
 		
