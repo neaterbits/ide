@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -60,6 +62,13 @@ public final class SWTBinaryLogTree extends Composite {
 					}
 				}
 		});
+	}
+	
+	void addTreeSelectionListener(ISelectionChangedListener listener) {
+
+		Objects.requireNonNull(listener);
+		
+		treeViewer.addSelectionChangedListener(listener);
 	}
 	
 	void setLogModel(LogModel logModel) {
@@ -134,6 +143,48 @@ public final class SWTBinaryLogTree extends Composite {
 		this.hiddenItems = filters;
 		
 		updateItemsMatching();
+	}
+	
+	boolean shouldShowMessageInLog(LogObject rootTargetObject) {
+		
+		final boolean shouldShow;
+		
+		if (treeViewer.getSelection().isEmpty()) {
+			shouldShow = !hiddenElements.contains(rootTargetObject);
+		}
+		else {
+			final IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+
+			shouldShow = isObjectAtOrUnder(rootTargetObject, selection.getFirstElement());
+		}
+
+		return shouldShow;
+	}
+	
+	private boolean isObjectAtOrUnder(Object toFind, Object startElement) {
+		
+		boolean found;
+		
+		if (toFind.equals(startElement)) {
+			found = true;
+		}
+		else {
+			found = false;
+			
+			final Object [] subElements = contentProvider.getElements(startElement);
+			
+			if (subElements != null && subElements.length != 0) {
+				
+				for (Object subElement : subElements) {
+					if (isObjectAtOrUnder(toFind, subElement)) {
+						found = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		return found;
 	}
 	
 	private void updateItemsMatching() {

@@ -33,10 +33,25 @@ final class SWTBinaryLogUI extends SWTBaseUI {
 		
 		logTree.setLogModel(logModel);
 
-		final SWTBinaryLogOptions optionsComposite = new SWTBinaryLogOptions(composite, SWT.NONE, logModel, logTree);
+		final SWTBinaryLogOptions optionsComposite = new SWTBinaryLogOptions(composite, SWT.NONE, logModel);
+		
 		optionsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		
+		optionsComposite.addUpdatedDisplayTypesListener(logTree::updateDisplayedTypes);
+		
 		final SWTBinaryLogMessageList messageList = new SWTBinaryLogMessageList(composite, SWT.NONE, logModel, logTree);
+		
+		logTree.addTreeSelectionListener(e -> messageList.refreshMessageList());
+
+		optionsComposite.addShownListener(items -> {
+			logTree.showItemsMatching(items);
+			messageList.refreshMessageList();
+		});
+		
+		optionsComposite.addHiddenListener(items -> {
+			logTree.hideItemsMatching(items);
+			messageList.refreshMessageList();
+		});
 		
 		final GridData listGridData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		listGridData.horizontalSpan = 2;

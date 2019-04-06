@@ -1,8 +1,10 @@
 package com.neaterbits.structuredlog.swt;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -24,19 +26,56 @@ import com.neaterbits.structuredlog.binary.model.LogObject;
 
 final class SWTBinaryLogOptions extends Composite {
 
-	SWTBinaryLogOptions(Composite parent, int style, LogModel logModel, SWTBinaryLogTree logTree) {
+	private final List<Consumer<Set<String>>> updatedDisplayTypesListeners;
+	private final List<Consumer<String []>> shownListeners;
+	private final List<Consumer<String []>> hiddenListeners;
+	
+	SWTBinaryLogOptions(Composite parent, int style, LogModel logModel) {
 		super(parent, style);
 
 		setLayout(new GridLayout(1, false));
+
+		this.updatedDisplayTypesListeners = new ArrayList<>();
+		this.shownListeners = new ArrayList<>();
+		this.hiddenListeners = new ArrayList<>();
 		
-		final Group typesGroup = makeTypesGroup(this, logModel, logTree);
+		final Group typesGroup = makeTypesGroup(
+				this,
+				logModel,
+				displayedTypes -> updatedDisplayTypesListeners.forEach(listener -> listener.accept(displayedTypes)));
+		
 		typesGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		
-		final Group filterGroup = makeFiltersGroup(this, logTree);
+		final Group filterGroup = makeFiltersGroup(
+				this,
+				list -> shownListeners.forEach(listener -> listener.accept(list)),
+				list -> hiddenListeners.forEach(listener -> listener.accept(list)));
+		
 		filterGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 	}
 	
-	private static Group makeTypesGroup(Composite composite, LogModel logModel, SWTBinaryLogTree logTree) {
+	void addUpdatedDisplayTypesListener(Consumer<Set<String>> listener) {
+		
+		Objects.requireNonNull(listener);
+		
+		updatedDisplayTypesListeners.add(listener);
+	}
+	
+	void addShownListener(Consumer<String[]> listener) {
+		
+		Objects.requireNonNull(listener);
+		
+		shownListeners.add(listener);
+	}
+	
+	void addHiddenListener(Consumer<String[]> listener) {
+		
+		Objects.requireNonNull(listener);
+		
+		hiddenListeners.add(listener);
+	}
+
+	private static Group makeTypesGroup(Composite composite, LogModel logModel, Consumer<Set<String>> onUpdatedDisplayedTypes) {
 		
 		final Group typesGroup = new Group(composite, SWT.BORDER);
 		typesGroup.setText("Types");
@@ -69,8 +108,8 @@ final class SWTBinaryLogOptions extends Composite {
 					else {
 						displayedTypes.remove(simpleType);
 					}
-					
-					logTree.updateDisplayedTypes(displayedTypes);
+
+					onUpdatedDisplayedTypes.accept(displayedTypes);
 				}
 			});
 		}
@@ -78,17 +117,17 @@ final class SWTBinaryLogOptions extends Composite {
 		return typesGroup;
 	}
 
-	private static Group makeFiltersGroup(Composite composite, SWTBinaryLogTree logTree) {
+	private static Group makeFiltersGroup(Composite composite, Consumer<String[]> onShownUpdated, Consumer<String[]> onHiddenUpdated) {
 
 		final Group group = new Group(composite, SWT.BORDER);
 		group.setText("Filters");
 
 		group.setLayout(new GridLayout(2, false));
 		
-		final Composite showFilterComposite = makeFilterEdit(group, "Show", list -> updateTree(list, logTree, true));
+		final Composite showFilterComposite = makeFilterEdit(group, "Show", onShownUpdated);
 		showFilterComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		
-		final Composite hideFilterComposite = makeFilterEdit(group, "Hide", list -> updateTree(list, logTree, false));
+		final Composite hideFilterComposite = makeFilterEdit(group, "Hide", onHiddenUpdated);
 		hideFilterComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		return group;
@@ -227,15 +266,5 @@ final class SWTBinaryLogOptions extends Composite {
 		list.add("");
 		list.setSelection(list.getItemCount() - 1);
 		text.setFocus();
-	}
-	
-	private static void updateTree(String [] list, SWTBinaryLogTree tree, boolean show) {
-		
-		if (show) {
-			tree.showItemsMatching(list);
-		}
-		else {
-			tree.hideItemsMatching(list);
-		}
 	}
 }
