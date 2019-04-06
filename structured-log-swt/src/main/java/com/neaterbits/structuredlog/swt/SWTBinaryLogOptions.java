@@ -189,6 +189,7 @@ final class SWTBinaryLogOptions extends Composite {
 
 				filterText.setEnabled(true);
 				filterText.setFocus();
+				removeButton.setEnabled(true);
 			}
 		});
 
@@ -218,6 +219,7 @@ final class SWTBinaryLogOptions extends Composite {
 		}
 		else {
 			filterText.setEnabled(false);
+			filterText.setText("");
 		}
 	}
 	
