@@ -1,4 +1,6 @@
 package com.neaterbits.structuredlog.swt;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -6,16 +8,27 @@ import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import com.neaterbits.structuredlog.binary.model.LogField;
 import com.neaterbits.structuredlog.binary.model.LogModel;
 import com.neaterbits.structuredlog.binary.model.LogObject;
 
 public final class SWTBinaryLogTree extends Composite {
 
 	private final TreeViewer treeViewer;
+
+	private LogModel logModel;
+	
+	private String [] shownItems;
+	private String [] hiddenItems;
+	
 	private final FilteredTexts filteredTexts;
+	private final Set<Object> hiddenElements;
+	
 	private final SWTBinaryLogTreeContentProvider contentProvider;
 	private final IBaseLabelProvider labelProvider;
 
@@ -29,18 +42,31 @@ public final class SWTBinaryLogTree extends Composite {
 		treeViewer.setUseHashlookup(true);
 	
 		this.filteredTexts = new FilteredTexts();
+		this.hiddenElements = new HashSet<>();
 		
-		this.contentProvider = new SWTBinaryLogTreeContentProvider(filteredTexts);
+		this.contentProvider = new SWTBinaryLogTreeContentProvider();
 		treeViewer.setContentProvider(contentProvider);	
 
 		this.labelProvider = new DelegatingStyledCellLabelProvider(new SWTBinaryLogTreeLabelProvider(filteredTexts));
 		treeViewer.setLabelProvider(labelProvider);
+		
+		treeViewer.setFilters(new ViewerFilter[] {
+				new ViewerFilter() {
+					
+					@Override
+					public boolean select(Viewer viewer, Object parentElement, Object element) {
+						
+						return !hiddenElements.contains(element);
+					}
+				}
+		});
 	}
 	
 	void setLogModel(LogModel logModel) {
 		
 		Objects.requireNonNull(logModel);
 		
+		this.logModel = logModel;
 		
 		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		
@@ -96,22 +122,53 @@ public final class SWTBinaryLogTree extends Composite {
 	
 	void showItemsMatching(String [] filters) {
 		
-		filteredTexts.clear();
-		
-		contentProvider.showItemsMatching(filters);
+		this.shownItems = filters;
 
-		treeViewer.refresh();
-		
-		// treeViewer.expandAll();
+		updateItemsMatching();
 	}
 	
 	void hideItemsMatching(String [] filters) {
 
+		System.out.println("## hide items " + Arrays.toString(filters));
+		
+		this.hiddenItems = filters;
+		
+		updateItemsMatching();
+	}
+	
+	private void updateItemsMatching() {
+		
 		filteredTexts.clear();
+		hiddenElements.clear();
 
-		contentProvider.hideItemsMatching(filters);
+		SWTBinaryLogTreeFilter.filter(
+				logModel,
+				shownItems, hiddenItems,
+				filteredTexts, hiddenElements,
+				contentProvider, element -> getObjectLabel(element));
 		
 		treeViewer.refresh();
+	}
+	
+	static String getObjectLabel(Object element) {
+		
+		Objects.requireNonNull(element);
+		
+		final String label;
+		
+		if (element instanceof LogObject) {
+			label = getLogObjectLabel((LogObject)element);
+		}
+		else if (element instanceof LogField) {
+			final LogField logField = (LogField)element;
+			
+			label = logField.getFieldName();
+		}
+		else {
+			label = element.toString();
+		}
+		
+		return label;
 	}
 	
 	static String getLogObjectLabel(LogObject logObject) {

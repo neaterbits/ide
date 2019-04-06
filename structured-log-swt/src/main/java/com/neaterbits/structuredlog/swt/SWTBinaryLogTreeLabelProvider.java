@@ -12,8 +12,6 @@ import org.eclipse.swt.graphics.TextStyle;
 
 import com.neaterbits.ide.util.ui.text.styling.TextColor;
 import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
-import com.neaterbits.structuredlog.binary.model.LogField;
-import com.neaterbits.structuredlog.binary.model.LogObject;
 
 final class SWTBinaryLogTreeLabelProvider extends BaseLabelProvider implements IStyledLabelProvider {
 
@@ -31,32 +29,17 @@ final class SWTBinaryLogTreeLabelProvider extends BaseLabelProvider implements I
 
 		final StyledString text;
 
-		if (element instanceof LogObject) {
-			
-			final LogObject logObject = (LogObject)element;
+		final String labelText = SWTBinaryLogTree.getObjectLabel(element);
+
+		final List<TextStyleOffset> textStyleOffsets = filteredTexts.getStyleOffsets(element);
 		
-			final String labelText = SWTBinaryLogTree.getLogObjectLabel(logObject);
-			
-			final List<TextStyleOffset> textStyleOffsets = filteredTexts.getStyleOffsets(logObject);
-			
-			if (textStyleOffsets != null) {
-				text = makeStyledString(labelText, textStyleOffsets);
-			}
-			else {
-				text = new StyledString(labelText);
-			}
-			
-		}
-		else if (element instanceof LogField) {
-			
-			final LogField logField = (LogField)element;
-			
-			text = new StyledString(logField.getFieldName());
+		if (textStyleOffsets != null) {
+			text = makeStyledString(labelText, textStyleOffsets);
 		}
 		else {
-			text = new StyledString(element.toString());
+			text = new StyledString(labelText);
 		}
-		
+
 		return text;
 	}
 	

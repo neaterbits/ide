@@ -8,38 +8,37 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
-import com.neaterbits.structuredlog.binary.model.LogObject;
 
 final class FilteredTexts {
 
-	private final Map<LogObject, List<TextStyleOffset>> styleOffsets;
+	private final Map<Object, List<TextStyleOffset>> styleOffsets;
 	
 	FilteredTexts() {
 		this.styleOffsets = new HashMap<>();
 	}
 	
-	void addStyleOffset(LogObject logObject, TextStyleOffset styleOffset) {
+	void addStyleOffset(Object object, TextStyleOffset styleOffset) {
 		
-		Objects.requireNonNull(logObject);
+		Objects.requireNonNull(object);
 		Objects.requireNonNull(styleOffset);
 
-		List<TextStyleOffset> offsets = styleOffsets.get(logObject);
+		List<TextStyleOffset> offsets = styleOffsets.get(object);
 		
 		if (offsets == null) {
 		
 			offsets = new ArrayList<>();
 			
-			styleOffsets.put(logObject, offsets);
+			styleOffsets.put(object, offsets);
 		}
 		
 		offsets.add(styleOffset);
 	}
 	
-	List<TextStyleOffset> getStyleOffsets(LogObject logObject) {
+	List<TextStyleOffset> getStyleOffsets(Object object) {
 		
-		Objects.requireNonNull(logObject);
+		Objects.requireNonNull(object);
 		
-		final List<TextStyleOffset> list = styleOffsets.get(logObject);
+		final List<TextStyleOffset> list = styleOffsets.get(object);
 	
 		return list != null ? Collections.unmodifiableList(list) : null;
 	}
