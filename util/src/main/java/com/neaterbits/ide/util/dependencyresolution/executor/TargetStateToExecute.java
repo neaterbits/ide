@@ -55,6 +55,7 @@ final class TargetStateToExecute<CONTEXT extends TaskContext>
 				context.logger.onTargetDone(target, status.getException(), context.state);
 			}
 			
+			onCompletedTarget(context, target, status.getException(), false);
 			nextState = new TargetStateFailed<>(target, status.getException());
 		}
 		else {
