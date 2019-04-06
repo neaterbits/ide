@@ -74,7 +74,7 @@ public class TargetBuilderModules extends TargetBuilderSpec<ModulesBuildContext>
 						/*
 						System.out.println("## module compile list " + moduleCompileList);
 						
-						System.out.println("## external dependency list " + externalDependencyList);
+						System.out.println("## external dependency list " + externalDependencyList + " for " + target);
 
 						System.out.println("## project dependency list " + projectDependencyList);
 						*/

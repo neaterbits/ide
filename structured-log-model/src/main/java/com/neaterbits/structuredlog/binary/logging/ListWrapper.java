@@ -59,4 +59,9 @@ final class ListWrapper<S> extends CollectionWrapper<S, List<S>> implements List
 	public List<S> subList(int arg0, int arg1) {
 		return delegate.subList(arg0, arg1);
 	}
+
+	@Override
+	public String toString() {
+		return delegate.toString();
+	}
 }

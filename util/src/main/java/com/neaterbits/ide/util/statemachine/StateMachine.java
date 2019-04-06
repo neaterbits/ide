@@ -31,9 +31,11 @@ public abstract class StateMachine<STATE extends BaseState<STATE>> {
 		return curState.getClass().getSimpleName();
 	}
 
-	public void schedule(StateOperation<STATE> runnable) {
+	public boolean schedule(StateOperation<STATE> runnable) {
 
 		Objects.requireNonNull(runnable);
+		
+		boolean stateChangeOccured = false;
 		
 		queue.addLast(runnable);
 		
@@ -67,6 +69,8 @@ public abstract class StateMachine<STATE extends BaseState<STATE>> {
 						*/
 
 						this.curState = nextState;
+						
+						stateChangeOccured = true;
 					}
 				}
 			}
@@ -74,5 +78,7 @@ public abstract class StateMachine<STATE extends BaseState<STATE>> {
 				this.withinSchedule = false;
 			}
 		}
+		
+		return stateChangeOccured;
 	}
 }

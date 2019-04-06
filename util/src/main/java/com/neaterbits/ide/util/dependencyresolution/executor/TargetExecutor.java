@@ -55,13 +55,22 @@ public final class TargetExecutor {
 			final int targetsLeft = targets.size();
 			final int priorNumScheduled = asyncExecutor.getNumScheduledJobs();
 			
+			System.out.println("## schedule targets");
+			
+			boolean anyStateChange = false;
+			
 			for (TargetState<CONTEXT> target : targets) {
 				
 				// Try to check if state can be completed
-				target.schedule(state -> state.onCheckPrerequisitesComplete(context));
+				final boolean stateChangeOccured = target.schedule(state -> state.onCheckPrerequisitesComplete(context));
+				
+				if (stateChangeOccured) {
+					anyStateChange = true;
+				}
 			}
 
-			if (   targetsLeft == context.state.getNonCompletedTargets().size()
+			if (   !anyStateChange
+				&& targetsLeft == context.state.getNonCompletedTargets().size()
 				&& priorNumScheduled == asyncExecutor.getNumScheduledJobs()) {
 
 				// No target scheduled

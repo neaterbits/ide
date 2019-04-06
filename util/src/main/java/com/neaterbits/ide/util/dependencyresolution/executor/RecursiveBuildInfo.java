@@ -9,11 +9,11 @@ import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 public class RecursiveBuildInfo<CONTEXT extends TaskContext, TARGET, PREREQUISITE> {
 
-	private final BiFunction<CONTEXT, ?, Collection<PREREQUISITE>> getSubPrerequisites;
+	private final BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getSubPrerequisites;
 	private final Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite;
 
 	public RecursiveBuildInfo(
-			BiFunction<CONTEXT, ?, Collection<PREREQUISITE>> getSubPrerequisites,
+			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getSubPrerequisites,
 			Function<PREREQUISITE, TARGET> getDependencyFromPrerequisite) {
 		
 		Objects.requireNonNull(getSubPrerequisites);

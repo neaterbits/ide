@@ -68,29 +68,60 @@ class Collector {
 		final Object collectTargetObject;
 		final CollectedProduct collected;
 		
-		if (withCollect.isRecursiveBuild()) {
+		// if (withCollect.isRecursiveBuild()) {
+		
+		if (target.isRecursionSubTarget()) {
 			
-			final Target<?> topOfRecursionTarget = Target.findRecursionTop(withCollect);
+			final Target<?> topOfRecursionTarget = target.getTopOfRecursion();
+
+			if (DEBUG) {
+				System.out.println("## add " + subTargetObjects + " for sub of " + topOfRecursionTarget);
+			}
 			
-			collectTargetObject = topOfRecursionTarget.getTargetObject();
-	
 			context.state.addToRecursiveTargetCollected(topOfRecursionTarget, subTargetObjects);
-	
-			if (target.isTopOfRecursion()) {
-				
-				if (target != topOfRecursionTarget) {
-					throw new IllegalStateException();
-				}
-				
-				collected = collect.collect(collectTargetObject, subTargetObjects);
-			}
-			else {
-				collected = null;
-			}
+
+
+			collected = null;
 		}
 		else {
-			collectTargetObject = withCollect.getFromTarget().getTargetObject();
-			collected = collect.collect(collectTargetObject, subTargetObjects);
+
+			if (withCollect.isRecursiveBuild()) {
+				// Target directly above recursion targets
+				
+				CollectedTargetObjects allCollectedTargetObjects = null;
+				
+				for (Prerequisite<?> prerequisite : withCollect.getPrerequisites()) {
+					
+					if (!prerequisite.getSubTarget().isTopOfRecursion()) {
+						throw new IllegalStateException();
+					}
+					
+					final CollectedTargetObjects collectedObjects
+							= context.state.getRecursiveTargetCollected(prerequisite.getSubTarget());
+					
+					if (collectedObjects != null) {
+						allCollectedTargetObjects = allCollectedTargetObjects != null
+								? allCollectedTargetObjects.mergeWith(collectedObjects)
+								: collectedObjects;
+					}
+				}
+				
+				if (allCollectedTargetObjects != null) {
+					collectTargetObject = target.getTargetObject();
+					collected = collect.collect(collectTargetObject, allCollectedTargetObjects);
+				}
+				else {
+					collected = null;
+				}
+			}
+			else {
+				if (DEBUG) {
+					System.out.println("## collect sub target objects " + subTargetObjects);
+				}
+	
+				collectTargetObject = withCollect.getFromTarget().getTargetObject();
+				collected = collect.collect(collectTargetObject, subTargetObjects);
+			}
 		}
 		
 		return collected;
@@ -229,5 +260,4 @@ class Collector {
 		collectProductsFromSubTargetsOf(context, target);
 		collectProductsFromSubProductsOf(context, target);
 	}
-	
 }

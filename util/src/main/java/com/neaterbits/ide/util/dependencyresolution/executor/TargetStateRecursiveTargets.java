@@ -16,7 +16,6 @@ final class TargetStateRecursiveTargets<CONTEXT extends TaskContext> extends Bas
 
 	@Override
 	public BaseTargetState<CONTEXT> onCheckPrerequisitesComplete(TargetExecutionContext<CONTEXT> context) {
-		Collector.collectFromSubTargetsAndSubProducts(context, target);
 
 		final BaseTargetState<CONTEXT> nextState;
 		
@@ -24,6 +23,7 @@ final class TargetStateRecursiveTargets<CONTEXT extends TaskContext> extends Bas
 		
 		switch (completion.getStatus()) {
 		case SUCCESS:
+			Collector.collectFromSubTargetsAndSubProducts(context, target);
 			onCompletedTarget(context, target, completion.getException(), false);
 			nextState = new TargetStateDone<>(target);
 			break;

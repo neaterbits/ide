@@ -7,7 +7,6 @@ import java.util.function.Function;
 import com.neaterbits.ide.util.dependencyresolution.executor.Action;
 import com.neaterbits.ide.util.dependencyresolution.executor.ActionWithResult;
 import com.neaterbits.ide.util.dependencyresolution.executor.BuildEntity;
-import com.neaterbits.ide.util.dependencyresolution.executor.RecursiveBuildInfo;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 import com.neaterbits.structuredlog.binary.logging.Loggable;
 
@@ -148,6 +147,29 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 	}
 
 	
+	public final Target<?> getTopOfRecursion() {
+
+		if (!isRecursionSubTarget()) {
+			throw new IllegalStateException();
+		}
+		
+		Target<?> result = null;
+		
+		for (Target<?> target = this;
+				   target != null
+				&& target.isRecursionSubTarget();
+				target = target.getFromTarget()) {
+			
+			result = target;
+		}
+		
+		if (!result.isTopOfRecursion()) {
+			throw new IllegalStateException();
+		}
+
+		return result;
+	}
+	
 	public final boolean isTopOfRecursion() {
 		
 		return getRecursionLevel() == 0;
@@ -157,7 +179,11 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 		
 		int level = 0;
 		
-		for (Target<?> target = this;
+		if (!isRecursionSubTarget()) {
+			throw new IllegalStateException("Not a recursion target " + this);
+		}
+		
+		for (Target<?> target = getFromTarget();
 				   target != null
 				&& target.isRecursionSubTarget()
 				// && target.targetSpec == this.targetSpec
@@ -171,6 +197,7 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 		return level;
 	}
 	
+	/*
 	public static Target<?> findRecursionTop(Prerequisites prerequisites) {
 
 		if (!prerequisites.isRecursiveBuild()) {
@@ -184,23 +211,34 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 
 		for (
 				prq = prerequisites;
-				prq.getRecursiveBuildInfo() == recursiveBuildInfo && prq.getFromTarget() != null;
-				prq = prq.getFromTarget().getFromPrerequisite().getFromPrerequisites()) {
+				
+				   prq != null
+			    && prq.getRecursiveBuildInfo() != null
+				&& prq.getRecursiveBuildInfo() == recursiveBuildInfo
+				&& prq.getFromTarget() != null;
+				
+				prq = prq.getFromTarget().getFromPrerequisite() != null
+						? prq.getFromTarget().getFromPrerequisite().getFromPrerequisites()
+						: null) {
 			
-			/*
 			System.out.println("## target " + prq.getFromTarget() + "/"
 						+ prq.getFromTarget().getFromPrerequisite().getFromPrerequisites().isRecursiveBuild());
 			
-			*/
 			initialTarget = prq.getFromTarget();
 		}
 
+		if (initialTarget == null) {
+			throw new IllegalStateException("No initialtarget for " + prerequisites);
+		}
+		
+		
 		if (!initialTarget.isTopOfRecursion()) {
 			throw new IllegalStateException();
 		}
 		
 		return initialTarget;
 	}
+	*/
 	
 	private void printTargets(int indent) {
 

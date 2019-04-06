@@ -26,8 +26,14 @@ public final class CollectSubTargets<TARGET> {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<Object, List<Object>, Object> function = (BiFunction)collect;
 		
-		final Object productObject =  function.apply(targetObject, subTargetObjects.getCollectedObjects());
+		final List<Object> collectedObjects = subTargetObjects.getCollectedObjects();
+
+		/*
+		System.out.println("## collected objects " + collectedObjects);
+		System.out.println("## target object " + targetObject);
+		*/
 		
+		final Object productObject =  function.apply(targetObject, collectedObjects);
 		
 		if (productObject == null) {
 			throw new IllegalStateException();

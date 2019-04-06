@@ -197,8 +197,13 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		
 		CollectedTargetObjects objects = recursiveTargetCollected.get(target);
 		
+		// System.out.println("## merge collected " + collected + " with " + objects);
+		
 		if (objects != null) {
 			objects = objects.mergeWith(collected);
+		}
+		else {
+			objects = collected;
 		}
 
 		recursiveTargetCollected.put(target, objects);
@@ -282,6 +287,8 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		Objects.requireNonNull(type);
 		
 		final Target<?> target = targetsByTargetObject.get(targetObject);
+
+		// System.out.println("## collected products " + targetsByTargetObject + ", returns " + target + " for " + targetObject);
 		
 		if (target == null) {
 			throw new IllegalStateException();
