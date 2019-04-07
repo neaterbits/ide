@@ -70,6 +70,7 @@ public final class TargetExecutor {
 			}
 
 			if (   !anyStateChange
+				&& targetsLeft != 0
 				&& targetsLeft == context.state.getNonCompletedTargets().size()
 				&& priorNumScheduled == asyncExecutor.getNumScheduledJobs()) {
 
