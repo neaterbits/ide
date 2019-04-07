@@ -26,16 +26,9 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 	private final Map<Object, Target<?>> targetsByTargetObject;
 
 	private final List<TargetStateMachine<CONTEXT>> nonCompletedTargets;
-
-	
-	/*
-	private final Map<Target<?>, Object> collected;
-	private final Map<Class<?>, Object> collectedProducts;
-	*/
 	
 	private final Map<Target<?>, CollectedTargetObjects> recursiveTargetCollected;
 
-	// private final Map<Target<?>, CollectedTargetObject> collectedTargetObjects; 
 	private final Map<Target<?>, List<CollectedProduct>> collectedProductObjects;
 	
 	static <CTX extends TaskContext> ExecutorState<CTX> createFromTargetTree(
@@ -75,12 +68,6 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 				throw new IllegalArgumentException();
 			}
 		}
-		
-		/*
-		this.collected = new HashMap<>(toExecuteTargets.size());
-		this.collectedProducts = new HashMap<>();
-		*/
-		
 		
 		this.recursiveTargetCollected = new HashMap<>();
 		
@@ -170,7 +157,17 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 
 	@Override
 	public Status getTargetStatus(Target<?> target) {
-		return targetState(target).getStatus();
+
+		final TargetStateMachine<?> targetState = targetState(target);
+
+		if (targetState == null) {
+			
+			System.out.println("## targets " + targets.keySet());
+			
+			throw new IllegalArgumentException("No target state for " + target.targetSimpleLogString());
+		}
+		
+		return targetState.getStatus();
 	}
 	
 	PrerequisiteCompletion getTargetCompletion(Target<?> target) {
@@ -319,14 +316,12 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 
 					if (toExecuteTargets.contains(prerequisite.getSubTarget())) {
 						// eg external modules are prerequisites via multiple paths
-						// throw new IllegalStateException("Already contains " + prerequisite.getSubTarget());
 					}
 					else {
-					
 						toExecuteTargets.add(prerequisite.getSubTarget());
-						
-						getSubTargets(prerequisite.getSubTarget(), toExecuteTargets);
 					}
+
+					getSubTargets(prerequisite.getSubTarget(), toExecuteTargets);
 				}
 			}
 		}
