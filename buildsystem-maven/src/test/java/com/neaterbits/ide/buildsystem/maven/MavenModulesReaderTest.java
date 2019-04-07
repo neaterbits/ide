@@ -1,4 +1,4 @@
-package com.neaterbits.ide.buildsystem.maven;
+	package com.neaterbits.ide.buildsystem.maven;
 
 import java.io.File;
 import java.io.IOException;

@@ -59,7 +59,9 @@ class BuildRootImplInit {
 			
 			final PROJECT pom = entry.getValue();
 			
-			final BuildProject<PROJECT> buildProject = new BuildProject<>(pom, findDependencies(pom, moduleIdToResourcePath, buildSystemRoot));
+			final List<Dependency> dependencies = findDependencies(pom, projects, moduleIdToResourcePath, buildSystemRoot);
+			
+			final BuildProject<PROJECT> buildProject = new BuildProject<>(pom, dependencies);
 
 			final ProjectModuleResourcePath moduleResourcePath = moduleIdToResourcePath.get(mavenModuleId);
 			
@@ -75,6 +77,7 @@ class BuildRootImplInit {
 
 	private static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> List<Dependency> findDependencies(
 			PROJECT project,
+			Map<MODULE_ID, PROJECT> projects,
 			Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath,
 			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
@@ -86,23 +89,24 @@ class BuildRootImplInit {
 			
 			for (DEPENDENCY buildSystemDependency : buildSystemRoot.resolveDependencies(project)) {
 				
-				final MODULE_ID moduleId = buildSystemRoot.getDependencyModuleId(buildSystemDependency);
+				final MODULE_ID dependencyModuleId = buildSystemRoot.getDependencyModuleId(buildSystemDependency);
 				
-				if (moduleId == null) {
+				if (dependencyModuleId == null) {
 					throw new IllegalStateException();
 				}
 				
-				final ProjectModuleResourcePath projectModule = moduleIdToResourcePath.get(moduleId);
+				final ProjectModuleResourcePath dependencyModule = moduleIdToResourcePath.get(dependencyModuleId);
+				final PROJECT dependencyProject = projects.get(dependencyModuleId);
 				
 				final Dependency dependency;
 				
-				if (projectModule != null) {
+				if (dependencyModule != null) {
 
 					dependency = new BuildDependency<>(
-							getCompiledModuleFile(projectModule, project, buildSystemRoot),
+							getCompiledModuleFile(dependencyModule, dependencyProject, buildSystemRoot),
 							DependencyType.PROJECT,
-							projectModule,
-							targetDirectoryJarFile(projectModule, buildSystemDependency, buildSystemRoot),
+							dependencyModule,
+							targetDirectoryJarFile(dependencyModule, buildSystemDependency, buildSystemRoot),
 							buildSystemDependency);
 				}
 				else {

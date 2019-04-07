@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.Dependency;
 import com.neaterbits.ide.common.build.model.DependencyType;
 import com.neaterbits.ide.common.buildsystem.Scope;
@@ -12,23 +13,28 @@ import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 public class ModuleBuilderUtil {
 
 	public static List<Dependency> transitiveProjectDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
+
+		return transitiveProjectDependencies(context.getBuildRoot(), module);
+	}
+		
+	public static List<Dependency> transitiveProjectDependencies(BuildRoot buildRoot, ProjectModuleResourcePath module) {
 		
 		final List<Dependency> dependencies = new ArrayList<>();
 		
-		transitiveProjectDependencies(context, module, dependencies);
+		transitiveProjectDependencies(buildRoot, module, dependencies);
 
 		return dependencies;
 	}
 
-	private static void transitiveProjectDependencies(TaskBuilderContext context, ProjectModuleResourcePath module, List<Dependency> dependencies) {
+	private static void transitiveProjectDependencies(BuildRoot buildRoot, ProjectModuleResourcePath module, List<Dependency> dependencies) {
 		 
-		final List<Dependency> moduleDependencies = context.getBuildRoot().getDependenciesForProjectModule(module);
+		final List<Dependency> moduleDependencies = buildRoot.getDependenciesForProjectModule(module);
 		 
 		dependencies.addAll(moduleDependencies);
 
 		for (Dependency dependency : moduleDependencies) {
 			if (dependency.getType() == DependencyType.PROJECT) {
-				transitiveProjectDependencies(context, dependency.getModule(), dependencies);
+				transitiveProjectDependencies(buildRoot, dependency.getModule(), dependencies);
 			}
 		}
 	}

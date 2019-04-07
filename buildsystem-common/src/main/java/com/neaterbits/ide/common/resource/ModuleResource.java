@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.util.modules.ModuleId;
 
+// Representing a module and its root directory
 public final class ModuleResource extends FileSystemResource {
 
 	private final ModuleId moduleId;

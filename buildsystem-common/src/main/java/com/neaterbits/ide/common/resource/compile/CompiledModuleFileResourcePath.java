@@ -5,6 +5,7 @@ import com.neaterbits.ide.common.resource.FileSystemResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.ResourcePath;
 
+// Path to eg. jar file
 public final class CompiledModuleFileResourcePath extends FileSystemResourcePath {
 
 	public CompiledModuleFileResourcePath(ProjectModuleResourcePath resourcePath, FileSystemResource resource) {

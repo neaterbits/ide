@@ -44,11 +44,11 @@ public abstract class ResourcePath {
 		return path;
 	}
 
-	final int length() {
+	public final int length() {
 		return path.size();
 	}
 	
-	final Resource get(int index) {
+	public final Resource get(int index) {
 		return path.get(index);
 	}
 	
