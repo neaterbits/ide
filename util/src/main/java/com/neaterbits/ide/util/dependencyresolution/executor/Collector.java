@@ -82,6 +82,18 @@ class Collector {
 			
 			context.state.addToRecursiveTargetCollected(topOfRecursionTarget, subTargetObjects);
 
+			if (target.isTopOfRecursion()) {
+				// This is top of recursion so must add this too
+				
+				final Set<CollectedTargetObject> thisCollected = new HashSet<>();
+				thisCollected.add(new CollectedTargetObject(target.getTargetObject()));
+
+				final CollectedTargetObjects thisObj = new CollectedTargetObjects(thisCollected);
+				
+				context.logger.onAddSubRecursionCollected(topOfRecursionTarget, target, thisObj);
+				context.state.addToRecursiveTargetCollected(topOfRecursionTarget, thisObj);
+			}
+			
 			collected = null;
 		}
 		else {
