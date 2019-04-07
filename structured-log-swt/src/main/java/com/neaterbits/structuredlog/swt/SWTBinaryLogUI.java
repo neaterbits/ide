@@ -59,6 +59,8 @@ final class SWTBinaryLogUI extends SWTBaseUI {
 
 		messageList.setLayoutData(listGridData);
 
+		optionsComposite.addLogMessageFilterListener(filterText -> messageList.setFilterText(filterText));
+		
 		window.open();
 	}
 }

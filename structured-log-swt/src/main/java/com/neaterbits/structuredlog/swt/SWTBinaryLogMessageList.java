@@ -19,6 +19,8 @@ final class SWTBinaryLogMessageList extends Composite {
 
 	private final ListViewer logMessageViewer;
 	
+	private String filterText;
+	
 	public SWTBinaryLogMessageList(Composite parent, int style, LogModel logModel, SWTBinaryLogTree logTree) {
 		super(parent, style);
 
@@ -71,6 +73,18 @@ final class SWTBinaryLogMessageList extends Composite {
 						
 						return logTree.shouldShowMessageInLog(logMessage.getTarget());
 					}
+				},
+				new ViewerFilter() {
+					
+					@Override
+					public boolean select(Viewer viewer, Object parentElement, Object element) {
+
+						final LogMessage logMessage = (LogMessage)element;
+						
+						return filterText == null || filterText.isEmpty()
+								? true
+								: logMessage.getMessage().contains(filterText);
+					}
 				}
 		});
 
@@ -89,6 +103,13 @@ final class SWTBinaryLogMessageList extends Composite {
 	}
 
 	void refreshMessageList() {
+		logMessageViewer.refresh();
+	}
+	
+	void setFilterText(String filterText) {
+		
+		this.filterText = filterText;
+
 		logMessageViewer.refresh();
 	}
 }

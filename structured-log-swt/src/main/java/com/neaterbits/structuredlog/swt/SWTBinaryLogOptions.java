@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -29,6 +30,7 @@ final class SWTBinaryLogOptions extends Composite {
 	private final List<Consumer<Set<String>>> updatedDisplayTypesListeners;
 	private final List<Consumer<String []>> shownListeners;
 	private final List<Consumer<String []>> hiddenListeners;
+	private final List<Consumer<String>> logMessageFilterListeners;
 	
 	SWTBinaryLogOptions(Composite parent, int style, LogModel logModel) {
 		super(parent, style);
@@ -38,20 +40,26 @@ final class SWTBinaryLogOptions extends Composite {
 		this.updatedDisplayTypesListeners = new ArrayList<>();
 		this.shownListeners = new ArrayList<>();
 		this.hiddenListeners = new ArrayList<>();
+		this.logMessageFilterListeners = new ArrayList<>();
 		
-		final Group typesGroup = makeTypesGroup(
+		final Group typesGroup = makeTreeTypesGroup(
 				this,
 				logModel,
 				displayedTypes -> updatedDisplayTypesListeners.forEach(listener -> listener.accept(displayedTypes)));
 		
 		typesGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		
-		final Group filterGroup = makeFiltersGroup(
+		final Group filterGroup = makeTreeFiltersGroup(
 				this,
 				list -> shownListeners.forEach(listener -> listener.accept(list)),
 				list -> hiddenListeners.forEach(listener -> listener.accept(list)));
 		
 		filterGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		
+		final Group logMessageGroup = makeLogMessageFilterGroup(this, text ->
+					logMessageFilterListeners.forEach(listener -> listener.accept(text)));
+
+		logMessageGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 	}
 	
 	void addUpdatedDisplayTypesListener(Consumer<Set<String>> listener) {
@@ -74,8 +82,15 @@ final class SWTBinaryLogOptions extends Composite {
 		
 		hiddenListeners.add(listener);
 	}
+	
+	void addLogMessageFilterListener(Consumer<String> listener) {
+		
+		Objects.requireNonNull(listener);
+	
+		logMessageFilterListeners.add(listener);
+	}
 
-	private static Group makeTypesGroup(Composite composite, LogModel logModel, Consumer<Set<String>> onUpdatedDisplayedTypes) {
+	private static Group makeTreeTypesGroup(Composite composite, LogModel logModel, Consumer<Set<String>> onUpdatedDisplayedTypes) {
 		
 		final Group typesGroup = new Group(composite, SWT.BORDER);
 		typesGroup.setText("Types");
@@ -117,23 +132,23 @@ final class SWTBinaryLogOptions extends Composite {
 		return typesGroup;
 	}
 
-	private static Group makeFiltersGroup(Composite composite, Consumer<String[]> onShownUpdated, Consumer<String[]> onHiddenUpdated) {
+	private static Group makeTreeFiltersGroup(Composite composite, Consumer<String[]> onShownUpdated, Consumer<String[]> onHiddenUpdated) {
 
 		final Group group = new Group(composite, SWT.BORDER);
-		group.setText("Filters");
+		group.setText("Tree filters");
 
 		group.setLayout(new GridLayout(2, false));
 		
-		final Composite showFilterComposite = makeFilterEdit(group, "Show", onShownUpdated);
+		final Composite showFilterComposite = makeTreeFilterEdit(group, "Show", onShownUpdated);
 		showFilterComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		
-		final Composite hideFilterComposite = makeFilterEdit(group, "Hide", onHiddenUpdated);
+		final Composite hideFilterComposite = makeTreeFilterEdit(group, "Hide", onHiddenUpdated);
 		hideFilterComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		return group;
 	}
 
-	private static Composite makeFilterEdit(Composite composite, String title, Consumer<String[]> onFiltersUpdated) {
+	private static Composite makeTreeFilterEdit(Composite composite, String title, Consumer<String[]> onFiltersUpdated) {
 
 		final Composite filterComposite = new Composite(composite, SWT.NONE);
 		filterComposite.setLayout(new GridLayout(2, false));
@@ -182,7 +197,7 @@ final class SWTBinaryLogOptions extends Composite {
 				
 				removeButton.setEnabled(selectionCount > 0);
 
-				updateFilterText(list, filterText);
+				updateTreeFilterText(list, filterText);
 			}
 		});
 		
@@ -238,7 +253,7 @@ final class SWTBinaryLogOptions extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				list.remove(list.getSelectionIndex());
 
-				updateFilterText(list, filterText);
+				updateTreeFilterText(list, filterText);
 				
 				removeButton.setEnabled(false);
 				
@@ -249,7 +264,7 @@ final class SWTBinaryLogOptions extends Composite {
 		return filterComposite;
 	}
 	
-	private static void updateFilterText(org.eclipse.swt.widgets.List list, Text filterText) {
+	private static void updateTreeFilterText(org.eclipse.swt.widgets.List list, Text filterText) {
 		
 		if (list.getSelectionCount() > 0) {
 			filterText.setText(list.getSelection()[0]);
@@ -267,4 +282,25 @@ final class SWTBinaryLogOptions extends Composite {
 		list.setSelection(list.getItemCount() - 1);
 		text.setFocus();
 	}
+
+	private static Group makeLogMessageFilterGroup(Composite composite, Consumer<String> onFilterUpdated) {
+
+		final Group group = new Group(composite, SWT.BORDER);
+		group.setText("Log message filter");
+
+		group.setLayout(new FillLayout());
+		
+		final Text filterText = new Text(group, SWT.BORDER);
+		
+		filterText.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				onFilterUpdated.accept(filterText.getText().trim());
+			}
+		});
+		
+		return group;
+	}
+
 }
