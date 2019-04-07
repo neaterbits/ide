@@ -1,6 +1,7 @@
 package com.neaterbits.ide.util.dependencyresolution.spec;
 
 import java.util.List;
+import java.util.Set;
 
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
@@ -20,5 +21,5 @@ public interface TargetFinderLogger {
 			TargetSpec<CONTEXT, TARGET> targetSpec,
 			TARGET target,
 			PrerequisiteSpec<CONTEXT, TARGET, PREREQUISITE> prerequisiteSpec,
-			List<Prerequisite<?>> prerequisites);
+			Set<Prerequisite<?>> prerequisites);
 }

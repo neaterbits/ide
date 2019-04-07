@@ -1,7 +1,7 @@
 package com.neaterbits.ide.util.dependencyresolution.model;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.BuildEntity;
@@ -15,7 +15,7 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 	private static final String LOG_FIELD_PREREQUISITES = "prerequisitelist";
 	
 	private final int constructorLogSequenceNo; 
-	private final List<Prerequisite<?>> prerequisites;
+	private final Collection<Prerequisite<?>> prerequisites;
 	private final String description;
 	private final RecursiveBuildInfo<?, ?, ?> recursiveBuildInfo;
 	private final Collectors<?> collectors;
@@ -32,7 +32,7 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 
 	public Prerequisites(
 			LogContext logContext,
-			List<Prerequisite<?>> prerequisites,
+			Collection<Prerequisite<?>> prerequisites,
 			String description,
 			RecursiveBuildInfo<?, ?, ?> recursiveBuildInfo,
 			Collectors<?> collectors) {
@@ -48,9 +48,9 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 		
 		Objects.requireNonNull(prerequisites);
 	
-		final List<Prerequisite<?>> logged = logConstructorListField(logContext, LOG_FIELD_PREREQUISITES, prerequisites);
+		final Collection<Prerequisite<?>> logged = logConstructorCollectionField(logContext, LOG_FIELD_PREREQUISITES, prerequisites);
 		
-		this.prerequisites = logged != null ? Collections.unmodifiableList(logged) : null;
+		this.prerequisites = logged != null ? Collections.unmodifiableCollection(logged) : null;
 		this.description = description;
 		this.recursiveBuildInfo = recursiveBuildInfo;
 		this.collectors = collectors;
@@ -99,7 +99,7 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 		this.fromTarget = fromTarget;
 	}
 
-	public List<Prerequisite<?>> getPrerequisites() {
+	public Collection<Prerequisite<?>> getPrerequisites() {
 		return prerequisites;
 	}
 

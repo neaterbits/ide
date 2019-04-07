@@ -1,9 +1,9 @@
 package com.neaterbits.ide.util.dependencyresolution.spec;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
@@ -45,7 +45,7 @@ abstract class PrerequisitesFinder {
 			PrerequisiteSpec<CONTEXT, TARGET, PREREQUISITE> prerequisiteSpec,
 			TargetFinderLogger logger,
 			int indent,
-			Consumer<List<Prerequisite<?>>> listener) {
+			Consumer<Set<Prerequisite<?>>> listener) {
 		
 		if (prerequisiteSpec.getConstraint() != null) {
 
@@ -91,20 +91,22 @@ abstract class PrerequisitesFinder {
 			Collection<PREREQUISITE> sub,
 			TargetFinderLogger logger,
 			int indent,
-			Consumer<List<Prerequisite<?>>> listener) {
+			Consumer<Set<Prerequisite<?>>> listener) {
 
 		if (sub == null) {
 			throw new IllegalStateException("No prerequisites for " + targetSpec.getType().getSimpleName() + "/" + target + "/" + prerequisiteSpec.getDescription());
 		}
 		
-		final List<Prerequisite<?>> list = new ArrayList<>(sub.size());
+		final Set<PREREQUISITE> subSet = sub instanceof Set<?> ? (Set<PREREQUISITE>)sub : new HashSet<>(sub);
+		
+		final Set<Prerequisite<?>> prerequisiteSet = new HashSet<>(subSet.size());
 
 		if (sub.isEmpty()) {
-			listener.accept(list);
+			listener.accept(prerequisiteSet);
 		}
 		else {
 		
-			for (PREREQUISITE prerequisite : sub) {
+			for (PREREQUISITE prerequisite : subSet) {
 				
 				if (prerequisiteSpec.getAction() != null) {
 					
@@ -121,20 +123,20 @@ abstract class PrerequisitesFinder {
 	
 						final Prerequisite<PREREQUISITE> subPrerequisite = new Prerequisite<>(logContext, prerequisite, subTarget);
 						
-						list.add(subPrerequisite);
+						prerequisiteSet.add(subPrerequisite);
 						
-						if (list.size() == sub.size()) {
-							listener.accept(list);
+						if (prerequisiteSet.size() == subSet.size()) {
+							listener.accept(prerequisiteSet);
 						}
 					});
 				}
 				else {
 					final Prerequisite<PREREQUISITE> subPrerequisite = new Prerequisite<>(logContext, prerequisite, null);
 					
-					list.add(subPrerequisite);
+					prerequisiteSet.add(subPrerequisite);
 	
-					if (list.size() == sub.size()) {
-						listener.accept(list);
+					if (prerequisiteSet.size() == sub.size()) {
+						listener.accept(prerequisiteSet);
 					}
 				}
 			}

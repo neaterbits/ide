@@ -2,6 +2,7 @@ package com.neaterbits.ide.util.dependencyresolution.spec;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.neaterbits.ide.util.Indent;
@@ -58,7 +59,7 @@ public class PrintlnTargetFinderLogger implements TargetFinderLogger {
 	public <CONTEXT extends TaskContext, TARGET, PREREQUISITE> void onPrerequisites(
 			int indent,
 			TargetSpec<CONTEXT, TARGET> targetSpec, TARGET target,
-			PrerequisiteSpec<CONTEXT, TARGET, PREREQUISITE> prerequisiteSpec, List<Prerequisite<?>> prerequisites) {
+			PrerequisiteSpec<CONTEXT, TARGET, PREREQUISITE> prerequisiteSpec, Set<Prerequisite<?>> prerequisites) {
 
 		System.out.println(Indent.indent(indent) + "Prerequisites " + prerequisiteSpec.getDescription());
 	}
