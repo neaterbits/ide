@@ -12,6 +12,10 @@ public abstract class StateMachine<STATE extends BaseState<STATE>> {
 	
 	protected abstract String getObjectDebugString();
 	
+	protected void onStateChange(STATE curState, STATE nextState) {
+		
+	}
+	
 	public StateMachine(STATE initialState) {
 		
 		Objects.requireNonNull(initialState);
@@ -31,7 +35,7 @@ public abstract class StateMachine<STATE extends BaseState<STATE>> {
 		return curState.getClass().getSimpleName();
 	}
 
-	public boolean schedule(StateOperation<STATE> runnable) {
+	public final boolean schedule(StateOperation<STATE> runnable) {
 
 		Objects.requireNonNull(runnable);
 		
@@ -67,6 +71,8 @@ public abstract class StateMachine<STATE extends BaseState<STATE>> {
 								+ " for event " + Thread.currentThread().getStackTrace()[2].getMethodName()
 								+ " object " + getObjectDebugString());
 						*/
+						
+						onStateChange(curState, nextState);
 
 						this.curState = nextState;
 						

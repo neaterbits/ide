@@ -2,6 +2,7 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
 import com.neaterbits.ide.util.dependencyresolution.model.Target;
@@ -13,6 +14,7 @@ public abstract class BaseTargetState<CONTEXT extends TaskContext>
 		implements TargetOps<CONTEXT> {
 
 	final Target<?> target;
+	final TargetExecutorLogger logger;
 
 	abstract Status getStatus();
 	
@@ -20,10 +22,11 @@ public abstract class BaseTargetState<CONTEXT extends TaskContext>
 		throw new IllegalStateException();
 	}
 	
-	public BaseTargetState(Target<?> target) {
+	public BaseTargetState(Target<?> target, TargetExecutorLogger logger) {
 		Objects.requireNonNull(target);
 		
 		this.target = target;
+		this.logger = logger;
 	}
 	
 	@Override

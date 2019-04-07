@@ -14,6 +14,7 @@ import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProduct;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProducts;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedTargetObjects;
 import com.neaterbits.ide.util.dependencyresolution.executor.Status;
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
 import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 import com.neaterbits.structuredlog.xml.model.Log;
@@ -139,6 +140,31 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		final LogEntry logEntry = addLogEntry(null, null, null, "Schedule more targets numScheduledJobs=" + numScheduledJobs);
 
 		addTargetLogState(logEntry, logState);
+	}
+	
+	@Override
+	public void onStateChange(Target<?> target, String oldState, String newState) {
+		
+	}
+
+	@Override
+	public void onAddRecursiveTarget(Target<?> target, Target<?> subTarget) {
+		
+	}
+
+	@Override
+	public void onCheckRecursiveTargetsComplete(Target<?> target, Status status) {
+		
+	}
+
+	@Override
+	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, CollectedTargetObjects subTargetObjects) {
+		
+	}
+
+	@Override
+	public void onAddTopRecursionCollected(Target<?> aboveRecursionTarget, Prerequisites prerequisites, CollectedTargetObjects subTargetObjects) {
+		
 	}
 
 	@Override

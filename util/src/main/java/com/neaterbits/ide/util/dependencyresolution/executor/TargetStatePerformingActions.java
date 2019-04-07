@@ -8,10 +8,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
 import com.neaterbits.ide.util.dependencyresolution.model.Target;
-import com.neaterbits.ide.util.dependencyresolution.spec.TargetSpec;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 
@@ -19,26 +19,26 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 
 	private static final Boolean DEBUG = false;
 	
-	TargetStatePerformingActions(Target<?> target) {
-		super(target);
+	TargetStatePerformingActions(Target<?> target, TargetExecutorLogger logger) {
+		super(target, logger);
 	}
 
 	@Override
 	public BaseTargetState<CONTEXT> onActionPerformed(TargetExecutionContext<CONTEXT> context) {
 	
-		final boolean targetsAdded = addRecursiveBuildTargetsIfAny(context.state, context.context, target);
+		final boolean targetsAdded = addRecursiveBuildTargetsIfAny(context.state, context.context, target, context.logger);
 		
 		final BaseTargetState<CONTEXT> nextState;
 		
 		if (targetsAdded) {
 			//context.state.moveTargetFromToScheduledToActionPerformedCollect(target);
 			
-			nextState = new TargetStateRecursiveTargets<>(target);
+			nextState = new TargetStateRecursiveTargets<>(target, logger);
 		}
 		else {
 			onCompletedTarget(context, target, null, false);
 			
-			nextState = new TargetStateDone<>(target);
+			nextState = new TargetStateDone<>(target, logger);
 		}
 		
 		return nextState;
@@ -49,7 +49,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 
 		onCompletedTarget(context, target, ex, false);
 		
-		return new TargetStateFailed<>(target, ex);
+		return new TargetStateFailed<>(target, logger, ex);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 
 
 	private 
-	boolean addRecursiveBuildTargetsIfAny(ExecutorState<CONTEXT> targetState, TaskContext context, Target<?> target) {
+	boolean addRecursiveBuildTargetsIfAny(ExecutorState<CONTEXT> targetState, TaskContext context, Target<?> target, TargetExecutorLogger logger) {
 
 		final boolean added;
 		
@@ -71,7 +71,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 			}
 			
 			if (fromPrerequisites.isRecursiveBuild()) {
-				addRecursiveBuildTargets(targetState, context, fromPrerequisites, target);
+				addRecursiveBuildTargets(targetState, context, fromPrerequisites, target, logger);
 
 				added = true;
 			}
@@ -87,7 +87,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 	}
 	
 	private
-	void addRecursiveBuildTargets(ExecutorState<CONTEXT> targetState, TaskContext context, Prerequisites fromPrerequisites, Target<?> target) {
+	void addRecursiveBuildTargets(ExecutorState<CONTEXT> targetState, TaskContext context, Prerequisites fromPrerequisites, Target<?> target, TargetExecutorLogger logger) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<Object, Object, Collection<Object>> getSubPrerequisites
@@ -142,6 +142,8 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 							Arrays.asList(subPrerequisites));
 
 			targetPrerequisitesList.add(new Prerequisite<>(logContext, subPrerequisiteObject, subTarget));
+			
+			logger.onAddRecursiveTarget(target, subTarget);
 
 			if (DEBUG) {
 				System.out.println("## added subtarget " + subTarget + " from prerequisites " + targetPrerequisites + " from " + target.getTargetObject());
@@ -152,7 +154,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 					System.out.println("## added target to execute " + subTarget);
 				}
 
-				targetState.addTargetToExecute(subTarget);
+				targetState.addTargetToExecute(subTarget, logger);
 			}
 			
 			if (DEBUG) {

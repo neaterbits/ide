@@ -78,8 +78,9 @@ class Collector {
 				System.out.println("## add " + subTargetObjects + " for sub of " + topOfRecursionTarget);
 			}
 			
+			context.logger.onAddSubRecursionCollected(topOfRecursionTarget, subTargetObjects);
+			
 			context.state.addToRecursiveTargetCollected(topOfRecursionTarget, subTargetObjects);
-
 
 			collected = null;
 		}
@@ -105,6 +106,8 @@ class Collector {
 								: collectedObjects;
 					}
 				}
+				
+				context.logger.onAddTopRecursionCollected(target, withCollect, allCollectedTargetObjects);
 				
 				if (allCollectedTargetObjects != null) {
 					collectTargetObject = target.getTargetObject();

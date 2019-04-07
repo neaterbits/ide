@@ -28,7 +28,7 @@ public final class TargetExecutor {
 			TargetExecutorLogger logger,
 			Consumer<TargetBuildResult> onResult) {
 		
-		final ExecutorState<CONTEXT> state = ExecutorState.createFromTargetTree(rootTarget, this);
+		final ExecutorState<CONTEXT> state = ExecutorState.createFromTargetTree(rootTarget, this, logger);
 
 		final TargetExecutionContext<CONTEXT> targetExecutionContext = new TargetExecutionContext<CONTEXT>(
 				context,
@@ -50,7 +50,7 @@ public final class TargetExecutor {
 
 			asyncExecutor.runQueuedResultRunnables();
 		
-			final List<TargetState<CONTEXT>> targets = new ArrayList<TargetState<CONTEXT>>(context.state.getNonCompletedTargets());
+			final List<TargetStateMachine<CONTEXT>> targets = new ArrayList<TargetStateMachine<CONTEXT>>(context.state.getNonCompletedTargets());
 
 			final int targetsLeft = targets.size();
 			final int priorNumScheduled = asyncExecutor.getNumScheduledJobs();
@@ -59,7 +59,7 @@ public final class TargetExecutor {
 			
 			boolean anyStateChange = false;
 			
-			for (TargetState<CONTEXT> target : targets) {
+			for (TargetStateMachine<CONTEXT> target : targets) {
 				
 				// Try to check if state can be completed
 				final boolean stateChangeOccured = target.schedule(state -> state.onCheckPrerequisitesComplete(context));
@@ -77,7 +77,7 @@ public final class TargetExecutor {
 				// No target scheduled
 				System.err.println("Not able to trigger more target builds: " + context.state.getNonCompletedTargets().size());
 				
-				for (TargetState<CONTEXT> targetState : context.state.getNonCompletedTargets()) {
+				for (TargetStateMachine<CONTEXT> targetState : context.state.getNonCompletedTargets()) {
 					
 					final List<String> prerequisitesList = targetState.getTarget().getPrerequisites().stream()
 							.flatMap(prerequisites -> prerequisites.getPrerequisites().stream())

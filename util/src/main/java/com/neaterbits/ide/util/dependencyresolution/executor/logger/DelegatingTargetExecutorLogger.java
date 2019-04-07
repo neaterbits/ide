@@ -7,6 +7,7 @@ import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProduct;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProducts;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedTargetObjects;
 import com.neaterbits.ide.util.dependencyresolution.executor.Status;
+import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
 import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 
@@ -18,6 +19,31 @@ public final class DelegatingTargetExecutorLogger implements TargetExecutorLogge
 		this.delegates = Arrays.asList(delegates);
 	}
 	
+	@Override
+	public void onStateChange(Target<?> target, String oldState, String newState) {
+		delegates.forEach(logger -> logger.onStateChange(target, oldState, newState));
+	}
+
+	@Override
+	public void onAddRecursiveTarget(Target<?> target, Target<?> subTarget) {
+		delegates.forEach(logger -> logger.onAddRecursiveTarget(target, subTarget));
+	}
+
+	@Override
+	public void onCheckRecursiveTargetsComplete(Target<?> target, Status status) {
+		delegates.forEach(logger -> logger.onCheckRecursiveTargetsComplete(target, status));
+	}
+
+	@Override
+	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, CollectedTargetObjects subTargetObjects) {
+		delegates.forEach(logger -> logger.onAddSubRecursionCollected(topOfRecursionTarget, subTargetObjects));
+	}
+
+	@Override
+	public void onAddTopRecursionCollected(Target<?> aboveRecursionTarget, Prerequisites prerequisites, CollectedTargetObjects subTargetObjects) {
+		delegates.forEach(logger -> logger.onAddTopRecursionCollected(aboveRecursionTarget, prerequisites, subTargetObjects));
+	}
+
 	@Override
 	public void onScheduleTargets(int numScheduledJobs, TargetExecutorLogState logState) {
 		delegates.forEach(logger -> logger.onScheduleTargets(numScheduledJobs, logState));

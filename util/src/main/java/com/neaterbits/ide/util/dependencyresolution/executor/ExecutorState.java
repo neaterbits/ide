@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogState;
+import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
 import com.neaterbits.ide.util.dependencyresolution.model.Target;
@@ -21,10 +22,10 @@ import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 final class ExecutorState<CONTEXT extends TaskContext> implements ActionParameters<Object>, TargetExecutorLogState {
 
-	private final Map<Target<?>, TargetState<CONTEXT>> targets;
+	private final Map<Target<?>, TargetStateMachine<CONTEXT>> targets;
 	private final Map<Object, Target<?>> targetsByTargetObject;
 
-	private final List<TargetState<CONTEXT>> nonCompletedTargets;
+	private final List<TargetStateMachine<CONTEXT>> nonCompletedTargets;
 
 	
 	/*
@@ -37,7 +38,10 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 	// private final Map<Target<?>, CollectedTargetObject> collectedTargetObjects; 
 	private final Map<Target<?>, List<CollectedProduct>> collectedProductObjects;
 	
-	static <CTX extends TaskContext> ExecutorState<CTX> createFromTargetTree(Target<?> rootTarget, TargetExecutor targetExecutor) {
+	static <CTX extends TaskContext> ExecutorState<CTX> createFromTargetTree(
+			Target<?> rootTarget,
+			TargetExecutor targetExecutor,
+			TargetExecutorLogger logger) {
 
 		final Set<Target<?>> toExecuteTargets = new HashSet<>();
 
@@ -45,15 +49,15 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		
 		getSubTargets(rootTarget, toExecuteTargets);
 		
-		final ExecutorState<CTX> state = new ExecutorState<>(toExecuteTargets);
+		final ExecutorState<CTX> state = new ExecutorState<>(toExecuteTargets, logger);
 		
 		return state;
 	}
 	
-	private ExecutorState(Set<Target<?>> toExecuteTargets) {
+	private ExecutorState(Set<Target<?>> toExecuteTargets, TargetExecutorLogger logger) {
 
 		this.targets = toExecuteTargets.stream()
-				.collect(Collectors.toMap(Function.identity(), target -> new TargetState<CONTEXT>(target)));
+				.collect(Collectors.toMap(Function.identity(), target -> new TargetStateMachine<CONTEXT>(target, logger)));
 		
 		this.targetsByTargetObject = new HashMap<>(toExecuteTargets.size());
 		
@@ -94,7 +98,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		return targets.containsKey(target);
 	}
 	
-	void addTargetToExecute(Target<?> target) {
+	void addTargetToExecute(Target<?> target, TargetExecutorLogger logger) {
 
 		Objects.requireNonNull(target);
 		
@@ -108,7 +112,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 			throw new IllegalStateException();
 		}
 
-		final TargetState<CONTEXT> targetState = new TargetState<>(target);
+		final TargetStateMachine<CONTEXT> targetState = new TargetStateMachine<>(target, logger);
 		
 		targets.put(target, targetState);
 		targetsByTargetObject.put(targetObject, target);
@@ -131,7 +135,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		return targetsInState(Status.TO_EXECUTE);
 	}
 
-	public Collection<TargetState<CONTEXT>> getNonCompletedTargets() {
+	public Collection<TargetStateMachine<CONTEXT>> getNonCompletedTargets() {
 		return Collections.unmodifiableCollection(nonCompletedTargets);
 	}
 
@@ -145,7 +149,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		
 		final Map<Target<?>, Exception> map = new HashMap<>();
 		
-		for (Map.Entry<Target<?>, TargetState<CONTEXT>> entry : targets.entrySet()) {
+		for (Map.Entry<Target<?>, TargetStateMachine<CONTEXT>> entry : targets.entrySet()) {
 			if (entry.getValue().getStatus() == Status.FAILED) {
 				map.put(entry.getKey(), entry.getValue().getException());
 			}
@@ -179,7 +183,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		
 	}
 	
-	private TargetState<CONTEXT> targetState(Target<?> target) {
+	private TargetStateMachine<CONTEXT> targetState(Target<?> target) {
 		
 		Objects.requireNonNull(target);
 		
@@ -222,7 +226,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 
 	void onCompletedTarget(Target<?> target) {
 
-		final TargetState<CONTEXT> targetState = targetState(target);
+		final TargetStateMachine<CONTEXT> targetState = targetState(target);
 		
 		if (targetState == null) {
 			throw new IllegalStateException();

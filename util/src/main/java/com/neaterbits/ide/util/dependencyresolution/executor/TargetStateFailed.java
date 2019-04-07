@@ -2,6 +2,7 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 
 import java.util.Objects;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
 import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
@@ -9,8 +10,8 @@ public class TargetStateFailed<CONTEXT extends TaskContext> extends BaseTargetSt
 
 	private final Exception exception;
 
-	TargetStateFailed(Target<?> target, Exception exception) {
-		super(target);
+	TargetStateFailed(Target<?> target, TargetExecutorLogger logger, Exception exception) {
+		super(target, logger);
 
 		Objects.requireNonNull(exception);
 		

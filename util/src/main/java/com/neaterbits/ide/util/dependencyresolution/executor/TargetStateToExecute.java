@@ -2,14 +2,15 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 
 import java.util.function.BiConsumer;
 
+import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
 import com.neaterbits.ide.util.dependencyresolution.model.Target;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 final class TargetStateToExecute<CONTEXT extends TaskContext>
 			extends BaseTargetState<CONTEXT> implements TargetOps<CONTEXT> {
 
-	public TargetStateToExecute(Target<?> target) {
-		super(target);
+	public TargetStateToExecute(Target<?> target, TargetExecutorLogger logger) {
+		super(target, logger);
 	}
 	
 	@Override
@@ -39,13 +40,13 @@ final class TargetStateToExecute<CONTEXT extends TaskContext>
 			});
 			
 			if (hasActions) {
-				nextState = new TargetStatePerformingActions<>(target);
+				nextState = new TargetStatePerformingActions<>(target, logger);
 			}
 			else {
 				
 				onCompletedTarget(context, target, null, false);
 				
-				nextState = new TargetStateDone<>(target);
+				nextState = new TargetStateDone<>(target, logger);
 			}
 		}
 		else if (status.getStatus() == Status.FAILED) {
@@ -56,7 +57,7 @@ final class TargetStateToExecute<CONTEXT extends TaskContext>
 			}
 			
 			onCompletedTarget(context, target, status.getException(), false);
-			nextState = new TargetStateFailed<>(target, status.getException());
+			nextState = new TargetStateFailed<>(target, logger, status.getException());
 		}
 		else {
 			nextState = this;

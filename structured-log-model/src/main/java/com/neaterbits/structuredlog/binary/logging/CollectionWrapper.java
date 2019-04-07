@@ -89,4 +89,9 @@ class CollectionWrapper<S, C extends Collection<S>> implements Collection<S> {
 	public final <T> T[] toArray(T[] arg0) {
 		return delegate.toArray(arg0);
 	}
+
+	@Override
+	public String toString() {
+		return delegate.toString();
+	}
 }
