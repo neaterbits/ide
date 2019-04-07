@@ -20,7 +20,7 @@ final class TargetStateRecursiveTargets<CONTEXT extends TaskContext> extends Bas
 
 		final BaseTargetState<CONTEXT> nextState;
 		
-		final PrerequisiteCompletion completion = hasCompletedPrerequisites(context.state, target);
+		final PrerequisiteCompletion completion = PrerequisiteCompleteChecker.hasCompletedPrerequisites(context.state, target);
 		
 		logger.onCheckRecursiveTargetsComplete(target, completion.getStatus());
 		

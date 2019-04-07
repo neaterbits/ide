@@ -21,7 +21,7 @@ final class TargetStateToExecute<CONTEXT extends TaskContext>
 	@Override
 	public BaseTargetState<CONTEXT> onCheckPrerequisitesComplete(TargetExecutionContext<CONTEXT> context) {
 		
-		final PrerequisiteCompletion status = hasCompletedPrerequisites(context.state, target);
+		final PrerequisiteCompletion status = PrerequisiteCompleteChecker.hasCompletedPrerequisites(context.state, target);
 		
 		final BaseTargetState<CONTEXT> nextState;
 		

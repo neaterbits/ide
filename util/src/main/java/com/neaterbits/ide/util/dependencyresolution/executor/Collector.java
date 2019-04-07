@@ -78,7 +78,7 @@ class Collector {
 				System.out.println("## add " + subTargetObjects + " for sub of " + topOfRecursionTarget);
 			}
 			
-			context.logger.onAddSubRecursionCollected(topOfRecursionTarget, subTargetObjects);
+			context.logger.onAddSubRecursionCollected(topOfRecursionTarget, target, subTargetObjects);
 			
 			context.state.addToRecursiveTargetCollected(topOfRecursionTarget, subTargetObjects);
 

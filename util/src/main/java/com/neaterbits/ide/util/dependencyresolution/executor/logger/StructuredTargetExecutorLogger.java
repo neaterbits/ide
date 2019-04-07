@@ -158,7 +158,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	}
 
 	@Override
-	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, CollectedTargetObjects subTargetObjects) {
+	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, Target<?> target, CollectedTargetObjects subTargetObjects) {
 		
 	}
 

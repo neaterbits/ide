@@ -37,9 +37,10 @@ public final class PrintlnTargetExecutorLogger implements TargetExecutorLogger {
 	}
 
 	@Override
-	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, CollectedTargetObjects subTargetObjects) {
+	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, Target<?> target, CollectedTargetObjects subTargetObjects) {
 
-		System.out.println("Add recursion collected to " + topOfRecursionTarget.targetSimpleLogString() + " from " + subTargetObjects);
+		System.out.println("Add recursion collected to " + topOfRecursionTarget.targetSimpleLogString()
+			+ " from " + target.targetSimpleLogString() + " with objects " + subTargetObjects);
 		
 	}
 

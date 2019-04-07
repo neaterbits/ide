@@ -48,10 +48,10 @@ public final class BinaryTargetExecutorLogger implements TargetExecutorLogger {
 	}
 
 	@Override
-	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, CollectedTargetObjects subTargetObjects) {
+	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, Target<?> target, CollectedTargetObjects subTargetObjects) {
 
 		topOfRecursionTarget.debug(logContext, "Add recursion collected to "
-				+ topOfRecursionTarget.targetSimpleLogString() + " from " + subTargetObjects);
+				+ topOfRecursionTarget.targetSimpleLogString() + " from " + target.targetSimpleLogString() + " with objects " + subTargetObjects);
 
 	}
 

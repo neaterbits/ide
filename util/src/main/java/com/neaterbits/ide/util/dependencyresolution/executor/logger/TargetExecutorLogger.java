@@ -19,7 +19,7 @@ public interface TargetExecutorLogger {
 	
 	void onCheckRecursiveTargetsComplete(Target<?> target, Status status);
 	
-	void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, CollectedTargetObjects subTargetObjects);
+	void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, Target<?> target, CollectedTargetObjects subTargetObjects);
 
 	void onAddTopRecursionCollected(Target<?> aboveRecursionTarget, Prerequisites prerequisites, CollectedTargetObjects subTargetObjects);
 

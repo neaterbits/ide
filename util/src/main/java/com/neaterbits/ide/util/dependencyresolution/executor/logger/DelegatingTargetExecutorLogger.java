@@ -35,8 +35,8 @@ public final class DelegatingTargetExecutorLogger implements TargetExecutorLogge
 	}
 
 	@Override
-	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, CollectedTargetObjects subTargetObjects) {
-		delegates.forEach(logger -> logger.onAddSubRecursionCollected(topOfRecursionTarget, subTargetObjects));
+	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, Target<?> target, CollectedTargetObjects subTargetObjects) {
+		delegates.forEach(logger -> logger.onAddSubRecursionCollected(topOfRecursionTarget, target, subTargetObjects));
 	}
 
 	@Override
