@@ -49,6 +49,7 @@ public abstract class Target<TARGET> extends BuildEntity implements Loggable {
 		
 		this.constructorLogSequenceNo = logConstructor(
 				logContext,
+				this,
 				Target.class,
 				logIdentifier,
 				logLocalIdentifier,

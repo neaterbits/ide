@@ -115,17 +115,25 @@ public final class LogContext extends BaseBinaryLogWriter {
 		debugWrite(sequenceNo, LogCommand.ROOT_OBJECT, "sequenceNo", String.valueOf(sequenceNo), "identifier", identifier);
 	}
 
-	int logConstructor(Class<? extends Loggable> type, String identifier, String localIdentifier, String description) {
+	int logConstructor(Object object, Class<? extends Loggable> type, String identifier, String localIdentifier, String description) {
 
 		final int sequenceNo = writeLogCommand(LogCommand.CONSTRUCTOR);
 
 		writeSequenceNo(sequenceNo);
+
+		final int identityHashCode = System.identityHashCode(object);
+		final int hashCode = object.hashCode();
 		
 		final int typeId = writeGetOrAllocateTypeId(type);
+
+		writeInteger(identityHashCode);
+		writeInteger(hashCode);
 
 		debugWrite(
 				sequenceNo,
 				LogCommand.CONSTRUCTOR,
+				"identityHashCode", String.valueOf(identityHashCode),
+				"hashCode", String.valueOf(hashCode),
 				"type", type.getName(),
 				"typeId", String.valueOf(typeId),
 				"identifier", identifier,

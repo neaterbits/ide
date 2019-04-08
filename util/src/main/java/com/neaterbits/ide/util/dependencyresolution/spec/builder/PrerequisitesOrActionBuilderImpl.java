@@ -33,7 +33,9 @@ final class PrerequisitesOrActionBuilderImpl<CONTEXT extends TaskContext, TARGET
 	@Override
 	public PrerequisitesOrActionBuilder<CONTEXT, TARGET> withPrerequisites(PrerequisitesBuilderSpec<CONTEXT, TARGET> buildSpec) {
 
-		final PrerequisitesBuilderImpl<CONTEXT, TARGET, ?> builder = new PrerequisitesBuilderImpl<>(getTargetBuilderState());
+		final TargetBuilderState<CONTEXT, TARGET, FILE_TARGET> targetBuilderState = getTargetBuilderState();
+		
+		final PrerequisitesBuilderImpl<CONTEXT, TARGET, ?> builder = new PrerequisitesBuilderImpl<>(targetBuilderState);
 		
 		buildSpec.buildSpec(builder);
 		

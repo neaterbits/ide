@@ -9,8 +9,8 @@ public interface Loggable {
 		logContext.logRootObject(getConstructorLogSequenceNo(), getLogIdentifier());
 	}
 
-	default int logConstructor(LogContext logContext, Class<? extends Loggable> type, String identifier, String localIdentifier, String description) {
-		return logContext.logConstructor(type, identifier, localIdentifier, description);
+	default int logConstructor(LogContext logContext, Loggable object, Class<? extends Loggable> type, String identifier, String localIdentifier, String description) {
+		return logContext.logConstructor(object, type, identifier, localIdentifier, description);
 	}
 	
 	default <T> T logConstructorScalarField(LogContext logContext, String field, T value) {

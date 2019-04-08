@@ -128,4 +128,10 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 					collectSubTargets != null ? new CollectSubTargets<>(productType, (BiFunction)collectSubTargets) : null,
 					collectSubProducts != null ? new CollectSubProducts<>(productType, (BiFunction)collectSubProducts) : null));
 	}
+
+	@Override
+	public String toString() {
+		return "PrerequisiteBuilderState [description=" + description + ", productType=" + productType + ", itemType="
+				+ itemType + ", constraint=" + constraint + ", recursiveBuild=" + recursiveBuild + "]";
+	}
 }

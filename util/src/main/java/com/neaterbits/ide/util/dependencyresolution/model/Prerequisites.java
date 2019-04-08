@@ -41,6 +41,7 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 		
 		this.constructorLogSequenceNo = logConstructor(
 				logContext,
+				this,
 				Prerequisites.class,
 				identifier,
 				getLogLocalIdentifierValue(),

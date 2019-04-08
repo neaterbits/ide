@@ -19,7 +19,7 @@ public final class Prerequisite<PREREQUISITE> extends BuildEntity implements Log
 	
 	public Prerequisite(LogContext logContext, PREREQUISITE item, Target<PREREQUISITE> subTarget) {
 		
-		this.constructorLogSequenceNo = logConstructor(logContext, getClass(), null, null, null);
+		this.constructorLogSequenceNo = logConstructor(logContext, this, getClass(), null, null, null);
 		
 		Objects.requireNonNull(item);
 		

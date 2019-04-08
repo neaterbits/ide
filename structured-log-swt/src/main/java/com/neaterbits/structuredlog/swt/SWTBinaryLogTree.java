@@ -226,6 +226,8 @@ public final class SWTBinaryLogTree extends Composite {
 		
 		final StringBuilder sb = new StringBuilder();
 		
+		sb.append(logObject.getHashCode()).append(' ');
+		
 		sb.append(logObject.getSimpleType());
 		final String identifierText;
 		

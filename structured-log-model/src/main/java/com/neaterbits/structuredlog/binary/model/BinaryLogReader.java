@@ -199,11 +199,22 @@ public class BinaryLogReader extends BaseBinaryLogIO {
 	private LogObject readLogObject(int sequenceNo, LogField parent, DataInput dataInput, Map<Integer, String> typeNames) throws IOException {
 
 		final int typeId = readTypeId(dataInput, typeNames);
+		final int identityHashCode = dataInput.readInt();
+		final int hashCode = dataInput.readInt();
 		final String itemIdentifier = readIdentifier(dataInput);
 		final String itemLocalIdentifier = readIdentifier(dataInput);
 		final String description = readDescription(dataInput);
 		
-		return new LogObject(sequenceNo, sequenceNo, parent, typeNames.get(typeId), itemIdentifier, itemLocalIdentifier, description);
+		return new LogObject(
+				sequenceNo,
+				sequenceNo,
+				parent,
+				identityHashCode,
+				hashCode,
+				typeNames.get(typeId),
+				itemIdentifier,
+				itemLocalIdentifier,
+				description);
 	}
 	
 	

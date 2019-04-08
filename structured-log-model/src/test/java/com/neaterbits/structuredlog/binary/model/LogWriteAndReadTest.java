@@ -30,7 +30,7 @@ public class LogWriteAndReadTest {
 			this.localLogIdentifier = localLogIdentifier;
 			this.description = description;
 
-			this.sequenceNo = logConstructor(logContext, getClass(), logIdentifier, localLogIdentifier, description);
+			this.sequenceNo = logConstructor(logContext, this, getClass(), logIdentifier, localLogIdentifier, description);
 		}
 
 		@Override

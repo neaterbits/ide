@@ -11,6 +11,8 @@ import com.neaterbits.structuredlog.binary.logging.Loggable;
 public final class LogObject extends LogNode implements Loggable {
 
 	private final int constructorSequenceNo;
+	private final int identityHashCode;
+	private final int hashCode;
 	private final String type;
 	private final String identifier;
 	private final String localIdentifier;
@@ -18,10 +20,21 @@ public final class LogObject extends LogNode implements Loggable {
 	
 	private Map<String, LogField> fields;
 	
-	public LogObject(int logFilesequenceNo, int constructorSequenceNo, LogField parent, String type, String identifier, String localIdentifier, String description) {
+	public LogObject(
+			int logFilesequenceNo,
+			int constructorSequenceNo,
+			LogField parent,
+			int identityHashCode,
+			int hashCode,
+			String type,
+			String identifier,
+			String localIdentifier,
+			String description) {
 		super(logFilesequenceNo, parent);
 
 		this.constructorSequenceNo = constructorSequenceNo;
+		this.identityHashCode = identityHashCode;
+		this.hashCode = hashCode;
 		this.type = type;
 		this.identifier = identifier;
 		this.localIdentifier = localIdentifier;
@@ -52,6 +65,14 @@ public final class LogObject extends LogNode implements Loggable {
 		fields.put(fieldName, field);
 	}
 	
+	public int getIdentityHashCode() {
+		return identityHashCode;
+	}
+
+	public int getHashCode() {
+		return hashCode;
+	}
+
 	public String getType() {
 		return type;
 	}
