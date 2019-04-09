@@ -9,8 +9,8 @@ import com.neaterbits.ide.common.resource.ResourcePath;
 public abstract class Dependency {
 
 	private final ResourcePath resourcePath;
-	private final DependencyType type;
 	private final ProjectModuleResourcePath module;
+	private final DependencyType type;
 	private final File compiledModuleFile;
 
 	public Dependency(ResourcePath resourcePath, DependencyType type, ProjectModuleResourcePath module, File compiledModuleFile) {

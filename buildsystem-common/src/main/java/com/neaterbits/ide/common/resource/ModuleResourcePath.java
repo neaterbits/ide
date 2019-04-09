@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.util.modules.ModuleId;
 
-public abstract class ModuleResourcePath extends FileSystemResourcePath {
+public abstract class ModuleResourcePath extends DirectoryResourcePath {
 
 	public ModuleResourcePath(List<? extends Resource> path) {
 		super(path);

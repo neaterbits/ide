@@ -1,14 +1,14 @@
 package com.neaterbits.ide.common.resource.compile;
 
-import com.neaterbits.ide.common.resource.FileSystemResource;
-import com.neaterbits.ide.common.resource.FileSystemResourcePath;
+import com.neaterbits.ide.common.resource.FileResource;
+import com.neaterbits.ide.common.resource.FileResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.ResourcePath;
 
 // Path to eg. jar file
-public final class CompiledModuleFileResourcePath extends FileSystemResourcePath {
+public final class CompiledModuleFileResourcePath extends FileResourcePath {
 
-	public CompiledModuleFileResourcePath(ProjectModuleResourcePath resourcePath, FileSystemResource resource) {
+	public CompiledModuleFileResourcePath(ProjectModuleResourcePath resourcePath, FileResource resource) {
 		super(resourcePath, resource);
 	}
 
