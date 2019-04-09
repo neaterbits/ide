@@ -70,7 +70,6 @@ public class TargetBuilderModules extends TargetBuilderSpec<ModulesBuildContext>
 						final ProjectModuleDependencyList projectDependencyList = actionParameters.getCollectedProduct(
 								target,
 								ProjectModuleDependencyList.class);
-
 						
 						/*
 						System.out.println("## module compile list " + moduleCompileList);
@@ -83,10 +82,12 @@ public class TargetBuilderModules extends TargetBuilderSpec<ModulesBuildContext>
 						if (moduleCompileList == null) {
 							throw new IllegalStateException();
 						}
-						
+
+						/* May be null for pom files without dependencies
 						if (externalDependencyList == null) {
 							throw new IllegalStateException();
 						}
+						*/
 
 						final ActionLog actionLog;
 						
@@ -120,15 +121,17 @@ public class TargetBuilderModules extends TargetBuilderSpec<ModulesBuildContext>
 
 		final List<File> dependencies = new ArrayList<>(
 				  projectModuleDependencyList.getDependencies().size()
-				+ externalDependencyList.getDependencies().size());
+				+ (externalDependencyList != null ? externalDependencyList.getDependencies().size() : 0));
 
 		projectModuleDependencyList.getDependencies().stream()
 			.map(ProjectDependency::getCompiledModuleFile)
 			.forEach(dependencies::add);
 
-		externalDependencyList.getDependencies().stream()
-			.map(LibraryDependency::getCompiledModuleFile)
-			.forEach(dependencies::add);
+		if (externalDependencyList != null) {
+			externalDependencyList.getDependencies().stream()
+				.map(LibraryDependency::getCompiledModuleFile)
+				.forEach(dependencies::add);
+		}
 		
 		final CompilerStatus status = compiler.compile(
 
