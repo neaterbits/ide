@@ -94,6 +94,11 @@ public abstract class BaseBinaryLogWriter extends BaseBinaryLogIO {
 	}
 	
 	protected final void writeSequenceNo(int sequenceNo) {
+		
+		if (sequenceNo < 0) {
+			throw new IllegalArgumentException();
+		}
+		
 		try {
 			getDataStream().writeInt(sequenceNo);
 		} catch (IOException ex) {

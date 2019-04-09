@@ -92,9 +92,11 @@ final class SWTBinaryLogTreeContentProvider extends TreeContentAdapter {
 						
 						// Skip and get sub type
 						final Object [] sub = getElements(obj);
-						
-						for (int j = 0; j < sub.length; ++ j) {
-							list.add(sub[j]);
+
+						if (sub != null) {
+							for (int j = 0; j < sub.length; ++ j) {
+								list.add(sub[j]);
+							}
 						}
 					}
 					else {

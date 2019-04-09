@@ -89,6 +89,10 @@ public final class LogContext extends BaseBinaryLogWriter {
 	
 	<T extends Loggable> T setLoggableField(Loggable parent, String field, T sub) {
 
+		if (parent.getConstructorLogSequenceNo() < 0) {
+			throw new IllegalArgumentException();
+		}
+		
 		final int sequenceNo = writeFieldHeader(LogCommand.SET_LOGGABLE_FIELD, parent.getConstructorLogSequenceNo());
 		
 		debugWrite(

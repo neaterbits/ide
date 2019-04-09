@@ -14,7 +14,17 @@ class PrerequisiteCompleteChecker {
 			ExecutorState<CONTEXT> targetState,
 			TargetDefinition<?> target) {
 		
-		return hasCompletedPrerequisites(targetState::getTargetCompletion, targetState::getTargetDefinition, targetState::printTargetKeys, target);
+		final PrerequisiteCompletion completion = hasCompletedPrerequisites(targetState::getTargetCompletion, targetState::getTargetDefinition, targetState::printTargetKeys, target);
+		
+		/*
+		if (completion.getStatus() == Status.FAILED) {
+			System.out.println("## failed target " + target.targetSimpleLogString() + ": " + completion.getException());
+			
+			completion.getException().printStackTrace();
+		}
+		*/
+		
+		return completion;
 	}
 
 	static <CONTEXT extends TaskContext> PrerequisiteCompletion hasCompletedPrerequisites(

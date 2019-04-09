@@ -20,11 +20,16 @@ public class TargetReference<TARGET> extends TargetKey<TARGET> implements Loggab
 			LogContext logContext,
 			Class<TARGET> type,
 			TARGET targetObject,
-			Function<TARGET, String> description) {
+			Function<TARGET, String> description,
+			boolean hasTargetDefinition) {
 		
 		super(type, targetObject);
 	
-		this.constructorSequenceNo = logConstructor(logContext, this, TargetReference.class, null, null, description != null ? description.apply(targetObject) : null);
+		// Don't write this to log if has target definition, write that instead
+		this.constructorSequenceNo = hasTargetDefinition
+				? -1
+				: logConstructor(logContext, this, TargetReference.class, null, null, description != null ? description.apply(targetObject) : null);
+		
 		this.description = description;
 	}
 	

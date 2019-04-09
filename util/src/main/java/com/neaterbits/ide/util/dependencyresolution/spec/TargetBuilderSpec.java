@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import com.neaterbits.ide.util.dependencyresolution.executor.TargetBuildResult;
 import com.neaterbits.ide.util.dependencyresolution.executor.TargetExecutor;
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.TargetBuilderImpl;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
@@ -37,13 +38,15 @@ public abstract class TargetBuilderSpec<CONTEXT extends TaskContext> {
 			
 			targetFinder.computeTargets((List)targetSpecs, logContext, context, targetFinderLogger, targetReference -> {
 				
-				targetReference.logRootObject(logContext);
+				final TargetDefinition<?> rootTarget = targetReference.getTargetDefinitionIfAny();
+				
+				rootTarget.logRootObject(logContext);
 				
 				// target.printTargets();
 				
 				final TargetExecutor targetExecutor = new TargetExecutor(executor);
 				
-				targetExecutor.runTargets(context, targetReference.getTargetDefinitionIfAny(), logger, onResult);
+				targetExecutor.runTargets(context, rootTarget, logger, onResult);
 			});
 		}
 		catch (Throwable ex) {

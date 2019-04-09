@@ -40,7 +40,7 @@ public final class FileTarget<TARGET> extends TargetDefinition<TARGET> {
 				logContext,
 				getLogIdentifier(file),
 				getLogLocalIdentifier(file),
-				new TargetReference<>(logContext, type, targetObject, description),
+				new TargetReference<>(logContext, type, targetObject, description, true),
 				prerequisites,
 				action,
 				actionWithResult);

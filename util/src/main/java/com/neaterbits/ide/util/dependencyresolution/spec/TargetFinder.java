@@ -58,7 +58,7 @@ final class TargetFinder extends PrerequisitesFinder {
 				&& !targetSpec.hasAction()) {
 				
 				// Link to target specified elsewhere
-				createdTargetReference = new TargetReference<>(logContext, targetSpec.getType(), target, null);
+				createdTargetReference = new TargetReference<>(logContext, targetSpec.getType(), target, null, false);
 			}
 			else {
 			

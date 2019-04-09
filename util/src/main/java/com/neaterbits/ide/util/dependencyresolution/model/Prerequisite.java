@@ -37,9 +37,21 @@ public final class Prerequisite<PREREQUISITE> extends BuildEntity implements Log
 		this.item = item;
 		
 		this.sourceFile = sourceFile;
-		this.subTarget = logConstructorLoggableField(logContext, null, LOG_FIELD_SUBTARGET, subTarget);
 		
-		if (subTarget != null) {
+		if (subTarget == null) {
+			this.subTarget = null;
+		}
+		else {
+			if (subTarget.getTargetDefinitionIfAny() != null) {
+				// Log target definition directly
+				logConstructorLoggableField(logContext, null, LOG_FIELD_SUBTARGET, subTarget.getTargetDefinitionIfAny());
+	
+				this.subTarget = subTarget;
+			}
+			else {
+				this.subTarget = logConstructorLoggableField(logContext, null, LOG_FIELD_SUBTARGET, subTarget);
+			}
+
 			subTarget.setFromPrerequisite(this);
 		}
 	}
