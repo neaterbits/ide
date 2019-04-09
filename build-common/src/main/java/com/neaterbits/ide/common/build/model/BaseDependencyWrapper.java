@@ -36,4 +36,9 @@ abstract class BaseDependencyWrapper<MODULE extends ModuleResourcePath> implemen
 	public final File getCompiledModuleFile() {
 		return dependency.getCompiledModuleFile();
 	}
+
+	@Override
+	public String toString() {
+		return dependency.getCompiledModuleFile().getName();
+	}
 }
