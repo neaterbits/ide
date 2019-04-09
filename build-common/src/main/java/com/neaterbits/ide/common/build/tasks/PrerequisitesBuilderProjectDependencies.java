@@ -1,5 +1,7 @@
 package com.neaterbits.ide.common.build.tasks;
 
+import java.util.stream.Collectors;
+
 import com.neaterbits.ide.common.build.model.ProjectDependency;
 import com.neaterbits.ide.common.build.model.compile.ProjectModuleDependencyList;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
@@ -17,15 +19,17 @@ final class PrerequisitesBuilderProjectDependencies extends PrerequisitesBuilder
 			.makingProduct(ProjectModuleDependencyList.class)
 			.fromItemType(ProjectDependency.class)
 			
-			.fromIterating(null, ModuleBuilderUtil::transitiveProjectDependencies)
+			.fromIterating(null, (context, dependency) -> ModuleBuilderUtil.transitiveProjectDependencies(context, dependency).stream()
+					.map(projectDependency -> projectDependency.getModulePath())
+					.collect(Collectors.toList()))
 			
 			.buildBy(st -> {
 				st.addFileSubTarget(
-						ProjectDependency.class,
+						ProjectModuleResourcePath.class,
 						CompiledModuleFileResourcePath.class,
-						(context, dependency) -> dependency.getCompiledModuleFilePath(),
+						(context, resourcePath) -> context.getBuildRoot().getCompiledModuleFile(resourcePath),
 						CompiledModuleFileResourcePath::getFile,
-						dependency -> "Project dependency " + dependency.getCompiledModuleFilePath().getLast().getName());
+						projectResourcePath -> "Project dependency " + projectResourcePath.getLast().getName());
 			})
 			.collectSubTargetsToProduct((module, dependencies) -> new ProjectModuleDependencyList(
 					module,

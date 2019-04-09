@@ -1,12 +1,22 @@
 package com.neaterbits.ide.util.dependencyresolution.model;
 
+import java.util.Objects;
+
 public abstract class TargetKey<TARGET> {
 
 	private final Class<TARGET> type;
 	private final TARGET targetObject;
 
 	public TargetKey(Class<TARGET> type, TARGET targetObject) {
-
+		
+		if (targetObject != null) {
+			Objects.requireNonNull(type);
+			
+			if (!type.isAssignableFrom(targetObject.getClass())) {
+				throw new IllegalArgumentException("Type mismatch " + type + "/" + targetObject.getClass());
+			}
+		}
+		
 		this.type = type;
 		this.targetObject = targetObject;
 	}
