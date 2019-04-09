@@ -1,5 +1,6 @@
 package com.neaterbits.ide.util.dependencyresolution.model;
 
+import java.io.File;
 import java.util.Objects;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.BuildEntity;
@@ -13,17 +14,29 @@ public final class Prerequisite<PREREQUISITE> extends BuildEntity implements Log
 	private final int constructorLogSequenceNo;
 	
 	private final PREREQUISITE item;
+
+	// One of the below
+	private final File sourceFile;
 	private final TargetReference<PREREQUISITE> subTarget;
 	
 	private Prerequisites fromPrerequisites;
 
+	public Prerequisite(LogContext logContext, PREREQUISITE item, File sourceFile) {
+		this(logContext, item, sourceFile, null);
+	}
+
 	public Prerequisite(LogContext logContext, PREREQUISITE item, TargetReference<PREREQUISITE> subTarget) {
+		this(logContext, item, null, subTarget);
+	}
 		
+	private Prerequisite(LogContext logContext, PREREQUISITE item, File sourceFile, TargetReference<PREREQUISITE> subTarget) {
 		this.constructorLogSequenceNo = logConstructor(logContext, this, getClass(), null, null, null);
 		
 		Objects.requireNonNull(item);
 		
 		this.item = item;
+		
+		this.sourceFile = sourceFile;
 		this.subTarget = logConstructorLoggableField(logContext, null, LOG_FIELD_SUBTARGET, subTarget);
 		
 		if (subTarget != null) {
@@ -76,6 +89,10 @@ public final class Prerequisite<PREREQUISITE> extends BuildEntity implements Log
 
 	PREREQUISITE getItem() {
 		return item;
+	}
+
+	public File getSourceFile() {
+		return sourceFile;
 	}
 
 	public TargetReference<PREREQUISITE> getSubTarget() {

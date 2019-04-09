@@ -22,7 +22,6 @@ final class NoTargetIteratingBuilderImpl<CONTEXT extends TaskContext> implements
 		final PrerequisiteBuilderState<CONTEXT, Object, Void, Void> prerequisiteBuilderState = new PrerequisiteBuilderState<>(prerequisiteDescription, null, null);
 		
 		prerequisiteBuilderState.setIterating(null, (context, target) -> getPrerequisites.apply(context));
-
 		
 		targetBuilderState.addPrerequisiteBuilder(prerequisiteBuilderState);
 		

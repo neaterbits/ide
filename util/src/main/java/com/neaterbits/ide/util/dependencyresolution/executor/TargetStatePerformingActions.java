@@ -1,5 +1,6 @@
 package com.neaterbits.ide.util.dependencyresolution.executor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -123,7 +124,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 			final Collection<Object> subPrerequisitesList = getSubPrerequisites.apply(context, subPrerequisiteObject);
 
 			final List<Prerequisite<?>> list = subPrerequisitesList.stream()
-					.map(sp -> new Prerequisite<>(logContext, sp, null))
+					.map(sp -> new Prerequisite<>(logContext, sp, (File)null))
 					.collect(Collectors.toList());
 			
 			final Prerequisites subPrerequisites = new Prerequisites(

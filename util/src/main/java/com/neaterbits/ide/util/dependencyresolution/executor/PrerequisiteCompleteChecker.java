@@ -49,21 +49,23 @@ class PrerequisiteCompleteChecker {
 						throw new IllegalStateException("No target definition found for target reference " + prerequisite.getSubTarget()
 									+ " of type " + prerequisite.getSubTarget().getTargetObject().getClass().getName());
 					}
+					else {
 					
-					final PrerequisiteCompletion subStatus = hasCompletedPrerequisites(
-							targetState,
-							getTargetDefiniton,
-							printTargetKeys,
-							targetDefinition);
-					
-					if (subStatus.getStatus() != Status.SUCCESS) {
-
-						return subStatus;
-					}
-
-					final PrerequisiteCompletion thisStatus = targetState.apply(targetDefinition);
-					if (thisStatus.getStatus() != Status.SUCCESS) {
-						return thisStatus;
+						final PrerequisiteCompletion subStatus = hasCompletedPrerequisites(
+								targetState,
+								getTargetDefiniton,
+								printTargetKeys,
+								targetDefinition);
+						
+						if (subStatus.getStatus() != Status.SUCCESS) {
+	
+							return subStatus;
+						}
+	
+						final PrerequisiteCompletion thisStatus = targetState.apply(targetDefinition);
+						if (thisStatus.getStatus() != Status.SUCCESS) {
+							return thisStatus;
+						}
 					}
 				}
 			}

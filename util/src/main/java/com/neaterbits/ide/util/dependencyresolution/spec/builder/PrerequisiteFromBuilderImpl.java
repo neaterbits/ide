@@ -6,27 +6,38 @@ import java.util.function.Function;
 
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
-class PrerequisiteFromBuilderImpl<CONTEXT extends TaskContext, TARGET> 
-		implements PrerequisiteFromBuilder<CONTEXT, TARGET> {
+class PrerequisiteFromBuilderImpl<CONTEXT extends TaskContext, TARGET, PREREQUISITE> 
+		implements PrerequisiteFromBuilder<CONTEXT, PREREQUISITE> {
 
 	private final String description;
-	private Function<TARGET, File> file;
+	private final PrerequisiteBuilderState<CONTEXT, TARGET, Void, Void> prerequisiteBuilderState;
+	private Function<TARGET, PREREQUISITE> from;
+	private Function<PREREQUISITE, File> withFile;
 	
-	PrerequisiteFromBuilderImpl(String description) {
+	PrerequisiteFromBuilderImpl(
+			String description,
+			Function<TARGET, PREREQUISITE> from,
+			PrerequisiteBuilderState<CONTEXT, TARGET, Void, Void> prerequisiteBuilderState) {
 		
 		Objects.requireNonNull(description);
+		Objects.requireNonNull(from);
+		Objects.requireNonNull(prerequisiteBuilderState);
 		
 		this.description = description;
+		this.from = from;
+		this.prerequisiteBuilderState = prerequisiteBuilderState;
 	}
 
 	@Override
-	public void withFile(Function<TARGET, File> withFile) {
+	public void withFile(Function<PREREQUISITE, File> withFile) {
 
-		if (this.file != null) {
+		if (this.withFile != null) {
 			throw new IllegalStateException();
 		}
 
-		this.file = withFile;
+		this.withFile = withFile;
+		
+		prerequisiteBuilderState.setSingleFile(from, withFile);
 	}
 
 	final String getDescription() {

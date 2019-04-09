@@ -1,5 +1,7 @@
 package com.neaterbits.ide.util.dependencyresolution.spec;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -22,11 +24,13 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 	private final Constraint constraint;
 	private final BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites;
 	private final RecursiveBuildInfo<CONTEXT, TARGET, PREREQUISITE> recursiveBuildInfo;
+	private final Function<TARGET, PREREQUISITE> getSingleFrom;
+	private final Function<PREREQUISITE, File> getSingleFile;
 	private final BuildSpec<CONTEXT, PREREQUISITE> action;
 	private final Collectors<TARGET> collectors;
 	
 	public PrerequisiteSpec(String named) {
-		this(named, null, null, null, null, null, null, null, null);
+		this(named, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	public PrerequisiteSpec(
@@ -37,11 +41,15 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 			Constraint constraint,
 			BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisites,
 			RecursiveBuildInfo<CONTEXT, TARGET, PREREQUISITE> recursiveBuildInfo,
+			Function<TARGET, PREREQUISITE> getSingleFrom,
+			Function<PREREQUISITE, File> getSingleFile,
 			BuildSpec<CONTEXT, PREREQUISITE> action,
 			Collectors<TARGET> collectors) {
 
 		if (named == null) {
-			Objects.requireNonNull(getPrerequisites);
+			if (getSingleFrom == null || getSingleFile == null) {
+				Objects.requireNonNull(getPrerequisites);
+			}
 		}
 		else {
 			if (named.isEmpty()) {
@@ -68,6 +76,9 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		this.getPrerequisites = getPrerequisites;
 
 		this.recursiveBuildInfo = recursiveBuildInfo;
+		
+		this.getSingleFrom = getSingleFrom;
+		this.getSingleFile = getSingleFile;
 		
 		this.action = action;
 
@@ -98,7 +109,22 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 		
 		Objects.requireNonNull(context);
 		
-		return getPrerequisites.apply(context, target);
+		final Collection<PREREQUISITE> result;
+		
+		if (getPrerequisites != null) {
+			result = getPrerequisites.apply(context, target);
+		}
+		else if (getSingleFrom != null && getSingleFile != null) {
+			
+			final PREREQUISITE prerequisite = getSingleFrom.apply(target);
+			
+			result = Arrays.asList(prerequisite);
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
+		
+		return result;
 	}
 	
 	BiFunction<CONTEXT, TARGET, Collection<PREREQUISITE>> getPrerequisitesFunction() {
@@ -116,6 +142,10 @@ public final class PrerequisiteSpec<CONTEXT extends TaskContext, TARGET, PREREQU
 
 	boolean isRecursiveBuild() {
 		return recursiveBuildInfo != null;
+	}
+
+	Function<PREREQUISITE, File> getSingleFileFunction() {
+		return getSingleFile;
 	}
 
 	BuildSpec<CONTEXT, PREREQUISITE> getAction() {

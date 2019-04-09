@@ -204,11 +204,24 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 	
 	PrerequisiteCompletion getTargetCompletion(TargetDefinition<?> target) {
 
-		final Status status = getTargetStatus(target);
+		Objects.requireNonNull(target);
+
+		final Target<?> targetState = targets.get(target.getTargetKey());
+
+		if (targetState == null) {
+			
+			printTargetKeys();
+			
+			throw new IllegalStateException("No target state for " + target.targetSimpleLogString() + "/" + target.getTargetReference());
+		}
+		
+		final TargetStateMachine<?> stateMachine = targetState.stateMachine;
+		
+		final Status status = stateMachine.getStatus();
 		
 		return status != Status.FAILED
 				? new PrerequisiteCompletion(status)
-				: new PrerequisiteCompletion(status, targets.get(target).stateMachine.getException());
+				: new PrerequisiteCompletion(status, stateMachine.getException());
 		
 	}
 
@@ -358,6 +371,8 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 				if (prerequisite.getSubTarget() != null) {
 
 					final TargetDefinition<?> targetDefinition = prerequisite.getSubTarget().getTargetDefinitionIfAny();
+
+					// System.out.println("## add subtarget " + prerequisite.getSubTarget() + "/" + targetDefinition);
 					
 					if (targetDefinition != null) {
 						
@@ -370,6 +385,9 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 
 						getSubTargets(targetDefinition, toExecuteTargets);
 					}
+				}
+				else {
+					// Already existing file
 				}
 			}
 		}

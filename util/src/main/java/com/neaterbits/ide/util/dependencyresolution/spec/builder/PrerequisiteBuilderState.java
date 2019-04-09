@@ -1,5 +1,6 @@
 package com.neaterbits.ide.util.dependencyresolution.spec.builder;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +26,9 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 	private BiFunction<CONTEXT, TARGET, Collection<?>> getPrerequisites;
 	private BiFunction<CONTEXT, ?, Collection<?>> getSubPrerequisites;
 	private Function<?, ?> getDependencyFromPrerequisite;
+	
+	private Function<TARGET, ?> getSingleFrom;
+	private Function<?, File> getSingleFile;
 	
 	private boolean recursiveBuild;
 	
@@ -78,6 +82,15 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 		this.recursiveBuild = true;
 	}
 	
+	final void setSingleFile(Function<TARGET, ?> getSingleFrom, Function<?, File> getSingleFile) {
+		
+		Objects.requireNonNull(getSingleFrom);
+		Objects.requireNonNull(getSingleFile);
+		
+		this.getSingleFrom = getSingleFrom;
+		this.getSingleFile = getSingleFile;
+	}
+	
 	final void setCollectSubTargets(BiFunction<TARGET, List<ITEM>, PRODUCT> collect) {
 
 		Objects.requireNonNull(collect);
@@ -121,8 +134,10 @@ final class PrerequisiteBuilderState<CONTEXT extends TaskContext, TARGET, PRODUC
 					? new RecursiveBuildInfo<>(
 							(BiFunction)getSubPrerequisites,
 							(Function)getDependencyFromPrerequisite)
-					: null
-,
+					: null,
+					
+				(Function)getSingleFrom,
+				(Function)getSingleFile,
 				build,
 				new Collectors<>(
 					collectSubTargets != null ? new CollectSubTargets<>(productType, (BiFunction)collectSubTargets) : null,

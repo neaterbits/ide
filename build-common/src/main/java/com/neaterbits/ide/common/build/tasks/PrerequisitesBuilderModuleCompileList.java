@@ -4,6 +4,7 @@ import com.neaterbits.ide.common.build.model.compile.FileCompilation;
 import com.neaterbits.ide.common.build.model.compile.ModuleCompileList;
 import com.neaterbits.ide.common.build.model.compile.SourceFolderCompileList;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
+import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.util.dependencyresolution.spec.PrerequisitesBuilderSpec;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.PrerequisitesBuilder;
@@ -33,12 +34,12 @@ public class PrerequisitesBuilderModuleCompileList extends PrerequisitesBuilderS
 						.makingProduct(SourceFolderCompileList.class)
 						.fromItemType(FileCompilation.class)
 						.fromIterating(Constraint.IO, (ctx, sourceFolder) -> SourceFilesBuilderUtil.getSourceFiles(ctx, sourceFolder))
-										
+
 						.buildBy(sourceFileTarget -> sourceFileTarget
 							.addFileSubTarget(FileCompilation.class, FileCompilation::getCompiledFile, classFile -> "Class file for source file " + classFile.getSourceFile().getName())
 								.withPrerequisite("Source file")
 								.from(FileCompilation::getSourcePath)
-								.withFile(FileCompilation::getSourceFile)
+								.withFile(SourceFileResourcePath::getFile)
 						)
 						.collectSubTargetsToProduct((sourceFolder, fileCompilationList) -> new SourceFolderCompileList(sourceFolder, fileCompilationList))
 			)

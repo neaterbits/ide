@@ -1,5 +1,6 @@
 package com.neaterbits.ide.util.dependencyresolution.spec;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -132,6 +133,9 @@ abstract class PrerequisitesFinder {
 				}
 				else {
 					
+					// Only prerequisite, no action to build target so probably a source file
+
+					/*
 					final TargetReference<PREREQUISITE> targetReference = new TargetReference<PREREQUISITE>(
 							logContext,
 							null,
@@ -139,6 +143,11 @@ abstract class PrerequisitesFinder {
 							null);
 					
 					final Prerequisite<PREREQUISITE> subPrerequisite = new Prerequisite<>(logContext, prerequisite, targetReference);
+					*/
+
+					final File sourceFile = prerequisiteSpec.getSingleFileFunction().apply(prerequisite);
+					
+					final Prerequisite<PREREQUISITE> subPrerequisite = new Prerequisite<>(logContext, prerequisite, sourceFile);
 					
 					prerequisiteSet.add(subPrerequisite);
 	

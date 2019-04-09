@@ -21,7 +21,12 @@ final class TargetPrerequisiteBuilderImpl<CONTEXT extends TaskContext, TARGET, F
 	}
 
 	@Override
-	public <PREREQUISITE> PrerequisiteFromBuilder<CONTEXT, TARGET> from(Function<TARGET, PREREQUISITE> from) {
-		return new PrerequisiteFromBuilderImpl<>(description);
+	public <PREREQUISITE> PrerequisiteFromBuilder<CONTEXT, PREREQUISITE> from(Function<TARGET, PREREQUISITE> from) {
+	
+		final PrerequisiteBuilderState<CONTEXT, TARGET, Void, Void> prerequisiteBuilderState = new PrerequisiteBuilderState<>(description, null, null);
+
+		targetBuilderState.addPrerequisiteBuilder(prerequisiteBuilderState);
+		
+		return new PrerequisiteFromBuilderImpl<>(description, from, prerequisiteBuilderState);
 	}
 }
