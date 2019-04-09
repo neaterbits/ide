@@ -3,7 +3,7 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 import java.util.Objects;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 import com.neaterbits.ide.util.statemachine.BaseState;
 
@@ -11,7 +11,7 @@ public abstract class BaseTargetState<CONTEXT extends TaskContext>
 		extends BaseState<BaseTargetState<CONTEXT>>
 		implements TargetOps<CONTEXT> {
 
-	final Target<?> target;
+	final TargetDefinition<?> target;
 	final TargetExecutorLogger logger;
 
 	abstract Status getStatus();
@@ -20,7 +20,7 @@ public abstract class BaseTargetState<CONTEXT extends TaskContext>
 		throw new IllegalStateException();
 	}
 	
-	public BaseTargetState(Target<?> target, TargetExecutorLogger logger) {
+	public BaseTargetState(TargetDefinition<?> target, TargetExecutorLogger logger) {
 		Objects.requireNonNull(target);
 		
 		this.target = target;
@@ -49,7 +49,7 @@ public abstract class BaseTargetState<CONTEXT extends TaskContext>
 
 	final void onCompletedTarget(
 			TargetExecutionContext<CONTEXT> context,
-			Target<?> target,
+			TargetDefinition<?> target,
 			Exception exception,
 			boolean async) {
 
@@ -60,6 +60,6 @@ public abstract class BaseTargetState<CONTEXT extends TaskContext>
 		
 		// context.state.onCompletedTarget(target, exception);
 
-		context.state.onCompletedTarget(target);
+		context.state.onCompletedTarget(target.getTargetKey());
 	}
 }

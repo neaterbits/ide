@@ -35,15 +35,15 @@ public abstract class TargetBuilderSpec<CONTEXT extends TaskContext> {
 			
 			final TargetFinderLogger targetFinderLogger = null; // new PrintlnTargetFinderLogger();
 			
-			targetFinder.computeTargets((List)targetSpecs, logContext, context, targetFinderLogger, target -> {
+			targetFinder.computeTargets((List)targetSpecs, logContext, context, targetFinderLogger, targetReference -> {
 				
-				target.logRootObject(logContext);
+				targetReference.logRootObject(logContext);
 				
 				// target.printTargets();
 				
 				final TargetExecutor targetExecutor = new TargetExecutor(executor);
 				
-				targetExecutor.runTargets(context, target, logger, onResult);
+				targetExecutor.runTargets(context, targetReference.getTargetDefinitionIfAny(), logger, onResult);
 			});
 		}
 		catch (Throwable ex) {

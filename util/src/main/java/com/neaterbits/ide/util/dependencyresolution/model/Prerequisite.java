@@ -13,11 +13,11 @@ public final class Prerequisite<PREREQUISITE> extends BuildEntity implements Log
 	private final int constructorLogSequenceNo;
 	
 	private final PREREQUISITE item;
-	private final Target<PREREQUISITE> subTarget;
+	private final TargetReference<PREREQUISITE> subTarget;
 	
 	private Prerequisites fromPrerequisites;
-	
-	public Prerequisite(LogContext logContext, PREREQUISITE item, Target<PREREQUISITE> subTarget) {
+
+	public Prerequisite(LogContext logContext, PREREQUISITE item, TargetReference<PREREQUISITE> subTarget) {
 		
 		this.constructorLogSequenceNo = logConstructor(logContext, this, getClass(), null, null, null);
 		
@@ -78,7 +78,7 @@ public final class Prerequisite<PREREQUISITE> extends BuildEntity implements Log
 		return item;
 	}
 
-	public Target<PREREQUISITE> getSubTarget() {
+	public TargetReference<PREREQUISITE> getSubTarget() {
 		return subTarget;
 	}
 

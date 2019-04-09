@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
@@ -24,7 +24,7 @@ public final class TargetExecutor {
 
 	public <CONTEXT extends TaskContext, TARGET> void runTargets(
 			CONTEXT context,
-			Target<TARGET> rootTarget,
+			TargetDefinition<TARGET> rootTarget,
 			TargetExecutorLogger logger,
 			Consumer<TargetBuildResult> onResult) {
 		
@@ -81,7 +81,7 @@ public final class TargetExecutor {
 					
 					final List<String> prerequisitesList = targetState.getTarget().getPrerequisites().stream()
 							.flatMap(prerequisites -> prerequisites.getPrerequisites().stream())
-							.map(prerequisite -> prerequisite.getSubTarget().getDebugString())
+							.map(prerequisite -> prerequisite.getSubTarget().getTargetObject().toString())
 							.collect(Collectors.toList());
 					
 					System.err.println("Target " + targetState.getObjectDebugString()

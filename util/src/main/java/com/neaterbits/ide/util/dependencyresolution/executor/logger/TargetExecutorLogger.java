@@ -5,33 +5,32 @@ import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProducts;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedTargetObjects;
 import com.neaterbits.ide.util.dependencyresolution.executor.Status;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 
 public interface TargetExecutorLogger {
 
-	
 	void onScheduleTargets(int numScheduledJobs, TargetExecutorLogState logState);
 
-	void onStateChange(Target<?> target, String oldState, String newState);
+	void onStateChange(TargetDefinition<?> target, String oldState, String newState);
 	
-	void onAddRecursiveTarget(Target<?> target, Target<?> subTarget);
+	void onAddRecursiveTarget(TargetDefinition<?> target, TargetDefinition<?> subTarget);
 	
-	void onCheckRecursiveTargetsComplete(Target<?> target, Status status);
+	void onCheckRecursiveTargetsComplete(TargetDefinition<?> target, Status status);
 	
-	void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, Target<?> target, CollectedTargetObjects subTargetObjects);
+	void onAddSubRecursionCollected(TargetDefinition<?> topOfRecursionTarget, TargetDefinition<?> target, CollectedTargetObjects subTargetObjects);
 
-	void onAddTopRecursionCollected(Target<?> aboveRecursionTarget, Prerequisites prerequisites, CollectedTargetObjects subTargetObjects);
+	void onAddTopRecursionCollected(TargetDefinition<?> aboveRecursionTarget, Prerequisites prerequisites, CollectedTargetObjects subTargetObjects);
 
-	void onScheduleTarget(Target<?> target, Status hasCompletedPrerequisites, TargetExecutorLogState logState);
+	void onScheduleTarget(TargetDefinition<?> target, Status hasCompletedPrerequisites, TargetExecutorLogState logState);
 
-	void onCollectProducts(Target<?> target, CollectedProducts subProducts, CollectedProduct collected, TargetExecutorLogState logState);
+	void onCollectProducts(TargetDefinition<?> target, CollectedProducts subProducts, CollectedProduct collected, TargetExecutorLogState logState);
 
-	void onCollectTargetObjects(Target<?> target, CollectedTargetObjects targetObjects, CollectedProduct collected, TargetExecutorLogState logState);
+	void onCollectTargetObjects(TargetDefinition<?> target, CollectedTargetObjects targetObjects, CollectedProduct collected, TargetExecutorLogState logState);
 	
-	void onActionCompleted(Target<?> target, TargetExecutorLogState logState, ActionLog actionLog);
+	void onActionCompleted(TargetDefinition<?> target, TargetExecutorLogState logState, ActionLog actionLog);
 
-	void onActionException(Target<?> target, TargetExecutorLogState logState, Exception exception);
+	void onActionException(TargetDefinition<?> target, TargetExecutorLogState logState, Exception exception);
 	
-	void onTargetDone(Target<?> target, Exception exception, TargetExecutorLogState logState);
+	void onTargetDone(TargetDefinition<?> target, Exception exception, TargetExecutorLogState logState);
 }

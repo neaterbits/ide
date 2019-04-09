@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetReference;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
@@ -22,7 +23,7 @@ final class TargetFinder extends PrerequisitesFinder {
 			LogContext logContext,
 			CONTEXT context,
 			TargetFinderLogger logger,
-			Consumer<Target<TARGET>> rootTarget) {
+			Consumer<TargetReference<TARGET>> rootTarget) {
 
 		for (TargetSpec<CONTEXT, TARGET> targetSpec : targetSpecs) {
 			findTargets(null, targetSpec, logContext, context, null, logger, 0, rootTarget);
@@ -41,21 +42,36 @@ final class TargetFinder extends PrerequisitesFinder {
 				TARGET target,
 				TargetFinderLogger logger,
 				int indent,
-				Consumer<Target<TARGET>> targetCreated) {
+				Consumer<TargetReference<TARGET>> targetCreated) {
 		
 		if (logger != null) {
 			logger.onFindTarget(indent, context, targetSpec, target);
 		}
 
+		
 		final Consumer<List<Prerequisites>> onFoundPrerequisites = (List<Prerequisites> prerequisites) -> {
+
+			final TargetReference<TARGET> createdTargetReference;
 			
-			final Target<TARGET> createdTarget = targetSpec.createTarget(logContext, context, target, prerequisites);
-			
-			if (logger != null) {
-				logger.onFoundPrerequisites(indent, createdTarget, prerequisites);
+			if (
+				   (prerequisites == null || prerequisites.isEmpty())
+				&& !targetSpec.hasAction()) {
+				
+				// Link to target specified elsewhere
+				createdTargetReference = new TargetReference<>(logContext, null, target, null);
 			}
+			else {
 			
-			targetCreated.accept(createdTarget);
+				final TargetDefinition<TARGET> createdTarget = targetSpec.createTargetDefinition(logContext, context, target, prerequisites);
+				
+				if (logger != null) {
+					logger.onFoundPrerequisites(indent, createdTarget, prerequisites);
+				}
+				
+				createdTargetReference = createdTarget.getTargetReference();
+			}
+
+			targetCreated.accept(createdTargetReference);
 		};
 		
 		findPrerequisites(

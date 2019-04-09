@@ -6,7 +6,8 @@ import java.util.Set;
 
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetReference;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 class Collector {
@@ -42,7 +43,7 @@ class Collector {
 		
 		for (Prerequisite<?> prerequisite : withCollect.getPrerequisites()) {
 
-			final Target<?> subTarget = prerequisite.getSubTarget();
+			final TargetReference<?> subTarget = prerequisite.getSubTarget();
 
 			if (subTarget != null) {
 				if (subTarget.getTargetObject() != null) {
@@ -56,7 +57,8 @@ class Collector {
 	
 	private static CollectedProduct productFromCollectedSubTargets(
 			TargetExecutionContext<?> context,
-			Target<?> target,
+			
+			TargetDefinition<?> target,
 			Prerequisites withCollect,
 			CollectedTargetObjects subTargetObjects) {
 	
@@ -72,7 +74,8 @@ class Collector {
 		
 		if (target.isRecursionSubTarget()) {
 			
-			final Target<?> topOfRecursionTarget = target.getTopOfRecursion();
+			final TargetReference<?> topOfRecursionTargetReference = target.getTopOfRecursion();
+			final TargetDefinition<?> topOfRecursionTarget = topOfRecursionTargetReference.getTargetDefinitionIfAny();
 
 			if (DEBUG) {
 				System.out.println("## add " + subTargetObjects + " for sub of " + topOfRecursionTarget);
@@ -80,7 +83,7 @@ class Collector {
 			
 			context.logger.onAddSubRecursionCollected(topOfRecursionTarget, target, subTargetObjects);
 			
-			context.state.addToRecursiveTargetCollected(topOfRecursionTarget, subTargetObjects);
+			context.state.addToRecursiveTargetCollected(topOfRecursionTargetReference, subTargetObjects);
 
 			if (target.isTopOfRecursion()) {
 				// This is top of recursion so must add this too
@@ -91,7 +94,7 @@ class Collector {
 				final CollectedTargetObjects thisObj = new CollectedTargetObjects(thisCollected);
 				
 				context.logger.onAddSubRecursionCollected(topOfRecursionTarget, target, thisObj);
-				context.state.addToRecursiveTargetCollected(topOfRecursionTarget, thisObj);
+				context.state.addToRecursiveTargetCollected(topOfRecursionTargetReference, thisObj);
 			}
 			
 			collected = null;
@@ -142,7 +145,7 @@ class Collector {
 		return collected;
 	}
 	
-	private static <CONTEXT extends TaskContext> void collectProductsFromSubTargetsOf(TargetExecutionContext<CONTEXT> context, Target<?> target) {
+	private static <CONTEXT extends TaskContext> void collectProductsFromSubTargetsOf(TargetExecutionContext<CONTEXT> context, TargetDefinition<?> target) {
 
 		// final Prerequisites withCollect = findOnlyPrerequisitesWithCollect(target);
 
@@ -174,25 +177,25 @@ class Collector {
 						System.out.println("## add collected target product for " + target + " " + collected);
 					}
 					
-					context.state.addCollectedProduct(target, collected);
+					context.state.addCollectedProduct(target.getTargetKey(), collected);
 				}
 			}
 		}
 	}
 
 	private static <CONTEXT extends TaskContext>
-	CollectedProducts getCollectedProductsFromSub(Target<?> target, Prerequisites withCollect, ExecutorState<CONTEXT> targetState) {
+	CollectedProducts getCollectedProductsFromSub(TargetDefinition<?> target, Prerequisites withCollect, ExecutorState<CONTEXT> targetState) {
 
 		final Set<CollectedProduct> subProducts = new HashSet<>(withCollect.getPrerequisites().size());
 		
 		for (Prerequisite<?> prerequisite : withCollect.getPrerequisites()) {
 
-			final Target<?> subTarget = prerequisite.getSubTarget();
+			final TargetReference<?> subTargetReference = prerequisite.getSubTarget();
 
-			final List<CollectedProduct> targetSubProducts = targetState.getCollectedProducts(subTarget);
+			final List<CollectedProduct> targetSubProducts = targetState.getCollectedProducts(subTargetReference);
 			
 			if (DEBUG) {
-				System.out.println("## collected subproducts for " + target + " from " + subTarget + " " + targetSubProducts);
+				System.out.println("## collected subproducts for " + target + " from " + subTargetReference + " " + targetSubProducts);
 			}
 			
 			if (targetSubProducts != null) {
@@ -205,7 +208,7 @@ class Collector {
 
 	private static CollectedProduct productFromCollectedSubProducts(
 			TargetExecutionContext<?> context,
-			Target<?> target,
+			TargetDefinition<?> target,
 			Prerequisites withCollect,
 			CollectedProducts subProducts) {
 	
@@ -232,7 +235,7 @@ class Collector {
 		return collected;
 	}
 
-	private static <CONTEXT extends TaskContext> void collectProductsFromSubProductsOf(TargetExecutionContext<CONTEXT> context, Target<?> target) {
+	private static <CONTEXT extends TaskContext> void collectProductsFromSubProductsOf(TargetExecutionContext<CONTEXT> context, TargetDefinition<?> target) {
 
 		// final Prerequisites withCollect = findOnlyPrerequisitesWithCollect(target);
 
@@ -264,13 +267,13 @@ class Collector {
 						System.out.println("## add collected product for subproducts of " + target + " " + collected);
 					}
 					
-					context.state.addCollectedProduct(target, collected);
+					context.state.addCollectedProduct(target.getTargetKey(), collected);
 				}
 			}
 		}
 	}
 
-	static <CONTEXT extends TaskContext> void collectFromSubTargetsAndSubProducts(TargetExecutionContext<CONTEXT> context, Target<?> target) {
+	static <CONTEXT extends TaskContext> void collectFromSubTargetsAndSubProducts(TargetExecutionContext<CONTEXT> context, TargetDefinition<?> target) {
 		
 		collectProductsFromSubTargetsOf(context, target);
 		collectProductsFromSubProductsOf(context, target);

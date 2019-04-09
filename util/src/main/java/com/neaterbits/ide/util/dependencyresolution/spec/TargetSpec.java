@@ -8,7 +8,7 @@ import java.util.function.Function;
 import com.neaterbits.ide.util.dependencyresolution.executor.Action;
 import com.neaterbits.ide.util.dependencyresolution.executor.ActionWithResult;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.Constraint;
@@ -30,7 +30,7 @@ public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 	private ActionWithResultFunction<CONTEXT, TARGET, ?> actionWithResult;
 	private ProcessResult<CONTEXT, TARGET, ?> onResult;
 
-	abstract Target<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList);
+	abstract TargetDefinition<TARGET> createTargetDefinition(LogContext logContext, CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList);
 
 	public abstract TargetSpec<CONTEXT, TARGET> addPrerequisiteSpecs(List<PrerequisiteSpec<CONTEXT, TARGET, ?>> additionalPrerequisites);
 	
@@ -61,6 +61,10 @@ public abstract class TargetSpec<CONTEXT extends TaskContext, TARGET> {
 	
 	final Function<TARGET, String> getDescriptionFunction() {
 		return description;
+	}
+
+	final boolean hasAction() {
+		return actionFunction != null || actionWithResult != null;
 	}
 	
 	TargetSpec(TargetSpec<CONTEXT, TARGET> other, List<PrerequisiteSpec<CONTEXT, TARGET, ?>> additionalPrerequisites) {

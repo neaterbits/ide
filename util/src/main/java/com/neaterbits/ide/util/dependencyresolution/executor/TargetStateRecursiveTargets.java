@@ -1,12 +1,12 @@
 package com.neaterbits.ide.util.dependencyresolution.executor;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 final class TargetStateRecursiveTargets<CONTEXT extends TaskContext> extends BaseTargetState<CONTEXT> {
 
-	TargetStateRecursiveTargets(Target<?> target, TargetExecutorLogger logger) {
+	TargetStateRecursiveTargets(TargetDefinition<?> target, TargetExecutorLogger logger) {
 		super(target, logger);
 	}
 

@@ -3,13 +3,13 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 import java.util.function.BiConsumer;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 final class TargetStateToExecute<CONTEXT extends TaskContext>
 			extends BaseTargetState<CONTEXT> implements TargetOps<CONTEXT> {
 
-	public TargetStateToExecute(Target<?> target, TargetExecutorLogger logger) {
+	public TargetStateToExecute(TargetDefinition<?> target, TargetExecutorLogger logger) {
 		super(target, logger);
 	}
 	
@@ -66,7 +66,7 @@ final class TargetStateToExecute<CONTEXT extends TaskContext>
 		return nextState;
 	}
 	private boolean runAnyActionsAndCallOnCompleted(
-			TargetExecutionContext<CONTEXT> context, Target<?> target,
+			TargetExecutionContext<CONTEXT> context, TargetDefinition<?> target,
 			BiConsumer<Exception, Boolean> onCompleted) {
 
 		final Action<?> action = target.getAction();

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 
@@ -19,7 +19,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 
 	private static final Boolean DEBUG = false;
 	
-	TargetStatePerformingActions(Target<?> target, TargetExecutorLogger logger) {
+	TargetStatePerformingActions(TargetDefinition<?> target, TargetExecutorLogger logger) {
 		super(target, logger);
 	}
 
@@ -59,7 +59,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 
 
 	private 
-	boolean addRecursiveBuildTargetsIfAny(ExecutorState<CONTEXT> targetState, TaskContext context, Target<?> target, TargetExecutorLogger logger) {
+	boolean addRecursiveBuildTargetsIfAny(ExecutorState<CONTEXT> targetState, TaskContext context, TargetDefinition<?> target, TargetExecutorLogger logger) {
 
 		final boolean added;
 		
@@ -87,7 +87,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 	}
 	
 	private
-	void addRecursiveBuildTargets(ExecutorState<CONTEXT> targetState, TaskContext context, Prerequisites fromPrerequisites, Target<?> target, TargetExecutorLogger logger) {
+	void addRecursiveBuildTargets(ExecutorState<CONTEXT> targetState, TaskContext context, Prerequisites fromPrerequisites, TargetDefinition<?> target, TargetExecutorLogger logger) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final BiFunction<Object, Object, Collection<Object>> getSubPrerequisites
@@ -134,14 +134,14 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 					fromPrerequisites.getCollectors());
 			
 			@SuppressWarnings({ "unchecked", "rawtypes" })
-			final Target<Object> subTarget =
-					((Target)target).createTarget(
+			final TargetDefinition<Object> subTarget =
+					((TargetDefinition)target).createTarget(
 							logContext,
 							context,
 							subPrerequisiteObject,
 							Arrays.asList(subPrerequisites));
 
-			targetPrerequisitesList.add(new Prerequisite<>(logContext, subPrerequisiteObject, subTarget));
+			targetPrerequisitesList.add(new Prerequisite<>(logContext, subPrerequisiteObject, subTarget.getTargetReference()));
 			
 			logger.onAddRecursiveTarget(target, subTarget);
 
@@ -149,7 +149,7 @@ final class TargetStatePerformingActions<CONTEXT extends TaskContext> extends Ba
 				System.out.println("## added subtarget " + subTarget + " from prerequisites " + targetPrerequisites + " from " + target.getTargetObject());
 			}
 			
-			if (!targetState.hasTarget(subTarget)) {
+			if (!targetState.hasTarget(subTarget.getTargetKey())) {
 				if (DEBUG) {
 					System.out.println("## added target to execute " + subTarget);
 				}

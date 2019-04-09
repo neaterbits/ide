@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import com.neaterbits.ide.util.dependencyresolution.model.FileTarget;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.Constraint;
@@ -69,7 +69,7 @@ public final class FileTargetSpec<CONTEXT extends TaskContext, TARGET, FILE_TARG
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	Target<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList) {
+	TargetDefinition<TARGET> createTargetDefinition(LogContext logContext, CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList) {
 		
 		final FILE_TARGET fileTarget = getFileTarget.apply(context, target);
 		

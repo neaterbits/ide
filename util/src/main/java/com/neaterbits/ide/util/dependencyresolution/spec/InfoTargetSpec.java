@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import com.neaterbits.ide.util.dependencyresolution.model.InfoTarget;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionWithResultFunction;
 import com.neaterbits.ide.util.scheduling.Constraint;
@@ -61,7 +61,7 @@ public final class InfoTargetSpec<CONTEXT extends TaskContext, TARGET> extends T
 
 	
 	@Override
-	Target<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList) {
+	TargetDefinition<TARGET> createTargetDefinition(LogContext logContext, CONTEXT context, TARGET target, List<Prerequisites> prerequisitesList) {
 		
 		return new InfoTarget<>(
 				logContext,

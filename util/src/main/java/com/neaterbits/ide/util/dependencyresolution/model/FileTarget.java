@@ -10,7 +10,7 @@ import com.neaterbits.ide.util.dependencyresolution.executor.Action;
 import com.neaterbits.ide.util.dependencyresolution.executor.ActionWithResult;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 
-public final class FileTarget<TARGET> extends Target<TARGET> {
+public final class FileTarget<TARGET> extends TargetDefinition<TARGET> {
 
 	private static String getLogIdentifier(File file) {
 		return file.getPath();
@@ -40,9 +40,7 @@ public final class FileTarget<TARGET> extends Target<TARGET> {
 				logContext,
 				getLogIdentifier(file),
 				getLogLocalIdentifier(file),
-				type,
-				description,
-				targetObject,
+				new TargetReference<>(logContext, type, targetObject, description),
 				prerequisites,
 				action,
 				actionWithResult);
@@ -55,7 +53,7 @@ public final class FileTarget<TARGET> extends Target<TARGET> {
 	}
 
 	@Override
-	public <CONTEXT> Target<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target,
+	public <CONTEXT> TargetDefinition<TARGET> createTarget(LogContext logContext, CONTEXT context, TARGET target,
 			List<Prerequisites> prerequisitesList) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -15,7 +15,7 @@ import com.neaterbits.ide.util.dependencyresolution.executor.CollectedProducts;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedTargetObjects;
 import com.neaterbits.ide.util.dependencyresolution.executor.Status;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 import com.neaterbits.structuredlog.xml.model.Log;
 import com.neaterbits.structuredlog.xml.model.LogData;
@@ -93,14 +93,14 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 		return pathIndex;
 	}
 
-	private void addTargetLogState(LogEntry logEntry, String dataType, Collection<Target<?>> targets) {
+	private void addTargetLogState(LogEntry logEntry, String dataType, Collection<TargetDefinition<?>> targets) {
 		
 		addCollectionLogState(
 				logEntry,
 				dataType,
 				targets,
 				BuildEntity::getPath,
-				Target::getDebugString);
+				TargetDefinition::getDebugString);
 	}
 
 	private <T> void addCollectionLogState(
@@ -143,32 +143,32 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	}
 	
 	@Override
-	public void onStateChange(Target<?> target, String oldState, String newState) {
+	public void onStateChange(TargetDefinition<?> target, String oldState, String newState) {
 		
 	}
 
 	@Override
-	public void onAddRecursiveTarget(Target<?> target, Target<?> subTarget) {
+	public void onAddRecursiveTarget(TargetDefinition<?> target, TargetDefinition<?> subTarget) {
 		
 	}
 
 	@Override
-	public void onCheckRecursiveTargetsComplete(Target<?> target, Status status) {
+	public void onCheckRecursiveTargetsComplete(TargetDefinition<?> target, Status status) {
 		
 	}
 
 	@Override
-	public void onAddSubRecursionCollected(Target<?> topOfRecursionTarget, Target<?> target, CollectedTargetObjects subTargetObjects) {
+	public void onAddSubRecursionCollected(TargetDefinition<?> topOfRecursionTarget, TargetDefinition<?> target, CollectedTargetObjects subTargetObjects) {
 		
 	}
 
 	@Override
-	public void onAddTopRecursionCollected(Target<?> aboveRecursionTarget, Prerequisites prerequisites, CollectedTargetObjects subTargetObjects) {
+	public void onAddTopRecursionCollected(TargetDefinition<?> aboveRecursionTarget, Prerequisites prerequisites, CollectedTargetObjects subTargetObjects) {
 		
 	}
 
 	@Override
-	public void onScheduleTarget(Target<?> target, Status hasCompletedPrerequisites, TargetExecutorLogState logState) {
+	public void onScheduleTarget(TargetDefinition<?> target, Status hasCompletedPrerequisites, TargetExecutorLogState logState) {
 
 		final LogEntry logEntry = addLogEntry(
 				target,
@@ -200,7 +200,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	
 	
 	@Override
-	public void onCollectProducts(Target<?> target, CollectedProducts subProducts, CollectedProduct collected,
+	public void onCollectProducts(TargetDefinition<?> target, CollectedProducts subProducts, CollectedProduct collected,
 			TargetExecutorLogState logState) {
 
 		final LogEntry logEntry = addLogEntry(
@@ -213,7 +213,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	}
 
 	@Override
-	public void onCollectTargetObjects(Target<?> target, CollectedTargetObjects targetObjects,
+	public void onCollectTargetObjects(TargetDefinition<?> target, CollectedTargetObjects targetObjects,
 			CollectedProduct collected, TargetExecutorLogState logState) {
 		
 		final LogEntry logEntry = addLogEntry(
@@ -226,7 +226,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	}
 
 	@Override
-	public void onActionCompleted(Target<?> target, TargetExecutorLogState logState, ActionLog actionLog) {
+	public void onActionCompleted(TargetDefinition<?> target, TargetExecutorLogState logState, ActionLog actionLog) {
 		
 		final LogEntry logEntry = addLogEntry(
 				target,
@@ -239,7 +239,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	}
 
 	@Override
-	public void onActionException(Target<?> target, TargetExecutorLogState logState, Exception exception) {
+	public void onActionException(TargetDefinition<?> target, TargetExecutorLogState logState, Exception exception) {
 
 		final LogEntry logEntry = addLogEntry(
 				target,
@@ -252,7 +252,7 @@ public final class StructuredTargetExecutorLogger implements TargetExecutorLogge
 	}
 
 	@Override
-	public void onTargetDone(Target<?> target, Exception exception, TargetExecutorLogState logState) {
+	public void onTargetDone(TargetDefinition<?> target, Exception exception, TargetExecutorLogState logState) {
 		
 		final LogEntry logEntry = addLogEntry(
 				target,

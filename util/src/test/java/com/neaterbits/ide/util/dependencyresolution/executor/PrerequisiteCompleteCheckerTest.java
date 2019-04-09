@@ -12,7 +12,7 @@ import com.neaterbits.ide.util.dependencyresolution.model.FileTarget;
 import com.neaterbits.ide.util.dependencyresolution.model.InfoTarget;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 
@@ -20,22 +20,21 @@ public class PrerequisiteCompleteCheckerTest {
 
 	private static Prerequisite<File> makePrerequisite(LogContext logContext, File targetObject) {
 		
-		return new Prerequisite<File>(
+		final FileTarget<File> fileTarget = new FileTarget<File>(
 				logContext, 
+				File.class,
 				targetObject,
-				new FileTarget<File>(
-						logContext, 
-						File.class,
-						targetObject,
-						(context, f) -> f,
-						f -> (File)f,
-						f -> "File target " + f,
-						targetObject,
-						Collections.emptyList(),
-						new Action<File>(null, (context, target, params) -> {
-							return new ActionLog("1234", 0);
-						}),
-						null));
+				(context, f) -> f,
+				f -> (File)f,
+				f -> "File target " + f,
+				targetObject,
+				Collections.emptyList(),
+				new Action<File>(null, (context, target, params) -> {
+					return new ActionLog("1234", 0);
+				}),
+				null);
+		
+		return new Prerequisite<File>(logContext, targetObject, fileTarget.getTargetReference());
 	}
 	
 	@Test
@@ -60,7 +59,7 @@ public class PrerequisiteCompleteCheckerTest {
 		
 		final String infoTargetObj = "the target object";
 
-		final Target<String> infoTarget = new InfoTarget<>(
+		final TargetDefinition<String> infoTarget = new InfoTarget<>(
 				logContext, 
 				String.class,
 				"test info target",
@@ -74,6 +73,7 @@ public class PrerequisiteCompleteCheckerTest {
 
 		assertThat(PrerequisiteCompleteChecker.hasCompletedPrerequisites(
 				target -> new PrerequisiteCompletion(Status.TO_EXECUTE),
+				targetKey -> null,
 				infoTarget)
 				
 				.getStatus()).isEqualTo(Status.TO_EXECUTE);
@@ -85,6 +85,7 @@ public class PrerequisiteCompleteCheckerTest {
 							target.getTargetObject() == targetObject1
 								? Status.SUCCESS
 								: Status.TO_EXECUTE),
+				targetKey -> null,
 				infoTarget)
 				
 				.getStatus()).isEqualTo(Status.TO_EXECUTE);
@@ -95,6 +96,7 @@ public class PrerequisiteCompleteCheckerTest {
 							target.getTargetObject() == targetObject2
 								? Status.SUCCESS
 								: Status.TO_EXECUTE),
+				targetKey -> null,
 				infoTarget)
 				
 				.getStatus()).isEqualTo(Status.TO_EXECUTE);
@@ -105,12 +107,14 @@ public class PrerequisiteCompleteCheckerTest {
 							target.getTargetObject() == targetObject3
 								? Status.SUCCESS
 								: Status.TO_EXECUTE),
+				targetKey -> null,
 				infoTarget)
 				
 				.getStatus()).isEqualTo(Status.TO_EXECUTE);
 		
 		assertThat(PrerequisiteCompleteChecker.hasCompletedPrerequisites(
 				target -> new PrerequisiteCompletion(Status.SUCCESS),
+				targetKey -> null,
 				infoTarget)
 				
 				.getStatus()).isEqualTo(Status.SUCCESS);

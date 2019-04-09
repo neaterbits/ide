@@ -3,12 +3,12 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 import java.util.Map;
 import java.util.Set;
 
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 
 public interface TargetBuildResult {
 
-	Set<Target<?>> getCompletedTargets();
+	Set<TargetDefinition<?>> getCompletedTargets();
 
-	Map<Target<?>, Exception> getFailedTargets();
+	Map<TargetDefinition<?>, Exception> getFailedTargets();
 
 }

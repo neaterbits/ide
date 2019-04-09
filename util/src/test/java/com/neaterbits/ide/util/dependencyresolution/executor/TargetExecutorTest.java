@@ -18,7 +18,7 @@ import com.neaterbits.ide.util.dependencyresolution.model.FileTarget;
 import com.neaterbits.ide.util.dependencyresolution.model.InfoTarget;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 import com.neaterbits.ide.util.scheduling.QueueAsyncExecutor;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
@@ -82,32 +82,34 @@ public class TargetExecutorTest {
 		
 		final LogContext logContext = new LogContext();
 		
+		final FileTarget<File> fileTarget = new FileTarget<File>(
+				logContext, 
+				File.class,
+				targetObject,
+				(context, f) -> f,
+				f -> (File)f,
+				f -> "File target " + f,
+				targetObject,
+				Collections.emptyList(),
+				new Action<File>(null, (context, target, params) -> {
+					return new ActionLog("1234", 0);
+				}),
+				null);
+		
 		final Prerequisites prerequisites = new Prerequisites(
 				logContext, 
 				Arrays.asList(
 						new Prerequisite<File>(
 								logContext, 
 								targetObject,
-								new FileTarget<File>(
-										logContext, 
-										File.class,
-										targetObject,
-										(context, f) -> f,
-										f -> (File)f,
-										f -> "File target " + f,
-										targetObject,
-										Collections.emptyList(),
-										new Action<File>(null, (context, target, params) -> {
-											return new ActionLog("1234", 0);
-										}),
-										null))),
+								fileTarget.getTargetReference())),
 				"Info prerequisites",
 				buildInfo,
 				collectors);
 		
 		final String infoTargetObj = "the target object";
 		
-		final Target<String> infoTarget = new InfoTarget<>(
+		final TargetDefinition<String> infoTarget = new InfoTarget<>(
 				logContext, 
 				String.class,
 				"test info target",

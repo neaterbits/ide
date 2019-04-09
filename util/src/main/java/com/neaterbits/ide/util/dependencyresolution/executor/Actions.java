@@ -2,7 +2,7 @@ package com.neaterbits.ide.util.dependencyresolution.executor;
 
 import java.util.function.BiConsumer;
 
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionFunction;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionLog;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionResult;
@@ -15,7 +15,7 @@ class Actions {
 	static <CONTEXT extends TaskContext> void runOrScheduleAction(
 			TargetExecutionContext<CONTEXT> context,
 			Action<?> action,
-			Target<?> target,
+			TargetDefinition<?> target,
 			BiConsumer<Exception, Boolean> onCompleted) {
 		
 		if (action.getConstraint() == null) {
@@ -39,7 +39,7 @@ class Actions {
 	static <CONTEXT extends TaskContext> void runOrScheduleActionWithResult(
 			TargetExecutionContext<CONTEXT> context,
 			ActionWithResult<?> actionWithResult,
-			Target<?> target,
+			TargetDefinition<?> target,
 			BiConsumer<Exception, Boolean> onCompleted) {
 		
 		if (actionWithResult.getConstraint() == null) {
@@ -74,7 +74,7 @@ class Actions {
 	private static <CONTEXT extends TaskContext> Exception performAction(
 			TargetExecutionContext<CONTEXT> context,
 			Action<?> action,
-			Target<?> target) {
+			TargetDefinition<?> target) {
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final ActionFunction<CONTEXT, Object> actionFunction = (ActionFunction)action.getActionFunction();
@@ -101,7 +101,7 @@ class Actions {
 	private static <CONTEXT extends TaskContext> Result performActionWithResult(
 			TargetExecutionContext<CONTEXT> context,
 			ActionWithResult<?> action,
-			Target<?> target) {
+			TargetDefinition<?> target) {
 
 		@SuppressWarnings({ "unchecked" })
 		final ActionWithResultFunction<CONTEXT, Object, Object> actionFunction

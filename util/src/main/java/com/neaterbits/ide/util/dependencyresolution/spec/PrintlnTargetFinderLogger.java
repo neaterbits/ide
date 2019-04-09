@@ -8,7 +8,7 @@ import java.util.function.Function;
 import com.neaterbits.ide.util.Indent;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 public class PrintlnTargetFinderLogger implements TargetFinderLogger {
@@ -67,7 +67,7 @@ public class PrintlnTargetFinderLogger implements TargetFinderLogger {
 
 
 	@Override
-	public void onFoundPrerequisites(int indent, Target<?> target, List<Prerequisites> prerequisites) {
+	public void onFoundPrerequisites(int indent, TargetDefinition<?> target, List<Prerequisites> prerequisites) {
 		System.out.println(Indent.indent(indent) + "Found target " + target + " with prerequisites " + prerequisites);
 	}
 }

@@ -20,7 +20,7 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 	private final RecursiveBuildInfo<?, ?, ?> recursiveBuildInfo;
 	private final Collectors<?> collectors;
 	
-	private Target<?> fromTarget;
+	private TargetReference<?> fromTarget;
 
 	private static String getLogIdentifierValue() {
 		return null;
@@ -86,14 +86,14 @@ public final class Prerequisites extends BuildEntity implements Loggable {
 
 	@Override
 	public BuildEntity getFromEntity() {
+		return fromTarget.getTargetDefinitionIfAny();
+	}
+
+	public TargetReference<?> getFromTarget() {
 		return fromTarget;
 	}
 
-	public Target<?> getFromTarget() {
-		return fromTarget;
-	}
-
-	void setFromTarget(Target<?> fromTarget) {
+	void setFromTarget(TargetReference<?> fromTarget) {
 		
 		Objects.requireNonNull(fromTarget);
 		

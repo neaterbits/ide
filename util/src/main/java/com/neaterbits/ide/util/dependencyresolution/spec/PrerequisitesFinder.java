@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetReference;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
@@ -33,7 +33,7 @@ abstract class PrerequisitesFinder {
 			TARGET target,
 			TargetFinderLogger logger,
 			int indent,
-			Consumer<Target<TARGET>> targetCreated);
+			Consumer<TargetReference<TARGET>> targetCreated);
 	
 	final <CONTEXT extends TaskContext, TARGET, PREREQUISITE>
 	void getPrerequisites(
@@ -131,7 +131,14 @@ abstract class PrerequisitesFinder {
 					});
 				}
 				else {
-					final Prerequisite<PREREQUISITE> subPrerequisite = new Prerequisite<>(logContext, prerequisite, null);
+					
+					final TargetReference<PREREQUISITE> targetReference = new TargetReference<PREREQUISITE>(
+							logContext,
+							null,
+							prerequisite,
+							null);
+					
+					final Prerequisite<PREREQUISITE> subPrerequisite = new Prerequisite<>(logContext, prerequisite, targetReference);
 					
 					prerequisiteSet.add(subPrerequisite);
 	

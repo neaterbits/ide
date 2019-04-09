@@ -9,35 +9,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogState;
 import com.neaterbits.ide.util.dependencyresolution.executor.logger.TargetExecutorLogger;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisite;
 import com.neaterbits.ide.util.dependencyresolution.model.Prerequisites;
-import com.neaterbits.ide.util.dependencyresolution.model.Target;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetDefinition;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetKey;
+import com.neaterbits.ide.util.dependencyresolution.model.TargetReference;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionParameters;
 import com.neaterbits.ide.util.scheduling.task.TaskContext;
 
 final class ExecutorState<CONTEXT extends TaskContext> implements ActionParameters<Object>, TargetExecutorLogState {
 
-	private final Map<Target<?>, TargetStateMachine<CONTEXT>> targets;
-	private final Map<Object, Target<?>> targetsByTargetObject;
+	
+	private static class Target<CTX extends TaskContext> {
+		private final TargetDefinition<?> definition;
+		private final TargetStateMachine<CTX> stateMachine;
+		
+		public Target(TargetDefinition<?> definition, TargetStateMachine<CTX> stateMachine) {
+			this.definition = definition;
+			this.stateMachine = stateMachine;
+		}
+	}
+	
+	private final Map<TargetKey<?>, Target<CONTEXT>> targets;
+	private final Map<Object, TargetKey<?>> targetsByTargetObject;
 
 	private final List<TargetStateMachine<CONTEXT>> nonCompletedTargets;
 	
-	private final Map<Target<?>, CollectedTargetObjects> recursiveTargetCollected;
+	private final Map<TargetKey<?>, CollectedTargetObjects> recursiveTargetCollected;
 
-	private final Map<Target<?>, List<CollectedProduct>> collectedProductObjects;
+	private final Map<TargetKey<?>, List<CollectedProduct>> collectedProductObjects;
 	
 	static <CTX extends TaskContext> ExecutorState<CTX> createFromTargetTree(
-			Target<?> rootTarget,
+			TargetDefinition<?> rootTarget,
 			TargetExecutor targetExecutor,
 			TargetExecutorLogger logger) {
 
-		final Set<Target<?>> toExecuteTargets = new HashSet<>();
+		final Set<TargetDefinition<?>> toExecuteTargets = new HashSet<>();
 
+		Objects.requireNonNull(rootTarget);
+		
 		toExecuteTargets.add(rootTarget);
 		
 		getSubTargets(rootTarget, toExecuteTargets);
@@ -47,16 +61,19 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		return state;
 	}
 	
-	private ExecutorState(Set<Target<?>> toExecuteTargets, TargetExecutorLogger logger) {
+	private ExecutorState(Set<TargetDefinition<?>> toExecuteTargets, TargetExecutorLogger logger) {
 
 		this.targets = toExecuteTargets.stream()
-				.collect(Collectors.toMap(Function.identity(), target -> new TargetStateMachine<CONTEXT>(target, logger)));
+				.collect(Collectors.toMap(TargetDefinition::getTargetKey, target -> new Target<>(target, new TargetStateMachine<CONTEXT>(target, logger))));
 		
 		this.targetsByTargetObject = new HashMap<>(toExecuteTargets.size());
 		
-		this.nonCompletedTargets = new ArrayList<>(targets.values());
+		this.nonCompletedTargets = new ArrayList<>(
+						targets.values().stream()
+							.map(target -> target.stateMachine)
+							.collect(Collectors.toList()));
 		
-		for (Target<?> target : toExecuteTargets) {
+		for (TargetDefinition<?> target : toExecuteTargets) {
 			
 			final Object targetObject = target.getTargetObject();
 			
@@ -64,7 +81,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 				throw new IllegalArgumentException("No target object for " + target);
 			}
 			
-			if (targetsByTargetObject.put(targetObject, target) != null) {
+			if (targetsByTargetObject.put(targetObject, target.getTargetKey()) != null) {
 				throw new IllegalArgumentException();
 			}
 		}
@@ -79,13 +96,13 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		return !nonCompletedTargets.isEmpty();
 	}
 
-	boolean hasTarget(Target<?> target) {
+	boolean hasTarget(TargetKey<?> target) {
 		Objects.requireNonNull(target);
 		
 		return targets.containsKey(target);
 	}
 	
-	void addTargetToExecute(Target<?> target, TargetExecutorLogger logger) {
+	void addTargetToExecute(TargetDefinition<?> target, TargetExecutorLogger logger) {
 
 		Objects.requireNonNull(target);
 		
@@ -101,24 +118,28 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 
 		final TargetStateMachine<CONTEXT> targetState = new TargetStateMachine<>(target, logger);
 		
-		targets.put(target, targetState);
-		targetsByTargetObject.put(targetObject, target);
+		if (targets.containsKey(target.getTargetKey())) {
+			throw new IllegalStateException();
+		}
+		
+		targets.put(target.getTargetKey(), new Target<>(target, targetState));
+		targetsByTargetObject.put(targetObject, target.getTargetKey());
 		
 		nonCompletedTargets.add(targetState);
 	}
 	
-	private Set<Target<?>> targetsInState(Status status) {
+	private Set<TargetDefinition<?>> targetsInState(Status status) {
 
 		Objects.requireNonNull(status);
 	
 		return Collections.unmodifiableSet(targets.entrySet().stream()
-				.filter(entry -> entry.getValue().getStatus() == status)
-				.map(entry -> entry.getKey())
+				.filter(entry -> entry.getValue().stateMachine.getStatus() == status)
+				.map(entry -> entry.getValue().definition)
 				.collect(Collectors.toSet()));
 	}
 	
 	@Override
-	public Set<Target<?>> getToExecuteTargets() {
+	public Set<TargetDefinition<?>> getToExecuteTargets() {
 		return targetsInState(Status.TO_EXECUTE);
 	}
 
@@ -127,18 +148,18 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 	}
 
 	@Override
-	public Set<Target<?>> getCompletedTargets() {
+	public Set<TargetDefinition<?>> getCompletedTargets() {
 		return targetsInState(Status.SUCCESS);
 	}
 
 	@Override
-	public Map<Target<?>, Exception> getFailedTargets() {
+	public Map<TargetDefinition<?>, Exception> getFailedTargets() {
 		
-		final Map<Target<?>, Exception> map = new HashMap<>();
+		final Map<TargetDefinition<?>, Exception> map = new HashMap<>();
 		
-		for (Map.Entry<Target<?>, TargetStateMachine<CONTEXT>> entry : targets.entrySet()) {
-			if (entry.getValue().getStatus() == Status.FAILED) {
-				map.put(entry.getKey(), entry.getValue().getException());
+		for (Map.Entry<TargetKey<?>, Target<CONTEXT>> entry : targets.entrySet()) {
+			if (entry.getValue().stateMachine.getStatus() == Status.FAILED) {
+				map.put(entry.getValue().definition, entry.getValue().stateMachine.getException());
 			}
 		}
 		
@@ -146,48 +167,70 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 	}
 
 	@Override
-	public Set<Target<?>> getScheduledTargets() {
+	public Set<TargetDefinition<?>> getScheduledTargets() {
 		return targetsInState(Status.SCHEDULED);
 	}
 
 	@Override
-	public Set<Target<?>> getActionPerformedCollectTargets() {
+	public Set<TargetDefinition<?>> getActionPerformedCollectTargets() {
 		return targetsInState(Status.ACTION_PERFORMED_COLLECTING_SUBTARGETS);
 	}
 
 	@Override
-	public Status getTargetStatus(Target<?> target) {
+	public Status getTargetStatus(TargetDefinition<?> target) {
 
-		final TargetStateMachine<?> targetState = targetState(target);
+		final TargetStateMachine<?> targetState = targetState(target.getTargetKey());
 
 		if (targetState == null) {
+
+			printTargetKeys();
 			
-			System.out.println("## targets " + targets.keySet());
-			
-			throw new IllegalArgumentException("No target state for " + target.targetSimpleLogString());
+			throw new IllegalArgumentException("No target state for " + target.targetSimpleLogString() + " of type " + target.getTargetKey());
 		}
 		
 		return targetState.getStatus();
 	}
+
+	public final void printTargetKeys() {
+		
+		System.out.println("## targets " + targets.size());
+		
+		for (TargetKey<?> key : targets.keySet()) {
+		
+			System.out.println("## target " + key);
+			
+		}
+	}
 	
-	PrerequisiteCompletion getTargetCompletion(Target<?> target) {
+	PrerequisiteCompletion getTargetCompletion(TargetDefinition<?> target) {
 
 		final Status status = getTargetStatus(target);
 		
 		return status != Status.FAILED
 				? new PrerequisiteCompletion(status)
-				: new PrerequisiteCompletion(status, targets.get(target).getException());
+				: new PrerequisiteCompletion(status, targets.get(target).stateMachine.getException());
 		
 	}
+
+	TargetDefinition<?> getTargetDefinition(TargetKey<?> targetKey) {
+		
+		Objects.requireNonNull(targetKey);
 	
-	private TargetStateMachine<CONTEXT> targetState(Target<?> target) {
+		final Target<CONTEXT> targetState = targets.get(targetKey);
+		
+		return targetState != null ? targetState.definition : null;
+	}
+	
+	private TargetStateMachine<CONTEXT> targetState(TargetKey<?> target) {
 		
 		Objects.requireNonNull(target);
 		
-		return targets.get(target);
+		final Target<CONTEXT> targetState = targets.get(target);
+		
+		return targetState != null ? targetState.stateMachine : null;
 	}
 	
-	void addToRecursiveTargetCollected(Target<?> target, CollectedTargetObjects collected) {
+	void addToRecursiveTargetCollected(TargetReference<?> target, CollectedTargetObjects collected) {
 		
 		Objects.requireNonNull(target);
 		Objects.requireNonNull(collected);
@@ -210,18 +253,18 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		recursiveTargetCollected.put(target, objects);
 	}
 	
-	CollectedTargetObjects getRecursiveTargetCollected(Target<?> target) {
+	CollectedTargetObjects getRecursiveTargetCollected(TargetReference<?> targetReference) {
 		
-		Objects.requireNonNull(target);
+		Objects.requireNonNull(targetReference);
 		
-		if (!target.isTopOfRecursion()) {
+		if (!targetReference.isTopOfRecursion()) {
 			throw new IllegalArgumentException();
 		}
 		
-		return recursiveTargetCollected.get(target);
+		return recursiveTargetCollected.get(targetReference);
 	}
 
-	void onCompletedTarget(Target<?> target) {
+	void onCompletedTarget(TargetKey<?> target) {
 
 		final TargetStateMachine<CONTEXT> targetState = targetState(target);
 		
@@ -247,7 +290,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 	}
 	*/
 
-	void addCollectedProduct(Target<?> target, CollectedProduct collected) {
+	void addCollectedProduct(TargetKey<?> target, CollectedProduct collected) {
 		
 		Objects.requireNonNull(target);
 		Objects.requireNonNull(collected);
@@ -271,7 +314,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 	}
 	*/
 
-	List<CollectedProduct> getCollectedProducts(Target<?> target) {
+	List<CollectedProduct> getCollectedProducts(TargetKey<?> target) {
 
 		Objects.requireNonNull(target);
 		
@@ -287,7 +330,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		Objects.requireNonNull(targetObject);
 		Objects.requireNonNull(type);
 		
-		final Target<?> target = targetsByTargetObject.get(targetObject);
+		final TargetKey<?> target = targetsByTargetObject.get(targetObject);
 
 		// System.out.println("## collected products " + targetsByTargetObject + ", returns " + target + " for " + targetObject);
 		
@@ -306,7 +349,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 					: null;
 	}
 
-	private static <TARGET> void getSubTargets(Target<TARGET> target, Set<Target<?>> toExecuteTargets) {
+	private static <TARGET> void getSubTargets(TargetDefinition<TARGET> target, Set<TargetDefinition<?>> toExecuteTargets) {
 		
 		for (Prerequisites prerequisites : target.getPrerequisites()) {
 			
@@ -314,14 +357,19 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 
 				if (prerequisite.getSubTarget() != null) {
 
-					if (toExecuteTargets.contains(prerequisite.getSubTarget())) {
-						// eg external modules are prerequisites via multiple paths
-					}
-					else {
-						toExecuteTargets.add(prerequisite.getSubTarget());
-					}
+					final TargetDefinition<?> targetDefinition = prerequisite.getSubTarget().getTargetDefinitionIfAny();
+					
+					if (targetDefinition != null) {
+						
+						if (toExecuteTargets.contains(targetDefinition)) {
+							// eg external modules are prerequisites via multiple paths
+						}
+						else {
+							toExecuteTargets.add(targetDefinition);
+						}
 
-					getSubTargets(prerequisite.getSubTarget(), toExecuteTargets);
+						getSubTargets(targetDefinition, toExecuteTargets);
+					}
 				}
 			}
 		}
