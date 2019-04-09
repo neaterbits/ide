@@ -10,4 +10,9 @@ public final class LibraryResourcePath extends ModuleResourcePath {
 	public ResourcePath getParentPath() {
 		return null;
 	}
+
+	@Override
+	public String getName() {
+		return getFile().getName();
+	}
 }

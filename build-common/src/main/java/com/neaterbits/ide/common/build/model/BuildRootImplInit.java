@@ -59,7 +59,7 @@ class BuildRootImplInit {
 			
 			final PROJECT pom = entry.getValue();
 			
-			final List<Dependency> dependencies = findDependencies(pom, projects, moduleIdToResourcePath, buildSystemRoot);
+			final List<BaseDependency> dependencies = findDependencies(pom, projects, moduleIdToResourcePath, buildSystemRoot);
 			
 			final BuildProject<PROJECT> buildProject = new BuildProject<>(pom, dependencies);
 
@@ -75,13 +75,13 @@ class BuildRootImplInit {
 		return buildProjects;
 	}
 
-	private static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> List<Dependency> findDependencies(
+	private static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> List<BaseDependency> findDependencies(
 			PROJECT project,
 			Map<MODULE_ID, PROJECT> projects,
 			Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath,
 			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
-		final List<Dependency> dependencies;
+		final List<BaseDependency> dependencies;
 		
 		if (buildSystemRoot.getDependencies(project) != null) {
 			
@@ -98,18 +98,19 @@ class BuildRootImplInit {
 				final ProjectModuleResourcePath dependencyModule = moduleIdToResourcePath.get(dependencyModuleId);
 				final PROJECT dependencyProject = projects.get(dependencyModuleId);
 				
-				final Dependency dependency;
+				final BaseDependency dependency;
 				
 				if (dependencyModule != null) {
 
 					dependency = new BuildDependency<>(
-							getCompiledModuleFile(dependencyModule, dependencyProject, buildSystemRoot),
-							DependencyType.PROJECT,
 							dependencyModule,
+							DependencyType.PROJECT,
+							getCompiledModuleFile(dependencyModule, dependencyProject, buildSystemRoot),
 							targetDirectoryJarFile(dependencyModule, buildSystemDependency, buildSystemRoot),
 							buildSystemDependency);
 				}
 				else {
+					// Library dependency
 					dependency = makeExternalDependency(buildSystemDependency, buildSystemRoot);
 				}
 				
@@ -123,18 +124,18 @@ class BuildRootImplInit {
 		return dependencies;
 	}
 	
-	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> Dependency makeExternalDependency(
+	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> BaseDependency makeExternalDependency(
 			DEPENDENCY buildSystemDependency,
 			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY> buildSystemRoot) {
 		
 		final File repositoryJarFile = buildSystemRoot.repositoryJarFile(buildSystemDependency);
 
 		final LibraryResourcePath resourcePath = new LibraryResourcePath(new LibraryResource(repositoryJarFile));
-
+		
 		return new BuildDependency<>(
 				resourcePath,
 				DependencyType.EXTERNAL,
-				null,
+				new CompiledModuleFileResourcePath(resourcePath, new CompiledModuleFileResource(repositoryJarFile)),
 				repositoryJarFile,
 				buildSystemDependency);
 	}

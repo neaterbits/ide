@@ -6,6 +6,8 @@ import com.neaterbits.compiler.util.modules.ModuleId;
 
 public abstract class ModuleResourcePath extends DirectoryResourcePath {
 
+	public abstract String getName();
+	
 	public ModuleResourcePath(List<? extends Resource> path) {
 		super(path);
 	}

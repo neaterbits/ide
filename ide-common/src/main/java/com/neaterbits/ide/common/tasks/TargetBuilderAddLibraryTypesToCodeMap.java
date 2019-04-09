@@ -1,11 +1,9 @@
 package com.neaterbits.ide.common.tasks;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.ide.common.build.model.Dependency;
-import com.neaterbits.ide.common.build.model.DependencyType;
+import com.neaterbits.ide.common.build.model.LibraryDependency;
 import com.neaterbits.ide.common.build.tasks.ModuleBuilderUtil;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
@@ -29,21 +27,19 @@ public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuilderSp
 						module -> module.getName(),
 						module -> "Scan module " + module.getName())
 					.withPrerequisites("Scan any found libraries")
-					.fromIterating(null, (context, module) -> ModuleBuilderUtil.transitiveExternalDependencies(context, module).stream()
-							.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
-							.collect(Collectors.toList()))
+					.fromIterating(null, ModuleBuilderUtil::transitiveProjectExternalDependencies)
 					
 					.buildBy(subTarget -> {
 						subTarget.addFileSubTarget(
-								Dependency.class,
+								LibraryDependency.class,
 								LibraryResourcePath.class,
-								(context, dependency) -> (LibraryResourcePath)dependency.getResourcePath(),
+								(context, dependency) -> dependency.getModulePath(),
 								LibraryResourcePath::getFile,
-								dependency -> "Project dependency " + dependency.getResourcePath().getLast().getName())
+								dependency -> "Project dependency " + dependency.getModulePath().getLast().getName())
 						
 						.action(Constraint.IO, (context, target, parameters) -> {
 							
-							final LibraryResourcePath libraryResourcePath = (LibraryResourcePath)target.getResourcePath();
+							final LibraryResourcePath libraryResourcePath = target.getModulePath();
 							final Set<TypeName> types = context.getCompileableLanguage().getTypesFromLibraryFile(libraryResourcePath);
 							
 							context.getCodeMapGatherer().addLibraryFileTypes(libraryResourcePath, types);

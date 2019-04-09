@@ -3,7 +3,6 @@ package com.neaterbits.ide.common.build.compile;
 import java.util.Collection;
 import java.util.List;
 
-import com.neaterbits.ide.common.build.model.Dependency;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
@@ -20,9 +19,4 @@ public interface BuildLogger {
 			List<SourceFileResourcePath> alreadyBuilt);
 	
 	void onBuildModules(Collection<ProjectModuleResourcePath> modules);
-	
-	
-	void onGetDependencies(ProjectModuleResourcePath module);
-
-	void onGetDependenciesResult(ProjectModuleResourcePath module, List<Dependency> dependencies);
 }

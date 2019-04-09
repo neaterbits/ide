@@ -11,11 +11,9 @@ import org.junit.Test;
 
 import com.neaterbits.ide.buildsystem.maven.MavenModuleId;
 import com.neaterbits.ide.common.build.model.BuildRoot;
-import com.neaterbits.ide.common.build.model.Dependency;
+import com.neaterbits.ide.common.build.model.ProjectDependency;
 import com.neaterbits.ide.common.buildsystem.ScanException;
-import com.neaterbits.ide.common.resource.LibraryResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
-import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResource;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 
@@ -51,37 +49,34 @@ public class ModuleBuilderTest extends BaseBuildTest {
 		
 		final MavenModuleId rootModuleId = (MavenModuleId)root.getModuleId();
 		
-		
 		final ProjectModuleResourcePath ideCommon = findOneModule(buildRoot, "ide-common");
 
 		assertThat(ideCommon.getModuleId().getId().contains("ide-common")).isTrue();
 
-		final List<Dependency> directDependencies = buildRoot.getDependenciesForProjectModule(ideCommon);
+		final List<ProjectDependency> directDependencies = buildRoot.getProjectDependenciesForProjectModule(ideCommon);
 		
 		assertThat(directDependencies).isNotNull();
 		assertThat(directDependencies.isEmpty()).isFalse();
 		
-		for (Dependency dependency : directDependencies) {
-			
-			final ResourcePath resourcePath = dependency.getResourcePath();
+		for (ProjectDependency dependency : directDependencies) {
+
+			assertThat(dependency.getModulePath()).isNotNull();
+			assertThat(dependency.getCompiledModuleFilePath()).isNotNull();
 
 			// System.out.println("## dependency " + dependency + "/" + resourcePath.getClass());
-
-			assertThat(    resourcePath instanceof CompiledModuleFileResourcePath
-					    || resourcePath instanceof LibraryResourcePath).isTrue();
 
 		}
 		
 		// Should depend on util
-		final Dependency utilDependency = findOne(
+		final ProjectDependency utilDependency = findOne(
 				directDependencies,
-				dependency -> dependency.getResourcePath().length() <= 1
-							? "" : dependency.getResourcePath().get(1).getName(),
+				dependency -> dependency.getModulePath().length() <= 1
+							? "" : dependency.getModulePath().get(1).getName(),
 				"util");
 		
-		assertThat(utilDependency.getResourcePath() instanceof CompiledModuleFileResourcePath).isTrue();
-		assertThat(utilDependency.getResourcePath().get(2) instanceof CompiledModuleFileResource).isTrue();
-		assertThat(utilDependency.getResourcePath().get(2).getName()).isEqualTo("util-" + rootModuleId.getVersion() + ".jar");
+		assertThat(utilDependency.getCompiledModuleFilePath() instanceof CompiledModuleFileResourcePath).isTrue();
+		assertThat(utilDependency.getCompiledModuleFilePath().get(2) instanceof CompiledModuleFileResource).isTrue();
+		assertThat(utilDependency.getCompiledModuleFilePath().get(2).getName()).isEqualTo("util-" + rootModuleId.getVersion() + ".jar");
 		/*
 		
 		final List<Dependency> transitiveDependencies = ModuleBuilderUtil.transitiveProjectDependencies(buildRoot, ideCommon);

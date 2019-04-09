@@ -4,40 +4,42 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.ide.common.build.model.Dependency;
+import com.neaterbits.ide.common.build.model.ModuleDependency;
+import com.neaterbits.ide.common.resource.ModuleResourcePath;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.util.dependencyresolution.executor.CollectedObject;
 
-public class ModuleDependencyList implements CollectedObject {
+public class ModuleDependencyList<DEPENDENCY_MODULE extends ModuleResourcePath, DEPENDENCY extends ModuleDependency<DEPENDENCY_MODULE>>
+			implements CollectedObject {
 
-	private final ProjectModuleResourcePath module;
-	private final List<Dependency> dependencies;
+	private final ProjectModuleResourcePath projectModule;
+	private final List<DEPENDENCY> dependencies;
 	
-	public ModuleDependencyList(ProjectModuleResourcePath module, List<Dependency> dependencies) {
+	public ModuleDependencyList(ProjectModuleResourcePath module, List<DEPENDENCY> dependencies) {
 		
 		Objects.requireNonNull(module);
 		Objects.requireNonNull(dependencies);
 		
-		this.module = module;
+		this.projectModule = module;
 		this.dependencies = dependencies;
 	}
 
-	public ProjectModuleResourcePath getModule() {
-		return module;
+	public final ProjectModuleResourcePath getProjectModule() {
+		return projectModule;
 	}
 
-	public List<Dependency> getDependencies() {
+	public final List<DEPENDENCY> getDependencies() {
 		return dependencies;
 	}
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " [module=" + module + ", dependencies=" + dependencies + "]";
+		return getClass().getSimpleName() + " [module=" + projectModule + ", dependencies=" + dependencies + "]";
 	}
 
 	@Override
 	public final String getName() {
-		return module.getName();
+		return projectModule.getName();
 	}
 
 	@Override

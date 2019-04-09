@@ -22,9 +22,11 @@ public interface BuildRoot {
 	
 	void setSourceFolders(ProjectModuleResourcePath module, List<SourceFolderResourcePath> sourceFolders);
 
-	List<Dependency> getDependenciesForProjectModule(ProjectModuleResourcePath module);
+	List<ProjectDependency> getProjectDependenciesForProjectModule(ProjectModuleResourcePath module);
 
-	List<Dependency> getDependenciesForExternalLibrary(Dependency dependency, Scope scope, boolean includeOptionalDependencies);
+	List<LibraryDependency> getLibraryDependenciesForProjectModule(ProjectModuleResourcePath module);
+
+	List<LibraryDependency> getDependenciesForExternalLibrary(LibraryDependency dependency, Scope scope, boolean includeOptionalDependencies);
 
 	TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module);
 	
@@ -34,9 +36,9 @@ public interface BuildRoot {
 	
 	BuildSystemRootScan getBuildSystemRootScan();
 	
-	void downloadExternalDependencyAndAddToBuildModel(Dependency dependency);
+	void downloadExternalDependencyAndAddToBuildModel(LibraryDependency dependency);
 
-	Scope getDependencyScope(Dependency dependency);
+	Scope getDependencyScope(BaseDependency dependency);
 	
 	default <T> T forEachSourceFolder(Function<SourceFolderResourcePath, T> function) {
 		

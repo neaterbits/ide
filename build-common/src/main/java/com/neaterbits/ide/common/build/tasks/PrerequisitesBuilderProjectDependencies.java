@@ -1,9 +1,6 @@
 package com.neaterbits.ide.common.build.tasks;
 
-import java.util.stream.Collectors;
-
-import com.neaterbits.ide.common.build.model.Dependency;
-import com.neaterbits.ide.common.build.model.DependencyType;
+import com.neaterbits.ide.common.build.model.ProjectDependency;
 import com.neaterbits.ide.common.build.model.compile.ProjectModuleDependencyList;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
@@ -18,25 +15,21 @@ final class PrerequisitesBuilderProjectDependencies extends PrerequisitesBuilder
 		builder
 			.withPrerequisites("Project dependencies")
 			.makingProduct(ProjectModuleDependencyList.class)
-			.fromItemType(Dependency.class)
+			.fromItemType(ProjectDependency.class)
 			
-			.fromIterating(null, (context, module) -> ModuleBuilderUtil.transitiveProjectDependencies(context, module).stream()
-					.filter(dependency -> dependency.getType() == DependencyType.PROJECT)
-					.collect(Collectors.toList()))
+			.fromIterating(null, ModuleBuilderUtil::transitiveProjectDependencies)
 			
 			.buildBy(st -> {
 				st.addFileSubTarget(
-						Dependency.class,
+						ProjectDependency.class,
 						CompiledModuleFileResourcePath.class,
-						(context, dependency) -> (CompiledModuleFileResourcePath)dependency.getResourcePath(),
+						(context, dependency) -> dependency.getCompiledModuleFilePath(),
 						CompiledModuleFileResourcePath::getFile,
-						dependency -> "Project dependency " + dependency.getResourcePath().getLast().getName());
+						dependency -> "Project dependency " + dependency.getCompiledModuleFilePath().getLast().getName());
 			})
 			.collectSubTargetsToProduct((module, dependencies) -> new ProjectModuleDependencyList(
 					module,
-					dependencies.stream()
-						.filter(dependency -> dependency.getType() == DependencyType.PROJECT)
-						.collect(Collectors.toList())));
+					dependencies));
 
 	}
 }

@@ -84,15 +84,31 @@ public class BuildRootImpl<MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> impl
 	}
 
 	@Override
-	public List<Dependency> getDependenciesForProjectModule(ProjectModuleResourcePath module) {
-		return projects.get(module).getDependencies();
-	}
-	
-	@Override
-	public List<Dependency> getDependenciesForExternalLibrary(Dependency dependency, Scope scope, boolean includeOptionalDependencies) {
+	public List<ProjectDependency> getProjectDependenciesForProjectModule(ProjectModuleResourcePath module) {
+		
+		return projects.get(module).getDependencies().stream()
+				.filter(dependency -> dependency.getType() == DependencyType.PROJECT)
+				.map(dependency -> new ProjectDependencyImpl(dependency))
+				.collect(Collectors.toList());
 
+	}
+
+	@Override
+	public List<LibraryDependency> getLibraryDependenciesForProjectModule(ProjectModuleResourcePath module) {
+		return projects.get(module).getDependencies().stream()
+				.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
+				.map(dependency -> new LibraryDependencyImpl(dependency))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<LibraryDependency> getDependenciesForExternalLibrary(LibraryDependency dependency, Scope scope,
+			boolean includeOptionalDependencies) {
+
+		final LibraryDependencyImpl impl = (LibraryDependencyImpl)dependency;
+		
 		try {
-			return getTransitiveExternalDependencies(dependency, scope, includeOptionalDependencies);
+			return getTransitiveExternalDependencies(impl.getDependency(), scope, includeOptionalDependencies);
 		}
 		catch (ScanException ex) {
 			throw new IllegalStateException(ex);
@@ -105,7 +121,7 @@ public class BuildRootImpl<MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> impl
 	}
 
 	@Override
-	public Scope getDependencyScope(Dependency dependency) {
+	public Scope getDependencyScope(BaseDependency dependency) {
 		@SuppressWarnings("unchecked")
 		final BuildDependency<DEPENDENCY> buildDependency = (BuildDependency<DEPENDENCY>)dependency;
 
@@ -113,22 +129,24 @@ public class BuildRootImpl<MODULE_ID extends ModuleId, PROJECT, DEPENDENCY> impl
 	}
 
 	@Override
-	public void downloadExternalDependencyAndAddToBuildModel(Dependency dependency) {
+	public void downloadExternalDependencyAndAddToBuildModel(LibraryDependency dependency) {
+		
+		final LibraryDependencyImpl impl = (LibraryDependencyImpl)dependency;
 		
 		@SuppressWarnings("unchecked")
-		final BuildDependency<DEPENDENCY> buildDependency = (BuildDependency<DEPENDENCY>)dependency;
+		final BuildDependency<DEPENDENCY> buildDependency = (BuildDependency<DEPENDENCY>)impl.getDependency();
 
 		buildSystemRoot.downloadExternalDependencyIfNotPresent(buildDependency.getDependency());
 	}
 
-	private List<Dependency> getTransitiveExternalDependencies(Dependency dependency, Scope scope, boolean includeOptionalDependencies) throws ScanException {
+	private List<LibraryDependency> getTransitiveExternalDependencies(BaseDependency dependency, Scope scope, boolean includeOptionalDependencies) throws ScanException {
 		@SuppressWarnings("unchecked")
 		final BuildDependency<DEPENDENCY> buildDependency = (BuildDependency<DEPENDENCY>)dependency;
 
 		return buildSystemRoot.getTransitiveExternalDependencies(buildDependency.getDependency()).stream()
 				.filter(transitive ->      buildSystemRoot.getDependencyScope(transitive) == scope
 										&& (includeOptionalDependencies ? true : !buildSystemRoot.isOptionalDependency(transitive)))
-				.map(transitive -> BuildRootImplInit.makeExternalDependency(transitive, buildSystemRoot))
+				.map(transitive -> new LibraryDependencyImpl(BuildRootImplInit.makeExternalDependency(transitive, buildSystemRoot)))
 				.collect(Collectors.toList());
 	}
 

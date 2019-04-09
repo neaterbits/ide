@@ -5,88 +5,75 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.neaterbits.ide.common.build.model.BuildRoot;
-import com.neaterbits.ide.common.build.model.Dependency;
-import com.neaterbits.ide.common.build.model.DependencyType;
+import com.neaterbits.ide.common.build.model.LibraryDependency;
+import com.neaterbits.ide.common.build.model.ProjectDependency;
 import com.neaterbits.ide.common.buildsystem.Scope;
 import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
 
 public class ModuleBuilderUtil {
-
-	public static List<Dependency> transitiveProjectDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
+	
+	public static List<ProjectDependency> transitiveProjectDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
 
 		return transitiveProjectDependencies(context.getBuildRoot(), module);
 	}
 		
-	public static List<Dependency> transitiveProjectDependencies(BuildRoot buildRoot, ProjectModuleResourcePath module) {
+	public static List<ProjectDependency> transitiveProjectDependencies(BuildRoot buildRoot, ProjectModuleResourcePath module) {
 		
-		final List<Dependency> dependencies = new ArrayList<>();
+		final List<ProjectDependency> dependencies = new ArrayList<>();
 		
 		transitiveProjectDependencies(buildRoot, module, dependencies);
 
 		return dependencies;
 	}
 
-	private static void transitiveProjectDependencies(BuildRoot buildRoot, ProjectModuleResourcePath module, List<Dependency> dependencies) {
+	private static void transitiveProjectDependencies(BuildRoot buildRoot, ProjectModuleResourcePath module, List<ProjectDependency> dependencies) {
 		 
-		final List<Dependency> moduleDependencies = buildRoot.getDependenciesForProjectModule(module);
+		final List<ProjectDependency> moduleDependencies = buildRoot.getProjectDependenciesForProjectModule(module);
 		 
 		dependencies.addAll(moduleDependencies);
 
-		for (Dependency dependency : moduleDependencies) {
-			if (dependency.getType() == DependencyType.PROJECT) {
-				transitiveProjectDependencies(buildRoot, dependency.getModule(), dependencies);
-			}
+		for (ProjectDependency dependency : moduleDependencies) {
+			transitiveProjectDependencies(buildRoot, dependency.getModulePath(), dependencies);
 		}
 	}
 
-	public static List<Dependency> transitiveExternalDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
+	public static List<LibraryDependency> transitiveProjectExternalDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
 
-		final List<Dependency> moduleDependencies = transitiveProjectDependencies(context, module);
+		final List<ProjectDependency> moduleDependencies = transitiveProjectDependencies(context, module);
 		
-		final List<Dependency> moduleExternalDependencies = moduleDependencies.stream()
-				.filter(dependency -> dependency.getType() == DependencyType.EXTERNAL)
+		final List<LibraryDependency> moduleExternalDependencies = moduleDependencies.stream()
+				.flatMap(projectDependency -> context.getBuildRoot().getLibraryDependenciesForProjectModule(projectDependency.getModulePath()).stream())
 				.collect(Collectors.toList());
 		
-		final List<Dependency> dependencies = new ArrayList<>();
+		final List<LibraryDependency> dependencies = new ArrayList<>();
 		
 		dependencies.addAll(moduleExternalDependencies);
 		
-		for (Dependency externalDependency : moduleExternalDependencies) {
+		for (LibraryDependency externalDependency : moduleExternalDependencies) {
 			transitiveDependencies(context, externalDependency, dependencies);
 		}
 
 		return dependencies;
 	}
 
-	static List<Dependency> transitiveDependencies(TaskBuilderContext context, Dependency module) {
+	static List<LibraryDependency> transitiveLibraryDependencies(TaskBuilderContext context, LibraryDependency module) {
 		
-		final List<Dependency> dependencies = new ArrayList<>();
+		final List<LibraryDependency> dependencies = new ArrayList<>();
 		
 		transitiveDependencies(context, module, dependencies);
 
 		return dependencies;
 	}
 
-	private static void transitiveDependencies(TaskBuilderContext context, Dependency dependency, List<Dependency> dependencies) {
+	private static void transitiveDependencies(TaskBuilderContext context, LibraryDependency dependency, List<LibraryDependency> dependencies) {
 
-		final List<Dependency> moduleDependencies;
-		
-		switch (dependency.getType()) {
-		case PROJECT:
-			moduleDependencies = context.getBuildRoot().getDependenciesForProjectModule((ProjectModuleResourcePath)dependency.getResourcePath());
-			break;
-			
-		case EXTERNAL:
-			moduleDependencies = context.getBuildRoot().getDependenciesForExternalLibrary(dependency, Scope.COMPILE, false);
-			break;
-			
-		default:
-			throw new UnsupportedOperationException();
-		}
+		final List<LibraryDependency> moduleDependencies;
+
+		moduleDependencies = context.getBuildRoot().getDependenciesForExternalLibrary(dependency, Scope.COMPILE, false);
 		 
 		dependencies.addAll(moduleDependencies);
 
-		for (Dependency foundDep : moduleDependencies) {
+		for (LibraryDependency foundDep : moduleDependencies) {
 			try {
 				transitiveDependencies(context, foundDep, dependencies);
 			}

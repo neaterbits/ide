@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 import com.neaterbits.ide.common.build.compile.BuildException;
 import com.neaterbits.ide.common.build.compile.Compiler;
 import com.neaterbits.ide.common.build.compile.CompilerStatus;
-import com.neaterbits.ide.common.build.model.Dependency;
+import com.neaterbits.ide.common.build.model.LibraryDependency;
+import com.neaterbits.ide.common.build.model.ProjectDependency;
 import com.neaterbits.ide.common.build.model.compile.ExternalModuleDependencyList;
 import com.neaterbits.ide.common.build.model.compile.ModuleCompileList;
 import com.neaterbits.ide.common.build.model.compile.ProjectModuleDependencyList;
@@ -122,11 +123,11 @@ public class TargetBuilderModules extends TargetBuilderSpec<ModulesBuildContext>
 				+ externalDependencyList.getDependencies().size());
 
 		projectModuleDependencyList.getDependencies().stream()
-			.map(Dependency::getCompiledModuleFile)
+			.map(ProjectDependency::getCompiledModuleFile)
 			.forEach(dependencies::add);
 
 		externalDependencyList.getDependencies().stream()
-			.map(Dependency::getCompiledModuleFile)
+			.map(LibraryDependency::getCompiledModuleFile)
 			.forEach(dependencies::add);
 		
 		final CompilerStatus status = compiler.compile(

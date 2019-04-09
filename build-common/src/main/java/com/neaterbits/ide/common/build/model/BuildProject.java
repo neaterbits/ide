@@ -8,11 +8,11 @@ import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 final class BuildProject<PROJECT> {
 
 	private final PROJECT buildSystemProject;
-	private final List<Dependency> dependencies;
+	private final List<BaseDependency> dependencies;
 	
 	private List<SourceFolderResourcePath> sourceFolders;
 
-	BuildProject(PROJECT buildSystemProject, List<Dependency> dependencies) {
+	BuildProject(PROJECT buildSystemProject, List<BaseDependency> dependencies) {
 
 		Objects.requireNonNull(buildSystemProject);
 		
@@ -32,7 +32,7 @@ final class BuildProject<PROJECT> {
 		this.sourceFolders = sourceFolders;
 	}
 
-	List<Dependency> getDependencies() {
+	List<BaseDependency> getDependencies() {
 		return dependencies;
 	}
 }
