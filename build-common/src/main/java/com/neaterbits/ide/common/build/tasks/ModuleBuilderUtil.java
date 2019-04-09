@@ -39,21 +39,27 @@ public class ModuleBuilderUtil {
 
 	public static List<LibraryDependency> transitiveProjectExternalDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
 
+		final List<LibraryDependency> downloadedDependencies = new ArrayList<>();
+
+		// In same pom file
+		downloadedDependencies.addAll(context.getBuildRoot().getLibraryDependenciesForProjectModule(module));
+
+		// Transitive from module dependencies
 		final List<ProjectDependency> moduleDependencies = transitiveProjectDependencies(context, module);
-		
 		final List<LibraryDependency> moduleExternalDependencies = moduleDependencies.stream()
 				.flatMap(projectDependency -> context.getBuildRoot().getLibraryDependenciesForProjectModule(projectDependency.getModulePath()).stream())
 				.collect(Collectors.toList());
 		
-		final List<LibraryDependency> dependencies = new ArrayList<>();
+		downloadedDependencies.addAll(moduleExternalDependencies);
 		
-		dependencies.addAll(moduleExternalDependencies);
+		final List<LibraryDependency> allDependencies = new ArrayList<>(downloadedDependencies);
 		
-		for (LibraryDependency externalDependency : moduleExternalDependencies) {
-			transitiveDependencies(context, externalDependency, dependencies);
+		// Transitive from all downloaded
+		for (LibraryDependency externalDependency : downloadedDependencies) {
+			transitiveDependencies(context, externalDependency, allDependencies);
 		}
 
-		return dependencies;
+		return allDependencies;
 	}
 
 	static List<LibraryDependency> transitiveLibraryDependencies(TaskBuilderContext context, LibraryDependency module) {
