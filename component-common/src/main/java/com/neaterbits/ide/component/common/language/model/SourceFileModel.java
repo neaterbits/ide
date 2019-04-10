@@ -66,6 +66,9 @@ public interface SourceFileModel {
 		case INSTANCE_VARIABLE_DECLARATION_NAME:
 			break;
 			
+		case BUILTIN_TYPE_NAME:
+			break;
+			
 		case UNKNOWN:
 			break;
 
