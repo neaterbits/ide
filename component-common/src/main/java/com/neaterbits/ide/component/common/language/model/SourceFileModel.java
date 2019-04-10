@@ -57,7 +57,7 @@ public interface SourceFileModel {
 			flags.add(SourceElementFlag.RENAMEABLE);
 			break;
 			
-		case PACKAGE_DECLARATION_NAME:
+		case NAMESPACE_DECLARATION_NAME:
 			break;
 
 		case UNKNOWN:
