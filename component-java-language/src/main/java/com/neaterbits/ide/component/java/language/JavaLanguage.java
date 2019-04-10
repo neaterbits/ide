@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,17 +190,6 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		return true;
 	}
 
-	private static class ParsedUnit {
-		
-		private final ParsedFile parsedFile;
-		private final SourceFileModel sourceFileModel;
-
-		ParsedUnit(ParsedFile parsedFile, SourceFileModel sourceFileModel) {
-			this.parsedFile = parsedFile;
-			this.sourceFileModel = sourceFileModel;
-		}
-	}
-	
 	@Override
 	public Map<SourceFileResourcePath, SourceFileModel> parseModule(
 			ModuleResourcePath modulePath,
@@ -220,10 +210,12 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			
 			try (FileInputStream inputStream = new FileInputStream(file)) {
 			
-				final ParsedUnit parsed = parseFile(parser, inputStream, file, programModel, resolvedTypes);
+				final ParsedFile parsedFile = parseFile(parser, inputStream, file, programModel, resolvedTypes);
 				
-				compilationUnits.put(path, parsed.parsedFile);
-				sourceFileModels.put(path, parsed.sourceFileModel);
+				final SourceFileModel sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), parsedFile.getErrors(), resolvedTypes);
+
+				compilationUnits.put(path, parsedFile);
+				sourceFileModels.put(path, sourceFileModel);
 			}
 		}
 
@@ -238,23 +230,34 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		final Java8AntlrParser parser = new Java8AntlrParser(false);
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream(string.getBytes());
 		
-		final ParsedUnit parsed;
+		final SourceFileModel sourceFileModel;
+		
 		try {
 			
 			final ObjectProgramModel programModel = new ObjectProgramModel();
 			
-			parsed = parseFile(parser, inputStream, sourceFilePath.getFile(), programModel, resolvedTypes);
+			final ParsedFile parsedFile = parseFile(parser, inputStream, sourceFilePath.getFile(), programModel, resolvedTypes);
 			
-			resolveParsedFiles(Arrays.asList(ProgramLoader.makeCompiledFile(parsed.parsedFile)), programModel, resolvedTypes);
+			final Collection<ResolveError> resolveErrors = resolveParsedFiles(
+					Arrays.asList(ProgramLoader.makeCompiledFile(parsedFile)),
+					programModel,
+					resolvedTypes);
 			
+			final List<CompileError> allErrors = new ArrayList<>(parsedFile.getErrors().size() + resolveErrors.size());
+			
+			allErrors.addAll(parsedFile.getErrors());
+			allErrors.addAll(resolveErrors);
+			
+			sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), allErrors, resolvedTypes);
+
 		} catch (IOException ex) {
 			throw new IllegalStateException(ex);
 		}
 		
-		return parsed.sourceFileModel;
+		return sourceFileModel;
 	}
 
-	private static ParsedUnit parseFile(
+	private static ParsedFile parseFile(
 			Java8AntlrParser parser,
 			InputStream inputStream,
 			File file,
@@ -277,10 +280,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 				null,
 				compilationUnit);
 		
-		
-		final SourceFileModel sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), compileErrors, resolvedTypes);
-		
-		return new ParsedUnit(parsedFile, sourceFileModel);
+		return parsedFile;
 	}
 
 	private static void resolveParsedModule(
@@ -307,15 +307,13 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 	}
 	
 
-	private static void resolveParsedFiles(
+	private static Collection<ResolveError> resolveParsedFiles(
 			Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles,
 			ObjectProgramModel programModel,
 			ResolvedTypes resolvedTypes) {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 
-		
-		
 		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> logger = new ResolveLogger<>(System.out);
 
 		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
@@ -335,11 +333,26 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = filesResolver.resolveFiles(allFiles);
 		
 		final UnresolvedDependencies unresolved = resolveResult.getUnresolvedDependencies();
+
+		final List<ResolveError> resolveErrors;
+		
 		if (!unresolved.isEmpty()) {
-			throw new IllegalStateException("Unresolved dependencies " + unresolved);
+			resolveErrors = new ArrayList<>(unresolved.getCount());
+			
+			unresolved.forEach((fileSpec, compiledTypeDependency) -> {
+				
+				final ResolveError resolveError = new ResolveError("Cannot resolve name " + compiledTypeDependency.getScopedName().toString());
+				
+				resolveErrors.add(resolveError);
+			});
+		}
+		else {
+			resolveErrors = Collections.emptyList();
 		}
 		
 		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
+	
+		return resolveErrors;
 	}
 }
 
