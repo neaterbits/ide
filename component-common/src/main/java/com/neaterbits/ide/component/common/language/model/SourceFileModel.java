@@ -60,6 +60,9 @@ public interface SourceFileModel {
 		case NAMESPACE_DECLARATION_NAME:
 			break;
 
+		case IMPORT_NAME:
+			break;
+			
 		case UNKNOWN:
 			break;
 
