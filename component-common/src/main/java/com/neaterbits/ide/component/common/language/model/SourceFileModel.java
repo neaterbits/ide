@@ -63,6 +63,9 @@ public interface SourceFileModel {
 		case IMPORT_NAME:
 			break;
 			
+		case INSTANCE_VARIABLE_DECLARATION_NAME:
+			break;
+			
 		case UNKNOWN:
 			break;
 
