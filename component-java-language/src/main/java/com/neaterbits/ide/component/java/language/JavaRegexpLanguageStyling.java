@@ -3,24 +3,23 @@ package com.neaterbits.ide.component.java.language;
 import java.util.Arrays;
 import java.util.List;
 
+import com.neaterbits.ide.component.common.language.LanguageStyleable;
 import com.neaterbits.ide.component.common.language.RegexpLanguageStyleable;
 import com.neaterbits.ide.component.common.language.RegexpLanguageStyling;
-import com.neaterbits.ide.component.common.language.TokenType;
-import com.neaterbits.ide.util.ui.text.styling.TextColor;
 
-final class JavaLanguageStyling extends RegexpLanguageStyling {
+@Deprecated // Used parsed tokens instead
+final class JavaRegexpLanguageStyling extends RegexpLanguageStyling {
 
 	private static List<RegexpLanguageStyleable> STYLEABLES = Arrays.asList(
 			
 			new RegexpLanguageStyleable(
-					TokenType.KEYWORD,
-					new TextColor(0x80, 0x80, 0x50),
+					LanguageStyleable.KEYWORD_DEFAULT,
 					" interface | class | if | for | while | do | throws | throw ")
 			
 	);
 	
 	
-	JavaLanguageStyling() {
+	JavaRegexpLanguageStyling() {
 		super(STYLEABLES);
 	}
 }

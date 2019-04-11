@@ -129,6 +129,11 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	public void select(long offset, long length) {
 		textWidget.setSelection((int)offset, (int)length);
 	}
+	
+	@Override
+	public void triggerStylingRefresh() {
+		
+	}
 
 	@Override
 	boolean hasSelectedText() {

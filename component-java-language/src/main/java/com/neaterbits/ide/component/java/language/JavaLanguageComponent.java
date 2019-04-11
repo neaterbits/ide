@@ -23,7 +23,7 @@ public class JavaLanguageComponent
 	
 	private static final List<String> FILE_SUFFIXES = Arrays.asList("java");
 	
-	private static final LanguageStyling STYLING = new JavaLanguageStyling();
+	private static final LanguageStyling STYLING = new JavaTokenLanguageStyling(); // new JavaRegexpLanguageStyling();
 
 	private static final JavaLanguage JAVA_LANGUAGE = new JavaLanguage();
 	

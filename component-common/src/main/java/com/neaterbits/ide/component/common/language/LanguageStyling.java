@@ -1,5 +1,6 @@
 package com.neaterbits.ide.component.common.language;
 
+import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.util.ui.text.Text;
 
 public interface LanguageStyling {
@@ -8,6 +9,6 @@ public interface LanguageStyling {
 	Iterable<LanguageStyleable> getStylables();
 
 	// Apply to some text chunk
-	Iterable<LanguageStyleOffset> applyStyles(Text text);
+	Iterable<LanguageStyleOffset> applyStylesToLine(long lineOffset, Text lineText, SourceFileModel sourceFileModel);
 	
 }

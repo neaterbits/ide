@@ -23,29 +23,36 @@ import com.neaterbits.ide.util.ui.text.TextRange;
 public final class EditorController implements EditorSourceActionContextProvider, EditorActions {
 
 	private final EditorView editorView;
+	private final EditorParseFileStateMachine parseStateMachine;
+
 	private TextModel textModel;
 	
 	private SourceFileModel sourceFileModel;
+	
 	
 	public EditorController(
 			EditorView editorView,
 			CompiledFileView compiledFileView,
 			TextModel textModel,
 			SourceFilesModel sourceFilesModel,
-			SourceFileInfo sourceFile) {
+			SourceFileInfo sourceFile,
+			DelegatingSourceFileModel delegatingSourceFileModel) {
 
 		Objects.requireNonNull(editorView);
 		
 		this.editorView = editorView;
 		this.textModel = textModel;
 
-		updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile);
+
+		this.parseStateMachine = new EditorParseFileStateMachine(sourceFile, sourceFilesModel);
+		
+		updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile, delegatingSourceFileModel);
 		
 		editorView.addTextChangeListener((start, length, newText) -> {
 
 			this.textModel.replaceTextRange(start, length, newText);
 
-			updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile);
+			updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile, delegatingSourceFileModel);
 		});
 		
 		if (compiledFileView != null) {
@@ -57,10 +64,11 @@ public final class EditorController implements EditorSourceActionContextProvider
 			TextModel textModel,
 			CompiledFileView compiledFileView,
 			SourceFilesModel sourceFilesModel,
-			SourceFileInfo sourceFile) {
+			SourceFileInfo sourceFile,
+			DelegatingSourceFileModel delegatingSourceFileModel) {
 
-		sourceFilesModel.parseOnChange(
-				sourceFile,
+		
+		parseStateMachine.tryParse(
 				textModel.getText(),
 				updatedModel -> {
 
@@ -73,6 +81,11 @@ public final class EditorController implements EditorSourceActionContextProvider
 					if (compiledFileView != null) {
 						compiledFileView.setSourceFileModel(updatedModel);
 					}
+					
+					delegatingSourceFileModel.setDelegate(updatedModel);
+					
+					// Refresh text styling
+					editorView.triggerStylingRefresh();
 				});
 		
 	}

@@ -41,6 +41,16 @@ public final class CompilerSourceFileModel implements SourceFileModel {
 	}
 
 	@Override
+	public void iterate(long offset, long length, SourceTokenVisitor visitor) {
+
+		iterate(token -> {
+			if (token.getStartOffset() >= offset && token.getStartOffset() < offset + length) {
+				visitor.onToken(token);
+			}
+		});
+	}
+
+	@Override
 	public ISourceToken getSourceTokenAt(long offset) {
 
 		final ISourceToken token = programModel.getTokenAt(sourceFile, offset, resolvedTypes);

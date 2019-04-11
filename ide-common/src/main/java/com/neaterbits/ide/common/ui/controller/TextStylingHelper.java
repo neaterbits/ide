@@ -3,25 +3,26 @@ package com.neaterbits.ide.common.ui.controller;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.neaterbits.ide.common.ui.TextStyling;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
+import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
-import com.neaterbits.ide.util.ui.text.styling.TextStyling;
 import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
 class TextStylingHelper {
 
-	static TextStylingModel makeTextStylingModel(LanguageComponent languageComponent, TextModel textModel) {
+	static TextStylingModel makeTextStylingModel(LanguageComponent languageComponent, TextModel textModel, SourceFileModel sourceFileModel) {
 		
 		final TextStyling textStyling = makeTextStyling(languageComponent);
 		
 		return new TextStylingModel() {
 			
 			@Override
-			public Collection<TextStyleOffset> getStyleOffsets(long startPos, long length) {
+			public Collection<TextStyleOffset> getLineStyleOffsets(long startPos, long length) {
 
-				return makeStylesForLine(textModel, startPos, length, textStyling);
+				return makeStylesForLine(textModel, sourceFileModel, startPos, length, textStyling);
 			}
 		};
 	}
@@ -45,6 +46,7 @@ class TextStylingHelper {
 	
 	private static Collection<TextStyleOffset> makeStylesForLine(
 			TextModel textModel,
+			SourceFileModel sourceFileModel,
 			long lineStartOffset, long lineLength,
 			TextStyling textStyling) {
 
@@ -79,7 +81,7 @@ class TextStylingHelper {
 			
 			final Text lineText = textModel.getTextRange(startOffset, lineLength);
 			
-			styleOffsets = textStyling.applyStylesToLine(startOffset, lineText);
+			styleOffsets = textStyling.applyStylesToLine(startOffset, lineText, sourceFileModel);
 		}
 		
 		return styleOffsets;

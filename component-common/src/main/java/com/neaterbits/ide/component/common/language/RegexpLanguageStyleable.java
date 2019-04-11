@@ -8,7 +8,11 @@ public class RegexpLanguageStyleable extends LanguageStyleable {
 
 	private final Pattern pattern;
 
-	public RegexpLanguageStyleable(TokenType tokenType, TextColor defaultColor, String regexp) {
+	public RegexpLanguageStyleable(LanguageStyleable styleable, String regexp) {
+		this(styleable.getTokenType(), styleable.getDefaultColor(), regexp);
+	}
+
+	public RegexpLanguageStyleable(SyntaxHighlightingTokenType tokenType, TextColor defaultColor, String regexp) {
 		super(tokenType, defaultColor);
 
 		this.pattern = Pattern.compile(regexp);

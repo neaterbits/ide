@@ -64,7 +64,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		if (textStylingModel != null) {
 			textWidget.addLineStyleListener(event -> {
 				
-				final Collection<TextStyleOffset> offsets = textStylingModel.getStyleOffsets(event.lineOffset, event.lineText.length());
+				final Collection<TextStyleOffset> offsets = textStylingModel.getLineStyleOffsets(event.lineOffset, event.lineText.length());
 				
 				event.styles = makeStyleRanges(offsets, resourceManager);
 				
@@ -182,6 +182,17 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
+	public void triggerStylingRefresh() {
+
+		final int cursorPosition = getCursorPos();
+		
+		setCurrentText(getText());
+		
+		setCursorPos(cursorPosition);
+		
+	}
+
+	@Override
 	boolean hasSelectedText() {
 		return textWidget.isTextSelected();
 	}
@@ -211,6 +222,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		int dstIdx = 0;
 		
 		for (TextStyleOffset style : styles) {
+			
 			result[dstIdx ++] = new StyleRange(
 					(int)style.getStart(),
 					(int)style.getLength(),

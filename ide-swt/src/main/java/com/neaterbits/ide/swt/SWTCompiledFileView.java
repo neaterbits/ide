@@ -35,6 +35,7 @@ public final class SWTCompiledFileView implements CompiledFileView {
 	private ISourceToken curToken;
 	private SourceFileModel sourceFileModel;
 	
+	
 	public SWTCompiledFileView(TabFolder tabFolder) {
 
 		final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
@@ -134,7 +135,7 @@ public final class SWTCompiledFileView implements CompiledFileView {
 						: 0;
 			
 			
-			System.out.println("## set textwidget pos to " + topIndex + " of " + sb.length());
+			// System.out.println("## set textwidget pos to " + topIndex + " of " + sb.length());
 			
 			textWidget.setTopIndex(topIndex);
 	
@@ -144,7 +145,7 @@ public final class SWTCompiledFileView implements CompiledFileView {
 	
 			if (visitor.getFoundCursorToken() != null) {
 				
-				System.out.println("## found cursor token " + visitor.getFoundCursorToken().getTokenDebugString());
+				// System.out.println("## found cursor token " + visitor.getFoundCursorToken().getTokenDebugString());
 				
 				textWidget.setStyleRange(new StyleRange(
 						(int)visitor.getFoundStringBuilderTextOffset(),

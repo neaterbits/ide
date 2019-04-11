@@ -88,7 +88,7 @@ final class SWTCompiledFileViewMakeTextVisitor implements SourceTokenVisitor {
 			
 			if (token.getStartOffset() <= editorCursorOffset && token.getStartOffset() + token.getLength() >= editorCursorOffset) {
 				
-				System.out.println("## matching token " + token.getTokenTypeDebugName());
+				// System.out.println("## matching token " + token.getTokenTypeDebugName());
 				
 				matchingToken = token;
 			}

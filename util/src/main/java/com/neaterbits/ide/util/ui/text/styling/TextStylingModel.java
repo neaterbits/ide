@@ -4,6 +4,6 @@ import java.util.Collection;
 
 public interface TextStylingModel {
 
-	Collection<TextStyleOffset> getStyleOffsets(long startPos, long length);
+	Collection<TextStyleOffset> getLineStyleOffsets(long startPos, long length);
 	
 }

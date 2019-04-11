@@ -24,4 +24,6 @@ public interface EditorView extends View {
 	void selectAll();
 	
 	void select(long offset, long length);
+
+	void triggerStylingRefresh();
 }

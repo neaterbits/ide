@@ -14,6 +14,7 @@ import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.EditorView;
 import com.neaterbits.ide.common.ui.view.EditorsView;
 import com.neaterbits.ide.model.text.TextModel;
+import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
 final class EditorsController {
 
@@ -75,12 +76,19 @@ final class EditorsController {
 
 		final EditorControllerDelegator editorControllerDelegator = new EditorControllerDelegator();
 		
-		final EditorView editorView = editorsView.displayFile(
-				sourceFile.getPath(),
-				null, // TextStylingHelper.makeTextStylingModel(languageComonent, textModel),
-				editorControllerDelegator);
+		final DelegatingSourceFileModel delegatingSourceFileModel = new DelegatingSourceFileModel();
+
+		final TextStylingModel textStylingModel = TextStylingHelper.makeTextStylingModel(sourceFile.getLanguage(), textModel, delegatingSourceFileModel);
 		
-		final EditorController editorController = new EditorController(editorView, compiledFileView, textModel, sourceFilesModel, sourceFile);
+		final EditorView editorView = editorsView.displayFile(sourceFile.getPath(), textStylingModel, editorControllerDelegator);
+		
+		final EditorController editorController = new EditorController(
+				editorView,
+				compiledFileView,
+				textModel,
+				sourceFilesModel,
+				sourceFile,
+				delegatingSourceFileModel);
 		
 		editorControllerDelegator.editorController = editorController;
 		

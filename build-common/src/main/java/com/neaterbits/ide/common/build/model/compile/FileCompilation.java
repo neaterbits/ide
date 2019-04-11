@@ -7,6 +7,7 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.resource.compile.CompiledFileResourcePath;
 
 public final class FileCompilation {
+
 	private final SourceFileResourcePath sourcePath;
 	private final CompiledFileResourcePath compiledPath;
 

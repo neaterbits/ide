@@ -12,6 +12,8 @@ public interface SourceFileModel {
 
 	void iterate(SourceTokenVisitor visitor);
 
+	void iterate(long offset, long length, SourceTokenVisitor visitor);
+
 	ISourceToken getSourceTokenAt(long offset);
 
 	IType getVariableType(ISourceToken token);

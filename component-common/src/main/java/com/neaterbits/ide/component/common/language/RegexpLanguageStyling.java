@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.util.ui.text.Text;
 
 public class RegexpLanguageStyling implements LanguageStyling {
@@ -22,7 +23,7 @@ public class RegexpLanguageStyling implements LanguageStyling {
 	}
 
 	@Override
-	public Iterable<LanguageStyleOffset> applyStyles(Text text) {
+	public Iterable<LanguageStyleOffset> applyStylesToLine(long lineOffset, Text text, SourceFileModel sourceFileModel) {
 		
 		final List<LanguageStyleOffset> styleOffsets = new ArrayList<>();
 
