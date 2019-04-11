@@ -78,7 +78,7 @@ final class EditorsController {
 		
 		final DelegatingSourceFileModel delegatingSourceFileModel = new DelegatingSourceFileModel();
 
-		final TextStylingModel textStylingModel = TextStylingHelper.makeTextStylingModel(sourceFile.getLanguage(), textModel, delegatingSourceFileModel);
+		final TextStylingModel textStylingModel = TextStylingHelper.makeTextStylingModel(sourceFile.getLanguage(), delegatingSourceFileModel);
 		
 		final EditorView editorView = editorsView.displayFile(sourceFile.getPath(), textStylingModel, editorControllerDelegator);
 		

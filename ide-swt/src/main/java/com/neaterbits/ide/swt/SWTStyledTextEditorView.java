@@ -64,7 +64,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		if (textStylingModel != null) {
 			textWidget.addLineStyleListener(event -> {
 				
-				final Collection<TextStyleOffset> offsets = textStylingModel.getLineStyleOffsets(event.lineOffset, event.lineText.length());
+				final Collection<TextStyleOffset> offsets = textStylingModel.getLineStyleOffsets(event.lineOffset, event.lineText.length(), new StringText(event.lineText));
 				
 				event.styles = makeStyleRanges(offsets, resourceManager);
 				
