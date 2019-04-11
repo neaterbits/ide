@@ -49,7 +49,7 @@ public final class SWTBinaryLogTree extends Composite {
 		this.contentProvider = new SWTBinaryLogTreeContentProvider();
 		treeViewer.setContentProvider(contentProvider);	
 
-		this.labelProvider = new DelegatingStyledCellLabelProvider(new SWTBinaryLogTreeLabelProvider(filteredTexts));
+		this.labelProvider = new DelegatingStyledCellLabelProvider(new SWTBinaryLogTreeLabelProvider(getDisplay(), filteredTexts));
 		treeViewer.setLabelProvider(labelProvider);
 		
 		treeViewer.setFilters(new ViewerFilter[] {

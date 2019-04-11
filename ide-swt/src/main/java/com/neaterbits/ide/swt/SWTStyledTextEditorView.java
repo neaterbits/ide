@@ -1,7 +1,12 @@
 package com.neaterbits.ide.swt;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.jface.resource.DeviceResourceManager;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -10,8 +15,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
@@ -20,6 +25,7 @@ import com.neaterbits.ide.common.ui.view.CursorPositionListener;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.TextEditorChangeListener;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
+import com.neaterbits.ide.util.ui.RGBColor;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.TextRange;
@@ -29,6 +35,9 @@ import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 
 	private final StyledText textWidget;
+	
+	private final LocalResourceManager resourceManager;
+	private final Map<RGBColor, Color> swtColors;
 	
 	private int textChangeEventsSinceSetWidgetText = 0;
 	
@@ -44,8 +53,12 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 
 		this.textWidget = new StyledText(composite, SWT.NONE);
 		
-		final Font font = new Font(composite.getDisplay(), new FontData("Monospace", 10, SWT.NONE));
-		textWidget.addDisposeListener(event -> font.dispose());
+		this.resourceManager = new LocalResourceManager(new DeviceResourceManager(composite.getDisplay()));
+		this.swtColors = new HashMap<>();
+		
+		final Font font = resourceManager.createFont(new SingleFontDescriptor("Monospace", 10, SWT.NONE));
+		
+		textWidget.addDisposeListener(event -> resourceManager.dispose());
 		textWidget.setFont(font);
 
 		if (textStylingModel != null) {
@@ -53,7 +66,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 				
 				final Collection<TextStyleOffset> offsets = textStylingModel.getStyleOffsets(event.lineOffset, event.lineText.length());
 				
-				event.styles = makeStyleRanges(offsets);
+				event.styles = makeStyleRanges(offsets, resourceManager);
 				
 			});
 		}
@@ -101,7 +114,6 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		textWidget.setTabs(tabs);
 	}
 
-	
 	
 	@Override
 	void addKeyListener(KeyListener keyListener) {
@@ -173,8 +185,26 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	boolean hasSelectedText() {
 		return textWidget.isTextSelected();
 	}
+	
 
-	private static StyleRange [] makeStyleRanges(Collection<TextStyleOffset> styles) {
+	private Color getColor(RGBColor rgb) {
+		
+		Color color = swtColors.get(rgb);
+		
+		if (color == null) {
+			color = resourceManager.createColor(new RGB(
+					rgb.getR(),
+					rgb.getG(),
+					rgb.getB()));
+			
+			swtColors.put(rgb, color);
+			
+		}
+		
+		return color;
+	}
+	
+	private StyleRange [] makeStyleRanges(Collection<TextStyleOffset> styles, ResourceManager resourceManager) {
 
 		final StyleRange [] result = new StyleRange[styles.size()];
 		
@@ -184,11 +214,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 			result[dstIdx ++] = new StyleRange(
 					(int)style.getStart(),
 					(int)style.getLength(),
-					new Color(
-							null,
-							style.getColor().getR(),
-							style.getColor().getG(),
-							style.getColor().getB()),
+					getColor(style.getColor()),
 					null);
 			
 		}

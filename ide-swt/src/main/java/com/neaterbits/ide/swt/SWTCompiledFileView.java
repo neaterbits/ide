@@ -29,6 +29,7 @@ public final class SWTCompiledFileView implements CompiledFileView {
 	private final Label cursorOffsetLabel;
 	private final Label tokenTypeLabel;
 	private final Label tokenTypeNameLabel;
+	private final Color highlightColor;
 	
 	private long editorCursorOffset;
 	private ISourceToken curToken;
@@ -77,6 +78,10 @@ public final class SWTCompiledFileView implements CompiledFileView {
 		textWidget.setFont(font);
 		
 		textWidget.setEditable(false);
+		
+		this.highlightColor = new Color(null, 0x30, 0xA0, 0x30);
+		
+		composite.addDisposeListener(event -> highlightColor.dispose());
 	}
 	
 	@Override
@@ -144,7 +149,7 @@ public final class SWTCompiledFileView implements CompiledFileView {
 				textWidget.setStyleRange(new StyleRange(
 						(int)visitor.getFoundStringBuilderTextOffset(),
 						(int)visitor.getFoundLength(),
-						new Color(null, 0x30, 0xA0, 0x30),
+						highlightColor,
 						null));
 			}
 		}
