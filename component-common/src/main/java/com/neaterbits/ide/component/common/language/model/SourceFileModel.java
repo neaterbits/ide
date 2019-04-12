@@ -71,6 +71,9 @@ public interface SourceFileModel {
 		case BUILTIN_TYPE_NAME:
 			break;
 			
+		case THIS_REFERENCE:
+			break;
+			
 		case UNKNOWN:
 			break;
 
