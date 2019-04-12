@@ -31,6 +31,7 @@ import com.neaterbits.ide.common.ui.keys.IDEKeyBindings;
 import com.neaterbits.ide.common.ui.keys.Key;
 import com.neaterbits.ide.common.ui.keys.KeyBindings;
 import com.neaterbits.ide.common.ui.keys.KeyCombination;
+import com.neaterbits.ide.common.ui.keys.KeyLocation;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
 import com.neaterbits.ide.common.ui.menus.IDEMenus;
 import com.neaterbits.ide.common.ui.menus.MenuItemEntry;
@@ -95,7 +96,7 @@ public final class IDEController implements ComponentIDEAccess {
 			return menuListener;
 		});
 		
-		this.uiController = new EditUIController(uiView, projectModel, ideComponents, sourceFilesModel, codeMapModel);
+		this.uiController = new EditUIController(uiView, config, projectModel, ideComponents, sourceFilesModel, codeMapModel);
 		
 		final Clipboard clipboard = new ClipboardImpl(ui.getSystemClipboard());
 		
@@ -125,12 +126,13 @@ public final class IDEController implements ComponentIDEAccess {
 		uiView.addKeyEventListener(new KeyEventListener() {
 			
 			@Override
-			public void onKeyRelease(Key key, KeyMask mask) {
+			public boolean onKeyRelease(Key key, KeyMask mask, KeyLocation location) {
 				
+				return true;
 			}
 			
 			@Override
-			public void onKeyPress(Key key, KeyMask mask) {
+			public boolean onKeyPress(Key key, KeyMask mask, KeyLocation location) {
 				
 				final Action action = findActionWithNoKeyBindingInMenus(keyBindings, menus, new KeyCombination(key, mask));
 
@@ -145,6 +147,8 @@ public final class IDEController implements ComponentIDEAccess {
 						action.execute(makeActionExecuteParameters());
 					}
 				}
+				
+				return true;
 			}
 		});
 

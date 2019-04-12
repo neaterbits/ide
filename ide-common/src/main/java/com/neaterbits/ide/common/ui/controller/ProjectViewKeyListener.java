@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.ui.keys.Key;
+import com.neaterbits.ide.common.ui.keys.KeyLocation;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.ProjectView;
@@ -23,7 +24,7 @@ final class ProjectViewKeyListener implements KeyEventListener {
 	}
 
 	@Override
-	public void onKeyPress(Key key, KeyMask mask) {
+	public boolean onKeyPress(Key key, KeyMask mask, KeyLocation location) {
 
 		if (key.getKeyCode() == 127) {
 			
@@ -36,10 +37,13 @@ final class ProjectViewKeyListener implements KeyEventListener {
 		else if (key.getKeyCode() == Key.F5) {
 			uiController.refreshProjectView();
 		}
+		
+		return true;
 	}
 
 	@Override
-	public void onKeyRelease(Key key, KeyMask mask) {
+	public boolean onKeyRelease(Key key, KeyMask mask, KeyLocation location) {
 		
+		return true;
 	}
 }

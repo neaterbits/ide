@@ -10,9 +10,11 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
@@ -23,6 +25,7 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.CursorPositionListener;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.TextEditorChangeListener;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.RGBColor;
@@ -39,6 +42,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	private final LocalResourceManager resourceManager;
 	private final Map<RGBColor, Color> swtColors;
 	
+	
 	private int textChangeEventsSinceSetWidgetText = 0;
 	
 	SWTStyledTextEditorView(
@@ -52,7 +56,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		super(composite, config, sourceFile, editorSourceActionContextProvider);
 
 		this.textWidget = new StyledText(composite, SWT.NONE);
-		
+	
 		this.resourceManager = new LocalResourceManager(new DeviceResourceManager(composite.getDisplay()));
 		this.swtColors = new HashMap<>();
 		
@@ -155,6 +159,22 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 
 		textWidget.addCaretListener(event -> cursorPositionListener.onCursorPositionChanged(event.caretOffset));
 		
+	}
+
+	@Override
+	public void addKeyListener(KeyEventListener listener) {
+
+		final SWTKeyEventListener keyEventListener = new SWTKeyEventListener(listener);
+		
+		textWidget.addKeyListener(keyEventListener);
+		
+		textWidget.addVerifyKeyListener(new VerifyKeyListener() {
+			
+			@Override
+			public void verifyKey(VerifyEvent event) {
+				event.doit = keyEventListener.keyPressed(event.character, event.keyCode, event.keyLocation, event.stateMask);
+			}
+		});
 	}
 
 	@Override

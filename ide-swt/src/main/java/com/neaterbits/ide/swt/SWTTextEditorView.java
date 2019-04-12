@@ -15,6 +15,7 @@ import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.CursorPositionListener;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.TextEditorChangeListener;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.util.ui.text.StringText;
@@ -116,8 +117,13 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
+	public void addKeyListener(KeyEventListener listener) {
+		textWidget.addKeyListener(new SWTKeyEventListener(listener));
+	}
+
+	@Override
 	public void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
-		throw new UnsupportedOperationException();
+		// throw new UnsupportedOperationException();
 	}
 	
 	@Override

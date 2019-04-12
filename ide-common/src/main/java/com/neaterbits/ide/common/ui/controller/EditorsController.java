@@ -9,6 +9,7 @@ import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
+import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.EditorView;
@@ -19,17 +20,20 @@ import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 final class EditorsController {
 
 	private final EditorsView editorsView;
+	private final TextEditorConfig config;
 	private final SourceFilesModel sourceFilesModel;
 	private final CompiledFileView compiledFileView;
 	
 	private final Map<SourceFileResourcePath, EditorController> editorControllers;
 	
-	EditorsController(EditorsView editorsView, SourceFilesModel sourceFilesModel, CompiledFileView compiledFileView) {
+	EditorsController(EditorsView editorsView, TextEditorConfig config, SourceFilesModel sourceFilesModel, CompiledFileView compiledFileView) {
 
 		Objects.requireNonNull(editorsView);
+		Objects.requireNonNull(config);
 		Objects.requireNonNull(sourceFilesModel);
 		
 		this.editorsView = editorsView;
+		this.config = config;
 		this.sourceFilesModel = sourceFilesModel;
 		this.compiledFileView = compiledFileView;
 		
@@ -84,6 +88,7 @@ final class EditorsController {
 		
 		final EditorController editorController = new EditorController(
 				editorView,
+				config,
 				compiledFileView,
 				textModel,
 				sourceFilesModel,

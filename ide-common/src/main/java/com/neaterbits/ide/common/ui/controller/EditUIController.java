@@ -8,6 +8,7 @@ import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.resource.ResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.view.UIView;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
@@ -29,6 +30,7 @@ public final class EditUIController implements EditorsActions {
 	
 	EditUIController(
 			UIViewAndSubViews uiView,
+			TextEditorConfig config,
 			ProjectsModel projectsModel,
 			IDEComponents ideComponents,
 			SourceFilesModel sourceFilesModel,
@@ -43,7 +45,12 @@ public final class EditUIController implements EditorsActions {
 		
 		this.codeMapModel = codeMapModel;
 		
-		this.editorsController 	= new EditorsController(uiView.getEditorsView(), sourceFilesModel, uiView.getCompiledFileView());
+		this.editorsController 	= new EditorsController(
+				uiView.getEditorsView(),
+				config,
+				sourceFilesModel,
+				uiView.getCompiledFileView());
+		
 		this.projectsController = new ProjectsController(projectsModel, uiView.getProjectView(), this);
 	}
 

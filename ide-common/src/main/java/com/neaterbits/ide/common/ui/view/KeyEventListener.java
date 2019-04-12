@@ -1,11 +1,12 @@
 package com.neaterbits.ide.common.ui.view;
 
 import com.neaterbits.ide.common.ui.keys.Key;
+import com.neaterbits.ide.common.ui.keys.KeyLocation;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
 
 public interface KeyEventListener {
 
-	void onKeyPress(Key key, KeyMask mask);
+	boolean onKeyPress(Key key, KeyMask mask, KeyLocation location);
 	
-	void onKeyRelease(Key key, KeyMask mask);
+	boolean onKeyRelease(Key key, KeyMask mask, KeyLocation location);
 }

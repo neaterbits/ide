@@ -9,6 +9,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 
 import com.neaterbits.ide.common.ui.keys.Key;
+import com.neaterbits.ide.common.ui.keys.KeyLocation;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
 import com.neaterbits.ide.common.ui.keys.QualifierKey;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
@@ -19,7 +20,7 @@ final class SWTKeyEventListener implements KeyListener {
 	
 	@FunctionalInterface
 	interface KeyEventHandler {
-		void onKey(Key key, KeyMask mask);
+		boolean onKey(Key key, KeyMask mask, KeyLocation location);
 	}
 
 	SWTKeyEventListener(KeyEventListener delegate) {
@@ -29,21 +30,21 @@ final class SWTKeyEventListener implements KeyListener {
 		this.delegate = delegate;
 	}
 	
-	void keyPressed(char character, int keyCode, int stateMask) {
-		convertKeyEvent(character, keyCode, stateMask, delegate::onKeyPress);
+	boolean keyPressed(char character, int keyCode, int keyLocation, int stateMask) {
+		return convertKeyEvent(character, keyCode, keyLocation,stateMask, delegate::onKeyPress);
 	}
 
 	@Override
 	public void keyPressed(KeyEvent event) {
-		keyPressed(event.character, event.keyCode, event.stateMask);
+		event.doit = keyPressed(event.character, event.keyCode, event.keyLocation, event.stateMask);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent event) {
-		convertKeyEvent(event.character, event.keyCode, event.stateMask, delegate::onKeyRelease);
+		event.doit = convertKeyEvent(event.character, event.keyCode, event.keyLocation, event.stateMask, delegate::onKeyRelease);
 	}
 
-	private void convertKeyEvent(char character, int keyCode, int stateMask, KeyEventHandler keyEventHandler) {
+	private boolean convertKeyEvent(char character, int keyCode, int keyLocation, int stateMask, KeyEventHandler keyEventHandler) {
 		
 		final int convertedKeyCode;
 		
@@ -84,8 +85,32 @@ final class SWTKeyEventListener implements KeyListener {
 			qualifiers.add(QualifierKey.ALT);
 		}
 
-		keyEventHandler.onKey(
+		final KeyLocation location;
+		
+		switch (keyLocation) {
+		case SWT.LEFT:
+			location = KeyLocation.LEFT;
+			break;
+			
+		case SWT.RIGHT:
+			location = KeyLocation.RIGHT;
+			break;
+			
+		case SWT.KEYPAD:
+			location = KeyLocation.KEYPAD;
+			break;
+			
+		case SWT.NONE:
+			location = KeyLocation.NONE;
+			break;
+			
+		default:
+			throw new UnsupportedOperationException();
+		}
+		
+		return keyEventHandler.onKey(
 				new Key(c, convertedKeyCode),
-				new KeyMask(qualifiers));
+				new KeyMask(qualifiers),
+				location);
 	}
 }

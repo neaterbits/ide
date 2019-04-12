@@ -26,4 +26,6 @@ public interface EditorView extends View {
 	void select(long offset, long length);
 
 	void triggerStylingRefresh();
+
+	void addKeyListener(KeyEventListener listener);
 }

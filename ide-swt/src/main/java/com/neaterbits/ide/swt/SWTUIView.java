@@ -320,7 +320,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 		display.addFilter(SWT.KeyDown, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				swtKeyEventListener.keyPressed(event.character, event.keyCode, event.stateMask);
+				event.doit = swtKeyEventListener.keyPressed(event.character, event.keyCode, event.keyLocation, event.stateMask);
 			}
 		});
 	}
