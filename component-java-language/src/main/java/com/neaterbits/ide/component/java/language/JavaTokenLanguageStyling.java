@@ -30,6 +30,7 @@ final class JavaTokenLanguageStyling implements LanguageStyling {
 			switch (token.getTokenType()) {
 			case KEYWORD:
 			case THIS_REFERENCE:
+			case BOOLEAN_LITERAL:
 				styleable = LanguageStyleable.KEYWORD_DEFAULT;
 				
 				offsets.add(new LanguageStyleOffset(token.getStartOffset(), token.getLength(), styleable));

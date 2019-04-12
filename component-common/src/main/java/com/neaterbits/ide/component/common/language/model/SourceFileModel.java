@@ -74,6 +74,9 @@ public interface SourceFileModel {
 		case THIS_REFERENCE:
 			break;
 			
+		case BOOLEAN_LITERAL:
+			break;
+			
 		case UNKNOWN:
 			break;
 
