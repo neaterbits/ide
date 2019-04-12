@@ -1,14 +1,17 @@
 package com.neaterbits.ide.common.ui.view;
 
+import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.TextRange;
 
 public interface EditorView extends View {
 
 	Text getText();
-	
-	void setCurrentText(Text text);
 
+	void setTextModel(TextModel textModel);
+
+	void triggerTextRefresh();
+	
 	void addTextChangeListener(TextEditorChangeListener listener);
 
 	void addCursorPositionListener(CursorPositionListener cursorPositionListener);

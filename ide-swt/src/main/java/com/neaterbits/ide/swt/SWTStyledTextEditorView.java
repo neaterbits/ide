@@ -3,6 +3,7 @@ package com.neaterbits.ide.swt;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.jface.resource.DeviceResourceManager;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -10,6 +11,8 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.StyledTextContent;
+import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,6 +31,7 @@ import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.TextEditorChangeListener;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
+import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.RGBColor;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
@@ -42,8 +46,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	private final LocalResourceManager resourceManager;
 	private final Map<RGBColor, Color> swtColors;
 	
-	
-	private int textChangeEventsSinceSetWidgetText = 0;
+	private TextModel textModel;
 	
 	SWTStyledTextEditorView(
 			SWTViewList viewList,
@@ -81,21 +84,8 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
-	public void setCurrentText(Text text) {
-		setWidgetText(text.asString());
-	}
-
-	@Override
 	public Text getText() {
 		return new StringText(textWidget.getText());
-	}
-
-	@Override
-	void setWidgetText(String text) {
-		
-		this.textChangeEventsSinceSetWidgetText = 0;
-		
-		this.textWidget.setText(text);
 	}
 
 	@Override
@@ -136,11 +126,11 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	@Override
 	public void addTextChangeListener(TextEditorChangeListener listener) {
 		
-		if (textChangeEventsSinceSetWidgetText > 0) {
-			textWidget.addExtendedModifyListener(event -> listener.onTextChange(event.start, event.length, new StringText(event.replacedText)));
-		}
+		textWidget.addExtendedModifyListener(event -> {
+			System.out.println("## text change");
 		
-		++ textChangeEventsSinceSetWidgetText;
+			listener.onTextChange(event.start, event.length, event.replacedText != null ? new StringText(event.replacedText) : null);
+		});
 	}
 	
 	@Override
@@ -177,6 +167,79 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		});
 	}
 
+	
+	@Override
+	public void setTextModel(TextModel textModel) {
+
+		Objects.requireNonNull(textModel);
+
+		this.textModel = textModel;
+
+		textWidget.setContent(new StyledTextContent() {
+			
+			@Override
+			public void setText(String text) {
+				textModel.setText(new StringText(text));;
+			}
+			
+			@Override
+			public void replaceTextRange(int start, int length, String replaceText) {
+				textModel.replaceTextRange(start, length, new StringText(replaceText));
+			}
+			
+			@Override
+			public void removeTextChangeListener(TextChangeListener arg0) {
+				
+			}
+			
+			@Override
+			public String getTextRange(int start, int length) {
+				return textModel.getTextRange(start, length).asString();
+			}
+			
+			@Override
+			public int getOffsetAtLine(int lineIndex) {
+				return (int)textModel.getOffsetAtLine(lineIndex);
+			}
+			
+			@Override
+			public String getLineDelimiter() {
+				return textModel.getLineDelimiter().asString();
+			}
+			
+			@Override
+			public int getLineCount() {
+				return (int)textModel.getLineCount();
+			}
+			
+			@Override
+			public int getLineAtOffset(int offset) {
+				return (int)textModel.getLineAtOffset(offset);
+			}
+			
+			@Override
+			public String getLine(int lineIndex) {
+				return textModel.getLineWithoutAnyNewline(lineIndex).asString();
+			}
+			
+			@Override
+			public int getCharCount() {
+				return (int)textModel.getCharCount();
+			}
+			
+			@Override
+			public void addTextChangeListener(TextChangeListener arg0) {
+				
+			}
+		});
+	}
+
+	@Override
+	public void triggerTextRefresh() {
+
+		
+	}
+
 	@Override
 	public void cut() {
 		textWidget.cut();
@@ -204,12 +267,13 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	@Override
 	public void triggerStylingRefresh() {
 
-		final int cursorPosition = getCursorPos();
-		
-		setCurrentText(getText());
-		
-		setCursorPos(cursorPosition);
-		
+		if (textModel != null) {
+			final int cursorPosition = getCursorPos();
+			
+			setTextModel(textModel);
+			
+			setCursorPos(cursorPosition);
+		}
 	}
 
 	@Override

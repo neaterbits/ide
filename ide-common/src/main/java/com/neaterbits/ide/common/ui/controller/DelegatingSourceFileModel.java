@@ -26,6 +26,8 @@ final class DelegatingSourceFileModel implements SourceFileModel {
 	
 	void setDelegate(SourceFileModel delegate) {
 		
+		System.out.println("## setDelegate");
+		
 		Objects.requireNonNull(delegate);
 		
 		if (this == delegate) {

@@ -31,4 +31,9 @@ public final class UnixLineDelimiter extends LineDelimiter {
 		
 		return numChars;
 	}
+
+	@Override
+	public String asString() {
+		return "\n";
+	}
 }

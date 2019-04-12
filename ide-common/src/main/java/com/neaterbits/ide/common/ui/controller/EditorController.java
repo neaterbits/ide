@@ -54,15 +54,11 @@ public final class EditorController implements EditorSourceActionContextProvider
 		this.config = config;
 		this.textModel = textModel;
 
-
 		this.parseStateMachine = new EditorParseFileStateMachine(sourceFile, sourceFilesModel);
 		
 		updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile, delegatingSourceFileModel);
 		
 		editorView.addTextChangeListener((start, length, newText) -> {
-
-			this.textModel.replaceTextRange(start, length, newText);
-
 			updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile, delegatingSourceFileModel);
 		});
 		
@@ -85,7 +81,6 @@ public final class EditorController implements EditorSourceActionContextProvider
 				}
 				else if (config.isTabsToSpaces() && key.getCharacter() == '\t') {
 					
-					
 					// System.out.println("position: " + textWidget.getCaretPosition());
 					
 					final Text text = editorView.getText();
@@ -99,8 +94,8 @@ public final class EditorController implements EditorSourceActionContextProvider
 							(int)cursorPos,
 							0,
 							spaces);
-					
-					editorView.setCurrentText(new StringText(updatedText));
+
+					setCurrentText(new StringText(updatedText));
 					
 					editorView.setCursorPosition(cursorPos + spaces.length());
 					
@@ -124,6 +119,8 @@ public final class EditorController implements EditorSourceActionContextProvider
 		if (compiledFileView != null) {
 			editorView.addCursorPositionListener(compiledFileView::onEditorCursorPosUpdate);
 		}
+		
+		editorView.setTextModel(textModel);
 	}
 	
 	private void updateSourceFileModel(
@@ -133,6 +130,7 @@ public final class EditorController implements EditorSourceActionContextProvider
 			SourceFileInfo sourceFile,
 			DelegatingSourceFileModel delegatingSourceFileModel) {
 
+		System.out.println("## updateSourceFileModel");
 		
 		parseStateMachine.tryParse(
 				textModel.getText(),
@@ -252,9 +250,8 @@ public final class EditorController implements EditorSourceActionContextProvider
 
 	@Override
 	public void replace(long pos, long replaceLength, Text replacement) {
+
 		textModel.replaceTextRange(pos, replaceLength, replacement);
-		
-		updateText();
 
 		editorView.select(pos, replacement.length());
 	}
@@ -262,14 +259,6 @@ public final class EditorController implements EditorSourceActionContextProvider
 	@Override
 	public void selectAll() {
 		editorView.selectAll();
-	}
-
-	public void updateText() {
-		
-		final Text newText = textModel.getText();
-		
-		editorView.setCurrentText(newText);
-		
 	}
 	
 	public void setTextModel(TextModel textModel) {
@@ -280,7 +269,7 @@ public final class EditorController implements EditorSourceActionContextProvider
 		
 		this.textModel = textModel;
 
-		updateText();
+		editorView.triggerTextRefresh();
 	}
 
 	private void indentOnNewline(String text, int cursorPos) {
@@ -372,8 +361,20 @@ public final class EditorController implements EditorSourceActionContextProvider
 				0,
 				newline);
 
-		editorView.setCurrentText(new StringText(updatedText));
+		setCurrentText(new StringText(updatedText));
 		
 		editorView.setCursorPosition(caretPosition + newline.length());
+	}
+
+	public void updateText() {
+		editorView.triggerTextRefresh();
+	}
+	
+	private void setCurrentText(Text text) {
+		
+		Objects.requireNonNull(text);
+
+		textModel.setText(text);
+		editorView.triggerTextRefresh();
 	}
 }

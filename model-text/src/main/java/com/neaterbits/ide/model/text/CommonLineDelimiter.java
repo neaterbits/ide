@@ -25,4 +25,9 @@ public class CommonLineDelimiter extends LineDelimiter {
 
 		return newlineChars;
 	}
+
+	@Override
+	public String asString() {
+		return UnixLineDelimiter.INSTANCE.asString();
+	}
 }

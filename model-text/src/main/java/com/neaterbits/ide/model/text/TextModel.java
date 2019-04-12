@@ -19,6 +19,10 @@ public abstract class TextModel {
 
 	public abstract Text getText();
 	
+	public void setText(Text text) {
+		replaceTextRange(0, getLength(), text);
+	}
+	
 	public abstract void replaceTextRange(long start, long replaceLength, Text text);
 	
 	public abstract Text getTextRange(long start, long length);

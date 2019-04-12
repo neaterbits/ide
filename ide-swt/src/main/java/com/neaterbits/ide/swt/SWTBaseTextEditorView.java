@@ -36,7 +36,6 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 
 	private final EditorSourceActionContextProvider editorSourceActionContextProvider;
 	
-	abstract void setWidgetText(String text);
 	abstract void setCursorPos(int pos);
 	abstract int getCursorPos();
 	abstract void setFocus();

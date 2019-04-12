@@ -95,6 +95,23 @@ public abstract class BaseTextModelTest {
 		checkModel(model, TEST_STRING);
 	}
 
+	@Test
+	public void testReplaceToRemovePartOfWord() {
+
+		final String replaceText = "some";
+		
+		final int offset = TEST_STRING.indexOf(replaceText);
+		final String string = TEST_STRING.replace(replaceText, "somet");
+		
+		final StringText initialText = new StringText(string);
+		
+		final TextModel model = makeTextModel(UnixLineDelimiter.INSTANCE, initialText);
+		
+		model.replaceTextRange(offset + 4, 1, new StringText(""));
+	
+		checkModel(model, TEST_STRING);
+	}
+
 	private void checkModel(TextModel model, String string) {
 
 		assertThat(model.getText().asString()).isEqualTo(string);

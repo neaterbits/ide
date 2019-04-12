@@ -42,4 +42,8 @@ public final class WindowsLineDelimiter extends LineDelimiter {
 		return numChars;
 	}
 
+	@Override
+	public String asString() {
+		return "\r\n";
+	}
 }

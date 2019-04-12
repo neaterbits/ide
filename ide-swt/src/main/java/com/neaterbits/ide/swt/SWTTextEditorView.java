@@ -18,6 +18,7 @@ import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.TextEditorChangeListener;
 import com.neaterbits.ide.common.ui.view.TextSelectionListener;
+import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.TextRange;
 
@@ -45,7 +46,19 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	}
 
 	@Override
-	public void setCurrentText(com.neaterbits.ide.util.ui.text.Text text) {
+	public void setTextModel(TextModel textModel) {
+
+		setCurrentText(textModel.getText());
+		
+	}
+
+	@Override
+	public void triggerTextRefresh() {
+		setCurrentText(new StringText(textWidget.getText()));
+	}
+
+
+	private void setCurrentText(com.neaterbits.ide.util.ui.text.Text text) {
 		
 		Objects.requireNonNull(text);
 		
@@ -58,11 +71,6 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 	@Override
 	public com.neaterbits.ide.util.ui.text.Text getText() {
 		return new StringText(textWidget.getText());
-	}
-
-	@Override
-	void setWidgetText(String text) {
-		textWidget.setText(text);
 	}
 
 	@Override
