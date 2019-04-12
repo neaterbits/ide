@@ -3,6 +3,10 @@ package com.neaterbits.ide.swt;
 import java.util.Collection;
 import java.util.Objects;
 
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -18,6 +22,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import com.neaterbits.compiler.util.model.ISourceToken;
+import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
 import com.neaterbits.ide.common.ui.view.CompiledFileView;
@@ -30,6 +35,8 @@ public final class SWTCompiledFileView implements CompiledFileView {
 	private final Label tokenTypeLabel;
 	private final Label tokenTypeNameLabel;
 	private final Color highlightColor;
+	private final ListViewer errorsViewer;
+	
 	
 	private long editorCursorOffset;
 	private ISourceToken curToken;
@@ -52,7 +59,7 @@ public final class SWTCompiledFileView implements CompiledFileView {
 		
 		composite.setLayout(compositeLayout);
 		
-		this.textWidget = new StyledText(composite, SWT.NONE);
+		this.textWidget = new StyledText(composite, SWT.BORDER);
 
 		final GridData textWidgetData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		
@@ -83,6 +90,65 @@ public final class SWTCompiledFileView implements CompiledFileView {
 		this.highlightColor = new Color(null, 0x30, 0xA0, 0x30);
 		
 		composite.addDisposeListener(event -> highlightColor.dispose());
+		
+		this.errorsViewer = new ListViewer(composite);
+		
+		final GridData errorsData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		
+		errorsData.horizontalSpan = 2;
+		
+		errorsViewer.getList().setLayoutData(errorsData);
+		
+		errorsViewer.setLabelProvider(new LabelProvider() {
+
+			@Override
+			public String getText(Object element) {
+
+				final String text;
+
+				if (element instanceof CompileError) {
+					final CompileError compileError = (CompileError)element;
+				
+					text = compileError.getMessage();
+				}
+				else {
+					throw new UnsupportedOperationException();
+				}
+
+				return text;
+			}
+		});
+		
+		errorsViewer.setContentProvider(new IStructuredContentProvider() {
+			
+			@Override
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				
+			}
+			
+			@Override
+			public void dispose() {
+				
+			}
+			
+			@Override
+			public Object[] getElements(Object inputElement) {
+
+				final Object [] elements;
+				
+				if (inputElement instanceof SourceFileModel) {
+					
+					final SourceFileModel sourceFileModel = (SourceFileModel)inputElement;
+
+					elements = sourceFileModel.getParserErrors().toArray(new Object[sourceFileModel.getParserErrors().size()]);
+				}
+				else {
+					elements = null;
+				}
+				
+				return elements;
+			}
+		});
 	}
 	
 	@Override
@@ -105,6 +171,8 @@ public final class SWTCompiledFileView implements CompiledFileView {
 		updateViewText(false);
 		
 		updateCursorPosLabels(true);
+		
+		errorsViewer.setInput(model);
 	}
 
 	
