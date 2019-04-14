@@ -36,7 +36,9 @@ import com.neaterbits.ide.util.ui.RGBColor;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.TextRange;
+import com.neaterbits.ide.util.ui.text.styling.TextStyle;
 import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;
+import com.neaterbits.ide.util.ui.text.styling.TextStyles;
 import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
 final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
@@ -311,10 +313,32 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 					(int)style.getStart(),
 					(int)style.getLength(),
 					getColor(style.getColor()),
-					null);
+					null,
+					getFontStyles(style.getStyles()));
 			
 		}
 		
 		return result;
+	}
+	
+	private static int getFontStyles(TextStyles styles) {
+		
+		int fontStyles = SWT.NONE;
+		
+		if (styles != null) {
+			if (styles.isSet(TextStyle.UNDERLINE)) {
+				fontStyles |= SWT.UNDERLINE_SINGLE;
+			}
+			
+			if (styles.isSet(TextStyle.ITALICS)) {
+				fontStyles |= SWT.ITALIC;
+			}
+			
+			if (styles.isSet(TextStyle.BOLD)) {
+				fontStyles |= SWT.BOLD;
+			}
+		}
+		
+		return fontStyles;
 	}
 }

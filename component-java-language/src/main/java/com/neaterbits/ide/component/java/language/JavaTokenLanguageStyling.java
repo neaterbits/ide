@@ -45,6 +45,12 @@ final class JavaTokenLanguageStyling implements LanguageStyling {
 				offsets.add(new LanguageStyleOffset(token.getStartOffset(), token.getLength(), styleable));
 				break;
 
+			case ENUM_CONSTANT:
+				styleable = LanguageStyleable.ENUM_CONSTANT_DEFAULT;
+				
+				offsets.add(new LanguageStyleOffset(token.getStartOffset(), token.getLength(), styleable));
+				break;
+				
 			default:
 				break;
 			}

@@ -66,7 +66,9 @@ final class LanguageTextStyling implements TextStyling {
 			result.add(new TextStyleOffset(
 					offset.getStart(),
 					offset.getLength(),
-					styleable.getDefaultColor()));
+					styleable.getDefaultColor(),
+					null,
+					styleable.getTextStyles()));
 			
 			lastOffsetWithinLine = offset.getStart() - lineStartPosInText;
 			lastLength = offset.getLength();

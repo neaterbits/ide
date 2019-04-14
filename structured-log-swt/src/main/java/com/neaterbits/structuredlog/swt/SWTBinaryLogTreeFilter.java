@@ -205,7 +205,7 @@ final class SWTBinaryLogTreeFilter {
 			
 			// System.out.println("## add text style from " + offset + "/" + length);
 			
-			offsets.add(new TextStyleOffset(offset, length, null, TextStyleOffset.SELECTED_BG_COLOR));
+			offsets.add(new TextStyleOffset(offset, length, null, TextStyleOffset.SELECTED_BG_COLOR, null));
 		});
 
 		if (match) {

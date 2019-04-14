@@ -1,20 +1,10 @@
 package com.neaterbits.ide.util.ui.text.styling;
 
-public class TextStyles {
+import com.neaterbits.ide.util.EnumMask;
 
-	private final TextColor color;
-	private final TextStyle style;
+public class TextStyles extends EnumMask<TextStyle> {
 	
-	public TextStyles(TextColor color, TextStyle style) {
-		this.color = color;
-		this.style = style;
-	}
-
-	public TextColor getColor() {
-		return color;
-	}
-
-	public TextStyle getStyle() {
-		return style;
+	public TextStyles(TextStyle ... styles) {
+		super(TextStyle.class, styles);
 	}
 }

@@ -9,17 +9,19 @@ public final class TextStyleOffset {
 	private final long length;
 	private final TextColor color;
 	private final TextColor bgColor;
+	private final TextStyles styles;
 	
 	public TextStyleOffset(long start, long length, TextColor color) {
-		this(start, length, color, null);
+		this(start, length, color, null, null);
 	}
 
-	public TextStyleOffset(long start, long length, TextColor color, TextColor bgColor) {
+	public TextStyleOffset(long start, long length, TextColor color, TextColor bgColor, TextStyles styles) {
 
 		this.start = start;
 		this.length = length;
 		this.color = color;
 		this.bgColor = bgColor;
+		this.styles = styles;
 	}
 
 	public long getStart() {
@@ -36,6 +38,10 @@ public final class TextStyleOffset {
 	
 	public TextColor getBgColor() {
 		return bgColor;
+	}
+
+	public TextStyles getStyles() {
+		return styles;
 	}
 
 	@Override

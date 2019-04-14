@@ -81,6 +81,9 @@ public interface SourceFileModel {
 		case NULL_LITERAL:
 			break;
 			
+		case ENUM_CONSTANT:
+			break;
+
 		case UNKNOWN:
 			break;
 
