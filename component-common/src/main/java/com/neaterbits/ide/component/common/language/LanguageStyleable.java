@@ -8,7 +8,10 @@ public class LanguageStyleable {
 
 	public static final LanguageStyleable KEYWORD_DEFAULT =
 			new LanguageStyleable(SyntaxHighlightingTokenType.KEYWORD, new TextColor(0x80, 0x80, 0x50));
-	
+
+	public static final LanguageStyleable LITERAL_DEFAULT =
+			new LanguageStyleable(SyntaxHighlightingTokenType.KEYWORD, new TextColor(0x50, 0x50, 0xE0));
+
 	private final SyntaxHighlightingTokenType tokenType;
 	private final TextColor defaultColor;
 

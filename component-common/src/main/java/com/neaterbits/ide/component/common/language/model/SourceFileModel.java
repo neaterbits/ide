@@ -74,7 +74,11 @@ public interface SourceFileModel {
 		case THIS_REFERENCE:
 			break;
 			
+		case CHARACTER_LITERAL:
+		case STRING_LITERAL:
+		case INTEGER_LITERAL:
 		case BOOLEAN_LITERAL:
+		case NULL_LITERAL:
 			break;
 			
 		case UNKNOWN:

@@ -31,12 +31,20 @@ final class JavaTokenLanguageStyling implements LanguageStyling {
 			case KEYWORD:
 			case THIS_REFERENCE:
 			case BOOLEAN_LITERAL:
+			case NULL_LITERAL:
 			case BUILTIN_TYPE_NAME:
 				styleable = LanguageStyleable.KEYWORD_DEFAULT;
 				
 				offsets.add(new LanguageStyleOffset(token.getStartOffset(), token.getLength(), styleable));
 				break;
+
+			case CHARACTER_LITERAL:
+			case STRING_LITERAL:
+				styleable = LanguageStyleable.LITERAL_DEFAULT;
 				
+				offsets.add(new LanguageStyleOffset(token.getStartOffset(), token.getLength(), styleable));
+				break;
+
 			default:
 				break;
 			}
