@@ -4,11 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.ast.CompilationUnit;
-import com.neaterbits.compiler.ast.Module;
-import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
-import com.neaterbits.compiler.ast.parser.SourceFile;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
@@ -30,21 +22,14 @@ import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
-import com.neaterbits.compiler.resolver.FilesResolver;
-import com.neaterbits.compiler.resolver.ResolveFilesResult;
-import com.neaterbits.compiler.resolver.ResolveLogger;
-import com.neaterbits.compiler.resolver.UnresolvedDependencies;
-import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
+import com.neaterbits.compiler.resolver.ResolveError;
+import com.neaterbits.compiler.resolver.ast.BuildAndResolve;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
-import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
-import com.neaterbits.compiler.util.modules.ModuleSpec;
-import com.neaterbits.compiler.util.modules.SourceModuleSpec;
 import com.neaterbits.compiler.util.parse.CompileError;
-import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.resource.FileSystemResourcePath;
@@ -210,7 +195,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			
 			try (FileInputStream inputStream = new FileInputStream(file)) {
 			
-				final ParsedFile parsedFile = parseFile(parser, inputStream, file, programModel, resolvedTypes);
+				final ParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, file, resolvedTypes);
 				
 				final SourceFileModel sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), parsedFile.getErrors(), resolvedTypes);
 
@@ -219,7 +204,15 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			}
 		}
 
-		resolveParsedModule(modulePath, dependencies, compilationUnits.values(), programModel, resolvedTypes);
+		BuildAndResolve.resolveParsedModule(
+				modulePath,
+				dependencies,
+				ModuleResourcePath::getModuleId,
+				ModuleResourcePath::getFile,
+				compilationUnits.values(),
+				programModel,
+				JavaTypes.getBuiltinTypes(),
+				resolvedTypes);
 		
 		return sourceFileModels;
 	}
@@ -233,15 +226,16 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		final SourceFileModel sourceFileModel;
 		
 		try {
-			
 			final ObjectProgramModel programModel = new ObjectProgramModel();
 			
-			final ParsedFile parsedFile = parseFile(parser, inputStream, sourceFilePath.getFile(), programModel, resolvedTypes);
+			final ParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, sourceFilePath.getFile(), resolvedTypes);
 			
-			final Collection<ResolveError> resolveErrors = resolveParsedFiles(
+			final Collection<ResolveError> resolveErrors = BuildAndResolve.resolveParsedFiles(
 					Arrays.asList(ProgramLoader.makeCompiledFile(parsedFile)),
 					programModel,
-					resolvedTypes);
+					JavaTypes.getBuiltinTypes(),
+					resolvedTypes)
+					.getResolveErrors();
 			
 			final List<CompileError> allErrors = new ArrayList<>(parsedFile.getErrors().size() + resolveErrors.size());
 			
@@ -255,104 +249,6 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		}
 		
 		return sourceFileModel;
-	}
-
-	private static ParsedFile parseFile(
-			Java8AntlrParser parser,
-			InputStream inputStream,
-			File file,
-			ObjectProgramModel programModel,
-			ResolvedTypes resolvedTypes) throws IOException {
-		
-		final List<ParseError> errors = new ArrayList<>();
-		
-		final CompilationUnit compilationUnit = parser.parse(inputStream, errors, file.getName(), null);
-		
-		if (compilationUnit == null) {
-			throw new IllegalStateException();
-		}
-		
-		final List<CompileError> compileErrors = errors.stream().map(error -> (CompileError)error).collect(Collectors.toList());
-		
-		final ParsedFile parsedFile = new ParsedFile(
-				new SourceFile(file),
-				compileErrors,
-				null,
-				compilationUnit);
-		
-		return parsedFile;
-	}
-
-	private static void resolveParsedModule(
-			ModuleResourcePath modulePath,
-			List<ModuleResourcePath> dependencies,
-			Collection<ParsedFile> compilationUnits,
-			ObjectProgramModel programModel,
-			ResolvedTypes resolvedTypes) {
-		
-		final ModuleSpec moduleSpec = new SourceModuleSpec(
-				modulePath.getModuleId(),
-				dependencies.stream()
-					.map(dependency -> new SourceModuleSpec(dependency.getModuleId(), null, dependency.getFile()))
-					.collect(Collectors.toList()),
-				modulePath.getFile());
-		
-		final Module module = new Module(moduleSpec, compilationUnits);
-		
-		final Program program = new Program(module);
-
-		final Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);
-		
-		resolveParsedFiles(allFiles, programModel, resolvedTypes);
-	}
-	
-
-	private static Collection<ResolveError> resolveParsedFiles(
-			Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles,
-			ObjectProgramModel programModel,
-			ResolvedTypes resolvedTypes) {
-
-		final ASTModelImpl astModel = new ASTModelImpl();
-
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> logger = new ResolveLogger<>(System.out);
-
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
-			= new FilesResolver<>(
-					logger,
-					JavaTypes.getBuiltinTypes(),
-					scopedName -> {
-						
-						System.out.println("## lookup scoped name " + scopedName);
-						
-						return resolvedTypes.lookup(scopedName);
-						
-					},
-					programModel,
-					astModel);
-		
-		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = filesResolver.resolveFiles(allFiles);
-		
-		final UnresolvedDependencies unresolved = resolveResult.getUnresolvedDependencies();
-
-		final List<ResolveError> resolveErrors;
-		
-		if (!unresolved.isEmpty()) {
-			resolveErrors = new ArrayList<>(unresolved.getCount());
-			
-			unresolved.forEach((fileSpec, compiledTypeDependency) -> {
-				
-				final ResolveError resolveError = new ResolveError("Cannot resolve name " + compiledTypeDependency.getScopedName().toString());
-				
-				resolveErrors.add(resolveError);
-			});
-		}
-		else {
-			resolveErrors = Collections.emptyList();
-		}
-		
-		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
-	
-		return resolveErrors;
 	}
 }
 
