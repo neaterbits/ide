@@ -26,6 +26,7 @@ import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.ast.BuildAndResolve;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
+import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
@@ -195,7 +196,11 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			
 			try (FileInputStream inputStream = new FileInputStream(file)) {
 			
-				final ParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, file, resolvedTypes);
+				final ParsedFile parsedFile = BuildAndResolve.parseFile(
+						parser,
+						inputStream,
+						new FileSystemFileSpec(file),
+						resolvedTypes);
 				
 				final SourceFileModel sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), parsedFile.getErrors(), resolvedTypes);
 
@@ -228,7 +233,11 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		try {
 			final ObjectProgramModel programModel = new ObjectProgramModel();
 			
-			final ParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, sourceFilePath.getFile(), resolvedTypes);
+			final ParsedFile parsedFile = BuildAndResolve.parseFile(
+					parser,
+					inputStream,
+					new FileSystemFileSpec(sourceFilePath.getFile()),
+					resolvedTypes);
 			
 			final Collection<ResolveError> resolveErrors = BuildAndResolve.resolveParsedFiles(
 					Arrays.asList(ProgramLoader.makeCompiledFile(parsedFile)),
