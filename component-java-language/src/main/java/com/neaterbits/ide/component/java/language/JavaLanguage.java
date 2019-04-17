@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
@@ -26,6 +25,7 @@ import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.ast.BuildAndResolve;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
@@ -186,7 +186,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		final Java8AntlrParser parser = new Java8AntlrParser(false);
 
 		final Map<SourceFileResourcePath, SourceFileModel> sourceFileModels = new HashMap<>(files.size());
-		final Map<SourceFileResourcePath, ParsedFile> compilationUnits = new HashMap<>(files.size());
+		final Map<SourceFileResourcePath, ASTParsedFile> compilationUnits = new HashMap<>(files.size());
 		
 		final ObjectProgramModel programModel = new ObjectProgramModel();
 		
@@ -196,7 +196,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			
 			try (FileInputStream inputStream = new FileInputStream(file)) {
 			
-				final ParsedFile parsedFile = BuildAndResolve.parseFile(
+				final ASTParsedFile parsedFile = BuildAndResolve.parseFile(
 						parser,
 						inputStream,
 						new FileSystemFileSpec(file),
@@ -233,13 +233,15 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		try {
 			final ObjectProgramModel programModel = new ObjectProgramModel();
 			
-			final ParsedFile parsedFile = BuildAndResolve.parseFile(
+			final FileSpec fileSpec = new FileSystemFileSpec(sourceFilePath.getFile());
+			
+			final ASTParsedFile parsedFile = BuildAndResolve.parseFile(
 					parser,
 					inputStream,
-					new FileSystemFileSpec(sourceFilePath.getFile()),
+					fileSpec,
 					resolvedTypes);
 			
-			final Collection<ResolveError> resolveErrors = BuildAndResolve.resolveParsedFiles(
+			final Map<FileSpec, List<ResolveError>> resolveErrors = BuildAndResolve.resolveParsedFiles(
 					Arrays.asList(ProgramLoader.makeCompiledFile(parsedFile)),
 					programModel,
 					JavaTypes.getBuiltinTypes(),
@@ -249,8 +251,13 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			final List<CompileError> allErrors = new ArrayList<>(parsedFile.getErrors().size() + resolveErrors.size());
 			
 			allErrors.addAll(parsedFile.getErrors());
-			allErrors.addAll(resolveErrors);
 			
+			final List<ResolveError> resolve = resolveErrors.get(fileSpec);
+			
+			if (resolve != null) {
+				allErrors.addAll(resolve);
+			}
+
 			sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), allErrors, resolvedTypes);
 
 		} catch (IOException ex) {

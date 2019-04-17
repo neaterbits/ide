@@ -24,7 +24,6 @@ import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.LoadType;
 import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
 import com.neaterbits.compiler.codemap.DynamicMethodOverrideMap;
-import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
@@ -200,44 +199,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	}
 	
 	@Override
-	public TypeName lookup(ScopedName scopedName) {
-
-		TypeName result;
-		
-		if (scopedName.hasScope()) {
-		
-			result = null;
-			
-			final String [] parts = scopedName.getParts();
-			
-			// Try all combinations of type names
-			for (int numOuterTypes = 0; numOuterTypes < parts.length - 1; ++ numOuterTypes) {
-				final TypeName typeName = new TypeName(
-						numOuterTypes == parts.length - 1
-							? null
-							: Arrays.copyOf(parts, parts.length - 1 - numOuterTypes),
-							
-						numOuterTypes == 0
-							? null
-							: Arrays.copyOfRange(parts, parts.length - 1 - numOuterTypes, parts.length - 1),
-						
-						parts[parts.length - 1]);
-		
-				if (hasType(typeName)) {
-					result = typeName;
-					break;
-				}
-			}
-		}
-		else {
-			// not fully scoped so cannot resolve
-			result = null;
-		}
-		
-		return result;
-	}
-	
-	private boolean hasType(TypeName typeName) {
+	public boolean hasType(TypeName typeName) {
 		
 		for (TypeSuggestionFinder typeSuggestionFinder : typeSuggestionFinders) {
 			if (typeSuggestionFinder.hasType(typeName)) {
