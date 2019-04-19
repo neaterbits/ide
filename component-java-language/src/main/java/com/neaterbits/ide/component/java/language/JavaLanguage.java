@@ -17,6 +17,7 @@ import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
+import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
@@ -188,7 +189,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		final Map<SourceFileResourcePath, SourceFileModel> sourceFileModels = new HashMap<>(files.size());
 		final Map<SourceFileResourcePath, ASTParsedFile> compilationUnits = new HashMap<>(files.size());
 		
-		final ObjectProgramModel programModel = new ObjectProgramModel();
+		final ObjectProgramModel programModel = new JavaProgramModel();
 		
 		for (SourceFileResourcePath path : files) {
 		
@@ -231,7 +232,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		final SourceFileModel sourceFileModel;
 		
 		try {
-			final ObjectProgramModel programModel = new ObjectProgramModel();
+			final ObjectProgramModel programModel = new JavaProgramModel();
 			
 			final FileSpec fileSpec = new FileSystemFileSpec(sourceFilePath.getFile());
 			
