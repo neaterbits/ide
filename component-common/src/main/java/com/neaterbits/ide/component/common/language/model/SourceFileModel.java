@@ -10,9 +10,9 @@ import com.neaterbits.compiler.util.parse.CompileError;
 
 public interface SourceFileModel {
 
-	void iterate(SourceTokenVisitor visitor);
+	void iterate(SourceTokenVisitor visitor, boolean visitPlaceholderElements);
 
-	void iterate(long offset, long length, SourceTokenVisitor visitor);
+	void iterate(long offset, long length, SourceTokenVisitor visitor, boolean visitPlaceholderElements);
 
 	ISourceToken getSourceTokenAt(long offset);
 

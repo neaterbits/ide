@@ -36,18 +36,19 @@ public final class CompilerSourceFileModel implements SourceFileModel {
 	}
 
 	@Override
-	public void iterate(SourceTokenVisitor visitor) {
-		programModel.iterate(sourceFile, visitor, resolvedTypes);
+	public void iterate(SourceTokenVisitor visitor, boolean visitPlaceholderElements) {
+		programModel.iterate(sourceFile, visitor, resolvedTypes, visitPlaceholderElements);
 	}
 
 	@Override
-	public void iterate(long offset, long length, SourceTokenVisitor visitor) {
+	public void iterate(long offset, long length, SourceTokenVisitor visitor, boolean visitPlaceholderElements) {
 
 		iterate(token -> {
 			if (token.getStartOffset() >= offset && token.getStartOffset() < offset + length) {
 				visitor.onToken(token);
 			}
-		});
+		},
+		visitPlaceholderElements);
 	}
 
 	@Override

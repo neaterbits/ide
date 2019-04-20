@@ -30,6 +30,8 @@ import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 
 public final class SWTCompiledFileView implements CompiledFileView {
 
+	private static final boolean VIEW_PLACEHOLDER_ELEMENTS = true;
+	
 	private final StyledText textWidget;
 	private final Label cursorOffsetLabel;
 	private final Label tokenTypeLabel;
@@ -192,7 +194,7 @@ public final class SWTCompiledFileView implements CompiledFileView {
 	
 			final SWTCompiledFileViewMakeTextVisitor visitor = new SWTCompiledFileViewMakeTextVisitor(sb, editorCursorOffset);
 			
-			sourceFileModel.iterate(visitor);
+			sourceFileModel.iterate(visitor, VIEW_PLACEHOLDER_ELEMENTS);
 			
 			if (!updateCursorOnly) {
 				textWidget.setText(sb.toString());

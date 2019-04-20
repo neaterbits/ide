@@ -54,7 +54,8 @@ final class JavaTokenLanguageStyling implements LanguageStyling {
 			default:
 				break;
 			}
-		});
+		},
+		false);
 		
 		
 		return offsets;

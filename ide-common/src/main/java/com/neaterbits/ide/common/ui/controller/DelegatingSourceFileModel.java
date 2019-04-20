@@ -38,18 +38,18 @@ final class DelegatingSourceFileModel implements SourceFileModel {
 	}
 
 	@Override
-	public void iterate(SourceTokenVisitor visitor) {
+	public void iterate(SourceTokenVisitor visitor, boolean visitPlaceholderElements) {
 
 		if (delegate != null) {
-			delegate.iterate(visitor);
+			delegate.iterate(visitor, visitPlaceholderElements);
 		}
 	}
 
 	@Override
-	public void iterate(long offset, long length, SourceTokenVisitor visitor) {
+	public void iterate(long offset, long length, SourceTokenVisitor visitor, boolean visitPlaceholderElements) {
 
 		if (delegate != null) {
-			delegate.iterate(offset, length, visitor);
+			delegate.iterate(offset, length, visitor, visitPlaceholderElements);
 		}
 	}
 

@@ -70,6 +70,9 @@ final class SWTCompiledFileViewMakeTextVisitor implements SourceTokenVisitor {
 
 	@Override
 	public void onPush(ISourceToken token) {
+		
+		Objects.requireNonNull(token);
+		
 		indent ++;
 		
 		if (foundCursorElement == null) {
@@ -86,7 +89,7 @@ final class SWTCompiledFileViewMakeTextVisitor implements SourceTokenVisitor {
 		
 			final ISourceToken matchingToken;
 			
-			if (token.getStartOffset() <= editorCursorOffset && token.getStartOffset() + token.getLength() >= editorCursorOffset) {
+			if (token.getStartOffset() <= editorCursorOffset && token.getStartOffset() + token.getLength() >= editorCursorOffset && !token.isPlaceholder()) {
 				
 				// System.out.println("## matching token " + token.getTokenTypeDebugName());
 				
