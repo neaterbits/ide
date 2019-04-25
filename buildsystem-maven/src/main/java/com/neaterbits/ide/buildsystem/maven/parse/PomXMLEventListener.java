@@ -37,7 +37,8 @@ public final class PomXMLEventListener implements XMLEventListener<Void> {
 				event.getLocation().getLineNumber(),
 				event.getLocation().getColumnNumber(),
 				event.getLocation().getCharacterOffset(),
-				null);
+				null,
+				-1);
 		
 	}
 	

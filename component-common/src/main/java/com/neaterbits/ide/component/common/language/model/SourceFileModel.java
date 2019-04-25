@@ -6,6 +6,7 @@ import java.util.List;
 import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.compiler.util.model.IType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
+import com.neaterbits.compiler.util.model.VariableScope;
 import com.neaterbits.compiler.util.parse.CompileError;
 
 public interface SourceFileModel {
@@ -19,6 +20,8 @@ public interface SourceFileModel {
 	IType getVariableType(ISourceToken token);
 
 	List<CompileError> getParserErrors();
+
+	VariableScope getVariableScope(ISourceToken token);
 	
 	public static ISourceTokenProperties getProperties(ISourceToken token) {
 
@@ -47,15 +50,14 @@ public interface SourceFileModel {
 			flags.add(SourceElementFlag.RENAMEABLE);
 			break;
 			
-		case INSTANCE_VARIABLE:
+		case VARIABLE_REFERENCE:
 			flags.add(SourceElementFlag.RENAMEABLE);
 			break;
-			
-		case LOCAL_VARIABLE:
-			flags.add(SourceElementFlag.RENAMEABLE);
-			break;
-			
-		case CALL_PARAMETER:
+
+		case INSTANCE_VARIABLE_DECLARATION_NAME:
+		case STATIC_VARIABLE_DECLARATION_NAME:
+		case CALL_PARAMETER_DECLARATION_NAME:
+		case LOCAL_VARIABLE_DECLARATION_NAME:
 			flags.add(SourceElementFlag.RENAMEABLE);
 			break;
 			
@@ -63,9 +65,6 @@ public interface SourceFileModel {
 			break;
 
 		case IMPORT_NAME:
-			break;
-			
-		case INSTANCE_VARIABLE_DECLARATION_NAME:
 			break;
 			
 		case BUILTIN_TYPE_NAME:

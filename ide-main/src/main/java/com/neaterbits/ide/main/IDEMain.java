@@ -13,6 +13,8 @@ import com.neaterbits.ide.common.scheduling.IDEScheduler;
 import com.neaterbits.ide.common.scheduling.IDESchedulerImpl;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
 import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.BuildRootImpl;
@@ -67,11 +69,22 @@ public class IDEMain {
 				
 				final CompileableLanguage language = new JavaLanguage();
 
-				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(asyncExecutor, language, new JavaBytecodeFormat(), buildRoot);
+				final CompilerCodeMap compilerCodeMap = new IntCompilerCodeMap();
+				
+				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(
+						asyncExecutor,
+						language,
+						new JavaBytecodeFormat(),
+						buildRoot,
+						compilerCodeMap);
 
 				final IDEScheduler ideScheduler = new IDESchedulerImpl(asyncExecutor);
 				
-				final SourceFilesModel sourceFilesModel = new SourceFilesModel(ideScheduler, ideComponents.getLanguages(), codeMapGatherer);
+				final SourceFilesModel sourceFilesModel = new SourceFilesModel(
+						ideScheduler,
+						ideComponents.getLanguages(),
+						codeMapGatherer,
+						compilerCodeMap);
 				
 				new IDEController(buildRoot, ui, config, ideComponents, sourceFilesModel, codeMapGatherer.getModel());
 				

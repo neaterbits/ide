@@ -21,9 +21,8 @@ import com.neaterbits.compiler.bytecode.common.TypeToDependencyFile;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.CreateType;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.LoadType;
-import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
-import com.neaterbits.compiler.codemap.DynamicMethodOverrideMap;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
@@ -45,7 +44,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	private final TypeToDependencyFile typeToDependencyFile;
 	
 	private final HashTypeMap<ClassInfo> typeMap;
-	private final IntCodeMap codeMap;
+	private final CompilerCodeMap codeMap;
 
 	private final List<TypeSuggestionFinder> typeSuggestionFinders;
 
@@ -53,7 +52,12 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	
 	private boolean codeScanComplete;
 	
-	public CodeMapGatherer(AsyncExecutor asyncExecutor, CompileableLanguage language, BytecodeFormat bytecodeFormat, BuildRoot buildRoot) {
+	public CodeMapGatherer(
+			AsyncExecutor asyncExecutor,
+			CompileableLanguage language,
+			BytecodeFormat bytecodeFormat,
+			BuildRoot buildRoot,
+			CompilerCodeMap codeMap) {
 
 		Objects.requireNonNull(asyncExecutor);
 		Objects.requireNonNull(language);
@@ -65,7 +69,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		this.typeToDependencyFile = new TypeToDependencyFile();
 		
 		this.typeMap = new HashTypeMap<>(ClassInfo::getTypeNo);
-		this.codeMap = new IntCodeMap(new DynamicMethodOverrideMap());
+		this.codeMap = codeMap;
 		
 		final TypeSuggestionFinder typeMapSuggestionFinder = new TypeSuggestionFinder() {
 			@Override

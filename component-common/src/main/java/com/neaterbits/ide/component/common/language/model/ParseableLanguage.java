@@ -1,5 +1,6 @@
 package com.neaterbits.ide.component.common.language.model;
 
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 
 import java.io.IOException;
@@ -15,8 +16,13 @@ public interface ParseableLanguage {
 			ModuleResourcePath modulePath,
 			List<ModuleResourcePath> dependencies,
 			List<SourceFileResourcePath> files,
-			ResolvedTypes resolvedTypes) throws IOException;
+			ResolvedTypes resolvedTypes,
+			CompilerCodeMap codeMap) throws IOException;
 	
-	SourceFileModel parseAndResolveChangedFile(SourceFileResourcePath sourceFilePath, String string, ResolvedTypes resolvedTypes);
+	SourceFileModel parseAndResolveChangedFile(
+			SourceFileResourcePath sourceFilePath,
+			String string,
+			ResolvedTypes resolvedTypes,
+			CompilerCodeMap codeMap);
 	
 }

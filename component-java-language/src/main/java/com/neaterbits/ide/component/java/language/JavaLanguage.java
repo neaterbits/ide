@@ -13,10 +13,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.compiler.java.JavaImportsModel;
 import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
@@ -30,6 +33,7 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
@@ -182,7 +186,8 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			ModuleResourcePath modulePath,
 			List<ModuleResourcePath> dependencies,
 			List<SourceFileResourcePath> files,
-			ResolvedTypes resolvedTypes) throws IOException {
+			ResolvedTypes resolvedTypes,
+			CompilerCodeMap codeMap) throws IOException {
 
 		final Java8AntlrParser parser = new Java8AntlrParser(false);
 
@@ -203,7 +208,13 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 						new FileSystemFileSpec(file),
 						resolvedTypes);
 				
-				final SourceFileModel sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), parsedFile.getErrors(), resolvedTypes);
+				final SourceFileModel sourceFileModel = new CompilerSourceFileModel(
+						programModel,
+						parsedFile.getParsed(),
+						parsedFile.getErrors(),
+						resolvedTypes,
+						-1,
+						codeMap);
 
 				compilationUnits.put(path, parsedFile);
 				sourceFileModels.put(path, sourceFileModel);
@@ -224,7 +235,11 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 	}
 
 	@Override
-	public SourceFileModel parseAndResolveChangedFile(SourceFileResourcePath sourceFilePath, String string, ResolvedTypes resolvedTypes) {
+	public SourceFileModel parseAndResolveChangedFile(
+			SourceFileResourcePath sourceFilePath,
+			String string,
+			ResolvedTypes resolvedTypes,
+			CompilerCodeMap codeMap) {
 
 		final Java8AntlrParser parser = new Java8AntlrParser(false);
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream(string.getBytes());
@@ -232,7 +247,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		final SourceFileModel sourceFileModel;
 		
 		try {
-			final ObjectProgramModel programModel = new JavaProgramModel();
+			final ImportsModel<CompilationUnit> importsModel = new JavaImportsModel();
 			
 			final FileSpec fileSpec = new FileSystemFileSpec(sourceFilePath.getFile());
 			
@@ -244,7 +259,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			
 			final Map<FileSpec, List<ResolveError>> resolveErrors = BuildAndResolve.resolveParsedFiles(
 					Arrays.asList(ProgramLoader.makeCompiledFile(parsedFile)),
-					programModel,
+					importsModel,
 					JavaTypes.getBuiltinTypes(),
 					resolvedTypes)
 					.getResolveErrors();
@@ -259,7 +274,13 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 				allErrors.addAll(resolve);
 			}
 
-			sourceFileModel = new CompilerSourceFileModel(programModel, parsedFile.getParsed(), allErrors, resolvedTypes);
+			sourceFileModel = new CompilerSourceFileModel(
+					new JavaProgramModel(),
+					parsedFile.getParsed(),
+					allErrors,
+					resolvedTypes,
+					-1,
+					codeMap);
 
 		} catch (IOException ex) {
 			throw new IllegalStateException(ex);

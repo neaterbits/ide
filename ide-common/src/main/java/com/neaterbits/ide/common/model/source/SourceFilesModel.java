@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
@@ -24,10 +25,11 @@ public final class SourceFilesModel {
 	private final IDEScheduler scheduler;
 	private final Languages languages;
 	private final ResolvedTypes resolvedTypes;
+	private final CompilerCodeMap codeMap;
 	
 	private final Map<SourceFileInfo, SourceFileModel> parsedSourceFiles;
 	
-	public SourceFilesModel(IDEScheduler scheduler, Languages languages, ResolvedTypes resolvedTypes) {
+	public SourceFilesModel(IDEScheduler scheduler, Languages languages, ResolvedTypes resolvedTypes, CompilerCodeMap codeMap) {
 		
 		Objects.requireNonNull(scheduler);
 		Objects.requireNonNull(languages);
@@ -36,6 +38,7 @@ public final class SourceFilesModel {
 		this.scheduler = scheduler;
 		this.languages = languages;
 		this.resolvedTypes = resolvedTypes;
+		this.codeMap = codeMap;
 		this.parsedSourceFiles = new HashMap<>();
 	}
 
@@ -47,7 +50,7 @@ public final class SourceFilesModel {
 		final LanguageComponent languageComponent = languages.getLanguageComponent(language);
 		
 		final Map<SourceFileResourcePath, SourceFileModel> sourceFileModels
-				= languageComponent.getParseableLanguage().parseModule(modulePath, dependencies, sourceFiles, resolvedTypes);
+				= languageComponent.getParseableLanguage().parseModule(modulePath, dependencies, sourceFiles, resolvedTypes, codeMap);
 
 		
 		for (Map.Entry<SourceFileResourcePath, SourceFileModel> entry : sourceFileModels.entrySet()) {
@@ -70,7 +73,8 @@ public final class SourceFilesModel {
 					final SourceFileModel sourceFileModel  = file.getLanguage().getParseableLanguage().parseAndResolveChangedFile(
 							sourceFile.getPath(),
 							text.asString(),
-							sourceFile.getResolvedTypes());
+							sourceFile.getResolvedTypes(),
+							codeMap);
 
 					return sourceFileModel;
 				},

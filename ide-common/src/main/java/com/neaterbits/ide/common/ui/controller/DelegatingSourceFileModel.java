@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.compiler.util.model.IType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
+import com.neaterbits.compiler.util.model.VariableScope;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 
@@ -51,6 +52,11 @@ final class DelegatingSourceFileModel implements SourceFileModel {
 		if (delegate != null) {
 			delegate.iterate(offset, length, visitor, visitPlaceholderElements);
 		}
+	}
+
+	@Override
+	public VariableScope getVariableScope(ISourceToken token) {
+		return delegate != null ? delegate.getVariableScope(token) : null;
 	}
 
 	@Override
