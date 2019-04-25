@@ -5,12 +5,14 @@ import java.util.Objects;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.TypeSource;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 
 final class ClassInfo implements TypeSuggestion {
 
 	private final int typeNo;
 	private final TypeName typeName;
+	private final TypeSource typeSource;
 	private final String namespace;
 	private final String binaryName;
 	private final TypeVariant typeVariant;
@@ -19,6 +21,7 @@ final class ClassInfo implements TypeSuggestion {
 	ClassInfo(
 			int typeNo,
 			TypeName typeName,
+			TypeSource typeSource,
 			String namespace,
 			String binaryName,
 			SourceFileResourcePath sourceFileResourcePath,
@@ -29,9 +32,11 @@ final class ClassInfo implements TypeSuggestion {
 		}
 		
 		Objects.requireNonNull(typeName);
+		Objects.requireNonNull(typeSource);
 		
 		this.typeNo = typeNo;
 		this.typeName = typeName;
+		this.typeSource = typeSource;
 		this.namespace = namespace;
 		this.binaryName = binaryName;
 		this.typeVariant = classByteCode.getTypeVariant();
@@ -40,6 +45,10 @@ final class ClassInfo implements TypeSuggestion {
 	
 	int getTypeNo() {
 		return typeNo;
+	}
+	
+	TypeSource getTypeSource() {
+		return typeSource;
 	}
 
 	@Override

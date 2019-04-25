@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner.Namespace;
@@ -54,7 +55,7 @@ final class SourceFileScannerTypeSuggestionFinder extends TypeSuggestionFinder {
 	}
 	
 	@Override
-	boolean hasType(TypeName typeName) {
+	boolean hasType(TypeName typeName, TypeSources typeSources) {
 		return false;
 	}
 

@@ -31,9 +31,16 @@ final class PrerequisitesBuilderProjectDependencies extends PrerequisitesBuilder
 						CompiledModuleFileResourcePath::getFile,
 						projectResourcePath -> "Project dependency " + projectResourcePath.getLast().getName());
 			})
-			.collectSubTargetsToProduct((module, dependencies) -> new ProjectModuleDependencyList(
+			.collectSubTargetsToProduct((module, dependencies) -> {
+				
+				System.out.println("## collect project dependencies " + module + " " + dependencies);
+				
+				final ProjectModuleDependencyList list = new ProjectModuleDependencyList(
 					module,
-					dependencies));
+					dependencies);
+						
+				return list;
+				});
 
 	}
 }

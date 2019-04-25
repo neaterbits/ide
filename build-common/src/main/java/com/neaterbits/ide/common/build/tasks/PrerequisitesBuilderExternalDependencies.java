@@ -1,6 +1,8 @@
 package com.neaterbits.ide.common.build.tasks;
 
 
+import java.util.List;
+
 import com.neaterbits.ide.common.build.model.LibraryDependency;
 import com.neaterbits.ide.common.build.model.compile.ExternalModuleDependencyList;
 import com.neaterbits.ide.common.resource.LibraryResourcePath;
@@ -25,11 +27,33 @@ public final class PrerequisitesBuilderExternalDependencies<CONTEXT extends Task
 					LibraryDependency.class,
 					
 					// from project all module target
-					(context, module) -> ModuleBuilderUtil.transitiveProjectExternalDependencies(context, module),
+					(context, module) -> {
+
+						final List<LibraryDependency> list = ModuleBuilderUtil.transitiveProjectExternalDependencies(context, module);
+
+						System.out.println("## get project transitive library dependencies for " + module + " " + list);
+						
+						try {
+							throw new Exception();
+						}
+						catch (Exception ex) {
+							ex.printStackTrace();
+						}
+						
+						return list;
+					},
 						
 					// from external dependencies found above
-					(context, dep) -> ModuleBuilderUtil.transitiveLibraryDependencies(context, dep),
+					(context, dep) -> {
 						
+						
+						final List<LibraryDependency> list = ModuleBuilderUtil.transitiveLibraryDependencies(context, dep);
+						
+						System.out.println("## get library transitive dependencies for " + dep + " " + list);
+						
+						
+						return list;
+					},
 					dependency -> dependency) // already of ItemType
 			
 			.buildBy(st -> {
@@ -47,7 +71,12 @@ public final class PrerequisitesBuilderExternalDependencies<CONTEXT extends Task
 					return null;
 				});
 			})
-			.collectSubTargetsToProduct((module, dependencies) -> new ExternalModuleDependencyList(module, dependencies));
+			.collectSubTargetsToProduct((module, dependencies) -> {
+				
+				System.out.println("## collect external dependencies " + module + " " + dependencies);
+				
+				return new ExternalModuleDependencyList(module, dependencies);
+			});
 
 	}
 	

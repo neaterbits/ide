@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
+import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
@@ -25,6 +26,8 @@ import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.TypeSource;
+import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassParameters;
 import com.neaterbits.ide.common.build.model.BuildRoot;
@@ -68,7 +71,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		
 		this.typeToDependencyFile = new TypeToDependencyFile();
 		
-		this.typeMap = new HashTypeMap<>(ClassInfo::getTypeNo);
+		this.typeMap = new HashTypeMap<>(ClassInfo::getTypeNo, ClassInfo::getTypeSource);
 		this.codeMap = codeMap;
 		
 		final TypeSuggestionFinder typeMapSuggestionFinder = new TypeSuggestionFinder() {
@@ -94,8 +97,8 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			}
 
 			@Override
-			boolean hasType(TypeName typeName) {
-				return typeMap.hasType(typeName);
+			boolean hasType(TypeName typeName, TypeSources typeSources) {
+				return typeMap.hasType(typeName, typeSources);
 			}
 		};
 		
@@ -135,8 +138,12 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			}
 
 			@Override
-			boolean hasType(TypeName typeName) {
-				return typeToDependencyFile.hasType(typeName);
+			boolean hasType(TypeName typeName, TypeSources typeSources) {
+				final DependencyFile dependencyFile =  typeToDependencyFile.getDependencyFileFor(typeName);
+				
+				return dependencyFile != null
+						? typeSources.isSet(dependencyFile.getTypeSource())
+						: false;
 			}
 		};
 		
@@ -145,9 +152,10 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 				dependencyFileSuggestionFinder,
 				new SourceFileScannerTypeSuggestionFinder(buildRoot, language));
 		
-		this.createType = (typeName, typeNo, classByteCode) -> new ClassInfo(
+		this.createType = (typeName, typeSource, typeNo, classByteCode) -> new ClassInfo(
 				typeNo,
 				typeName,
+				typeSource,
 				language.getNamespaceString(typeName),
 				language.getBinaryName(typeName),
 				null,
@@ -203,10 +211,10 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	}
 	
 	@Override
-	public boolean hasType(TypeName typeName) {
+	public boolean hasType(TypeName typeName, TypeSources typeSources) {
 		
 		for (TypeSuggestionFinder typeSuggestionFinder : typeSuggestionFinders) {
-			if (typeSuggestionFinder.hasType(typeName)) {
+			if (typeSuggestionFinder.hasType(typeName, typeSources)) {
 				return true;
 			}
 		}
@@ -229,15 +237,15 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	}
 
 	public void addCompiledModuleFileTypes(CompiledModuleFileResourcePath module, Set<TypeName> types) {
-		typeToDependencyFile.mergeModuleDependencyTypes(new DependencyFile(module.getFile(), true), types);
+		typeToDependencyFile.mergeModuleDependencyTypes(new DependencyFile(module.getFile(), TypeSource.LIBRARY), types);
 	}
 	
 	public void addLibraryFileTypes(LibraryResourcePath module, Set<TypeName> types) {
-		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(module.getFile(), true), types);
+		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(module.getFile(), TypeSource.LIBRARY), types);
 	}
 
 	public void addSystemLibraryFileTypes(File libraryFile, Set<TypeName> types) {
-		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(libraryFile, true), types);
+		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(libraryFile, TypeSource.LIBRARY), types);
 	}
 
 	public void addSystemLibraryFile(DependencyFile file) {
@@ -286,11 +294,13 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		
 		try (FileInputStream inputStream = new FileInputStream(classFile)) {
 
-			loadAndAddToCodeMap(typeName, type -> {
-				ClassBytecode classBytecode = null;
+			final TypeSource typeSource = TypeSource.COMPILED_PROJECT_MODULE;
+			
+			loadAndAddToCodeMap(typeName, typeSource, type -> {
+				ClassByteCodeWithTypeSource classBytecode = null;
 				
 				try {
-					classBytecode = bytecodeFormat.loadClassBytecode(inputStream);
+					classBytecode = bytecodeFormat.loadClassBytecode(inputStream, typeSource);
 				} catch (IOException | ClassFileException ex) {
 					ex.printStackTrace();
 				}
@@ -309,11 +319,11 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	}
 
 	// load classfile from local library
-	void loadAndAddToCodeMap(TypeName typeName) throws IOException, ClassFileException {
+	void loadAndAddToCodeMap(TypeName typeName, TypeSource typeSource) throws IOException, ClassFileException {
 		
-		loadAndAddToCodeMap(typeName, type -> {
+		loadAndAddToCodeMap(typeName, typeSource, type -> {
 					
-					ClassBytecode classBytecode = null;
+					ClassByteCodeWithTypeSource classBytecode = null;
 					
 					try {
 						classBytecode = bytecodeFormat.loadClassBytecode(typeToDependencyFile, type);
@@ -340,7 +350,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		return addedByteCode != null;
 	}
 	
-	private void loadAndAddToCodeMap(TypeName typeName, LoadType loadType) throws IOException, ClassFileException {
+	private void loadAndAddToCodeMap(TypeName typeName, TypeSource typeSource, LoadType loadType) throws IOException, ClassFileException {
 		
 		Objects.requireNonNull(typeName);
 		
