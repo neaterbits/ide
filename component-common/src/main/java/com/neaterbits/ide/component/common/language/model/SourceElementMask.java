@@ -2,7 +2,7 @@ package com.neaterbits.ide.component.common.language.model;
 
 import java.util.Collection;
 
-import com.neaterbits.ide.util.EnumMask;
+import com.neaterbits.compiler.util.EnumMask;
 
 final class SourceElementMask extends EnumMask<SourceElementFlag> {
 

@@ -1,6 +1,6 @@
 package com.neaterbits.ide.util.ui.text.styling;
 
-import com.neaterbits.ide.util.EnumMask;
+import com.neaterbits.compiler.util.EnumMask;
 
 public class TextStyles extends EnumMask<TextStyle> {
 	
