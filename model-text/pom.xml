@@ -10,7 +10,7 @@
   <dependencies>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
-  		<artifactId>util</artifactId>
+  		<artifactId>ide-util</artifactId>
   		<version>${project.version}</version>
 	</dependency>
   </dependencies>
