@@ -13,13 +13,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.java.JavaImportsModel;
 import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
@@ -33,7 +31,6 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
@@ -228,7 +225,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 				ModuleResourcePath::getFile,
 				compilationUnits.values(),
 				programModel,
-				JavaTypes.getBuiltinTypes(),
+				JavaTypes.getBuiltinTypeRefs(),
 				resolvedTypes);
 		
 		return sourceFileModels;
@@ -247,7 +244,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		final SourceFileModel sourceFileModel;
 		
 		try {
-			final ImportsModel<CompilationUnit> importsModel = new JavaImportsModel();
+			final ObjectProgramModel programModel = new JavaProgramModel();
 			
 			final FileSpec fileSpec = new FileSystemFileSpec(sourceFilePath.getFile());
 			
@@ -259,8 +256,8 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			
 			final Map<FileSpec, List<ResolveError>> resolveErrors = BuildAndResolve.resolveParsedFiles(
 					Arrays.asList(ProgramLoader.makeCompiledFile(parsedFile)),
-					importsModel,
-					JavaTypes.getBuiltinTypes(),
+					programModel,
+					JavaTypes.getBuiltinTypeRefs(),
 					resolvedTypes)
 					.getResolveErrors();
 			
