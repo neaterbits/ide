@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.ast.parser.ASTParsedFile;
+import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
@@ -24,9 +25,9 @@ import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.compiler.resolver.ResolveError;
-import com.neaterbits.compiler.resolver.ast.BuildAndResolve;
-import com.neaterbits.compiler.resolver.ast.ProgramLoader;
-import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
+import com.neaterbits.compiler.resolver.ast.objects.BuildAndResolve;
+import com.neaterbits.compiler.resolver.ast.objects.ProgramLoader;
+import com.neaterbits.compiler.resolver.ast.objects.model.ObjectProgramModel;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.Strings;
@@ -172,6 +173,11 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 
 		return bytecodeFormat.getTypesFromLibraryFile(file);
 	}
+	
+	private Charset getCharset() {
+	    
+	    return Charset.defaultCharset();
+	}
 
 	@Override
 	public boolean canReadCodeMapFromCompiledCode() {
@@ -202,6 +208,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 				final ASTParsedFile parsedFile = BuildAndResolve.parseFile(
 						parser,
 						inputStream,
+						getCharset(),
 						new FileSystemFileSpec(file),
 						resolvedTypes);
 				
@@ -251,6 +258,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			final ASTParsedFile parsedFile = BuildAndResolve.parseFile(
 					parser,
 					inputStream,
+					getCharset(),
 					fileSpec,
 					resolvedTypes);
 			

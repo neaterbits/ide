@@ -108,7 +108,7 @@ final class ExecutorState<CONTEXT extends TaskContext> implements ActionParamete
 		
 		final Object targetObject = target.getTargetObject();
 		
-		if (targets.containsKey(target)) {
+		if (targets.containsKey(target.getTargetKey())) {
 			throw new IllegalArgumentException();
 		}
 

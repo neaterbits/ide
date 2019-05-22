@@ -2,7 +2,6 @@ package com.neaterbits.ide.model.text.difftextmodel;
 
 import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.model.text.BaseTextModelTest;
-import com.neaterbits.ide.model.text.difftextmodel.DiffTextModel;
 import com.neaterbits.ide.util.ui.text.LineDelimiter;
 import com.neaterbits.ide.util.ui.text.StringText;
 

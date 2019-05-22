@@ -1,12 +1,10 @@
 package com.neaterbits.ide.model.text;
 
-import com.neaterbits.ide.model.text.TextModel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.neaterbits.ide.model.text.StringTextModel;
 import com.neaterbits.ide.util.ui.text.LineDelimiter;
 import com.neaterbits.ide.util.ui.text.StringText;
 

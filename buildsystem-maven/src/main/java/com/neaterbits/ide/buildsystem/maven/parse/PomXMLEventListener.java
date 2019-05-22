@@ -11,6 +11,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ImmutableFullContext;
 import com.neaterbits.ide.buildsystem.maven.xml.XMLEventListener;
 
 public final class PomXMLEventListener implements XMLEventListener<Void> {
@@ -29,7 +30,7 @@ public final class PomXMLEventListener implements XMLEventListener<Void> {
 
 	private Context context(XMLEvent event) {
 		
-		return new Context(
+		return new ImmutableFullContext(
 				file.getPath(),
 				event.getLocation().getLineNumber(),
 				event.getLocation().getColumnNumber(),
@@ -37,8 +38,7 @@ public final class PomXMLEventListener implements XMLEventListener<Void> {
 				event.getLocation().getLineNumber(),
 				event.getLocation().getColumnNumber(),
 				event.getLocation().getCharacterOffset(),
-				null,
-				-1);
+				null);
 		
 	}
 	

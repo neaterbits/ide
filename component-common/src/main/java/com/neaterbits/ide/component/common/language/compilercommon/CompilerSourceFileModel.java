@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMapGetters;
 import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.compiler.util.model.IType;

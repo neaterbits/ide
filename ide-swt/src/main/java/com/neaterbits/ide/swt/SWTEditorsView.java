@@ -116,7 +116,7 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 				editorView.close();
 			}
 			finally {
-				editorViews.remove(editorView);
+				editorViews.remove(sourceFile);
 			}
 		}
 	}

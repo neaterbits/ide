@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
 
-import com.neaterbits.ide.model.text.TextModel;
-import com.neaterbits.ide.model.text.UnixLineDelimiter;
 import com.neaterbits.ide.util.ui.text.LineDelimiter;
 import com.neaterbits.ide.util.ui.text.StringText;
 

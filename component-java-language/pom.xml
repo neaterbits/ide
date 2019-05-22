@@ -25,7 +25,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.neaterbits.compiler</groupId>
-			<artifactId>compiler-language-java</artifactId>
+			<artifactId>compiler-language-java-parser-antlr</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -35,7 +35,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.neaterbits.compiler</groupId>
-			<artifactId>compiler-resolver-ast</artifactId>
+			<artifactId>compiler-resolver-ast-objects</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

@@ -16,24 +16,35 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>util</artifactId>
+			<artifactId>ide-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 
 			<groupId>org.eclipse.swt</groupId>
-			
+
+			<artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>			
+			<version>3.105.3.v20170228-0512</version>
+<!--  
 			<artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
-
 			<version>v20181204-1801</version>
-
+-->
 		</dependency>
 		
 		<dependency>
 			<groupId>org.eclipse.jface</groupId>
 			<artifactId>org.eclipse.jface</artifactId>
+			<version>3.12.2.v20170113-2113</version>
+<!-- 
 			<version>3.8.0.v20120521-2329</version>
+ -->
+ 		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>org.eclipse.core.commands</artifactId>
+			<version>3.8.1.v20161221-1651</version>
 		</dependency>
 	</dependencies>
 

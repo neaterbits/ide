@@ -8,8 +8,6 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
-import com.neaterbits.ide.model.text.difftextmodel.SortedArray;
-
 public class SortedArrayTest {
 
 	@Test
