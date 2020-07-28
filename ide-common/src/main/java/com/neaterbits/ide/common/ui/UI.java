@@ -17,7 +17,7 @@ public interface UI {
 
 	void runInitialEvents();
 
-	void main();
+	void main(UIViewAndSubViews mainView);
 	
 	void addFocusListener(ViewFocusListener focusListener);
 	

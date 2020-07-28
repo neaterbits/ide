@@ -86,16 +86,25 @@ public class IDEMain {
 						codeMapGatherer,
 						compilerCodeMap);
 				
-				new IDEController(buildRoot, ui, config, ideComponents, sourceFilesModel, codeMapGatherer.getModel());
+				final IDEController ideController = new IDEController(
+				        buildRoot,
+				        ui,
+				        config,
+				        ideComponents,
+				        sourceFilesModel,
+				        codeMapGatherer.getModel());
 				
 				// Run events on event queue before async jobs send event on event queue
 				ui.runInitialEvents();
 				
 				final LogContext logContext = new LogContext();
 				
-				startIDEScanJobs(logContext, asyncExecutor, buildRoot, language, codeMapGatherer);
-				
-				ui.main();
+				try {
+				    startIDEScanJobs(logContext, asyncExecutor, buildRoot, language, codeMapGatherer);
+				}
+				finally {
+				    ui.main(ideController.getMainView());
+				}
 			}
 		}
 		}

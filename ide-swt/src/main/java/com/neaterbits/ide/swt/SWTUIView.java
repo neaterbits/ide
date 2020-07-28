@@ -402,4 +402,9 @@ public final class SWTUIView implements UIViewAndSubViews {
 
 		this.editorsMaximized = !editorsMaximized;
 	}
+
+    boolean isClosed() {
+        
+        return window.isDisposed();
+    }
 }

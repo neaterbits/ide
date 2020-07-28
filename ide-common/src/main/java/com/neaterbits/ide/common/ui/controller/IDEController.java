@@ -59,6 +59,8 @@ public final class IDEController implements ComponentIDEAccess {
 	
 	private final Map<MenuItemEntry, ViewMenuItem> menuMap;
 	
+	private final UIViewAndSubViews uiView;
+	
 	private View focusedView;
 	
 	public IDEController(
@@ -90,7 +92,7 @@ public final class IDEController implements ComponentIDEAccess {
 			callMenuItemAction(menuItemEntry);
 		};
 		
-		final UIViewAndSubViews uiView = ui.makeUIView(uiParameters, menus, (menuItemEntry, viewMenuItem) -> {
+		this.uiView = ui.makeUIView(uiParameters, menus, (menuItemEntry, viewMenuItem) -> {
 			menuMap.put(menuItemEntry, viewMenuItem);
 			
 			return menuListener;
@@ -167,7 +169,11 @@ public final class IDEController implements ComponentIDEAccess {
 	
 	}
 
-	private static Action findActionWithNoKeyBindingInMenus(KeyBindings keyBindings, Menus menus, KeyCombination keyCombination) {
+	public UIViewAndSubViews getMainView() {
+        return uiView;
+    }
+
+    private static Action findActionWithNoKeyBindingInMenus(KeyBindings keyBindings, Menus menus, KeyCombination keyCombination) {
 
 		Objects.requireNonNull(keyBindings);
 		Objects.requireNonNull(menus);

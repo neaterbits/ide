@@ -95,15 +95,19 @@ public class SWTUI implements UI {
 	
 	@Override
 	public void runInitialEvents() {
+	    
 		while (display.readAndDispatch())
 			;
 	}
 
 	@Override
-	public void main() {
+	public void main(UIViewAndSubViews mainView) {
 
-		while (display.readAndDispatch()) {
-			display.sleep();
-		}
+	    while (!((SWTUIView)mainView).isClosed()) {
+	        
+    		if (!display.readAndDispatch()) {
+    			display.sleep();
+    		}
+	    }
 	}
 }
