@@ -19,11 +19,11 @@ import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.java.JavaProgramModel;
-import com.neaterbits.compiler.java.JavaTypes;
+import com.neaterbits.compiler.java.JavaLexerObjectParser;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
-import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
+import com.neaterbits.compiler.language.java.JavaTypes;
+import com.neaterbits.compiler.language.java.model.astobjects.JavaProgramModel;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.ast.objects.BuildAndResolve;
 import com.neaterbits.compiler.resolver.ast.objects.ProgramLoader;
@@ -46,6 +46,7 @@ import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath
 import com.neaterbits.ide.component.common.language.compilercommon.CompilerSourceFileModel;
 import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
+import com.neaterbits.util.parse.ParserException;
 
 public final class JavaLanguage extends JavaBuildableLanguage implements CompileableLanguage, ParseableLanguage {
 
@@ -192,7 +193,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			ResolvedTypes resolvedTypes,
 			CompilerCodeMap codeMap) throws IOException {
 
-		final Java8AntlrParser parser = new Java8AntlrParser(false);
+		final JavaLexerObjectParser parser = new JavaLexerObjectParser();
 
 		final Map<SourceFileResourcePath, SourceFileModel> sourceFileModels = new HashMap<>(files.size());
 		final Map<SourceFileResourcePath, ASTParsedFile> compilationUnits = new HashMap<>(files.size());
@@ -205,23 +206,30 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			
 			try (FileInputStream inputStream = new FileInputStream(file)) {
 			
-				final ASTParsedFile parsedFile = BuildAndResolve.parseFile(
-						parser,
-						inputStream,
-						getCharset(),
-						new FileSystemFileSpec(file),
-						resolvedTypes);
+				ASTParsedFile parsedFile;
 				
-				final SourceFileModel sourceFileModel = new CompilerSourceFileModel(
-						programModel,
-						parsedFile.getParsed(),
-						parsedFile.getErrors(),
-						resolvedTypes,
-						-1,
-						codeMap);
+                try {
+                    parsedFile = BuildAndResolve.parseFile(
+                    		parser,
+                    		inputStream,
+                    		getCharset(),
+                    		new FileSystemFileSpec(file),
+                    		resolvedTypes);
 
-				compilationUnits.put(path, parsedFile);
-				sourceFileModels.put(path, sourceFileModel);
+                    final SourceFileModel sourceFileModel = new CompilerSourceFileModel(
+                            programModel,
+                            parsedFile.getParsed(),
+                            parsedFile.getErrors(),
+                            resolvedTypes,
+                            -1,
+                            codeMap);
+
+                    compilationUnits.put(path, parsedFile);
+                    sourceFileModels.put(path, sourceFileModel);
+                } catch (ParserException e) {
+                    e.printStackTrace();
+                }
+				
 			}
 		}
 
@@ -245,7 +253,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			ResolvedTypes resolvedTypes,
 			CompilerCodeMap codeMap) {
 
-		final Java8AntlrParser parser = new Java8AntlrParser(false);
+		final JavaLexerObjectParser parser = new JavaLexerObjectParser();
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream(string.getBytes());
 		
 		final SourceFileModel sourceFileModel;
@@ -287,7 +295,7 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 					-1,
 					codeMap);
 
-		} catch (IOException ex) {
+		} catch (IOException | ParserException ex) {
 			throw new IllegalStateException(ex);
 		}
 		
