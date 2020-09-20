@@ -20,12 +20,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.neaterbits.compiler</groupId>
-			<artifactId>bytecode-java</artifactId>
+			<artifactId>compiler-language-java</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.neaterbits.compiler</groupId>
-			<artifactId>compiler-language-java</artifactId>
+			<artifactId>bytecode-java</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.util.model.ResolvedTypes;
+import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.resource.ModuleResourcePath;
 import com.neaterbits.ide.common.resource.SourceFileResourcePath;

@@ -3,10 +3,10 @@ package com.neaterbits.ide.component.common.language.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.neaterbits.compiler.util.model.ISourceToken;
-import com.neaterbits.compiler.util.model.IType;
-import com.neaterbits.compiler.util.model.SourceTokenVisitor;
-import com.neaterbits.compiler.util.model.VariableScope;
+import com.neaterbits.compiler.model.common.ISourceToken;
+import com.neaterbits.compiler.model.common.IType;
+import com.neaterbits.compiler.model.common.SourceTokenVisitor;
+import com.neaterbits.compiler.model.common.VariableScope;
 import com.neaterbits.compiler.util.parse.CompileError;
 
 public interface SourceFileModel {

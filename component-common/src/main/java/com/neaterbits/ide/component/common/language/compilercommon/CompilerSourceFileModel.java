@@ -6,13 +6,13 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMapGetters;
-import com.neaterbits.compiler.util.model.ISourceToken;
-import com.neaterbits.compiler.util.model.IType;
-import com.neaterbits.compiler.util.model.ProgramModel;
-import com.neaterbits.compiler.util.model.ResolvedTypes;
-import com.neaterbits.compiler.util.model.SourceTokenType;
-import com.neaterbits.compiler.util.model.SourceTokenVisitor;
-import com.neaterbits.compiler.util.model.VariableScope;
+import com.neaterbits.compiler.model.common.ISourceToken;
+import com.neaterbits.compiler.model.common.IType;
+import com.neaterbits.compiler.model.common.ProgramModel;
+import com.neaterbits.compiler.model.common.ResolvedTypes;
+import com.neaterbits.compiler.model.common.SourceTokenType;
+import com.neaterbits.compiler.model.common.SourceTokenVisitor;
+import com.neaterbits.compiler.model.common.VariableScope;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 

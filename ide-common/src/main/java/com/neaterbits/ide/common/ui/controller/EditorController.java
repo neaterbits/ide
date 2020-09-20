@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;

@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.ui.actions.types.source;
 
-import com.neaterbits.compiler.util.model.SourceTokenType;
+import com.neaterbits.compiler.model.common.SourceTokenType;
 import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;

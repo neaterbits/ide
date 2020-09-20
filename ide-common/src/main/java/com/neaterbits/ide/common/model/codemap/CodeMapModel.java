@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.model.codemap;
 
-import com.neaterbits.compiler.util.model.ResolvedTypes;
+import com.neaterbits.compiler.model.common.ResolvedTypes;
 
 public interface CodeMapModel extends ResolvedTypes {
 

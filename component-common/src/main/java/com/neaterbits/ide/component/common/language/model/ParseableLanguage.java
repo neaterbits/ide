@@ -1,7 +1,7 @@
 package com.neaterbits.ide.component.common.language.model;
 
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.util.model.ResolvedTypes;
+import com.neaterbits.compiler.model.common.ResolvedTypes;
 
 import java.io.IOException;
 import java.util.List;
