@@ -14,9 +14,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${buildGroupId}</groupId>
 			<artifactId>build-language-java-jdk</artifactId>
-			<version>${project.version}</version>
+			<version>${buildVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.neaterbits.compiler</groupId>

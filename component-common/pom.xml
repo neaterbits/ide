@@ -8,9 +8,9 @@
   <artifactId>component-common</artifactId>
   <dependencies>
   	<dependency>
-  		<groupId>${project.groupId}</groupId>
+  		<groupId>${buildGroupId}</groupId>
   		<artifactId>build-common</artifactId>
-  		<version>${project.version}</version>
+  		<version>${buildVersion}</version>
   	</dependency>
   	<dependency>
   		<groupId>com.neaterbits.compiler</groupId>

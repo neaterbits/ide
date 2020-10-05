@@ -13,6 +13,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<buildGroupId>com.neaterbits.build</buildGroupId>
+		<buildVersion>0.0.1-SNAPSHOT</buildVersion>
 	</properties>
 
 	<dependencies>
@@ -41,11 +43,6 @@
 		<module>ide-main</module>
 		<module>ide-swt</module>
 		<module>model-text</module>
-		<module>buildsystem-common</module>
-		<module>buildsystem-maven</module>
-		<module>build-common</module>
-		<module>build-language-java-jdk</module>
-		<module>build-main</module>
 		<module>component-common</module>
 		<module>component-java-language</module>
 		<module>component-java-ui</module>
