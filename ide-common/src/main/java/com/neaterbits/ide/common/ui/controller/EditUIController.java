@@ -17,7 +17,7 @@ import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.model.text.StringTextModel;
 import com.neaterbits.ide.model.text.UnixLineDelimiter;
 import com.neaterbits.ide.util.IOUtil;
-import com.neaterbits.ide.util.PathUtil;
+import com.neaterbits.util.PathUtil;
 
 public final class EditUIController implements EditorsActions {
 

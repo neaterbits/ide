@@ -6,9 +6,9 @@ import java.util.function.Consumer;
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
-import com.neaterbits.ide.util.statemachine.BaseState;
-import com.neaterbits.ide.util.statemachine.StateMachine;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.util.concurrency.statemachine.BaseState;
+import com.neaterbits.util.concurrency.statemachine.StateMachine;
 
 final class EditorParseFileStateMachine extends StateMachine<EditorParseFileStateMachine.BaseParseState> {
 

@@ -2,10 +2,10 @@ package com.neaterbits.ide.common.scheduling;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.AsyncExecutor;
-import com.neaterbits.ide.util.scheduling.ScheduleFunction;
-import com.neaterbits.ide.util.scheduling.ScheduleListener;
+import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
+import com.neaterbits.util.concurrency.scheduling.Constraint;
+import com.neaterbits.util.concurrency.scheduling.ScheduleFunction;
+import com.neaterbits.util.concurrency.scheduling.ScheduleListener;
 
 public class IDESchedulerImpl implements IDEScheduler {
 

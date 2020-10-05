@@ -17,8 +17,8 @@ import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.component.common.language.Languages;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
-import com.neaterbits.ide.util.scheduling.Constraint;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.util.concurrency.scheduling.Constraint;
 
 public final class SourceFilesModel {
 

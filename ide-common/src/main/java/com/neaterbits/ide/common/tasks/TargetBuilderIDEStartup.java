@@ -1,7 +1,7 @@
 package com.neaterbits.ide.common.tasks;
 
-import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
-import com.neaterbits.ide.util.dependencyresolution.spec.builder.TargetBuilder;
+import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
+import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
 
 public final class TargetBuilderIDEStartup extends TargetBuilderSpec<InitialScanContext> {
 

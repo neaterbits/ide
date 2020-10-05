@@ -25,10 +25,10 @@ import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
 import com.neaterbits.ide.swt.SWTUI;
-import com.neaterbits.ide.util.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
-import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 import com.neaterbits.ide.util.swt.SWTAsyncExecutor;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
+import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
+import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
 
 public class IDEMain {
 

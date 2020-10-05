@@ -8,6 +8,12 @@
   <artifactId>component-common</artifactId>
   <dependencies>
   	<dependency>
+  		<groupId>${project.groupId}</groupId>
+  		<artifactId>ide-util</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+  
+  	<dependency>
   		<groupId>${buildGroupId}</groupId>
   		<artifactId>build-common</artifactId>
   		<version>${buildVersion}</version>

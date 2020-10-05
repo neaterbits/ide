@@ -37,7 +37,7 @@ import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassParameters;
 import com.neaterbits.ide.common.model.common.InformationGatherer;
-import com.neaterbits.ide.util.scheduling.AsyncExecutor;
+import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
 
 public final class CodeMapGatherer extends InformationGatherer implements CodeMapModel {
 

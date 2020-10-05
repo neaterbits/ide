@@ -1,8 +1,8 @@
 package com.neaterbits.ide.common.scheduling;
 
-import com.neaterbits.ide.util.scheduling.Constraint;
-import com.neaterbits.ide.util.scheduling.ScheduleFunction;
-import com.neaterbits.ide.util.scheduling.ScheduleListener;
+import com.neaterbits.util.concurrency.scheduling.Constraint;
+import com.neaterbits.util.concurrency.scheduling.ScheduleFunction;
+import com.neaterbits.util.concurrency.scheduling.ScheduleListener;
 
 public interface IDEScheduler {
 
