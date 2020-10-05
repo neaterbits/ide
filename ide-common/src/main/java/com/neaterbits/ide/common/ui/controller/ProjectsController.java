@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.controller;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.view.ProjectView;
 import com.neaterbits.ide.common.ui.view.ProjectViewListener;

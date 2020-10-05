@@ -1,7 +1,7 @@
 package com.neaterbits.ide.component.common;
 
-import com.neaterbits.ide.common.resource.NamespaceResourcePath;
-import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
+import com.neaterbits.build.types.resource.NamespaceResourcePath;
+import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 
 public interface UIComponentProvider {
 

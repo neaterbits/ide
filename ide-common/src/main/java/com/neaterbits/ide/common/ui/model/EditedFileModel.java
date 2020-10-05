@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.model;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 
 public final class EditedFileModel {
 

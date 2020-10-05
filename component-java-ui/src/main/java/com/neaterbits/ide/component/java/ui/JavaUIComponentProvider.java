@@ -1,7 +1,7 @@
 package com.neaterbits.ide.component.java.ui;
 
-import com.neaterbits.ide.common.resource.NamespaceResourcePath;
-import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
+import com.neaterbits.build.types.resource.NamespaceResourcePath;
+import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.Newable;
 import com.neaterbits.ide.component.common.NewableCategoryName;

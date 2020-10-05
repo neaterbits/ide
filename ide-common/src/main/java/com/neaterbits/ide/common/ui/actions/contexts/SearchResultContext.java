@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.ui.actions.contexts;
 
-import com.neaterbits.ide.common.resource.SourceLineResourcePath;
+import com.neaterbits.build.types.resource.SourceLineResourcePath;
 
 public class SearchResultContext extends ActionContext {
 

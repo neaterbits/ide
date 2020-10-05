@@ -9,7 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;

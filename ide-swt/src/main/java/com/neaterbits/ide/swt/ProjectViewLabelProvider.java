@@ -5,13 +5,13 @@ import java.io.File;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import com.neaterbits.ide.common.resource.ModuleResource;
-import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
-import com.neaterbits.ide.common.resource.NamespaceResourcePath;
-import com.neaterbits.ide.common.resource.Resource;
-import com.neaterbits.ide.common.resource.ResourcePath;
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
+import com.neaterbits.build.types.resource.ModuleResource;
+import com.neaterbits.build.types.resource.NamespaceResourcePath;
+import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
+import com.neaterbits.build.types.resource.Resource;
+import com.neaterbits.build.types.resource.ResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 
 final class ProjectViewLabelProvider extends LabelProvider {
 

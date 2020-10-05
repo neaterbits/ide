@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.neaterbits.build.types.resource.LibraryResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
@@ -34,9 +37,6 @@ import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.build.model.compile.FileCompilation;
 import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.model.common.InformationGatherer;
-import com.neaterbits.ide.common.resource.LibraryResourcePath;
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
-import com.neaterbits.ide.common.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 
 public final class CodeMapGatherer extends InformationGatherer implements CodeMapModel {

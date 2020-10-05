@@ -2,8 +2,8 @@ package com.neaterbits.ide.common.tasks;
 
 import java.util.List;
 
-import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
-import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
+import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
+import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.ActionResult;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.TargetBuilder;

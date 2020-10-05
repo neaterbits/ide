@@ -6,7 +6,7 @@ import java.util.Objects;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.neaterbits.ide.common.resource.ResourcePath;
+import com.neaterbits.build.types.resource.ResourcePath;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.util.swt.TreeContentAdapter;
 

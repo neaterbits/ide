@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.ui.actions.contexts;
 
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 
 public class SourceFileContext extends ResourceContext<SourceFileResourcePath> {
 

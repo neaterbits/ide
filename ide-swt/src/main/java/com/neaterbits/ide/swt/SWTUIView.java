@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 
+import com.neaterbits.build.types.resource.NamespaceResourcePath;
+import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.model.codemap.TypeSuggestion;
-import com.neaterbits.ide.common.resource.NamespaceResourcePath;
-import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.ui.controller.UIParameters;
 import com.neaterbits.ide.common.ui.keys.KeyCombination;
 import com.neaterbits.ide.common.ui.keys.KeyMask;

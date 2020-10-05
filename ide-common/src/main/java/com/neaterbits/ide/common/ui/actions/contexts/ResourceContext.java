@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.actions.contexts;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.resource.ResourcePath;
+import com.neaterbits.build.types.resource.ResourcePath;
 
 public abstract class ResourceContext<T extends ResourcePath> {
 

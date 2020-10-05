@@ -2,10 +2,10 @@ package com.neaterbits.ide.common.ui.controller;
 
 import java.util.Objects;
 
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;
 import com.neaterbits.ide.common.ui.view.UIDialogs;

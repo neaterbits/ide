@@ -3,9 +3,9 @@ package com.neaterbits.ide.common.ui.view;
 import java.util.Collection;
 import java.util.function.Consumer;
 
+import com.neaterbits.build.types.resource.NamespaceResourcePath;
+import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.model.codemap.TypeSuggestion;
-import com.neaterbits.ide.common.resource.NamespaceResourcePath;
-import com.neaterbits.ide.common.resource.SourceFolderResourcePath;
 import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;
 import com.neaterbits.ide.common.ui.model.dialogs.NewableSelection;
 import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;

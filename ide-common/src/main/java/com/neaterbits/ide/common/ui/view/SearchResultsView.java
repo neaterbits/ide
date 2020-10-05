@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.view;
 
 import java.util.List;
 
-import com.neaterbits.ide.common.resource.SourceLineResourcePath;
+import com.neaterbits.build.types.resource.SourceLineResourcePath;
 
 public interface SearchResultsView extends View {
 

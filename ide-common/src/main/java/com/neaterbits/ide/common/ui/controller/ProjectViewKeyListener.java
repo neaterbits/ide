@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.controller;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.resource.ResourcePath;
+import com.neaterbits.build.types.resource.ResourcePath;
 import com.neaterbits.ide.common.ui.keys.Key;
 import com.neaterbits.ide.common.ui.keys.KeyLocation;
 import com.neaterbits.ide.common.ui.keys.KeyMask;

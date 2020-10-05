@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.project;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.resource.ResourcePath;
+import com.neaterbits.build.types.resource.ResourcePath;
 
 public class SourceFolder {
 	

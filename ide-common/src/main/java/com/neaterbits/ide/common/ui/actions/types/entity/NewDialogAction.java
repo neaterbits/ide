@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.actions.types.entity;
 
 import java.util.List;
 
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExecuteParameters;

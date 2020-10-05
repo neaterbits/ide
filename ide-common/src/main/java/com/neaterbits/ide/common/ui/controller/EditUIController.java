@@ -3,11 +3,11 @@ package com.neaterbits.ide.common.ui.controller;
 import java.io.IOException;
 import java.util.Objects;
 
+import com.neaterbits.build.types.resource.ResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
-import com.neaterbits.ide.common.resource.ResourcePath;
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.view.UIView;

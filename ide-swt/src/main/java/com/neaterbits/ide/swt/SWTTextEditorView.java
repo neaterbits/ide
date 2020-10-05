@@ -11,7 +11,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Text;
 
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.CursorPositionListener;
 import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;

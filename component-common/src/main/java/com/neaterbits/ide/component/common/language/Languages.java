@@ -1,6 +1,6 @@
 package com.neaterbits.ide.component.common.language;
 
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 
 public interface Languages {
 

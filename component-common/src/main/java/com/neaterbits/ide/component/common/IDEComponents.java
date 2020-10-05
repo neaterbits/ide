@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.ide.common.resource.SourceFileResourcePath;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.component.common.language.Languages;

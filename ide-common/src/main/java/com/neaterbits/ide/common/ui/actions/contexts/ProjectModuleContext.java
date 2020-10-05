@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.ui.actions.contexts;
 
-import com.neaterbits.ide.common.resource.ProjectModuleResourcePath;
+import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
 
 public final class ProjectModuleContext extends ResourceContext<ProjectModuleResourcePath> {
 

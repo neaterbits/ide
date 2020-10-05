@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.ui.actions.contexts;
 
-import com.neaterbits.ide.common.resource.NamespaceResourcePath;
+import com.neaterbits.build.types.resource.NamespaceResourcePath;
 
 public class NamespaceContext extends ResourceContext<NamespaceResourcePath> {
 
