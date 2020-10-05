@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.controller;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.build.model.BuildRoot;
+import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;

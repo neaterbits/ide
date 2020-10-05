@@ -10,7 +10,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.TabFolder;
 
-import com.neaterbits.ide.common.build.model.compile.BuildIssue;
+import com.neaterbits.build.types.compile.BuildIssue;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.actions.contexts.BuildIssueContext;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;

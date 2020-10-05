@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.build.types.resource.NamespaceResource;
 import com.neaterbits.build.types.resource.NamespaceResourcePath;
 import com.neaterbits.build.types.resource.SourceFileHolderResourcePath;
@@ -16,7 +17,6 @@ import com.neaterbits.build.types.resource.SourceFileResource;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.ide.common.build.model.BuildRoot;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;

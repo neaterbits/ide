@@ -2,7 +2,7 @@ package com.neaterbits.ide.common.ui.actions.contexts;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.common.build.model.compile.BuildIssue;
+import com.neaterbits.build.types.compile.BuildIssue;
 
 public final class BuildIssueContext extends ActionContext {
 
