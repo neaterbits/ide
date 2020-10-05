@@ -25,6 +25,11 @@
   	</dependency>
   	<dependency>
   		<groupId>com.neaterbits.compiler</groupId>
+  		<artifactId>codemap</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.neaterbits.compiler</groupId>
   		<artifactId>compiler-model-common</artifactId>
   		<version>${project.version}</version>
   	</dependency>

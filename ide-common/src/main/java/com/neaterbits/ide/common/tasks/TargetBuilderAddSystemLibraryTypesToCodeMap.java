@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.tasks;
 
-import com.neaterbits.compiler.bytecode.common.DependencyFile;
+import com.neaterbits.build.types.DependencyFile;
 import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
 import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.util.concurrency.scheduling.Constraint;

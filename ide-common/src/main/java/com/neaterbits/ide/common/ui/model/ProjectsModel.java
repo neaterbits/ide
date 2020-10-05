@@ -20,7 +20,7 @@ import com.neaterbits.build.types.resource.ResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResource;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
-import com.neaterbits.compiler.util.Files;
+import com.neaterbits.util.Files;
 
 public class ProjectsModel {
 

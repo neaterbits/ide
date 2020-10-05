@@ -2,8 +2,8 @@ package com.neaterbits.ide.common.tasks;
 
 import java.util.Set;
 
-import com.neaterbits.compiler.bytecode.common.DependencyFile;
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.DependencyFile;
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
 import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.util.concurrency.scheduling.Constraint;
