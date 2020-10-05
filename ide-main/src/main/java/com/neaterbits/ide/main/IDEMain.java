@@ -4,15 +4,15 @@ import java.io.File;
 
 import org.eclipse.swt.widgets.Display;
 
-import com.neaterbits.ide.common.buildsystem.BuildSystem;
-import com.neaterbits.ide.common.buildsystem.ScanException;
-import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.model.codemap.CodeMapGatherer;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.scheduling.IDEScheduler;
 import com.neaterbits.ide.common.scheduling.IDESchedulerImpl;
 import com.neaterbits.ide.common.tasks.InitialScanContext;
 import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
+import com.neaterbits.build.buildsystem.common.BuildSystem;
+import com.neaterbits.build.buildsystem.common.ScanException;
+import com.neaterbits.build.common.language.CompileableLanguage;
 import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.build.model.BuildRootImpl;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;

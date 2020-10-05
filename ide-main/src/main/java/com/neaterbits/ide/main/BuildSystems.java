@@ -2,8 +2,8 @@ package com.neaterbits.ide.main;
 
 import java.io.File;
 
-import com.neaterbits.ide.buildsystem.maven.MavenBuildSystem;
-import com.neaterbits.ide.common.buildsystem.BuildSystem;
+import com.neaterbits.build.buildsystem.common.BuildSystem;
+import com.neaterbits.build.buildsystem.maven.MavenBuildSystem;
 
 public class BuildSystems {
 

@@ -2,11 +2,11 @@ package com.neaterbits.ide.common.tasks;
 
 import java.util.Set;
 
+import com.neaterbits.build.common.tasks.ModuleBuilderUtil;
 import com.neaterbits.build.types.dependencies.LibraryDependency;
 import com.neaterbits.build.types.resource.LibraryResourcePath;
 import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.ide.common.build.tasks.ModuleBuilderUtil;
 import com.neaterbits.ide.util.dependencyresolution.spec.TargetBuilderSpec;
 import com.neaterbits.ide.util.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.ide.util.scheduling.Constraint;

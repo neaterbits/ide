@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.build.common.language.CompileableLanguage;
+import com.neaterbits.build.common.tasks.util.SourceFileScanner;
+import com.neaterbits.build.common.tasks.util.SourceFileScanner.Namespace;
 import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.build.types.resource.NamespaceResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResource;
@@ -13,9 +16,6 @@ import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.TypeSources;
-import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
-import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner.Namespace;
-import com.neaterbits.ide.common.language.CompileableLanguage;
 
 final class SourceFileScannerTypeSuggestionFinder extends TypeSuggestionFinder {
 

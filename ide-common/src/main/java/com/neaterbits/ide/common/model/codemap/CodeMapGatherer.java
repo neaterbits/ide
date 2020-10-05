@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.neaterbits.build.common.language.CompileableLanguage;
 import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.build.types.compile.FileCompilation;
 import com.neaterbits.build.types.resource.LibraryResourcePath;
@@ -35,7 +36,6 @@ import com.neaterbits.compiler.util.model.TypeSource;
 import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassParameters;
-import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.common.model.common.InformationGatherer;
 import com.neaterbits.ide.util.scheduling.AsyncExecutor;
 

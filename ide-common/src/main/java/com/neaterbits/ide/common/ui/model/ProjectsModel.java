@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.neaterbits.build.common.tasks.util.SourceFileScanner;
+import com.neaterbits.build.common.tasks.util.SourceFileScanner.Namespace;
 import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.build.model.BuildRootListener;
 import com.neaterbits.build.types.resource.ModuleResource;
@@ -19,8 +21,6 @@ import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResource;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.compiler.util.Files;
-import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
-import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner.Namespace;
 
 public class ProjectsModel {
 

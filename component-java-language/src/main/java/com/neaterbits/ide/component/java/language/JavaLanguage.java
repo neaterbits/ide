@@ -14,6 +14,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.neaterbits.build.common.language.CompileableLanguage;
+import com.neaterbits.build.common.tasks.util.SourceFileScanner;
+import com.neaterbits.build.language.java.jdk.JavaBuildableLanguage;
 import com.neaterbits.build.types.resource.FileSystemResourcePath;
 import com.neaterbits.build.types.resource.LibraryResourcePath;
 import com.neaterbits.build.types.resource.ModuleResourcePath;
@@ -40,8 +43,6 @@ import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.parse.CompileError;
-import com.neaterbits.ide.common.build.tasks.util.SourceFileScanner;
-import com.neaterbits.ide.common.language.CompileableLanguage;
 import com.neaterbits.ide.component.common.language.compilercommon.CompilerSourceFileModel;
 import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
