@@ -18,7 +18,7 @@ import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 
 public final class CompilerSourceFileModel implements SourceFileModel {
 
-	private final ProgramModel<?, ?, CompilationUnit> programModel;
+	private final ProgramModel<?, CompilationUnit> programModel;
 	private final CompilationUnit sourceFile;
 	private final List<CompileError> parserErrors;
 	private final ResolvedTypes resolvedTypes;
@@ -26,7 +26,7 @@ public final class CompilerSourceFileModel implements SourceFileModel {
 	private final CompilerCodeMapGetters codeMap;
 	
 	public CompilerSourceFileModel(
-			ProgramModel<?, ?, CompilationUnit> programModel,
+			ProgramModel<?, CompilationUnit> programModel,
 			CompilationUnit sourceFile,
 			List<CompileError> parserErrors,
 			ResolvedTypes resolvedTypes,
