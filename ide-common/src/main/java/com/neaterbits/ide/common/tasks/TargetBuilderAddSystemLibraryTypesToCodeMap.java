@@ -12,13 +12,18 @@ public final class TargetBuilderAddSystemLibraryTypesToCodeMap extends TargetBui
 
 		
 		targetBuilder
-			.addTarget("systemlibrarytypes", "System library type names")
+			.addTarget(
+			        "systemlibrarytypes",
+			        "system_libraries_types_to_codemap",
+			        "scan_system_libraries_for_types",
+			        "System library type names")
 			.withPrerequisites("System library files")
 			.fromIterating(context -> context.getCompileableLanguage().getSystemLibraries().getFiles())
 			.buildBy(st -> st
 				.addInfoSubTarget(
 					DependencyFile.class,
-					"systemlibrarytypenames",
+                    "system_library_types_to_codemap",
+                    "scan_system_library_for_types",
 					file -> file.getFile().getName(),
 					file -> "System library type names from " + file.getFile().getPath())
 				.action(Constraint.IO, (context, target, parameters) -> {

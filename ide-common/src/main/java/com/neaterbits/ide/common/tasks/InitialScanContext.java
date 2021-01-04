@@ -4,8 +4,8 @@ package com.neaterbits.ide.common.tasks;
 import java.util.Objects;
 
 import com.neaterbits.build.common.language.CompileableLanguage;
-import com.neaterbits.build.common.tasks.TaskBuilderContext;
 import com.neaterbits.build.model.BuildRoot;
+import com.neaterbits.build.strategies.common.TaskBuilderContext;
 import com.neaterbits.ide.common.model.codemap.CodeMapGatherer;
 
 public final class InitialScanContext extends TaskBuilderContext {

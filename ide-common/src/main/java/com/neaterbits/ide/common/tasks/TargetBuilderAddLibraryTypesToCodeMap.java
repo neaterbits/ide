@@ -17,21 +17,33 @@ public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuilderSp
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {
 
-		targetBuilder.addTarget("librariescodemap", "External libraries code map")
+		targetBuilder.addTarget(
+		        "librariescodemap",
+		        "libraries_codemap",
+		        "build_codemap",
+		        "External libraries code map")
 			.withPrerequisites("modules")
 			.fromIterating(InitialScanContext::getModules)
 			
 			.buildBy(st -> st.addInfoSubTarget(
 						ProjectModuleResourcePath.class,
-						"scan",
+						"module",
+						"module_scan",
 						module -> module.getName(),
 						module -> "Scan module " + module.getName())
 					.withPrerequisites("Scan any found libraries")
-					.fromIterating(null, ModuleBuilderUtil::transitiveProjectExternalDependencies)
+					.fromIterating(
+					        null,
+					        (context, module) ->
+					            ModuleBuilderUtil.transitiveProjectExternalDependencies(
+					                                context.getBuildRoot(),
+					                                module))
 					
 					.buildBy(subTarget -> {
 						subTarget.addFileSubTarget(
 								LibraryDependency.class,
+								"library_dependency" ,
+								"gather_library_dependency",
 								LibraryResourcePath.class,
 								(context, dependency) -> dependency.getModulePath(),
 								LibraryResourcePath::getFile,

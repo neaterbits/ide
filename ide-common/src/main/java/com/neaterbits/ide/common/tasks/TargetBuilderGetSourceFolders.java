@@ -16,17 +16,18 @@ public class TargetBuilderGetSourceFolders extends TargetBuilderSpec<InitialScan
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {
 
-		targetBuilder.addTarget(NAME, "Source folders for all modules")
+		targetBuilder.addTarget(NAME, "source_folders", "scan_for_source_folders", "Source folders for all modules")
 			.withPrerequisites("Source folders")
 			.fromIterating(InitialScanContext::getModules)
 			.buildBy(subTarget -> subTarget
 					.addInfoSubTarget(
 							ProjectModuleResourcePath.class,
-							"sourcefolders",
+							"modules_sourcefolders",
+							"scan_modules_for_source_folders",
 							ProjectModuleResourcePath::getName,
 							module -> "Find source folders for " + module.getName())
 					
-					.actionWithResult(Constraint.IO, (context, module) ->  {
+					.actionWithResult(Constraint.IO, (context, module, params) ->  {
 
 						final List<SourceFolderResourcePath> result = context.getBuildRoot().getBuildSystemRootScan().findSourceFolders(module);
 						

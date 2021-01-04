@@ -15,13 +15,18 @@ public final class TargetBuilderAddSystemLibraryTypeNamesToCodeMap extends Targe
 
 		
 		targetBuilder
-			.addTarget("systemlibrarytypes", "System library type names")
+			.addTarget(
+			        "systemlibrarytypes",
+			        "system_libraries_typenames_to_codemap",
+			        "scan_system_libraries_for_typenames",
+			        "System library type names")
 			.withPrerequisites("System library files")
 			.fromIterating(context -> context.getCompileableLanguage().getSystemLibraries().getFiles())
 			.buildBy(st -> st
 				.addInfoSubTarget(
 					DependencyFile.class,
-					"systemlibrarytypenames",
+					"system_library_typenames",
+					"scan_system_library_for_typenames",
 					file -> file.getFile().getName(),
 					file -> "System library type names from " + file.getFile().getPath())
 				.action(Constraint.IO, (context, target, parameters) -> {

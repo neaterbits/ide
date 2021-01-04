@@ -1,6 +1,6 @@
 package com.neaterbits.ide.common.tasks;
 
-import com.neaterbits.build.common.tasks.SourceFilesBuilderUtil;
+import com.neaterbits.build.strategies.common.SourceFilesBuilderUtil;
 import com.neaterbits.build.types.compile.FileCompilation;
 import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
@@ -13,23 +13,33 @@ public final class TargetBuilderProjectModulesCodeMap extends TargetBuilderSpec<
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {
 
-		targetBuilder.addTarget("projectcodemap", "Add project module build files to codemap")
+		targetBuilder.addTarget(
+		        "projectcodemap",
+		        "project_codemap",
+		        "add_buildfiles_to_codemap",
+		        "Add project module build files to codemap")
 			.withPrerequisites("Modules")
 			.fromIterating(context -> context.getModules())
 			.buildBy(subTarget-> subTarget
 					.addInfoSubTarget(
 							ProjectModuleResourcePath.class,
-							"module",
+			                "module_codemap",
+			                "add_modules_buildfiles_to_codemap",
 							module -> module.getName(),
 							module ->"Codemap for module " + module.getName())
 					
 					.withPrerequisites("Module class files")
-					.fromIterating(Constraint.IO, (context, module) -> context.getBuildRoot().getBuildSystemRootScan().findSourceFolders(module))
+					.fromIterating(
+					        Constraint.IO,
+					        (context, module) -> context.getBuildRoot()
+					                                    .getBuildSystemRootScan()
+					                                    .findSourceFolders(module))
 					.buildBy(st -> st
 							
 						.addInfoSubTarget(
 								SourceFolderResourcePath.class,
-								"compilelist",
+                                "module_compilelist",
+                                "get_module_compilelist",
 								sourceFolder -> sourceFolder.getModule().getName(),
 								sourceFolder -> "Class files for source folder " + sourceFolder.getName())
 
@@ -39,7 +49,8 @@ public final class TargetBuilderProjectModulesCodeMap extends TargetBuilderSpec<
 										
 										.addInfoSubTarget(
 												FileCompilation.class,
-												"classcodemap",
+												"class_codemap",
+												"generate_class_codemap",
 												fileCompilation -> fileCompilation.getSourceFile().getPath(),
 												fileCompilation -> "Generate codemap for " + fileCompilation.getCompiledFile().getPath())
 										
