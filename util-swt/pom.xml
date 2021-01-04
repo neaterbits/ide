@@ -24,9 +24,14 @@
 
 			<groupId>org.eclipse.swt</groupId>
 
+			<artifactId>swt-win32-x86_64</artifactId>
+			<version>3.115.0.v20200831-1002</version>
+			
+
+<!--  
 			<artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>			
 			<version>3.105.3.v20170228-0512</version>
-<!--  
+
 			<artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
 			<version>v20181204-1801</version>
 -->
@@ -34,19 +39,26 @@
 		
 		<dependency>
 			<groupId>org.eclipse.jface</groupId>
+			<artifactId>jface</artifactId>
+			<version>3.21.0.v20200821-1458</version>
+<!-- 
 			<artifactId>org.eclipse.jface</artifactId>
 			<version>3.12.2.v20170113-2113</version>
-<!-- 
 			<version>3.8.0.v20120521-2329</version>
  -->
  		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.core</groupId>
+			<artifactId>commands</artifactId>
+			<version>3.9.700.v20191217-1850</version>
+<!-- 
 			<artifactId>org.eclipse.core.commands</artifactId>
 			<version>3.8.1.v20161221-1651</version>
+ -->
 		</dependency>
-	</dependencies>
+ 
+ 	</dependencies>
 
         <repositories>
                 <repository>
