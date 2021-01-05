@@ -16,6 +16,7 @@
 		<buildGroupId>com.neaterbits.build</buildGroupId>
 		<buildVersion>0.0.1-SNAPSHOT</buildVersion>
 		<utilGroupId>com.neaterbits.util</utilGroupId>
+		<utilVersion>0.0.1-SNAPSHOT</utilVersion>
 		<structuredLogModelVersion>0.0.1-SNAPSHOT</structuredLogModelVersion>
 	</properties>
 
