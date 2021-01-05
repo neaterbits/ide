@@ -57,8 +57,12 @@
 			<version>3.8.1.v20161221-1651</version>
  -->
 		</dependency>
- 
- 	</dependencies>
+ 		<dependency>
+			<groupId>org.eclipse.equinox</groupId>
+			<artifactId>equinox-common</artifactId>
+			<version>3.13.0.v20200828-1034</version>
+		</dependency>
+	</dependencies>
 
         <repositories>
                 <repository>
