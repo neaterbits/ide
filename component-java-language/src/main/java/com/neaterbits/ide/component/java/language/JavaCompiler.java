@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.neaterbits.build.common.compile.Compiler;
-import com.neaterbits.build.common.compile.CompilerStatus;
+import com.neaterbits.build.types.compile.Compiler;
+import com.neaterbits.build.types.compile.CompilerStatus;
 import com.neaterbits.build.types.compile.BuildIssue;
 import com.neaterbits.build.types.compile.BuildIssue.Type;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;

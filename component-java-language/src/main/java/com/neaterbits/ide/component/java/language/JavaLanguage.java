@@ -1,12 +1,11 @@
 package com.neaterbits.ide.component.java.language;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +16,9 @@ import java.util.stream.Collectors;
 import com.neaterbits.build.common.language.CompileableLanguage;
 import com.neaterbits.build.common.tasks.util.SourceFileScanner;
 import com.neaterbits.build.language.java.jdk.JavaBuildableLanguage;
+import com.neaterbits.build.strategies.compilemodules.CompileModule;
+import com.neaterbits.build.strategies.compilemodules.ParsedWithCachedRefs;
+import com.neaterbits.build.strategies.compilemodules.ResolvedModule;
 import com.neaterbits.build.types.ClassLibs;
 import com.neaterbits.build.types.DependencyFile;
 import com.neaterbits.build.types.TypeName;
@@ -24,23 +26,29 @@ import com.neaterbits.build.types.resource.FileSystemResourcePath;
 import com.neaterbits.build.types.resource.LibraryResourcePath;
 import com.neaterbits.build.types.resource.ModuleResourcePath;
 import com.neaterbits.build.types.resource.NamespaceResource;
+import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResource;
 import com.neaterbits.build.types.resource.compile.CompiledModuleFileResourcePath;
+import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.java.JavaLexerObjectParser;
 import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
+import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.language.java.JavaTypes;
+import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
+import com.neaterbits.compiler.model.objects.ObjectProgramModel;
+import com.neaterbits.compiler.model.objects.ObjectsCompilerModel;
 import com.neaterbits.compiler.resolver.ResolveError;
-import com.neaterbits.compiler.resolver.ast.objects.BuildAndResolve;
-import com.neaterbits.compiler.resolver.ast.objects.ProgramLoader;
-import com.neaterbits.compiler.resolver.ast.objects.model.ObjectProgramModel;
-import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.FileSystemFileSpec;
+import com.neaterbits.compiler.resolver.build.CompileSource;
+import com.neaterbits.compiler.resolver.build.CompilerOptions;
+import com.neaterbits.compiler.resolver.build.ModulesBuilder;
+import com.neaterbits.compiler.resolver.build.ResolvedSourceModule;
+import com.neaterbits.compiler.resolver.build.SourceBuilder;
+import com.neaterbits.compiler.resolver.build.SourceModule;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.component.common.language.compilercommon.CompilerSourceFileModel;
@@ -49,6 +57,10 @@ import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.util.parse.ParserException;
 
 public final class JavaLanguage extends JavaBuildableLanguage implements CompileableLanguage, ParseableLanguage {
+
+    private static final CompilerOptions COMPILER_OPTIONS = new CompilerOptions(true);
+    
+    private static final LanguageSpec LANGUAGE_SPEC = JavaLanguageSpec.INSTANCE;
 
 	private final BytecodeFormat bytecodeFormat;
 	
@@ -185,6 +197,14 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		return true;
 	}
 
+	private static ObjectsCompilerModel makeCompilerModel(CompilerCodeMap codeMap) {
+	    
+	    return new ObjectsCompilerModel(
+                LANGUAGE_SPEC,
+                JavaTypes.getBuiltinTypes(),
+                codeMap::getTypeNoByTypeName);
+	}
+
 	@Override
 	public Map<SourceFileResourcePath, SourceFileModel> parseModule(
 			ModuleResourcePath modulePath,
@@ -193,59 +213,50 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			ResolvedTypes resolvedTypes,
 			CompilerCodeMap codeMap) throws IOException {
 
-		final JavaLexerObjectParser parser = new JavaLexerObjectParser();
-
 		final Map<SourceFileResourcePath, SourceFileModel> sourceFileModels = new HashMap<>(files.size());
-		final Map<SourceFileResourcePath, ASTParsedFile> compilationUnits = new HashMap<>(files.size());
 		
-		final ObjectProgramModel programModel = new JavaProgramModel();
+		final ObjectsCompilerModel compilerModel = makeCompilerModel(codeMap);
+		        
+		final ModulesBuilder<CompilationUnit, ASTParsedFile> modulesBuilder
+		    = new ModulesBuilder<>(LANGUAGE_SPEC, compilerModel, COMPILER_OPTIONS);
 		
-		for (SourceFileResourcePath path : files) {
+		final CompileModule compileModule
+		    = new CompileModule(
+		            (ProjectModuleResourcePath)modulePath,
+		            files,
+		            getCharset(),
+		            Collections.emptyList(),
+		            Collections.emptyList());
 		
-			final File file = path.getFile();
-			
-			try (FileInputStream inputStream = new FileInputStream(file)) {
-			
-				ASTParsedFile parsedFile;
-				
-                try {
-                    parsedFile = BuildAndResolve.parseFile(
-                    		parser,
-                    		inputStream,
-                    		getCharset(),
-                    		new FileSystemFileSpec(file),
-                    		resolvedTypes);
+		final ResolvedModule<ASTParsedFile, ResolveError> resolvedModule;
+		
+		try {
+            resolvedModule = modulesBuilder.compile(compileModule, codeMap);
+        } catch (IOException | ParserException ex) {
+            throw new IllegalStateException(ex);
+        }
 
-                    final SourceFileModel sourceFileModel = new CompilerSourceFileModel(
-                            programModel,
-                            parsedFile.getParsed(),
-                            parsedFile.getErrors(),
-                            resolvedTypes,
-                            -1,
-                            codeMap);
+		for (ParsedWithCachedRefs<ASTParsedFile, ResolveError> parsedWithCachedRefs
+		            : resolvedModule.getParsedModule().getParsed()) {
 
-                    compilationUnits.put(path, parsedFile);
-                    sourceFileModels.put(path, sourceFileModel);
-                } catch (ParserException e) {
-                    e.printStackTrace();
-                }
-				
-			}
+		    
+		    final SourceFileModel sourceFileModel = makeSourceFileModel(
+		                                                parsedWithCachedRefs,
+		                                                resolvedTypes,
+		                                                codeMap);
+		    
+	        final SourceFileResourcePath path = resolvedModule.getCompileModule().getSourceFiles().stream()
+	                .filter(sourceFile -> sourceFile.getFile().equals(
+	                                            parsedWithCachedRefs.getParsedFile().getFileSpec().getFile()))
+	                .findFirst()
+	                .orElseThrow(IllegalStateException::new);
+
+	        sourceFileModels.put(path, sourceFileModel);
 		}
-
-		BuildAndResolve.resolveParsedModule(
-				modulePath,
-				dependencies,
-				ModuleResourcePath::getModuleId,
-				ModuleResourcePath::getFile,
-				compilationUnits.values(),
-				programModel,
-				JavaTypes.getBuiltinTypeRefs(),
-				resolvedTypes);
 		
 		return sourceFileModels;
 	}
-
+	
 	@Override
 	public SourceFileModel parseAndResolveChangedFile(
 			SourceFileResourcePath sourceFilePath,
@@ -253,53 +264,64 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 			ResolvedTypes resolvedTypes,
 			CompilerCodeMap codeMap) {
 
-		final JavaLexerObjectParser parser = new JavaLexerObjectParser();
-		final ByteArrayInputStream inputStream = new ByteArrayInputStream(string.getBytes());
-		
-		final SourceFileModel sourceFileModel;
-		
-		try {
-			final ObjectProgramModel programModel = new JavaProgramModel();
-			
-			final FileSpec fileSpec = new FileSystemFileSpec(sourceFilePath.getFile());
-			
-			final ASTParsedFile parsedFile = BuildAndResolve.parseFile(
-					parser,
-					inputStream,
-					getCharset(),
-					fileSpec,
-					resolvedTypes);
-			
-			final Map<FileSpec, List<ResolveError>> resolveErrors = BuildAndResolve.resolveParsedFiles(
-					Arrays.asList(ProgramLoader.makeCompiledFile(parsedFile)),
-					programModel,
-					JavaTypes.getBuiltinTypeRefs(),
-					resolvedTypes)
-					.getResolveErrors();
-			
-			final List<CompileError> allErrors = new ArrayList<>(parsedFile.getErrors().size() + resolveErrors.size());
-			
-			allErrors.addAll(parsedFile.getErrors());
-			
-			final List<ResolveError> resolve = resolveErrors.get(fileSpec);
-			
-			if (resolve != null) {
-				allErrors.addAll(resolve);
-			}
+		final ObjectsCompilerModel compilerModel = makeCompilerModel(codeMap);
 
-			sourceFileModel = new CompilerSourceFileModel(
-					new JavaProgramModel(),
-					parsedFile.getParsed(),
-					allErrors,
-					resolvedTypes,
-					-1,
-					codeMap);
+		final SourceBuilder<CompilationUnit, ASTParsedFile> sourceBuilder
+                                                    		    = new SourceBuilder<>(
+                                                    		            LANGUAGE_SPEC,
+                                                    		            compilerModel,
+                                                    		            COMPILER_OPTIONS);
+		
+		final CompileSource compileSource = new CompileSource(string, sourceFilePath.getFile().getName());
+		
+		final SourceModule sourceModule = new SourceModule(
+		        Arrays.asList(compileSource),
+		        getCharset(),
+		        Collections.emptyList(),
+		        Collections.emptyList());
 
-		} catch (IOException | ParserException ex) {
-			throw new IllegalStateException(ex);
-		}
+		final ResolvedSourceModule<ASTParsedFile> resolvedSourceModule;
+
+        try {
+            resolvedSourceModule = sourceBuilder.compile(
+                                                    sourceModule,
+                                                    codeMap,
+                                                    fileName -> sourceFilePath.getFile());
+
+        } catch (IOException | ParserException ex) {
+            throw new IllegalStateException(ex);
+        }
+		
+		final ParsedWithCachedRefs<ASTParsedFile, ResolveError> parsedWithCachedRefs
+		        = resolvedSourceModule.getParsedModule().getParsed().get(0);
+
+		final SourceFileModel sourceFileModel = makeSourceFileModel(
+		                                                parsedWithCachedRefs,
+		                                                resolvedTypes,
+		                                                codeMap);
 		
 		return sourceFileModel;
 	}
+
+    private SourceFileModel makeSourceFileModel(
+            ParsedWithCachedRefs<ASTParsedFile, ResolveError> parsedWithCachedRefs,
+            ResolvedTypes resolvedTypes,
+            CompilerCodeMap codeMap) {
+        
+        final List<CompileError> allErrors = new ArrayList<>();
+        
+        allErrors.addAll(parsedWithCachedRefs.getParsedFile().getErrors());
+        allErrors.addAll(parsedWithCachedRefs.getResolveErrorsList());
+        
+        final SourceFileModel sourceFileModel = new CompilerSourceFileModel(
+                new ObjectProgramModel(),
+                parsedWithCachedRefs.getParsedFile().getParsed(),
+                allErrors,
+                resolvedTypes,
+                parsedWithCachedRefs.getCodeMapFileNo(),
+                codeMap);
+        
+        return sourceFileModel;
+    }
 }
 
