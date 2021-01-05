@@ -31,7 +31,6 @@ import com.neaterbits.ide.common.ui.view.ProjectViewListener;
 final class SWTProjectView extends SWTView implements ProjectView {
 
 	private final Composite composite;
-	
 	private final TreeViewer treeViewer;
 
 	private final List<ProjectViewListener> listeners;
@@ -45,9 +44,7 @@ final class SWTProjectView extends SWTView implements ProjectView {
 		tabItem.setText("Projects");
 
 		this.composite = new Composite(tabFolder, SWT.NONE);
-		
 		tabItem.setControl(composite);
-		
 		this.composite.setLayout(new FillLayout());
 		
 		this.listeners = new ArrayList<>();

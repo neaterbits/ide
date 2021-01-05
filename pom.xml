@@ -53,6 +53,7 @@
 		<module>util-swt</module>
 		<module>structured-log-swt</module>
 		<module>util</module>
+		<module>icons</module>
 	</modules>
 
 	<build>
