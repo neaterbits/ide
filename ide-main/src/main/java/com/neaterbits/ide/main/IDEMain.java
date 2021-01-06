@@ -123,7 +123,6 @@ public class IDEMain {
 		
 		return components;
 	}
-	
 
 	private static void startIDEScanJobs(
 			LogContext logContext,
@@ -135,7 +134,13 @@ public class IDEMain {
 		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
 		final InitialScanContext context = new InitialScanContext(buildRoot, language, codeMapGatherer);
 		
-		ideStartup.execute(logContext, context, new PrintlnTargetExecutorLogger(), asyncExecutor, null);
+		ideStartup.execute(
+		        logContext,
+		        context,
+                "sourcefolders",
+		        new PrintlnTargetExecutorLogger(),
+		        asyncExecutor,
+		        null);
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {
