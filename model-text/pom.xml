@@ -6,7 +6,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <artifactId>model-text</artifactId>
+  <artifactId>ide-model-text</artifactId>
   <dependencies>
   	<dependency>
   		<groupId>${project.groupId}</groupId>

@@ -18,13 +18,13 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>icons</artifactId>
+			<artifactId>ide-icons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>ui-swt</artifactId>
+			<artifactId>ide-ui-swt</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

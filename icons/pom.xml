@@ -5,5 +5,5 @@
     <artifactId>root</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>icons</artifactId>
+  <artifactId>ide-icons</artifactId>
 </project>

@@ -6,7 +6,7 @@
 		<artifactId>root</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>ui-swt</artifactId>
+	<artifactId>ide-ui-swt</artifactId>
 
 	<dependencies>
 

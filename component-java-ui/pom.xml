@@ -6,21 +6,21 @@
 		<artifactId>root</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>component-java-ui</artifactId>
+	<artifactId>ide-component-java-ui</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>component-common</artifactId>
+			<artifactId>ide-component-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>component-java-language</artifactId>
+			<artifactId>ide-component-java-language</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>ui-swt</artifactId>
+			<artifactId>ide-ui-swt</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

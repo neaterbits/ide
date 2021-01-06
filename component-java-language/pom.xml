@@ -6,11 +6,11 @@
 		<artifactId>root</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>component-java-language</artifactId>
+	<artifactId>ide-component-java-language</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>component-common</artifactId>
+			<artifactId>ide-component-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
