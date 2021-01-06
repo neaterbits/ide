@@ -29,9 +29,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>${utilGroupId}</groupId>
 			<artifactId>util-swt</artifactId>
-			<version>${project.version}</version>
+			<version>${utilVersion}</version>
 		</dependency>
 	</dependencies>
 
