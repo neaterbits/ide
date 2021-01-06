@@ -3,6 +3,8 @@ package com.neaterbits.ide.component.java.language;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,11 +102,26 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		
 		System.out.println("## jre dir " + jreDir);
 		
-		final List<String> fileNames = Arrays.asList("rt.jar", "charsets.jar");
+		final Path jrePath = Path.of(jreDir);
+
+		final List<String> list;
 		
-		final List<String> list = fileNames.stream()
-			.map(fileName -> jreDir + "/lib/" + fileName)
-			.collect(Collectors.toList());
+		if (Files.exists(jrePath.resolve("jmods"))) {
+		    
+            final List<String> fileNames = Arrays.asList("java.base.jmod");
+
+            list = fileNames.stream()
+                    .map(fileName -> jreDir + "/jmods/" + fileName)
+                    .collect(Collectors.toList());
+		}
+		else {
+		
+		    final List<String> fileNames = Arrays.asList("rt.jar", "charsets.jar");
+		
+		    list = fileNames.stream()
+		            .map(fileName -> jreDir + "/lib/" + fileName)
+		            .collect(Collectors.toList());
+		}
 		
 		try {
 			return new JavaClassLibs(list);
