@@ -13,11 +13,11 @@ import com.neaterbits.ide.common.tasks.TargetBuilderIDEStartup;
 import com.neaterbits.build.buildsystem.common.BuildSystem;
 import com.neaterbits.build.buildsystem.common.ScanException;
 import com.neaterbits.build.common.language.CompileableLanguage;
+import com.neaterbits.build.language.java.jdk.JavaRuntimeEnvironment;
 import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.build.model.BuildRootImpl;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
-import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.controller.IDEController;
 import com.neaterbits.ide.component.common.IDEComponents;
@@ -61,7 +61,10 @@ public class IDEMain {
 
 				final BuildSystem buildSystem = buildSystems.findBuildSystem(projectDir);
 				
-				final BuildRoot buildRoot = new BuildRootImpl<>(projectDir, buildSystem.scan(projectDir));  
+				final BuildRoot buildRoot = new BuildRootImpl<>(
+				                                    projectDir,
+				                                    buildSystem.scan(projectDir),
+				                                    new JavaRuntimeEnvironment());  
 				
 				final IDEComponents ideComponents = registerComponents();
 				
@@ -74,7 +77,6 @@ public class IDEMain {
 				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(
 						asyncExecutor,
 						language,
-						new JavaBytecodeFormat(),
 						buildRoot,
 						compilerCodeMap);
 

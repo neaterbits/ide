@@ -1,10 +1,11 @@
 package com.neaterbits.ide.common.tasks;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.neaterbits.build.common.tasks.ModuleBuilderUtil;
+import com.neaterbits.build.model.runtimeenvironment.RuntimeEnvironment;
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.build.types.dependencies.LibraryDependency;
 import com.neaterbits.build.types.resource.LibraryResourcePath;
 import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
 import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
@@ -37,22 +38,31 @@ public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuilderSp
 					        (context, module) ->
 					            ModuleBuilderUtil.transitiveProjectExternalDependencies(
 					                                context.getBuildRoot(),
-					                                module))
+					                                module).stream()
+					            .map(dep -> new LibraryDep(module, dep))
+					            .collect(Collectors.toList()))
 					
 					.buildBy(subTarget -> {
 						subTarget.addFileSubTarget(
-								LibraryDependency.class,
+								LibraryDep.class,
 								"library_dependency" ,
 								"gather_library_dependency",
 								LibraryResourcePath.class,
-								(context, dependency) -> dependency.getModulePath(),
+								(context, dependency) -> dependency.getTo().getModulePath(),
 								LibraryResourcePath::getFile,
-								dependency -> "Project dependency " + dependency.getModulePath().getLast().getName())
+								
+								dependency -> "Project dependency "
+								               + dependency.getTo().getModulePath().getLast().getName())
 						
 						.action(Constraint.IO, (context, target, parameters) -> {
 							
-							final LibraryResourcePath libraryResourcePath = target.getModulePath();
-							final Set<TypeName> types = context.getCompileableLanguage().getTypesFromLibraryFile(libraryResourcePath);
+						    final RuntimeEnvironment runtimeEnvironment
+						        = context.getBuildRoot().getRuntimeEnvironment(target.getFrom());
+						    
+							final LibraryResourcePath libraryResourcePath = target.getTo().getModulePath();
+							
+							final Set<TypeName> types
+							    = runtimeEnvironment.getTypesFromLibraryFile(libraryResourcePath);
 							
 							context.getCodeMapGatherer().addLibraryFileTypes(libraryResourcePath, types);
 							
