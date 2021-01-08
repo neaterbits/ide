@@ -17,7 +17,6 @@ import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.build.model.BuildRootImpl;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
-import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.controller.IDEController;
 import com.neaterbits.ide.component.common.IDEComponents;
@@ -74,7 +73,6 @@ public class IDEMain {
 				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(
 						asyncExecutor,
 						language,
-						new JavaBytecodeFormat(),
 						buildRoot,
 						compilerCodeMap);
 

@@ -1,7 +1,8 @@
 package com.neaterbits.ide.common.tasks;
 
+import java.util.stream.Collectors;
+
 import com.neaterbits.build.strategies.common.SourceFilesBuilderUtil;
-import com.neaterbits.build.types.compile.FileCompilation;
 import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
@@ -32,8 +33,8 @@ public final class TargetBuilderProjectModulesCodeMap extends TargetBuilderSpec<
 					.fromIterating(
 					        Constraint.IO,
 					        (context, module) -> context.getBuildRoot()
-					                                    .getBuildSystemRootScan()
-					                                    .findSourceFolders(module))
+    		                                    .getBuildSystemRootScan()
+    		                                    .findSourceFolders(module))
 					.buildBy(st -> st
 							
 						.addInfoSubTarget(
@@ -44,18 +45,28 @@ public final class TargetBuilderProjectModulesCodeMap extends TargetBuilderSpec<
 								sourceFolder -> "Class files for source folder " + sourceFolder.getName())
 
 							.withPrerequisites("Source folder compilations")
-							.fromIterating(Constraint.IO, (ctx, sourceFolder) -> SourceFilesBuilderUtil.getSourceFiles(ctx, sourceFolder))
+							.fromIterating(
+							        Constraint.IO,
+							        (ctx, sourceFolder) -> SourceFilesBuilderUtil.getSourceFiles(
+						                                                              ctx,
+						                                                              sourceFolder)
+							                    .stream()
+							                    .map(fileCompilation
+							                            -> new FileCompilationDep(sourceFolder.getModule(), fileCompilation))
+					                            .collect(Collectors.toList()))
+							                    
 							.buildBy(sourceFileTarget -> sourceFileTarget
 										
 										.addInfoSubTarget(
-												FileCompilation.class,
+												FileCompilationDep.class,
 												"class_codemap",
 												"generate_class_codemap",
-												fileCompilation -> fileCompilation.getSourceFile().getPath(),
-												fileCompilation -> "Generate codemap for " + fileCompilation.getCompiledFile().getPath())
+												fileCompilation -> fileCompilation.getTo().getSourceFile().getPath(),
+												fileCompilation -> "Generate codemap for "
+												                    + fileCompilation.getTo().getCompiledFile().getPath())
 										
 										.action(Constraint.IO, (ctx, target, actionParameters) -> {
-											ctx.getCodeMapGatherer().addClassFile(target);
+											ctx.getCodeMapGatherer().addClassFile(target.getFrom(), target.getTo());
 											
 											return null;
 										})

@@ -14,6 +14,7 @@ import java.util.Set;
 
 import com.neaterbits.build.common.language.CompileableLanguage;
 import com.neaterbits.build.model.BuildRoot;
+import com.neaterbits.build.model.runtimeenvironment.RuntimeEnvironment;
 import com.neaterbits.build.types.ClassLibs;
 import com.neaterbits.build.types.DependencyFile;
 import com.neaterbits.build.types.TypeName;
@@ -21,9 +22,9 @@ import com.neaterbits.build.types.TypeSource;
 import com.neaterbits.build.types.TypeToDependencyFile;
 import com.neaterbits.build.types.compile.FileCompilation;
 import com.neaterbits.build.types.resource.LibraryResourcePath;
+import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.compile.CompiledModuleFileResourcePath;
-import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
@@ -42,9 +43,11 @@ import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
 public final class CodeMapGatherer extends InformationGatherer implements CodeMapModel {
 
 	private final CompileableLanguage language;
-	private final BytecodeFormat bytecodeFormat;
+	private final BuildRoot buildRoot;
 	
-	private final TypeToDependencyFile typeToDependencyFile;
+	private final TypeToDependencyFile moduleAndLibraryToDependencyFile;
+	
+	private final Map<RuntimeEnvironment, TypeToDependencyFile> systemTypeToDependencyFileByRuntimeEnvironment;
 	
 	private final HashTypeMap<ClassInfo> typeMap;
 	private final CompilerCodeMap codeMap;
@@ -58,18 +61,18 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	public CodeMapGatherer(
 			AsyncExecutor asyncExecutor,
 			CompileableLanguage language,
-			BytecodeFormat bytecodeFormat,
 			BuildRoot buildRoot,
 			CompilerCodeMap codeMap) {
 
 		Objects.requireNonNull(asyncExecutor);
 		Objects.requireNonNull(language);
-		Objects.requireNonNull(bytecodeFormat);
-		
+		Objects.requireNonNull(buildRoot);
+
 		this.language = language;
-		this.bytecodeFormat = bytecodeFormat;
+		this.buildRoot = buildRoot;
 		
-		this.typeToDependencyFile = new TypeToDependencyFile();
+		this.moduleAndLibraryToDependencyFile = new TypeToDependencyFile();
+		this.systemTypeToDependencyFileByRuntimeEnvironment = new HashMap<>();
 		
 		this.typeMap = new HashTypeMap<>(ClassInfo::getTypeNo, ClassInfo::getTypeSource);
 		this.codeMap = codeMap;
@@ -107,7 +110,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 			@Override
 			boolean findSuggestions(TypeNameMatcher matcher, Map<TypeName, TypeSuggestion> dst) {
 
-				typeToDependencyFile.forEachKeyValue((typeName, file) -> {
+				moduleAndLibraryToDependencyFile.forEachKeyValue((typeName, file) -> {
 					
 					final String namespaceString = language.getNamespaceString(typeName);
 					
@@ -139,7 +142,8 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 
 			@Override
 			boolean hasType(TypeName typeName, TypeSources typeSources) {
-				final DependencyFile dependencyFile =  typeToDependencyFile.getDependencyFileFor(typeName);
+				final DependencyFile dependencyFile
+				    = moduleAndLibraryToDependencyFile.getDependencyFileFor(typeName);
 				
 				return dependencyFile != null
 						? typeSources.isSet(dependencyFile.getTypeSource())
@@ -237,35 +241,70 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	}
 
 	public void addCompiledModuleFileTypes(CompiledModuleFileResourcePath module, Set<TypeName> types) {
-		typeToDependencyFile.mergeModuleDependencyTypes(new DependencyFile(module.getFile(), TypeSource.LIBRARY), types);
+
+		moduleAndLibraryToDependencyFile.mergeModuleDependencyTypes(new DependencyFile(module.getFile(), TypeSource.LIBRARY), types);
 	}
 	
 	public void addLibraryFileTypes(LibraryResourcePath module, Set<TypeName> types) {
-		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(module.getFile(), TypeSource.LIBRARY), types);
+
+	    moduleAndLibraryToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(module.getFile(), TypeSource.LIBRARY), types);
 	}
 
-	public void addSystemLibraryFileTypes(File libraryFile, Set<TypeName> types) {
+	public boolean hasSystemLibraryFileTypes(ProjectModuleResourcePath from) {
+	    
+        Objects.requireNonNull(from);
+
+        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+
+        return systemTypeToDependencyFileByRuntimeEnvironment.containsKey(runtimeEnvironment);
+	}
+
+	public void addSystemLibraryFileTypes(ProjectModuleResourcePath from, File libraryFile, Set<TypeName> types) {
+
+	    Objects.requireNonNull(from);
+	    Objects.requireNonNull(libraryFile);
+	    Objects.requireNonNull(types);
+
+	    final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+	    
+	    TypeToDependencyFile typeToDependencyFile
+	        = systemTypeToDependencyFileByRuntimeEnvironment.get(runtimeEnvironment);
+	    
+	    if (typeToDependencyFile == null) {
+	        
+	        typeToDependencyFile = new TypeToDependencyFile();
+
+	        systemTypeToDependencyFileByRuntimeEnvironment.put(runtimeEnvironment, typeToDependencyFile);
+	    }
+
 		typeToDependencyFile.mergeLibraryDependencyTypesIfNotPresent(new DependencyFile(libraryFile, TypeSource.LIBRARY), types);
 	}
 
-	public void addSystemLibraryFile(DependencyFile file) {
+	public void addSystemLibraryFile(ProjectModuleResourcePath from, DependencyFile file) {
+	    
+	    Objects.requireNonNull(from);
+	    
+	    final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
 		
 		final long start = System.currentTimeMillis();
 
 		Set<TypeName> typeNames = null;
 		
 		try {
-			typeNames = language.getTypesFromSystemLibraryFile(file);
+			typeNames = runtimeEnvironment.getTypesFromSystemLibraryFile(file);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		
-		final ClassLibs systemLibraries = language.getSystemLibraries();
+		final ClassLibs systemLibraries = runtimeEnvironment.getSystemLibraries();
 		
 		if (typeNames != null) {
 			for (TypeName typeName : typeNames) {
 				try {
-					final boolean addedType = loadClassAndBaseClassesAndAddToCodeMap(systemLibraries, typeName);
+					final boolean addedType = loadClassAndBaseClassesAndAddToCodeMap(
+					                                            from,
+					                                            systemLibraries,
+					                                            typeName);
 					
 					if (!addedType) {
 						System.out.println("## already added " + typeName.toDebugString());
@@ -284,9 +323,15 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		return this;
 	}
 	
-	public void addClassFile(FileCompilation fileCompilation) throws IOException, ClassFileException {
+	public void addClassFile(
+	        ProjectModuleResourcePath from,
+	        FileCompilation fileCompilation) throws IOException, ClassFileException {
 		
 		Objects.requireNonNull(fileCompilation);
+		
+        Objects.requireNonNull(from);
+        
+        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
 		
 		final TypeName typeName = language.getTypeName(fileCompilation.getSourcePath());
 		
@@ -300,7 +345,9 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 				ClassByteCodeWithTypeSource classBytecode = null;
 				
 				try {
-					classBytecode = bytecodeFormat.loadClassBytecode(inputStream, typeSource);
+					classBytecode = runtimeEnvironment
+					                    .getBytecodeFormat()
+					                    .loadClassBytecode(inputStream, typeSource);
 				} catch (IOException | ClassFileException ex) {
 					ex.printStackTrace();
 				}
@@ -319,14 +366,36 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	}
 
 	// load classfile from local library
-	void loadAndAddToCodeMap(TypeName typeName, TypeSource typeSource) throws IOException, ClassFileException {
+	void loadAndAddToCodeMap(
+	        ProjectModuleResourcePath from,
+	        TypeName typeName,
+	        TypeSource typeSource) throws IOException, ClassFileException {
 		
+        Objects.requireNonNull(from);
+        
+        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+	    
 		loadAndAddToCodeMap(typeName, typeSource, type -> {
 					
 					ClassByteCodeWithTypeSource classBytecode = null;
 					
 					try {
-						classBytecode = bytecodeFormat.loadClassBytecode(typeToDependencyFile, type);
+						classBytecode = runtimeEnvironment
+						                        .getBytecodeFormat()
+						                        .loadClassBytecode(moduleAndLibraryToDependencyFile, type);
+						
+						if (classBytecode == null) {
+						    
+						    final TypeToDependencyFile systemTypeToDependencyFile
+						        = systemTypeToDependencyFileByRuntimeEnvironment.get(runtimeEnvironment);
+						    
+						    if (systemTypeToDependencyFile != null) {
+
+						        classBytecode = runtimeEnvironment
+                                        .getBytecodeFormat()
+                                        .loadClassBytecode(systemTypeToDependencyFile, type);
+						    }
+						}
 					} catch (IOException | ClassFileException ex) {
 						ex.printStackTrace();
 					}
@@ -336,14 +405,21 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 
 	}
 
-	private boolean loadClassAndBaseClassesAndAddToCodeMap(ClassLibs classLibs, TypeName typeName) throws IOException, ClassFileException {
+	private boolean loadClassAndBaseClassesAndAddToCodeMap(
+	        ProjectModuleResourcePath from,
+	        ClassLibs classLibs,
+	        TypeName typeName) throws IOException, ClassFileException {
+
+	    Objects.requireNonNull(from);
+        
+        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
 		
 		final LoadClassParameters<File, ClassInfo, Void> parameters = new LoadClassParameters<>(
 				typeMap,
 				codeMap,
 				createType,
 				null,
-				type -> bytecodeFormat.loadClassBytecode(classLibs, type));
+				type -> runtimeEnvironment.getBytecodeFormat().loadClassBytecode(classLibs, type));
 		
 		final ClassBytecode addedByteCode = LoadClassHelper.loadClassAndBaseTypesAndAddToCodeMap(typeName, new TypeResult(), parameters);
 		

@@ -3,8 +3,6 @@ package com.neaterbits.ide.component.java.language;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.neaterbits.build.common.language.CompileableLanguage;
 import com.neaterbits.build.common.tasks.util.SourceFileScanner;
@@ -21,23 +17,15 @@ import com.neaterbits.build.language.java.jdk.JavaBuildableLanguage;
 import com.neaterbits.build.strategies.compilemodules.CompileModule;
 import com.neaterbits.build.strategies.compilemodules.ParsedWithCachedRefs;
 import com.neaterbits.build.strategies.compilemodules.ResolvedModule;
-import com.neaterbits.build.types.ClassLibs;
-import com.neaterbits.build.types.DependencyFile;
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.build.types.resource.FileSystemResourcePath;
-import com.neaterbits.build.types.resource.LibraryResourcePath;
 import com.neaterbits.build.types.resource.ModuleResourcePath;
 import com.neaterbits.build.types.resource.NamespaceResource;
 import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResource;
-import com.neaterbits.build.types.resource.compile.CompiledModuleFileResourcePath;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
-import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
-import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.model.common.LanguageSpec;
@@ -64,12 +52,6 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
     
     private static final LanguageSpec LANGUAGE_SPEC = JavaLanguageSpec.INSTANCE;
 
-	private final BytecodeFormat bytecodeFormat;
-	
-	public JavaLanguage() {
-		this.bytecodeFormat = new JavaBytecodeFormat();
-	}
-	
 	private static NamespaceResource getNamespace(SourceFileResourcePath sourceFile) {
 		
 		final NamespaceResource namespaceResource;
@@ -95,41 +77,6 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		return new File(jreDir + "/lib/" + libName);
 	}
 	
-	@Override
-	public ClassLibs getSystemLibraries() {
-
-		final String jreDir = System.getProperty("java.home");
-		
-		System.out.println("## jre dir " + jreDir);
-		
-		final Path jrePath = Path.of(jreDir);
-
-		final List<String> list;
-		
-		if (Files.exists(jrePath.resolve("jmods"))) {
-		    
-            final List<String> fileNames = Arrays.asList("java.base.jmod");
-
-            list = fileNames.stream()
-                    .map(fileName -> jreDir + "/jmods/" + fileName)
-                    .collect(Collectors.toList());
-		}
-		else {
-		
-		    final List<String> fileNames = Arrays.asList("rt.jar", "charsets.jar");
-		
-		    list = fileNames.stream()
-		            .map(fileName -> jreDir + "/lib/" + fileName)
-		            .collect(Collectors.toList());
-		}
-		
-		try {
-			return new JavaClassLibs(list);
-		} catch (IOException ex) {
-			throw new IllegalStateException(ex);
-		}
-	}
-
 	@Override
 	public TypeName getTypeName(SourceFileResourcePath sourceFile) {
 
@@ -178,40 +125,10 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
 		
 		return name.substring(0, name.length() - ".java".length());
 	}
-
-	@Override
-	public Set<TypeName> getTypesFromCompiledModuleFile(CompiledModuleFileResourcePath compiledModuleFileResourcePath) throws IOException {
-		return getTypesFromJarFile(compiledModuleFileResourcePath);
-	}
-	
-	@Override
-	public Set<TypeName> getTypesFromLibraryFile(LibraryResourcePath libraryResourcePath) throws IOException {
-		return getTypesFromJarFile(libraryResourcePath);
-	}
-	
-	@Override
-	public Set<TypeName> getTypesFromSystemLibraryFile(DependencyFile systemLibraryPath) throws IOException {
-
-		return getTypesFromJarFile(systemLibraryPath.getFile());
-	}
-
-	private Set<TypeName> getTypesFromJarFile(FileSystemResourcePath jarFileResourcePath) throws IOException {
-		return getTypesFromJarFile(jarFileResourcePath.getFile());
-	}
-
-	private Set<TypeName> getTypesFromJarFile(File file) throws IOException {
-
-		return bytecodeFormat.getTypesFromLibraryFile(file);
-	}
 	
 	private Charset getCharset() {
 	    
 	    return Charset.defaultCharset();
-	}
-
-	@Override
-	public boolean canReadCodeMapFromCompiledCode() {
-		return true;
 	}
 
 	private static ObjectsCompilerModel makeCompilerModel(CompilerCodeMap codeMap) {
