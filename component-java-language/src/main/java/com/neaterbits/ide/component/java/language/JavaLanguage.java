@@ -21,18 +21,17 @@ import com.neaterbits.build.types.TypeName;
 import com.neaterbits.build.types.resource.ModuleResourcePath;
 import com.neaterbits.build.types.resource.NamespaceResource;
 import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
-import com.neaterbits.build.types.resource.SourceFileHolderResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResource;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
+import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.model.common.BaseTypeVisitor;
 import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
-import com.neaterbits.compiler.model.common.SourceTokenVisitor;
 import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.model.objects.ObjectProgramModel;
 import com.neaterbits.compiler.model.objects.ObjectsCompilerModel;
@@ -52,7 +51,6 @@ import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.component.common.language.compilercommon.CompilerSourceFileModel;
 import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 import com.neaterbits.ide.component.common.runner.RunnableLanguage;
-import com.neaterbits.ide.util.Value;
 import com.neaterbits.util.parse.ParserException;
 
 public final class JavaLanguage
@@ -80,7 +78,6 @@ public final class JavaLanguage
 		
 		return namespaceResource;
 	}
-
 	
 	public static File getSystemJarFilePath(String libName) {
 		
@@ -290,11 +287,7 @@ public final class JavaLanguage
                 TypeName[] parameterTypes,
                 int indexInType) {
             
-            if (
-                       name.equals("main")
-                    && methodVariant == MethodVariant.STATIC
-                    && parameterTypes.length == 0) {
-
+            if (isMainMethod(name, methodVariant, parameterTypes.length)) {
                 this.isRunnable = true;
             }
         }
@@ -302,7 +295,7 @@ public final class JavaLanguage
     
     @Override
     public boolean isSourceFileRunnable(
-            SourceFileHolderResourcePath sourceFile,
+            SourceFileResourcePath sourceFile,
             SourceFileModel sourceFileModel) {
 
         final IsRunnableVisitor visitor = new IsRunnableVisitor();
@@ -310,6 +303,43 @@ public final class JavaLanguage
         sourceFileModel.iterateTypeMembers(visitor);
 
         return visitor.isRunnable;
+    }
+
+    @Override
+    public TypeName getRunnableType(ClassBytecode bytecode) {
+
+        if (!isBytecodeRunnable(bytecode)) {
+            throw new IllegalArgumentException();
+        }
+        
+        return bytecode.getTypeName();
+    }
+
+    @Override
+    public boolean isBytecodeRunnable(ClassBytecode bytecode) {
+
+        boolean isRunnable = false;
+        
+        for (int i = 0; i < bytecode.getMethodCount(); ++ i) {
+            
+            if (isMainMethod(
+                    bytecode.getMethodName(i),
+                    bytecode.getMethodVariant(i),
+                    bytecode.getMethodParameterCount(i))) {
+                
+                isRunnable = true;
+                break;
+            }
+        }
+        
+        return isRunnable;
+    }
+
+    private static boolean isMainMethod(String name, MethodVariant methodVariant, int parameterCount) {
+
+        return     name.equals("main")
+                && methodVariant == MethodVariant.STATIC
+                && parameterCount == 1;
     }
 }
 

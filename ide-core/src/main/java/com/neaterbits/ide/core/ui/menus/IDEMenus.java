@@ -1,15 +1,19 @@
 package com.neaterbits.ide.core.ui.menus;
 
+import java.util.List;
+
 import com.neaterbits.ide.common.ui.keys.KeyBindings;
 import com.neaterbits.ide.common.ui.menus.BuiltinMenu;
 import com.neaterbits.ide.common.ui.menus.Menus;
+import com.neaterbits.ide.component.common.IDEComponentsConstAccess;
+import com.neaterbits.ide.component.common.ui.MenuComponentUI;
 import com.neaterbits.ide.core.ui.actions.BuiltinAction;
 
 public class IDEMenus {
 
-	public static Menus makeMenues(KeyBindings keyBindings) {
+	public static Menus makeMenues(KeyBindings keyBindings, IDEComponentsConstAccess componentsAccess) {
 		
-		final MenuBuilder builder = new MenuBuilder(keyBindings);
+		final MenuBuilderImpl builder = new MenuBuilderImpl(keyBindings);
 		
 		builder
 			.addSubMenu(BuiltinMenu.FILE, b -> b
@@ -41,7 +45,14 @@ public class IDEMenus {
 					.addBuiltinAction(BuiltinAction.MOVE))
 			.addSubMenu(BuiltinMenu.NAVIGATE, b -> b
 					.addBuiltinAction(BuiltinAction.TYPE_HIERARCHY)
-			);
+			)
+			.addSubMenu(BuiltinMenu.RUN, b -> { });
+
+		final List<MenuComponentUI> menuUIs = componentsAccess.findComponentUIs(MenuComponentUI.class);
+		
+		for (MenuComponentUI menuComponentUI : menuUIs) {
+		    menuComponentUI.addToMenu(componentsAccess, builder);
+		}
 
 		return new Menus(builder.build());
 	}

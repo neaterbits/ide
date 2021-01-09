@@ -1,7 +1,5 @@
 package com.neaterbits.ide.component.common;
 
-import java.util.Objects;
-
 import com.neaterbits.ide.component.common.ui.ComponentUI;
 
 final class IDERegisteredComponent {

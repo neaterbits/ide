@@ -1,5 +1,6 @@
 package com.neaterbits.ide.core.ui.actions;
 
+import com.neaterbits.ide.common.ui.actions.BuiltinActionAccess;
 import com.neaterbits.ide.common.ui.translation.EnumTranslateable;
 import com.neaterbits.ide.common.ui.translation.TranslationNamespaces;
 import com.neaterbits.ide.core.ui.actions.types.clipboard.CopyAction;
@@ -23,7 +24,9 @@ import com.neaterbits.ide.core.ui.actions.types.source.MoveAction;
 import com.neaterbits.ide.core.ui.actions.types.source.RenameAction;
 import com.neaterbits.ide.core.ui.actions.types.source.TypeHierarchyAction;
 
-public enum BuiltinAction implements EnumTranslateable<BuiltinAction> {
+public enum BuiltinAction
+    implements EnumTranslateable<BuiltinAction>,
+               BuiltinActionAccess {
 
 	NEW_POPUP(NewPopupAction.class),
 	NEW_DIALOG(NewDialogAction.class),

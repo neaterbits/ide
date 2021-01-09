@@ -3,6 +3,7 @@ package com.neaterbits.ide.common.ui.menus;
 import com.neaterbits.ide.common.ui.actions.ActionAppParameters;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
 import com.neaterbits.ide.common.ui.actions.ActionExeParameters;
+import com.neaterbits.ide.common.ui.actions.ActionExecutionException;
 import com.neaterbits.ide.common.ui.keys.KeyCombination;
 
 public abstract class MenuItemEntry<
@@ -14,7 +15,7 @@ public abstract class MenuItemEntry<
 			ActionContexts focusedViewContexts,
 			ActionContexts allContexts);
 	
-	public abstract void execute(EXECUTE_PARAMETERS parameters);
+	public abstract void execute(EXECUTE_PARAMETERS parameters) throws ActionExecutionException;
 	
 	public abstract KeyCombination getKeyCombination();
 }

@@ -15,12 +15,15 @@ import com.neaterbits.build.model.BuildRootImpl;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
+import com.neaterbits.ide.component.application.runner.MainApplicationRunnerComponent;
 import com.neaterbits.ide.component.build.ui.BuildIssuesComponent;
 import com.neaterbits.ide.component.common.IDERegisteredComponents;
 import com.neaterbits.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
 import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
+import com.neaterbits.ide.component.runners.RunnersComponent;
+import com.neaterbits.ide.component.runners.ui.RunnersComponentUI;
 import com.neaterbits.ide.core.model.codemap.CodeMapGatherer;
 import com.neaterbits.ide.core.source.SourceFilesModel;
 import com.neaterbits.ide.core.tasks.InitialScanContext;
@@ -127,7 +130,9 @@ public class IDEMain {
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
         components.registerComponent(null, new BuildIssuesComponent());
         components.registerComponent(null, new CompiledFileViewComponent());
-		
+		components.registerComponent(new RunnersComponent(), new RunnersComponentUI());
+		components.registerComponent(new MainApplicationRunnerComponent(), null);
+        
 		return components;
 	}
 

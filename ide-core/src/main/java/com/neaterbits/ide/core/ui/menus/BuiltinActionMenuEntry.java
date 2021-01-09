@@ -1,46 +1,29 @@
 package com.neaterbits.ide.core.ui.menus;
 
-import java.util.Objects;
 
-import com.neaterbits.ide.common.ui.actions.ActionContexts;
+import com.neaterbits.ide.common.ui.actions.Action;
 import com.neaterbits.ide.common.ui.keys.KeyBindings;
-import com.neaterbits.ide.common.ui.keys.KeyCombination;
-import com.neaterbits.ide.common.ui.menus.MenuItemEntry;
 import com.neaterbits.ide.core.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.core.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.core.ui.actions.BuiltinAction;
 
 public final class BuiltinActionMenuEntry
-        extends MenuItemEntry<ActionApplicableParameters, ActionExecuteParameters> {
+        extends BaseActionMenuEntry<
+                        ActionApplicableParameters,
+                        ActionExecuteParameters,
+                        Action<ActionApplicableParameters, ActionExecuteParameters>> {
 
 	private final BuiltinAction builtinAction;
-	private final KeyCombination keyCombination;
 	
 	BuiltinActionMenuEntry(BuiltinAction builtinAction, KeyBindings keyBindings) {
+	    
+	    super(builtinAction.getAction(), keyBindings);
 
-		Objects.requireNonNull(builtinAction);
-		
 		this.builtinAction = builtinAction;
-		this.keyCombination = keyBindings.findKeyCombination(builtinAction.getAction());
 	}
 
 	public BuiltinAction getAction() {
 		return builtinAction;
-	}
-
-	@Override
-	public boolean isApplicableInContexts(ActionApplicableParameters parameters, ActionContexts focusedViewContexts, ActionContexts allContexts) {
-		return builtinAction.getAction().isApplicableInContexts(parameters, focusedViewContexts, allContexts);
-	}
-
-	@Override
-	public KeyCombination getKeyCombination() {
-		return keyCombination;
-	}
-
-	@Override
-	public void execute(ActionExecuteParameters parameters) {
-		builtinAction.getAction().execute(parameters);
 	}
 
 	@Override

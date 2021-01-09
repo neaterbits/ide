@@ -1,5 +1,5 @@
 package com.neaterbits.ide.common.ui.actions;
 
-public interface ActionAppParameters {
+public interface ActionAppParameters extends ActionSourceFileParameters {
 
 }

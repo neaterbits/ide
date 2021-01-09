@@ -9,7 +9,7 @@ import com.neaterbits.ide.component.common.instantiation.NewableCategoryName;
 import com.neaterbits.ide.component.common.language.Languages;
 import com.neaterbits.ide.component.common.ui.DetailsComponentUI;
 
-public interface IDEComponentsConstAccess {
+public interface IDEComponentsConstAccess extends IDEComponentsFinder {
 
 	Languages getLanguages();
 	

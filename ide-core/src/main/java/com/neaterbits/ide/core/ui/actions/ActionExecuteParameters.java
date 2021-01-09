@@ -1,7 +1,5 @@
 package com.neaterbits.ide.core.ui.actions;
 
-import com.neaterbits.build.model.BuildRoot;
-import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.ui.actions.ActionExeParameters;
@@ -18,8 +16,6 @@ public interface ActionExecuteParameters extends ActionExeParameters {
 
 	IDEComponentsConstAccess getComponents();
 
-	SourceFileResourcePath getCurrentEditedFile();
-	
 	UIDialogs getUIDialogs();
 
 	Clipboard getClipboard();
@@ -27,8 +23,6 @@ public interface ActionExecuteParameters extends ActionExeParameters {
 	UndoRedoBuffer getUndoRedoBuffer();
 	
 	ComponentIDEAccess getComponentIDEAccess();
-	
-	BuildRoot getBuildRoot();
 	
 	EditorsActions getEditorsActions();
 	

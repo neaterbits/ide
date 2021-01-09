@@ -3,15 +3,18 @@ package com.neaterbits.ide.core.ui.controller;
 import java.util.Objects;
 
 import com.neaterbits.build.model.BuildRoot;
+import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.common.ui.controller.EditorsActions;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.IDEComponentsConstAccess;
 import com.neaterbits.ide.core.ui.model.dialogs.FindReplaceDialogModel;
 import com.neaterbits.ide.core.ui.view.UIDialogs;
+import com.neaterbits.util.threads.ForwardResultToCaller;
 
-final class ActionExecuteState {
+abstract class ActionExecuteState {
 
 	private final IDEComponentsConstAccess components;
 	private final UIDialogs uiDialogs;
@@ -21,7 +24,13 @@ final class ActionExecuteState {
 	private final BuildRoot buildRoot;
 	private final EditorsActions editorsActions;
 	private final CodeMapModel codeMap;
+	private final ForwardResultToCaller forwardResultToCaller;
+	
 	private FindReplaceDialogModel findReplaceModel;
+
+    abstract SourceFileResourcePath getCurrentSourceFileResourcePath();
+
+    abstract SourceFileModel getSourceFileModel(SourceFileResourcePath sourceFileResourcePath);
 
 	ActionExecuteState(
 			IDEComponentsConstAccess components,
@@ -31,7 +40,8 @@ final class ActionExecuteState {
 			ComponentIDEAccess componentIDEAccess,
 			BuildRoot buildRoot,
 			EditorsActions editorsActions,
-			CodeMapModel codeMap) {
+			CodeMapModel codeMap,
+			ForwardResultToCaller forwardResultToCaller) {
 	
 		Objects.requireNonNull(components);
 		Objects.requireNonNull(uiDialogs);
@@ -41,6 +51,7 @@ final class ActionExecuteState {
 		Objects.requireNonNull(buildRoot);
 		Objects.requireNonNull(editorsActions);
 		Objects.requireNonNull(codeMap);
+		Objects.requireNonNull(forwardResultToCaller);
 		
 		this.components = components;
 		this.uiDialogs = uiDialogs;
@@ -50,9 +61,10 @@ final class ActionExecuteState {
 		this.buildRoot = buildRoot;
 		this.editorsActions = editorsActions;
 		this.codeMap = codeMap;
+		this.forwardResultToCaller = forwardResultToCaller;
 	}
 
-	IDEComponentsConstAccess getComponents() {
+    IDEComponentsConstAccess getComponents() {
 		return components;
 	}
 
@@ -84,7 +96,11 @@ final class ActionExecuteState {
 		return codeMap;
 	}
 
-	FindReplaceDialogModel getFindReplaceModel() {
+	ForwardResultToCaller getForwardResultToCaller() {
+        return forwardResultToCaller;
+    }
+
+    FindReplaceDialogModel getFindReplaceModel() {
 		return findReplaceModel;
 	}
 
