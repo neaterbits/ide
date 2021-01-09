@@ -65,15 +65,15 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 		return languages;
 	}
 	
-	public void registerComponent(ComponentProvider componentProvider, UIComponentProvider uiComponentProvider) {
+	public void registerComponent(IDEComponent component, UIComponentProvider uiComponentProvider) {
 
-		if (componentProvider instanceof LanguageComponent) {
-			final LanguageComponent languageComponent = (LanguageComponent)componentProvider;
+		if (component instanceof LanguageComponent) {
+			final LanguageComponent languageComponent = (LanguageComponent)component;
 		
 			languageComponents.put(languageComponent.getLanguageName(), languageComponent);
 		}
 		
-		components.add(new IDERegisteredComponent(componentProvider, uiComponentProvider));
+		components.add(new IDERegisteredComponent(component, uiComponentProvider));
 	}
 	
 	@Override
@@ -83,27 +83,33 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 		
 		for (IDERegisteredComponent ideComponent : components) {
 			
-			final List<NewableCategory> componentNewableCategories = ideComponent.getComponentProvider().getNewables();
-			
-			if (componentNewableCategories != null) {
-				for (NewableCategory newableCategory : componentNewableCategories) {
-	
-					if (newableCategory.getTypes() == null || newableCategory.getTypes().isEmpty()) {
-						throw new IllegalStateException();
-					}
-					
-					Set<Newable> newables = map.get(newableCategory);
-					
-					if (newables == null) {
-						newables = new HashSet<>();
-						
-						map.put(newableCategory, newables);
-					}
-					
-					for (Newable newable : newableCategory.getTypes()) {
-						newables.add(newable);
-					}
-				}
+		    if (ideComponent.getComponent() instanceof InstantiationComponent) {
+		        
+		        final InstantiationComponent instantiationComponent
+		            = (InstantiationComponent)ideComponent.getComponent();
+		        
+    			final List<NewableCategory> componentNewableCategories = instantiationComponent.getNewables();
+    			
+    			if (componentNewableCategories != null) {
+    				for (NewableCategory newableCategory : componentNewableCategories) {
+    	
+    					if (newableCategory.getTypes() == null || newableCategory.getTypes().isEmpty()) {
+    						throw new IllegalStateException();
+    					}
+    					
+    					Set<Newable> newables = map.get(newableCategory);
+    					
+    					if (newables == null) {
+    						newables = new HashSet<>();
+    						
+    						map.put(newableCategory, newables);
+    					}
+    					
+    					for (Newable newable : newableCategory.getTypes()) {
+    						newables.add(newable);
+    					}
+    				}
+    			}
 			}
 		}
 		
@@ -137,18 +143,24 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 		Objects.requireNonNull(newable);
 		
 		for (IDERegisteredComponent ideComponent : components) {
+		    
+		    if (ideComponent.getComponent() instanceof InstantiationComponent) {
+		        
+		        final InstantiationComponent instantiationComponent
+		            = (InstantiationComponent)ideComponent.getComponent();
 			
-			if (ideComponent.getComponentProvider().getNewables() != null) {
-				for (NewableCategory componentCategory : ideComponent.getComponentProvider().getNewables()) {
-					if (category.getName().equals(componentCategory.getName())) {
-						for (Newable componentNewable : componentCategory.getTypes()) {
-							if (newable.equals(componentNewable)) {
-								return ideComponent.getUiComponentProvider();
-							}
-						}
-					}
-				}
-			}
+    			if (instantiationComponent.getNewables() != null) {
+    				for (NewableCategory componentCategory : instantiationComponent.getNewables()) {
+    					if (category.getName().equals(componentCategory.getName())) {
+    						for (Newable componentNewable : componentCategory.getTypes()) {
+    							if (newable.equals(componentNewable)) {
+    								return ideComponent.getUiComponentProvider();
+    							}
+    						}
+    					}
+    				}
+    			}
+		    }
 		}
 
 		return null;
