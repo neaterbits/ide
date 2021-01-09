@@ -20,7 +20,7 @@ import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.controller.IDEController;
-import com.neaterbits.ide.component.common.IDEComponents;
+import com.neaterbits.ide.component.common.IDERegisteredComponents;
 import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
@@ -66,7 +66,7 @@ public class IDEMain {
 				                                    buildSystem.scan(projectDir),
 				                                    new JavaRuntimeEnvironment());  
 				
-				final IDEComponents ideComponents = registerComponents();
+				final IDERegisteredComponents ideComponents = registerComponents();
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
@@ -117,9 +117,9 @@ public class IDEMain {
 		}
 	}
 	
-	private static IDEComponents registerComponents() {
+	private static IDERegisteredComponents registerComponents() {
 
-		final IDEComponents components = new IDEComponents();
+		final IDERegisteredComponents components = new IDERegisteredComponents();
 		
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
 		
