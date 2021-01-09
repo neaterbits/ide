@@ -6,6 +6,7 @@ import java.util.List;
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.model.common.IType;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
+import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.model.common.VariableScope;
 import com.neaterbits.compiler.util.parse.CompileError;
 
@@ -16,6 +17,8 @@ public interface SourceFileModel {
 	void iterate(long offset, long length, SourceTokenVisitor visitor, boolean visitPlaceholderElements);
 
 	ISourceToken getSourceTokenAt(long offset);
+
+	void iterateTypeMembers(TypeMemberVisitor typeMemberVisitor);
 
 	IType getVariableType(ISourceToken token);
 
@@ -90,5 +93,4 @@ public interface SourceFileModel {
 
 		return new SourceTokenProperties(new SourceElementMask(flags));
 	}
-	
 }

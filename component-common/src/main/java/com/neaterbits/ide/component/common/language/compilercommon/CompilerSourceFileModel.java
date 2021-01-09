@@ -12,6 +12,7 @@ import com.neaterbits.compiler.model.common.ProgramModel;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.compiler.model.common.SourceTokenType;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
+import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.model.common.VariableScope;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
@@ -66,6 +67,12 @@ public final class CompilerSourceFileModel implements SourceFileModel {
 	}
 
 	@Override
+    public void iterateTypeMembers(TypeMemberVisitor typeMemberVisitor) {
+
+	    programModel.iterateTypeMembers(sourceFile, typeMemberVisitor);
+    }
+
+    @Override
 	public ISourceToken getSourceTokenAt(long offset) {
 
 		final ISourceToken token = programModel.getTokenAtOffset(sourceFile, offset, resolvedTypes);
