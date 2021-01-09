@@ -1,7 +1,7 @@
 package com.neaterbits.ide.common.ui.controller;
 
-import com.neaterbits.ide.common.ui.model.dialogs.SearchDirection;
-import com.neaterbits.ide.common.ui.model.dialogs.SearchScope;
+import com.neaterbits.ide.common.ui.SearchDirection;
+import com.neaterbits.ide.common.ui.SearchScope;
 import com.neaterbits.ide.util.ui.text.Text;
 
 public interface EditorActions {

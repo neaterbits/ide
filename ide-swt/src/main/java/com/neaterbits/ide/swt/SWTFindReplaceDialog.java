@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.neaterbits.ide.common.ui.SearchDirection;
+import com.neaterbits.ide.common.ui.SearchScope;
 import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;
-import com.neaterbits.ide.common.ui.model.dialogs.SearchDirection;
-import com.neaterbits.ide.common.ui.model.dialogs.SearchScope;
 import com.neaterbits.ide.common.ui.translation.Translator;
 import com.neaterbits.ide.common.ui.translation.texts.FindReplaceTexts;
 import com.neaterbits.ide.common.ui.view.ButtonListener;

@@ -6,10 +6,10 @@ import com.neaterbits.ide.common.ui.actions.Action;
 
 public final class KeyBinding {
 
-	private final Action action;
+	private final Action<?, ?> action;
 	private final KeyCombination keyCombination;
 	
-	public KeyBinding(Action action, Key key) {
+	public KeyBinding(Action<?, ?> action, Key key) {
 		
 		Objects.requireNonNull(action);
 		Objects.requireNonNull(key);
@@ -18,7 +18,7 @@ public final class KeyBinding {
 		this.keyCombination = new KeyCombination(key);
 	}
 
-	public KeyBinding(Action action, Key key, KeyMask qualifiers) {
+	public KeyBinding(Action<?, ?> action, Key key, KeyMask qualifiers) {
 		
 		Objects.requireNonNull(action);
 		
@@ -26,7 +26,7 @@ public final class KeyBinding {
 		this.keyCombination = new KeyCombination(key, qualifiers);
 	}
 
-	public Action getAction() {
+	public Action<?, ?> getAction() {
 		return action;
 	}
 
