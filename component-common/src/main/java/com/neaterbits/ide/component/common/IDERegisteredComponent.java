@@ -4,19 +4,19 @@ import java.util.Objects;
 
 final class IDERegisteredComponent {
 
-	private final ComponentProvider componentProvider;
+	private final IDEComponent component;
 	private final UIComponentProvider uiComponentProvider;
 
-	IDERegisteredComponent(ComponentProvider componentProvider, UIComponentProvider uiComponentProvider) {
+	IDERegisteredComponent(IDEComponent component, UIComponentProvider uiComponentProvider) {
 		
-		Objects.requireNonNull(componentProvider);
+		Objects.requireNonNull(component);
 		
-		this.componentProvider = componentProvider;
+		this.component = component;
 		this.uiComponentProvider = uiComponentProvider;
 	}
 
-	ComponentProvider getComponentProvider() {
-		return componentProvider;
+	IDEComponent getComponent() {
+		return component;
 	}
 
 	UIComponentProvider getUiComponentProvider() {

@@ -3,7 +3,7 @@ package com.neaterbits.ide.component.java.language;
 import java.util.Arrays;
 import java.util.List;
 
-import com.neaterbits.ide.component.common.ComponentProvider;
+import com.neaterbits.ide.component.common.InstantiationComponent;
 import com.neaterbits.ide.component.common.Newable;
 import com.neaterbits.ide.component.common.NewableCategory;
 import com.neaterbits.ide.component.common.NewableType;
@@ -13,7 +13,7 @@ import com.neaterbits.ide.component.common.language.LanguageStyling;
 import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 
 public class JavaLanguageComponent
-	implements ComponentProvider, LanguageComponent {
+	implements InstantiationComponent, LanguageComponent {
 
 	public static final Newable CLASS 		= new Newable(NewableType.FILE, "Class", null);
 	public static final Newable INTERFACE 	= new Newable(NewableType.FILE, "Interface", null);
