@@ -6,7 +6,7 @@ import com.neaterbits.build.types.TypeName;
 import com.neaterbits.build.types.TypeSource;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
-import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.types.TypeVariant;
 
 final class ClassInfo implements TypeSuggestion {
 
