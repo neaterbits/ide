@@ -36,6 +36,7 @@ import com.neaterbits.ide.common.ui.menus.SubMenuEntry;
 import com.neaterbits.ide.common.ui.menus.TextMenuEntry;
 import com.neaterbits.ide.common.ui.translation.Translateable;
 import com.neaterbits.ide.common.ui.translation.Translator;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.instantiation.InstantiationComponentUI;
 import com.neaterbits.ide.component.common.instantiation.Newable;
@@ -47,7 +48,6 @@ import com.neaterbits.ide.core.ui.model.dialogs.FindReplaceDialogModel;
 import com.neaterbits.ide.core.ui.model.dialogs.NewableSelection;
 import com.neaterbits.ide.core.ui.model.dialogs.OpenTypeDialogModel;
 import com.neaterbits.ide.core.ui.view.EditorsView;
-import com.neaterbits.ide.core.ui.view.KeyEventListener;
 import com.neaterbits.ide.core.ui.view.MapMenuItem;
 import com.neaterbits.ide.core.ui.view.MenuSelectionListener;
 import com.neaterbits.ide.core.ui.view.ProjectView;
@@ -56,6 +56,7 @@ import com.neaterbits.ide.core.ui.view.ViewMenuItem;
 import com.neaterbits.ide.core.ui.view.dialogs.FindReplaceDialog;
 import com.neaterbits.ide.ui.swt.SWTCompositeUIContext;
 import com.neaterbits.ide.ui.swt.SWTDialogUIContext;
+import com.neaterbits.ide.ui.swt.SWTKeyEventListener;
 import com.neaterbits.ide.ui.swt.SWTViewList;
 
 public final class SWTUIView implements UIViewAndSubViews {
@@ -164,7 +165,9 @@ public final class SWTUIView implements UIViewAndSubViews {
 		for (DetailsComponentUI<?> detailsComponentUI : uiParameters.getComponentsAccess().getDetailsComponentUIs()) {
 		    
 		    final Control control
-		        = (Control)detailsComponentUI.addCompositeComponentUI(compositeUIContext);
+		        = (Control)detailsComponentUI.addCompositeComponentUI(
+		                                            compositeUIContext,
+		                                            uiParameters.getComponentIDEAccess());
 		    
 		    final TabItem tabItem = new TabItem(detailsTabFolder, SWT.NONE);
 		    

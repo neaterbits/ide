@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.neaterbits.ide.util.ui.text.LineDelimiter;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.ide.util.ui.text.UnixLineDelimiter;
 
 public class UnixLineDelimiterTest {
 

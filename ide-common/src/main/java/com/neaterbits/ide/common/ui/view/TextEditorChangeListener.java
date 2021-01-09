@@ -1,4 +1,4 @@
-package com.neaterbits.ide.core.ui.view;
+package com.neaterbits.ide.common.ui.view;
 
 import com.neaterbits.ide.util.ui.text.Text;
 

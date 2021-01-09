@@ -24,9 +24,10 @@ import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.model.ProjectModelListener;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
-import com.neaterbits.ide.core.ui.view.KeyEventListener;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.core.ui.view.ProjectView;
 import com.neaterbits.ide.core.ui.view.ProjectViewListener;
+import com.neaterbits.ide.ui.swt.SWTKeyEventListener;
 import com.neaterbits.ide.ui.swt.SWTView;
 import com.neaterbits.ide.ui.swt.SWTViewList;
 

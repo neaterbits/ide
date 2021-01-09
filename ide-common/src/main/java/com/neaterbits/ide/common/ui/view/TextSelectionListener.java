@@ -1,4 +1,4 @@
-package com.neaterbits.ide.core.ui.view;
+package com.neaterbits.ide.common.ui.view;
 
 @FunctionalInterface
 public interface TextSelectionListener {

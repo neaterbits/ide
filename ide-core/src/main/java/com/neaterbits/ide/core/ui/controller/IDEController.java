@@ -17,6 +17,7 @@ import com.neaterbits.build.types.resource.SourceFileResource;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.ide.common.config.Configuration;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.ui.actions.Action;
@@ -34,8 +35,10 @@ import com.neaterbits.ide.common.ui.menus.MenuItemEntry;
 import com.neaterbits.ide.common.ui.menus.Menus;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.translation.Translator;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
+import com.neaterbits.ide.component.common.ConfigurationAccess;
 import com.neaterbits.ide.component.common.IDERegisteredComponents;
 import com.neaterbits.ide.core.source.SourceFilesModel;
 import com.neaterbits.ide.core.ui.UI;
@@ -43,7 +46,6 @@ import com.neaterbits.ide.core.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.core.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.core.ui.keys.IDEKeyBindings;
 import com.neaterbits.ide.core.ui.menus.IDEMenus;
-import com.neaterbits.ide.core.ui.view.KeyEventListener;
 import com.neaterbits.ide.core.ui.view.MenuSelectionListener;
 import com.neaterbits.ide.core.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.core.ui.view.ViewMenuItem;
@@ -54,6 +56,7 @@ import com.neaterbits.util.PathUtil;
 public final class IDEController implements ComponentIDEAccess {
 
 	private final BuildRoot buildRoot;
+	private final ConfigurationAccess configurationAccess;
 	private final EditUIController uiController;
 	
 	private final ActionExecuteState actionExecuteState;
@@ -72,11 +75,14 @@ public final class IDEController implements ComponentIDEAccess {
 			IDERegisteredComponents ideComponents,
 			Translator uiTranslator,
 			SourceFilesModel sourceFilesModel,
-			CodeMapModel codeMapModel) {
+			CodeMapModel codeMapModel,
+			ConfigurationAccess configurationAccess) {
 
 		Objects.requireNonNull(buildRoot);
+		Objects.requireNonNull(configurationAccess);
 		
 		this.buildRoot = buildRoot;
+		this.configurationAccess = configurationAccess;
 		
 		final ProjectsModel projectModel = new ProjectsModel(buildRoot);
 
@@ -91,6 +97,7 @@ public final class IDEController implements ComponentIDEAccess {
 		        keyBindings,
 		        uiModels,
 		        ideComponents,
+		        this,
 		        config);
 		
 		this.menuMap = new HashMap<>();
@@ -318,8 +325,13 @@ public final class IDEController implements ComponentIDEAccess {
 		uiController.showInProjectView(sourceFile, false);
 	}
 
-	
 	@Override
+    public <T extends Configuration> T getConfiguration(Class<T> type) {
+
+	    return configurationAccess.getConfiguration(type);
+    }
+
+    @Override
 	public File getRootPath() {
 		return buildRoot.getPath();
 	}

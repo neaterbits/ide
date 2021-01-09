@@ -1,7 +1,4 @@
-package com.neaterbits.ide.model.text;
-
-import com.neaterbits.ide.util.ui.text.LineDelimiter;
-import com.neaterbits.ide.util.ui.text.Text;
+package com.neaterbits.ide.util.ui.text;
 
 public final class UnixLineDelimiter extends LineDelimiter {
 
@@ -36,4 +33,9 @@ public final class UnixLineDelimiter extends LineDelimiter {
 	public String asString() {
 		return "\n";
 	}
+
+    @Override
+    public int getMaxLength() {
+        return 1;
+    }
 }

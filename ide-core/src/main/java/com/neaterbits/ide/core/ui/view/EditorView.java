@@ -1,5 +1,8 @@
 package com.neaterbits.ide.core.ui.view;
 
+import com.neaterbits.ide.common.ui.view.CursorPositionListener;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
+import com.neaterbits.ide.common.ui.view.TextEditorChangeListener;
 import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.text.Text;

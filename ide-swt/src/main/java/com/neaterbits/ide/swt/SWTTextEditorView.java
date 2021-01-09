@@ -13,13 +13,14 @@ import org.eclipse.swt.widgets.Text;
 
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
-import com.neaterbits.ide.core.ui.view.CursorPositionListener;
+import com.neaterbits.ide.common.ui.view.CursorPositionListener;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
+import com.neaterbits.ide.common.ui.view.TextEditorChangeListener;
+import com.neaterbits.ide.common.ui.view.TextSelectionListener;
 import com.neaterbits.ide.core.ui.view.EditorSourceActionContextProvider;
-import com.neaterbits.ide.core.ui.view.KeyEventListener;
-import com.neaterbits.ide.core.ui.view.TextEditorChangeListener;
-import com.neaterbits.ide.core.ui.view.TextSelectionListener;
 import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.ui.swt.SWTViewList;
+import com.neaterbits.ide.ui.swt.SWTKeyEventListener;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.TextRange;
 

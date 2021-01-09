@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.eclipse.swt.widgets.Display;
 
+import com.neaterbits.ide.common.config.Configuration;
 import com.neaterbits.ide.common.scheduling.IDEScheduler;
 import com.neaterbits.ide.common.scheduling.IDESchedulerImpl;
 import com.neaterbits.build.buildsystem.common.BuildSystem;
@@ -15,8 +16,11 @@ import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.component.build.ui.BuildIssuesComponent;
+import com.neaterbits.ide.component.common.ConfigurationAccess;
 import com.neaterbits.ide.component.common.IDERegisteredComponents;
 import com.neaterbits.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
+import com.neaterbits.ide.component.console.output.config.ConsoleConfiguration;
+import com.neaterbits.ide.component.console.output.ui.ConsoleOutputComponent;
 import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
@@ -27,6 +31,7 @@ import com.neaterbits.ide.core.tasks.TargetBuilderIDEStartup;
 import com.neaterbits.ide.core.ui.controller.IDEController;
 import com.neaterbits.ide.swt.SWTUI;
 import com.neaterbits.ide.util.swt.SWTAsyncExecutor;
+import com.neaterbits.ide.util.ui.text.LineDelimiter;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
 import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
@@ -62,7 +67,7 @@ public class IDEMain {
 
 				final BuildSystem buildSystem = buildSystems.findBuildSystem(projectDir);
 				
-				final BuildRoot buildRoot = new BuildRootImpl<>(projectDir, buildSystem.scan(projectDir));  
+				final BuildRoot buildRoot = new BuildRootImpl<>(projectDir, buildSystem.scan(projectDir), null);  
 				
 				final IDERegisteredComponents ideComponents = registerComponents();
 				
@@ -93,7 +98,8 @@ public class IDEMain {
 				        ideComponents,
 				        new IDEMainTranslator(),
 				        sourceFilesModel,
-				        codeMapGatherer.getModel());
+				        codeMapGatherer.getModel(),
+				        getConfigurationAccess());
 				
 				// Run events on event queue before async jobs send event on event queue
 				ui.runInitialEvents();
@@ -123,6 +129,7 @@ public class IDEMain {
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
         components.registerComponent(null, new BuildIssuesComponent());
         components.registerComponent(null, new CompiledFileViewComponent());
+        components.registerComponent(null, new ConsoleOutputComponent());
 		
 		return components;
 	}
@@ -144,6 +151,31 @@ public class IDEMain {
 		        new PrintlnTargetExecutorLogger(),
 		        asyncExecutor,
 		        null);
+	}
+	
+	private static ConfigurationAccess getConfigurationAccess() {
+	    return new ConfigurationAccess() {
+            
+            @Override
+            public <T extends Configuration> T getConfiguration(Class<T> type) {
+
+                final Configuration configuration;
+                
+                if (type.equals(ConsoleConfiguration.class)) {
+                    configuration = new ConsoleConfiguration(
+                            LineDelimiter.getSystemLineDelimiter(),
+                            1000000);
+                }
+                else {
+                    configuration = null;
+                }
+                
+                @SuppressWarnings("unchecked")
+                final T t = (T)configuration;
+                
+                return t;
+            }
+        };
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {

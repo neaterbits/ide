@@ -3,6 +3,7 @@ package com.neaterbits.ide.component.compiledfiledebug.ui;
 import org.eclipse.swt.widgets.Control;
 
 import com.neaterbits.ide.common.model.source.SourceFileModel;
+import com.neaterbits.ide.component.common.ComponentIDEAccess;
 import com.neaterbits.ide.component.common.editors.EditorsComponent;
 import com.neaterbits.ide.component.common.ui.ComponentCompositeContext;
 import com.neaterbits.ide.component.common.ui.DetailsComponentUI;
@@ -14,7 +15,7 @@ public final class CompiledFileViewComponent
     private SWTCompiledFileView compiledFileView;
 
     @Override
-    public Control addCompositeComponentUI(ComponentCompositeContext context) {
+    public Control addCompositeComponentUI(ComponentCompositeContext context, ComponentIDEAccess componentIDEAccess) {
         
         final SWTCompositeUIContext swtuiContext = (SWTCompositeUIContext)context;
         

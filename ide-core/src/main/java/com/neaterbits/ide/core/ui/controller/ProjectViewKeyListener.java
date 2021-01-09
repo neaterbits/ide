@@ -6,7 +6,7 @@ import com.neaterbits.build.types.resource.ResourcePath;
 import com.neaterbits.ide.common.ui.keys.Key;
 import com.neaterbits.ide.common.ui.keys.KeyLocation;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
-import com.neaterbits.ide.core.ui.view.KeyEventListener;
+import com.neaterbits.ide.common.ui.view.KeyEventListener;
 import com.neaterbits.ide.core.ui.view.ProjectView;
 
 final class ProjectViewKeyListener implements KeyEventListener {

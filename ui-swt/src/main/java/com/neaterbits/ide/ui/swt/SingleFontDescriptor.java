@@ -1,4 +1,4 @@
-package com.neaterbits.ide.swt;
+package com.neaterbits.ide.ui.swt;
 
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.FontDescriptor;
