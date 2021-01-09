@@ -21,6 +21,7 @@ import com.neaterbits.build.types.TypeName;
 import com.neaterbits.build.types.resource.ModuleResourcePath;
 import com.neaterbits.build.types.resource.NamespaceResource;
 import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
+import com.neaterbits.build.types.resource.SourceFileHolderResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResource;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
@@ -28,8 +29,11 @@ import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.language.java.JavaTypes;
+import com.neaterbits.compiler.model.common.BaseTypeVisitor;
 import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
+import com.neaterbits.compiler.model.common.SourceTokenVisitor;
+import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.model.objects.ObjectProgramModel;
 import com.neaterbits.compiler.model.objects.ObjectsCompilerModel;
 import com.neaterbits.compiler.resolver.ResolveError;
@@ -39,14 +43,22 @@ import com.neaterbits.compiler.resolver.build.ModulesBuilder;
 import com.neaterbits.compiler.resolver.build.ResolvedSourceModule;
 import com.neaterbits.compiler.resolver.build.SourceBuilder;
 import com.neaterbits.compiler.resolver.build.SourceModule;
+import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.component.common.language.compilercommon.CompilerSourceFileModel;
 import com.neaterbits.ide.component.common.language.model.ParseableLanguage;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
+import com.neaterbits.ide.component.common.runner.RunnableLanguage;
+import com.neaterbits.ide.util.Value;
 import com.neaterbits.util.parse.ParserException;
 
-public final class JavaLanguage extends JavaBuildableLanguage implements CompileableLanguage, ParseableLanguage {
+public final class JavaLanguage
+        extends JavaBuildableLanguage
+        implements
+        CompileableLanguage, ParseableLanguage, RunnableLanguage {
 
     private static final CompilerOptions COMPILER_OPTIONS = new CompilerOptions(true);
     
@@ -256,6 +268,48 @@ public final class JavaLanguage extends JavaBuildableLanguage implements Compile
                 codeMap);
         
         return sourceFileModel;
+    }
+    
+    private static class IsRunnableVisitor extends BaseTypeVisitor implements TypeMemberVisitor {
+        
+        private boolean isRunnable;
+
+        @Override
+        public void onField(CharSequence name, TypeName type, int numArrayDimensions, boolean isStatic,
+                Visibility visibility, Mutability mutability, boolean isVolatile, boolean isTransient,
+                int indexInType) {
+
+            
+        }
+
+        @Override
+        public void onMethod(
+                String name,
+                MethodVariant methodVariant,
+                TypeName returnType,
+                TypeName[] parameterTypes,
+                int indexInType) {
+            
+            if (
+                       name.equals("main")
+                    && methodVariant == MethodVariant.STATIC
+                    && parameterTypes.length == 0) {
+
+                this.isRunnable = true;
+            }
+        }
+    }
+    
+    @Override
+    public boolean isSourceFileRunnable(
+            SourceFileHolderResourcePath sourceFile,
+            SourceFileModel sourceFileModel) {
+
+        final IsRunnableVisitor visitor = new IsRunnableVisitor();
+        
+        sourceFileModel.iterateTypeMembers(visitor);
+
+        return visitor.isRunnable;
     }
 }
 
