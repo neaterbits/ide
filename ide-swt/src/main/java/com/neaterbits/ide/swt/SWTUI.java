@@ -15,7 +15,7 @@ import com.neaterbits.ide.common.ui.view.MapMenuItem;
 import com.neaterbits.ide.common.ui.view.SystemClipboard;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.common.ui.view.View;
-import com.neaterbits.util.concurrency.scheduling.ForwardResultToCaller;
+import com.neaterbits.util.threads.ForwardResultToCaller;
 
 public class SWTUI implements UI {
 
