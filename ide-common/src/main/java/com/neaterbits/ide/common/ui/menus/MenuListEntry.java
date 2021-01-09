@@ -20,11 +20,11 @@ public abstract class MenuListEntry extends TextMenuEntry {
 		return Collections.unmodifiableList(entries);
 	}
 
-	public final void iterateItems(Consumer<MenuItemEntry> onMenuItem) {
+	public final void iterateItems(Consumer<MenuItemEntry<?, ?>> onMenuItem) {
 		
 		for (MenuEntry entry : entries) {
 			if (entry instanceof MenuItemEntry) {
-				onMenuItem.accept((MenuItemEntry)entry);
+				onMenuItem.accept((MenuItemEntry<?, ?>)entry);
 			}
 			else if (entry instanceof MenuListEntry) {
 				((MenuListEntry)entry).iterateItems(onMenuItem);

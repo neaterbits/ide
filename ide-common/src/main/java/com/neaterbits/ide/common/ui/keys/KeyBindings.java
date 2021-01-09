@@ -16,7 +16,7 @@ public final class KeyBindings {
 		this.bindings = new ArrayList<>(bindings);
 	}
 
-	public KeyCombination findKeyCombination(Action action) {
+	public KeyCombination findKeyCombination(Action<?, ?> action) {
 		
 		Objects.requireNonNull(action);
 
@@ -27,7 +27,7 @@ public final class KeyBindings {
 				.orElse(null);
 	}
 	
-	public Action findAction(Key key, KeyMask qualifierMask) {
+	public Action<?, ?> findAction(Key key, KeyMask qualifierMask) {
 		
 		final KeyCombination keyCombination = new KeyCombination(key, qualifierMask);
 	
