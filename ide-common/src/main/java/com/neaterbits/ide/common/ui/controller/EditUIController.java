@@ -12,7 +12,7 @@ import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.model.ProjectsModel;
 import com.neaterbits.ide.common.ui.view.UIView;
 import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
-import com.neaterbits.ide.component.common.IDEComponents;
+import com.neaterbits.ide.component.common.IDERegisteredComponents;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.model.text.StringTextModel;
 import com.neaterbits.ide.model.text.UnixLineDelimiter;
@@ -22,7 +22,7 @@ import com.neaterbits.util.PathUtil;
 public final class EditUIController implements EditorsActions {
 
 	private final UIView uiView;
-	private final IDEComponents ideComponents;
+	private final IDERegisteredComponents ideComponents;
 	
 	private final EditorsController editorsController;
 	private final ProjectsController projectsController;
@@ -32,7 +32,7 @@ public final class EditUIController implements EditorsActions {
 			UIViewAndSubViews uiView,
 			TextEditorConfig config,
 			ProjectsModel projectsModel,
-			IDEComponents ideComponents,
+			IDERegisteredComponents ideComponents,
 			SourceFilesModel sourceFilesModel,
 			CodeMapModel codeMapModel) {
 		

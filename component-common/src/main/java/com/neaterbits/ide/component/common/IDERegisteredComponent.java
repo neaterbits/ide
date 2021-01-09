@@ -2,12 +2,12 @@ package com.neaterbits.ide.component.common;
 
 import java.util.Objects;
 
-final class IDEComponent {
+final class IDERegisteredComponent {
 
 	private final ComponentProvider componentProvider;
 	private final UIComponentProvider uiComponentProvider;
 
-	public IDEComponent(ComponentProvider componentProvider, UIComponentProvider uiComponentProvider) {
+	IDERegisteredComponent(ComponentProvider componentProvider, UIComponentProvider uiComponentProvider) {
 		
 		Objects.requireNonNull(componentProvider);
 		
@@ -15,11 +15,11 @@ final class IDEComponent {
 		this.uiComponentProvider = uiComponentProvider;
 	}
 
-	public ComponentProvider getComponentProvider() {
+	ComponentProvider getComponentProvider() {
 		return componentProvider;
 	}
 
-	public UIComponentProvider getUiComponentProvider() {
+	UIComponentProvider getUiComponentProvider() {
 		return uiComponentProvider;
 	}
 }

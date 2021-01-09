@@ -14,15 +14,15 @@ import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.component.common.language.Languages;
 
-public final class IDEComponents implements IDEComponentsConstAccess {
+public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 
-	private final List<IDEComponent> components;
+	private final List<IDERegisteredComponent> components;
 
 	private final Map<LanguageName, LanguageComponent> languageComponents;
 	
 	private final Languages languages;
 	
-	public IDEComponents() {
+	public IDERegisteredComponents() {
 		this.components = new ArrayList<>();
 	
 		this.languageComponents = new HashMap<>();
@@ -73,7 +73,7 @@ public final class IDEComponents implements IDEComponentsConstAccess {
 			languageComponents.put(languageComponent.getLanguageName(), languageComponent);
 		}
 		
-		components.add(new IDEComponent(componentProvider, uiComponentProvider));
+		components.add(new IDERegisteredComponent(componentProvider, uiComponentProvider));
 	}
 	
 	@Override
@@ -81,7 +81,7 @@ public final class IDEComponents implements IDEComponentsConstAccess {
 		
 		final Map<NewableCategory, Set<Newable>> map = new HashMap<>();
 		
-		for (IDEComponent ideComponent : components) {
+		for (IDERegisteredComponent ideComponent : components) {
 			
 			final List<NewableCategory> componentNewableCategories = ideComponent.getComponentProvider().getNewables();
 			
@@ -136,7 +136,7 @@ public final class IDEComponents implements IDEComponentsConstAccess {
 		Objects.requireNonNull(category);
 		Objects.requireNonNull(newable);
 		
-		for (IDEComponent ideComponent : components) {
+		for (IDERegisteredComponent ideComponent : components) {
 			
 			if (ideComponent.getComponentProvider().getNewables() != null) {
 				for (NewableCategory componentCategory : ideComponent.getComponentProvider().getNewables()) {

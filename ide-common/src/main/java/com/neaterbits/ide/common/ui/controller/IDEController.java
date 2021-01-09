@@ -44,7 +44,7 @@ import com.neaterbits.ide.common.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.common.ui.view.View;
 import com.neaterbits.ide.common.ui.view.ViewMenuItem;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
-import com.neaterbits.ide.component.common.IDEComponents;
+import com.neaterbits.ide.component.common.IDERegisteredComponents;
 import com.neaterbits.ide.util.IOUtil;
 import com.neaterbits.ide.util.Value;
 import com.neaterbits.util.PathUtil;
@@ -67,7 +67,7 @@ public final class IDEController implements ComponentIDEAccess {
 			BuildRoot buildRoot,
 			UI ui,
 			TextEditorConfig config,
-			IDEComponents ideComponents,
+			IDERegisteredComponents ideComponents,
 			SourceFilesModel sourceFilesModel,
 			CodeMapModel codeMapModel) {
 
