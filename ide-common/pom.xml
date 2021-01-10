@@ -11,11 +11,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>ide-component-common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>ide-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -23,6 +18,16 @@
 			<groupId>${compilerGroupId}</groupId>
 			<artifactId>compiler-model-common</artifactId>
 			<version>${compilerVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>${compilerGroupId}</groupId>
+			<artifactId>bytecode-common</artifactId>
+			<version>${compilerVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>${buildGroupId}</groupId>
+			<artifactId>build-common</artifactId>
+			<version>${buildVersion}</version>
 		</dependency>
 	</dependencies>
 </project>

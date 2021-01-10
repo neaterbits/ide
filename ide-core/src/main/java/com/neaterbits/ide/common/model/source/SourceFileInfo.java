@@ -1,4 +1,4 @@
-package com.neaterbits.ide.common.model.common;
+package com.neaterbits.ide.common.model.source;
 
 import java.io.File;
 import java.util.Objects;
