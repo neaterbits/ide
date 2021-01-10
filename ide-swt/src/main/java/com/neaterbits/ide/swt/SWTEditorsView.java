@@ -13,9 +13,9 @@ import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
-import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
-import com.neaterbits.ide.common.ui.view.EditorView;
-import com.neaterbits.ide.common.ui.view.EditorsView;
+import com.neaterbits.ide.core.ui.view.EditorSourceActionContextProvider;
+import com.neaterbits.ide.core.ui.view.EditorView;
+import com.neaterbits.ide.core.ui.view.EditorsView;
 import com.neaterbits.ide.util.ui.text.styling.TextStylingModel;
 
 public final class SWTEditorsView extends SWTView implements EditorsView {

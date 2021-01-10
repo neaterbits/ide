@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.neaterbits.ide.common.model.codemap.TypeSuggestion;
 import com.neaterbits.ide.common.model.codemap.TypeSuggestions;
-import com.neaterbits.ide.common.ui.model.dialogs.OpenTypeDialogModel;
+import com.neaterbits.ide.core.ui.model.dialogs.OpenTypeDialogModel;
 
 final class SWTOpenTypeDialog extends Dialog {
 

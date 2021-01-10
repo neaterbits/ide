@@ -11,7 +11,7 @@ public final class KeyBindings {
 
 	private final List<KeyBinding> bindings;
 	
-	KeyBindings(Collection<KeyBinding> bindings) {
+	public KeyBindings(Collection<KeyBinding> bindings) {
 	
 		this.bindings = new ArrayList<>(bindings);
 	}

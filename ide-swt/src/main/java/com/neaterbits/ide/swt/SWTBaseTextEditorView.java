@@ -15,15 +15,15 @@ import org.eclipse.swt.widgets.TabItem;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.model.clipboard.ClipboardDataType;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
-import com.neaterbits.ide.common.ui.actions.contexts.ClipboardPasteableContext;
-import com.neaterbits.ide.common.ui.actions.contexts.ClipboardSelectionContext;
-import com.neaterbits.ide.common.ui.actions.contexts.EditorContext;
-import com.neaterbits.ide.common.ui.actions.contexts.EditorSelectionContext;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
-import com.neaterbits.ide.common.ui.view.EditorSourceActionContextProvider;
-import com.neaterbits.ide.common.ui.view.TextSelectionListener;
-import com.neaterbits.ide.common.ui.view.ViewDisposeListener;
+import com.neaterbits.ide.core.ui.actions.contexts.ClipboardPasteableContext;
+import com.neaterbits.ide.core.ui.actions.contexts.ClipboardSelectionContext;
+import com.neaterbits.ide.core.ui.actions.contexts.EditorContext;
+import com.neaterbits.ide.core.ui.actions.contexts.EditorSelectionContext;
+import com.neaterbits.ide.core.ui.view.EditorSourceActionContextProvider;
+import com.neaterbits.ide.core.ui.view.TextSelectionListener;
+import com.neaterbits.ide.core.ui.view.ViewDisposeListener;
 
 abstract class SWTBaseTextEditorView extends SWTEditorView {
 

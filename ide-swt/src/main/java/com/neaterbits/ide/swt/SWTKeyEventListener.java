@@ -12,7 +12,7 @@ import com.neaterbits.ide.common.ui.keys.Key;
 import com.neaterbits.ide.common.ui.keys.KeyLocation;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
 import com.neaterbits.ide.common.ui.keys.QualifierKey;
-import com.neaterbits.ide.common.ui.view.KeyEventListener;
+import com.neaterbits.ide.core.ui.view.KeyEventListener;
 
 final class SWTKeyEventListener implements KeyListener {
 

@@ -19,13 +19,13 @@ import org.eclipse.swt.widgets.Text;
 
 import com.neaterbits.ide.common.ui.SearchDirection;
 import com.neaterbits.ide.common.ui.SearchScope;
-import com.neaterbits.ide.common.ui.model.dialogs.FindReplaceDialogModel;
 import com.neaterbits.ide.common.ui.translation.Translator;
-import com.neaterbits.ide.common.ui.translation.texts.FindReplaceTexts;
-import com.neaterbits.ide.common.ui.view.ButtonListener;
-import com.neaterbits.ide.common.ui.view.TextInputChangeListener;
-import com.neaterbits.ide.common.ui.view.TextInputEnterKeyListener;
-import com.neaterbits.ide.common.ui.view.dialogs.FindReplaceDialog;
+import com.neaterbits.ide.core.ui.model.dialogs.FindReplaceDialogModel;
+import com.neaterbits.ide.core.ui.translation.texts.FindReplaceTexts;
+import com.neaterbits.ide.core.ui.view.ButtonListener;
+import com.neaterbits.ide.core.ui.view.TextInputChangeListener;
+import com.neaterbits.ide.core.ui.view.TextInputEnterKeyListener;
+import com.neaterbits.ide.core.ui.view.dialogs.FindReplaceDialog;
 
 final class SWTFindReplaceDialog extends Dialog implements FindReplaceDialog {
 
