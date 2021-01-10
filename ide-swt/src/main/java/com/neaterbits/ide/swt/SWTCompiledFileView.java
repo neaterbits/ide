@@ -25,8 +25,8 @@ import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
-import com.neaterbits.ide.common.ui.view.CompiledFileView;
 import com.neaterbits.ide.component.common.language.model.SourceFileModel;
+import com.neaterbits.ide.core.ui.view.CompiledFileView;
 
 public final class SWTCompiledFileView implements CompiledFileView {
 

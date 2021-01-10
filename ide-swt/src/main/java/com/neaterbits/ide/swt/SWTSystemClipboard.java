@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Display;
 import com.neaterbits.ide.common.model.clipboard.ClipboardData;
 import com.neaterbits.ide.common.model.clipboard.ClipboardDataType;
 import com.neaterbits.ide.common.model.clipboard.TextClipboardData;
-import com.neaterbits.ide.common.ui.view.SystemClipboard;
+import com.neaterbits.ide.core.ui.view.SystemClipboard;
 
 final class SWTSystemClipboard implements SystemClipboard {
 

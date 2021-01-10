@@ -9,7 +9,7 @@ public final class TypeSuggestions {
 	private final List<TypeSuggestion> typeSuggestions;
 	private final boolean completeResult;
 
-	TypeSuggestions(List<TypeSuggestion> typeSuggestions, boolean completeResult) {
+	public TypeSuggestions(List<TypeSuggestion> typeSuggestions, boolean completeResult) {
 	
 		Objects.requireNonNull(typeSuggestions);
 		

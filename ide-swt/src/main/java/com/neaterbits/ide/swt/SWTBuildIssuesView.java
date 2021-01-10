@@ -12,9 +12,9 @@ import org.eclipse.swt.widgets.TabFolder;
 
 import com.neaterbits.build.types.compile.BuildIssue;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
-import com.neaterbits.ide.common.ui.actions.contexts.BuildIssueContext;
 import com.neaterbits.ide.common.ui.view.ActionContextListener;
-import com.neaterbits.ide.common.ui.view.BuildIssuesView;
+import com.neaterbits.ide.core.ui.actions.contexts.BuildIssueContext;
+import com.neaterbits.ide.core.ui.view.BuildIssuesView;
 
 public class SWTBuildIssuesView extends SWTView implements BuildIssuesView {
 

@@ -1,5 +1,0 @@
-package com.neaterbits.ide.common.ui.actions.triggers;
-
-public abstract class ActionTrigger {
-
-}

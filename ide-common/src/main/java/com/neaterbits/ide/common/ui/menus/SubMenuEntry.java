@@ -9,7 +9,7 @@ public final class SubMenuEntry extends MenuListEntry {
 
 	private final Translateable name;
 	
-	SubMenuEntry(Translateable name, List<MenuEntry> entries) {
+	public SubMenuEntry(Translateable name, List<MenuEntry> entries) {
 		super(entries);
 	
 		Objects.requireNonNull(name);

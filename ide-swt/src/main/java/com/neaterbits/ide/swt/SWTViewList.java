@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 import com.neaterbits.ide.common.ui.view.View;
-import com.neaterbits.ide.common.ui.view.ViewList;
+import com.neaterbits.ide.core.ui.view.ViewList;
 
 final class SWTViewList extends ViewList {
 

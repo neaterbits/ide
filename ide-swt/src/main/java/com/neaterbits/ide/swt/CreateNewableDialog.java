@@ -18,10 +18,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.neaterbits.ide.common.ui.model.dialogs.NewableSelection;
 import com.neaterbits.ide.component.common.Named;
 import com.neaterbits.ide.component.common.Newable;
 import com.neaterbits.ide.component.common.NewableCategory;
+import com.neaterbits.ide.core.ui.model.dialogs.NewableSelection;
 
 final class CreateNewableDialog extends Dialog {
 
