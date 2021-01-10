@@ -11,7 +11,6 @@ import com.neaterbits.build.types.resource.ModuleResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
-import com.neaterbits.ide.common.model.common.SourceFileInfo;
 import com.neaterbits.ide.common.scheduling.IDEScheduler;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;

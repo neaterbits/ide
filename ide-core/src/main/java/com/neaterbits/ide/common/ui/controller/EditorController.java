@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.ide.common.model.common.SourceFileInfo;
+import com.neaterbits.ide.common.model.source.SourceFileInfo;
 import com.neaterbits.ide.common.model.source.SourceFilesModel;
 import com.neaterbits.ide.common.ui.SearchDirection;
 import com.neaterbits.ide.common.ui.SearchScope;
