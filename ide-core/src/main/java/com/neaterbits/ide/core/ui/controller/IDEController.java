@@ -70,6 +70,7 @@ public final class IDEController implements ComponentIDEAccess {
 			UI ui,
 			TextEditorConfig config,
 			IDERegisteredComponents ideComponents,
+			Translator uiTranslator,
 			SourceFilesModel sourceFilesModel,
 			CodeMapModel codeMapModel) {
 
@@ -79,14 +80,18 @@ public final class IDEController implements ComponentIDEAccess {
 		
 		final ProjectsModel projectModel = new ProjectsModel(buildRoot);
 
-		final Translator uiTranslator = new IDETranslator();
 		final KeyBindings keyBindings = IDEKeyBindings.makeKeyBindings();
 
 		final Menus menus = IDEMenus.makeMenues(keyBindings);
 		
 		final UIModels uiModels = new UIModels(projectModel);
 		
-		final UIParameters uiParameters = new UIParameters(uiTranslator, keyBindings, uiModels, config);
+		final UIParameters uiParameters = new UIParameters(
+		        uiTranslator,
+		        keyBindings,
+		        uiModels,
+		        ideComponents,
+		        config);
 		
 		this.menuMap = new HashMap<>();
 		

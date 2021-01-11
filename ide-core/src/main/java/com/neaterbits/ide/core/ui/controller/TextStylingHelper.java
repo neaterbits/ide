@@ -3,8 +3,8 @@ package com.neaterbits.ide.core.ui.controller;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.core.ui.TextStyling;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.styling.TextStyleOffset;

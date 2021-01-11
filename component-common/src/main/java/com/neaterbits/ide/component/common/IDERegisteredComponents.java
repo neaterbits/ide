@@ -8,11 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
+import com.neaterbits.ide.common.ui.controller.EditorsListener;
+import com.neaterbits.ide.component.common.instantiation.InstantiationComponent;
+import com.neaterbits.ide.component.common.instantiation.InstantiationComponentUI;
+import com.neaterbits.ide.component.common.instantiation.Newable;
+import com.neaterbits.ide.component.common.instantiation.NewableCategory;
+import com.neaterbits.ide.component.common.instantiation.NewableCategoryName;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.component.common.language.Languages;
+import com.neaterbits.ide.component.common.ui.ComponentUI;
+import com.neaterbits.ide.component.common.ui.DetailsComponentUI;
 
 public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 
@@ -59,13 +68,31 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 			}
 		};
 	}
+	
+	public List<EditorsListener> getEditorsListeners() {
+
+	    return components.stream()
+	            .map(c -> c.getComponentUI())
+	            .filter(c -> c instanceof EditorsListener)
+	            .map(c -> (EditorsListener)c)
+	            .collect(Collectors.toList());
+	}
 
 	@Override
+    public List<DetailsComponentUI<?>> getDetailsComponentUIs() {
+        return components.stream()
+                .map(registered -> registered.getComponentUI())
+                .filter(c -> c instanceof DetailsComponentUI<?>)
+                .map(c -> (DetailsComponentUI<?>)c)
+                .collect(Collectors.toList());
+    }
+
+    @Override
 	public Languages getLanguages() {
 		return languages;
 	}
 	
-	public void registerComponent(IDEComponent component, UIComponentProvider uiComponentProvider) {
+	public void registerComponent(IDEComponent component, ComponentUI componentUI) {
 
 		if (component instanceof LanguageComponent) {
 			final LanguageComponent languageComponent = (LanguageComponent)component;
@@ -73,7 +100,7 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 			languageComponents.put(languageComponent.getLanguageName(), languageComponent);
 		}
 		
-		components.add(new IDERegisteredComponent(component, uiComponentProvider));
+		components.add(new IDERegisteredComponent(component, componentUI));
 	}
 	
 	@Override
@@ -137,7 +164,7 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 	}
 	
 	@Override
-	public UIComponentProvider findUIComponentProvider(NewableCategoryName category, Newable newable) {
+	public InstantiationComponentUI findInstantiationUIComponent(NewableCategoryName category, Newable newable) {
 		
 		Objects.requireNonNull(category);
 		Objects.requireNonNull(newable);
@@ -154,7 +181,7 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
     					if (category.getName().equals(componentCategory.getName())) {
     						for (Newable componentNewable : componentCategory.getTypes()) {
     							if (newable.equals(componentNewable)) {
-    								return ideComponent.getUiComponentProvider();
+    								return (InstantiationComponentUI)ideComponent.getComponentUI();
     							}
     						}
     					}

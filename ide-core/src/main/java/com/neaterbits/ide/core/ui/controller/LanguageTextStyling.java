@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.component.common.language.LanguageStyleOffset;
 import com.neaterbits.ide.component.common.language.LanguageStyleable;
 import com.neaterbits.ide.component.common.language.LanguageStyling;
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.core.ui.TextStyling;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.styling.TextColor;

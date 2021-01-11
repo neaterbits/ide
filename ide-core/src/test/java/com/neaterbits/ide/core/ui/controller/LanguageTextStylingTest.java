@@ -6,10 +6,10 @@ import org.junit.Test;
 
 import org.mockito.Mockito;
 
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.component.common.language.LanguageStyleOffset;
 import com.neaterbits.ide.component.common.language.LanguageStyleable;
 import com.neaterbits.ide.component.common.language.LanguageStyling;
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.styling.TextColor;

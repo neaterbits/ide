@@ -10,7 +10,7 @@ import com.neaterbits.compiler.model.common.SourceTokenVisitor;
 import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.model.common.VariableScope;
 import com.neaterbits.compiler.util.parse.CompileError;
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 
 // Delegates and allows for swapping source file model on re-parse
 

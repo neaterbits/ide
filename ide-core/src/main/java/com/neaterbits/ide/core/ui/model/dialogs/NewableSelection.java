@@ -2,8 +2,8 @@ package com.neaterbits.ide.core.ui.model.dialogs;
 
 import java.util.Objects;
 
-import com.neaterbits.ide.component.common.Newable;
-import com.neaterbits.ide.component.common.NewableCategoryName;
+import com.neaterbits.ide.component.common.instantiation.Newable;
+import com.neaterbits.ide.component.common.instantiation.NewableCategoryName;
 
 public final class NewableSelection {
 

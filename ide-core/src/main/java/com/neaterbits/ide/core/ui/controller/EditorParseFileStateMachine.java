@@ -3,7 +3,7 @@ package com.neaterbits.ide.core.ui.controller;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.core.source.SourceFileInfo;
 import com.neaterbits.ide.core.source.SourceFilesModel;
 import com.neaterbits.ide.util.ui.text.Text;

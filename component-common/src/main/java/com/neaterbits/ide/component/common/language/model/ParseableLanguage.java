@@ -4,6 +4,7 @@ import com.neaterbits.build.types.resource.ModuleResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 
 import java.io.IOException;
 import java.util.List;

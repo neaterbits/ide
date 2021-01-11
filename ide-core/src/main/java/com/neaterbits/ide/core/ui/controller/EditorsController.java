@@ -2,6 +2,7 @@ package com.neaterbits.ide.core.ui.controller;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -9,9 +10,9 @@ import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.controller.EditorActions;
+import com.neaterbits.ide.common.ui.controller.EditorsListener;
 import com.neaterbits.ide.core.source.SourceFileInfo;
 import com.neaterbits.ide.core.source.SourceFilesModel;
-import com.neaterbits.ide.core.ui.view.CompiledFileView;
 import com.neaterbits.ide.core.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.core.ui.view.EditorView;
 import com.neaterbits.ide.core.ui.view.EditorsView;
@@ -23,11 +24,15 @@ final class EditorsController {
 	private final EditorsView editorsView;
 	private final TextEditorConfig config;
 	private final SourceFilesModel sourceFilesModel;
-	private final CompiledFileView compiledFileView;
+	private final List<EditorsListener> listeners;
 	
 	private final Map<SourceFileResourcePath, EditorController> editorControllers;
 	
-	EditorsController(EditorsView editorsView, TextEditorConfig config, SourceFilesModel sourceFilesModel, CompiledFileView compiledFileView) {
+	EditorsController(
+	        EditorsView editorsView,
+	        TextEditorConfig config,
+	        SourceFilesModel sourceFilesModel,
+	        List<EditorsListener> listeners) {
 
 		Objects.requireNonNull(editorsView);
 		Objects.requireNonNull(config);
@@ -36,7 +41,7 @@ final class EditorsController {
 		this.editorsView = editorsView;
 		this.config = config;
 		this.sourceFilesModel = sourceFilesModel;
-		this.compiledFileView = compiledFileView;
+		this.listeners = listeners;
 		
 		this.editorControllers = new HashMap<>();
 	}
@@ -90,7 +95,7 @@ final class EditorsController {
 		final EditorController editorController = new EditorController(
 				editorView,
 				config,
-				compiledFileView,
+				listeners,
 				textModel,
 				sourceFilesModel,
 				sourceFile,

@@ -8,7 +8,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.ide.common.model.source.CodeCompletion;
 import com.neaterbits.ide.common.model.source.CodeProposal;
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.model.text.TextModel;
 
 public class SourceFileModelCodeCompletion implements CodeCompletion {

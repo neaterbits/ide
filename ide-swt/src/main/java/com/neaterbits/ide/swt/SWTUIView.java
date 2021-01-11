@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -18,6 +19,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import com.neaterbits.build.types.resource.NamespaceResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
@@ -32,28 +34,29 @@ import com.neaterbits.ide.common.ui.menus.Menus;
 import com.neaterbits.ide.common.ui.menus.SeparatorMenuEntry;
 import com.neaterbits.ide.common.ui.menus.SubMenuEntry;
 import com.neaterbits.ide.common.ui.menus.TextMenuEntry;
+import com.neaterbits.ide.common.ui.translation.Translateable;
 import com.neaterbits.ide.common.ui.translation.Translator;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
-import com.neaterbits.ide.component.common.Newable;
-import com.neaterbits.ide.component.common.NewableCategory;
-import com.neaterbits.ide.component.common.NewableCategoryName;
-import com.neaterbits.ide.component.common.UIComponentProvider;
+import com.neaterbits.ide.component.common.instantiation.InstantiationComponentUI;
+import com.neaterbits.ide.component.common.instantiation.Newable;
+import com.neaterbits.ide.component.common.instantiation.NewableCategory;
+import com.neaterbits.ide.component.common.instantiation.NewableCategoryName;
+import com.neaterbits.ide.component.common.ui.DetailsComponentUI;
 import com.neaterbits.ide.core.ui.controller.UIParameters;
 import com.neaterbits.ide.core.ui.model.dialogs.FindReplaceDialogModel;
 import com.neaterbits.ide.core.ui.model.dialogs.NewableSelection;
 import com.neaterbits.ide.core.ui.model.dialogs.OpenTypeDialogModel;
-import com.neaterbits.ide.core.ui.view.BuildIssuesView;
-import com.neaterbits.ide.core.ui.view.CompiledFileView;
 import com.neaterbits.ide.core.ui.view.EditorsView;
 import com.neaterbits.ide.core.ui.view.KeyEventListener;
 import com.neaterbits.ide.core.ui.view.MapMenuItem;
 import com.neaterbits.ide.core.ui.view.MenuSelectionListener;
 import com.neaterbits.ide.core.ui.view.ProjectView;
-import com.neaterbits.ide.core.ui.view.SearchResultsView;
 import com.neaterbits.ide.core.ui.view.UIViewAndSubViews;
 import com.neaterbits.ide.core.ui.view.ViewMenuItem;
 import com.neaterbits.ide.core.ui.view.dialogs.FindReplaceDialog;
-import com.neaterbits.ide.ui.swt.SWTUIContext;
+import com.neaterbits.ide.ui.swt.SWTCompositeUIContext;
+import com.neaterbits.ide.ui.swt.SWTDialogUIContext;
+import com.neaterbits.ide.ui.swt.SWTViewList;
 
 public final class SWTUIView implements UIViewAndSubViews {
 
@@ -73,11 +76,9 @@ public final class SWTUIView implements UIViewAndSubViews {
 	
 	private final SWTProjectView projectView;
 	private final SWTEditorsView editorsView;
-	private final SWTBuildIssuesView buildIssuesView;
-	private final SWTCompiledFileView compiledFileView;
 	
-	private final SWTUIContext uiContext;
-	
+	private final SWTDialogUIContext dialogUIContext;
+	private final SWTCompositeUIContext compositeUIContext;
 	
 	private boolean editorsMaximized;
 	
@@ -157,16 +158,35 @@ public final class SWTUIView implements UIViewAndSubViews {
 		this.detailsTabFolder = new TabFolder(composite, SWT.NONE);
 		
 		detailsTabFolder.setLayoutData(detailsGridData);
+		
+		this.compositeUIContext = new SWTCompositeUIContext(viewList, detailsTabFolder);
+		
+		for (DetailsComponentUI<?> detailsComponentUI : uiParameters.getComponentsAccess().getDetailsComponentUIs()) {
+		    
+		    final Control control
+		        = (Control)detailsComponentUI.addCompositeComponentUI(compositeUIContext);
+		    
+		    final TabItem tabItem = new TabItem(detailsTabFolder, SWT.NONE);
+		    
+		    final Translateable translateable
+		        = Translateable.fromComponent(
+		                DetailsComponentUI.TITLE_TRANSLATION_ID,
+		                detailsComponentUI.getClass());
 
-		this.buildIssuesView = new SWTBuildIssuesView(viewList, detailsTabFolder);
-		
-		this.compiledFileView = new SWTCompiledFileView(detailsTabFolder);
-		
+		    final String translation = uiParameters.getTranslator().translate(translateable);
+		    
+		    if (translation != null) {
+		        tabItem.setText(translation);
+		    }
+		    
+		    tabItem.setControl(control);
+		}
+
 		window.addDisposeListener(event -> System.exit(0));
 		
 		// window.pack();
 
-		this.uiContext = new SWTUIContext(window);
+		this.dialogUIContext = new SWTDialogUIContext(window);
 
 		window.open();
 	
@@ -226,7 +246,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 				};
 
 
-				final MenuItemEntry menuItemEntry = (MenuItemEntry)entry;
+				final MenuItemEntry<?, ?> menuItemEntry = (MenuItemEntry<?, ?>)entry;
 				
 				textMenuEntry = menuItemEntry;
 				
@@ -239,7 +259,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 					menuItem.setAccelerator(accelerator);
 				}
 				
-				final MenuSelectionListener listener = mapMenuItems.apply((MenuItemEntry)entry, viewMenuItem);
+				final MenuSelectionListener listener = mapMenuItems.apply((MenuItemEntry<?, ?>)entry, viewMenuItem);
 				
 				menuItem.addSelectionListener(new SelectionAdapter() {
 
@@ -345,14 +365,14 @@ public final class SWTUIView implements UIViewAndSubViews {
 	
 	@Override
 	public void openNewableDialog(
-			UIComponentProvider uiComponentProvider,
+			InstantiationComponentUI uiComponent,
 			NewableCategoryName category,
 			Newable newable,
 			SourceFolderResourcePath sourceFolder,
 			NamespaceResourcePath namespace,
 			ComponentIDEAccess ideAccess) {
 
-		uiComponentProvider.openNewableDialog(uiContext, category, newable, sourceFolder, namespace, ideAccess);
+		uiComponent.openNewableDialog(dialogUIContext, category, newable, sourceFolder, namespace, ideAccess);
 	}
 
 	@Override
@@ -371,22 +391,6 @@ public final class SWTUIView implements UIViewAndSubViews {
 	@Override
 	public EditorsView getEditorsView() {
 		return editorsView;
-	}
-
-	@Override
-	public BuildIssuesView getBuildIssuesView() {
-		return buildIssuesView;
-	}
-
-	@Override
-	public SearchResultsView getSearchView() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public CompiledFileView getCompiledFileView() {
-		return compiledFileView;
 	}
 
 	@Override

@@ -15,7 +15,9 @@ import com.neaterbits.build.model.BuildRootImpl;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
+import com.neaterbits.ide.component.build.ui.BuildIssuesComponent;
 import com.neaterbits.ide.component.common.IDERegisteredComponents;
+import com.neaterbits.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
 import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
@@ -93,6 +95,7 @@ public class IDEMain {
 				        ui,
 				        config,
 				        ideComponents,
+				        new IDEMainTranslator(),
 				        sourceFilesModel,
 				        codeMapGatherer.getModel());
 				
@@ -122,6 +125,8 @@ public class IDEMain {
 		final IDERegisteredComponents components = new IDERegisteredComponents();
 		
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
+        components.registerComponent(null, new BuildIssuesComponent());
+        components.registerComponent(null, new CompiledFileViewComponent());
 		
 		return components;
 	}

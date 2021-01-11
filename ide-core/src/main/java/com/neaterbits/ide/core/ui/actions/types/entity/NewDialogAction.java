@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.ide.common.ui.actions.ActionContexts;
-import com.neaterbits.ide.component.common.NewableCategory;
-import com.neaterbits.ide.component.common.UIComponentProvider;
+import com.neaterbits.ide.component.common.instantiation.InstantiationComponentUI;
+import com.neaterbits.ide.component.common.instantiation.NewableCategory;
 import com.neaterbits.ide.core.ui.actions.ActionApplicableParameters;
 import com.neaterbits.ide.core.ui.actions.ActionExecuteParameters;
 import com.neaterbits.ide.core.ui.model.dialogs.NewableSelection;
@@ -23,14 +23,14 @@ public final class NewDialogAction extends NewAction {
 		
 		if (newableSelection != null) {
 		
-			final UIComponentProvider uiComponentProvider = parameters.getComponents().findUIComponentProvider(
+			final InstantiationComponentUI componentUI = parameters.getComponents().findInstantiationUIComponent(
 					newableSelection.getCategory(),
 					newableSelection.getNewable());
 			
 			final SourceFileResourcePath currentEditedFile = parameters.getCurrentEditedFile();
 			
 			parameters.getUIDialogs().openNewableDialog(
-					uiComponentProvider,
+					componentUI,
 					newableSelection.getCategory(),
 					newableSelection.getNewable(),
 					currentEditedFile != null ? currentEditedFile.getSourceFolderPath() : null,

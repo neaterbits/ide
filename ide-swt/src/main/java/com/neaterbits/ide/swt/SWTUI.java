@@ -15,6 +15,7 @@ import com.neaterbits.ide.core.ui.controller.UIParameters;
 import com.neaterbits.ide.core.ui.view.MapMenuItem;
 import com.neaterbits.ide.core.ui.view.SystemClipboard;
 import com.neaterbits.ide.core.ui.view.UIViewAndSubViews;
+import com.neaterbits.ide.ui.swt.SWTViewList;
 import com.neaterbits.util.threads.ForwardResultToCaller;
 
 public class SWTUI implements UI {

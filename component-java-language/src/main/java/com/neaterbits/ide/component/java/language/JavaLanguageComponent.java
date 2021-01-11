@@ -3,10 +3,10 @@ package com.neaterbits.ide.component.java.language;
 import java.util.Arrays;
 import java.util.List;
 
-import com.neaterbits.ide.component.common.InstantiationComponent;
-import com.neaterbits.ide.component.common.Newable;
-import com.neaterbits.ide.component.common.NewableCategory;
-import com.neaterbits.ide.component.common.NewableType;
+import com.neaterbits.ide.component.common.instantiation.InstantiationComponent;
+import com.neaterbits.ide.component.common.instantiation.Newable;
+import com.neaterbits.ide.component.common.instantiation.NewableCategory;
+import com.neaterbits.ide.component.common.instantiation.NewableType;
 import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.component.common.language.LanguageStyling;

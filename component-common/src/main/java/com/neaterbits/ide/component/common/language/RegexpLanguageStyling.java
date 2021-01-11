@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.util.ui.text.Text;
 
 public class RegexpLanguageStyling implements LanguageStyling {
