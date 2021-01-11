@@ -22,7 +22,7 @@ import com.neaterbits.build.types.resource.NamespaceResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
-import com.neaterbits.ide.component.common.Newable;
+import com.neaterbits.ide.component.common.instantiation.Newable;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 
 public class NewJavaTypeDialog extends Dialog {

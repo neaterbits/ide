@@ -3,10 +3,10 @@ package com.neaterbits.ide.component.java.language;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.component.common.language.LanguageStyleOffset;
 import com.neaterbits.ide.component.common.language.LanguageStyleable;
 import com.neaterbits.ide.component.common.language.LanguageStyling;
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.util.ui.text.Text;
 
 final class JavaTokenLanguageStyling implements LanguageStyling {

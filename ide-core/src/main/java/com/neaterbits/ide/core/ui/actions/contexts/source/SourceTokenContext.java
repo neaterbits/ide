@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.model.common.SourceTokenType;
-import com.neaterbits.ide.component.common.language.model.ISourceTokenProperties;
+import com.neaterbits.ide.common.model.source.ISourceTokenProperties;
 
 public class SourceTokenContext extends SourceContext {
 

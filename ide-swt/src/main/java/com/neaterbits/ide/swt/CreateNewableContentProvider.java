@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.neaterbits.ide.component.common.Newable;
-import com.neaterbits.ide.component.common.NewableCategory;
+import com.neaterbits.ide.component.common.instantiation.Newable;
+import com.neaterbits.ide.component.common.instantiation.NewableCategory;
 import com.neaterbits.ide.util.swt.TreeContentAdapter;
 
 final class CreateNewableContentProvider extends TreeContentAdapter implements ITreeContentProvider {

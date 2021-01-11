@@ -19,6 +19,7 @@ import com.neaterbits.ide.core.ui.view.KeyEventListener;
 import com.neaterbits.ide.core.ui.view.TextEditorChangeListener;
 import com.neaterbits.ide.core.ui.view.TextSelectionListener;
 import com.neaterbits.ide.model.text.TextModel;
+import com.neaterbits.ide.ui.swt.SWTViewList;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.TextRange;
 

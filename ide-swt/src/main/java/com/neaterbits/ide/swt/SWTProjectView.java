@@ -27,6 +27,8 @@ import com.neaterbits.ide.common.ui.view.ActionContextListener;
 import com.neaterbits.ide.core.ui.view.KeyEventListener;
 import com.neaterbits.ide.core.ui.view.ProjectView;
 import com.neaterbits.ide.core.ui.view.ProjectViewListener;
+import com.neaterbits.ide.ui.swt.SWTView;
+import com.neaterbits.ide.ui.swt.SWTViewList;
 
 final class SWTProjectView extends SWTView implements ProjectView {
 

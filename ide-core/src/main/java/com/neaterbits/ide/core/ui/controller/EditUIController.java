@@ -51,7 +51,7 @@ public final class EditUIController implements EditorsActions {
 				uiView.getEditorsView(),
 				config,
 				sourceFilesModel,
-				uiView.getCompiledFileView());
+				ideComponents.getEditorsListeners());
 		
 		this.projectsController = new ProjectsController(projectsModel, uiView.getProjectView(), this);
 	}

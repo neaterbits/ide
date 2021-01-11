@@ -2,25 +2,26 @@ package com.neaterbits.ide.core.ui.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.ide.common.model.source.ISourceTokenProperties;
+import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.common.ui.SearchDirection;
 import com.neaterbits.ide.common.ui.SearchScope;
 import com.neaterbits.ide.common.ui.actions.contexts.ActionContext;
 import com.neaterbits.ide.common.ui.config.TextEditorConfig;
 import com.neaterbits.ide.common.ui.controller.EditorActions;
+import com.neaterbits.ide.common.ui.controller.EditorsListener;
 import com.neaterbits.ide.common.ui.keys.Key;
 import com.neaterbits.ide.common.ui.keys.KeyLocation;
 import com.neaterbits.ide.common.ui.keys.KeyMask;
 import com.neaterbits.ide.common.ui.keys.QualifierKey;
-import com.neaterbits.ide.component.common.language.model.ISourceTokenProperties;
-import com.neaterbits.ide.component.common.language.model.SourceFileModel;
 import com.neaterbits.ide.core.source.SourceFileInfo;
 import com.neaterbits.ide.core.source.SourceFilesModel;
 import com.neaterbits.ide.core.ui.actions.contexts.source.SourceTokenContext;
-import com.neaterbits.ide.core.ui.view.CompiledFileView;
 import com.neaterbits.ide.core.ui.view.EditorSourceActionContextProvider;
 import com.neaterbits.ide.core.ui.view.EditorView;
 import com.neaterbits.ide.core.ui.view.KeyEventListener;
@@ -42,7 +43,7 @@ public final class EditorController implements EditorSourceActionContextProvider
 	public EditorController(
 			EditorView editorView,
 			TextEditorConfig config,
-			CompiledFileView compiledFileView,
+			List<EditorsListener> listeners,
 			TextModel textModel,
 			SourceFilesModel sourceFilesModel,
 			SourceFileInfo sourceFile,
@@ -57,10 +58,10 @@ public final class EditorController implements EditorSourceActionContextProvider
 
 		this.parseStateMachine = new EditorParseFileStateMachine(sourceFile, sourceFilesModel);
 		
-		updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile, delegatingSourceFileModel);
+		updateSourceFileModel(textModel, listeners, sourceFilesModel, sourceFile, delegatingSourceFileModel);
 		
 		editorView.addTextChangeListener((start, length, newText) -> {
-			updateSourceFileModel(textModel, compiledFileView, sourceFilesModel, sourceFile, delegatingSourceFileModel);
+			updateSourceFileModel(textModel, listeners, sourceFilesModel, sourceFile, delegatingSourceFileModel);
 		});
 		
 		editorView.addKeyListener(new KeyEventListener() {
@@ -117,8 +118,10 @@ public final class EditorController implements EditorSourceActionContextProvider
 			}
 		});
 		
-		if (compiledFileView != null) {
-			editorView.addCursorPositionListener(compiledFileView::onEditorCursorPosUpdate);
+		if (listeners != null) {
+			editorView.addCursorPositionListener(
+			        cursorPos -> listeners.forEach(l -> l.onEditorCursorPosUpdate(cursorPos))
+	        );
 		}
 		
 		editorView.setTextModel(textModel);
@@ -126,7 +129,7 @@ public final class EditorController implements EditorSourceActionContextProvider
 	
 	private void updateSourceFileModel(
 			TextModel textModel,
-			CompiledFileView compiledFileView,
+			List<EditorsListener> listeners,
 			SourceFilesModel sourceFilesModel,
 			SourceFileInfo sourceFile,
 			DelegatingSourceFileModel delegatingSourceFileModel) {
@@ -143,8 +146,8 @@ public final class EditorController implements EditorSourceActionContextProvider
 					
 					sourceFileModel = updatedModel;
 
-					if (compiledFileView != null) {
-						compiledFileView.setSourceFileModel(updatedModel);
+					if (listeners != null) {
+						listeners.forEach(l -> l.onSourceFileModelChanged(updatedModel));
 					}
 					
 					delegatingSourceFileModel.setDelegate(updatedModel);
