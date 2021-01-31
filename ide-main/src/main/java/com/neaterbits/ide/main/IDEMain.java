@@ -22,6 +22,8 @@ import com.neaterbits.ide.component.compiledfiledebug.ui.CompiledFileViewCompone
 import com.neaterbits.ide.component.java.language.JavaLanguage;
 import com.neaterbits.ide.component.java.language.JavaLanguageComponent;
 import com.neaterbits.ide.component.java.ui.JavaUIComponentProvider;
+import com.neaterbits.ide.component.runner.test.TestRunnerComponent;
+import com.neaterbits.ide.component.runner.test.ui.TestRunnerUI;
 import com.neaterbits.ide.component.runners.RunnersComponent;
 import com.neaterbits.ide.component.runners.ui.RunnersComponentUI;
 import com.neaterbits.ide.core.model.codemap.CodeMapGatherer;
@@ -122,17 +124,20 @@ public class IDEMain {
 			printStackTrace(ex.getStackTrace(), 5);
 		}
 	}
-	
+
 	private static IDERegisteredComponents registerComponents() {
 
 		final IDERegisteredComponents components = new IDERegisteredComponents();
-		
+
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
         components.registerComponent(null, new BuildIssuesComponent());
         components.registerComponent(null, new CompiledFileViewComponent());
-		components.registerComponent(new RunnersComponent(), new RunnersComponentUI());
+
+        components.registerComponent(new RunnersComponent(), new RunnersComponentUI());
+
 		components.registerComponent(new MainApplicationRunnerComponent(), null);
-        
+		components.registerComponent(new TestRunnerComponent(), new TestRunnerUI());
+
 		return components;
 	}
 

@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.neaterbits.build.model.BuildRoot;
 import com.neaterbits.ide.common.ui.actions.ActionExeParameters;
 import com.neaterbits.ide.component.common.ComponentIDEAccess;
-import com.neaterbits.ide.component.common.IDEComponentsFinder;
 import com.neaterbits.ide.component.common.language.Languages;
 import com.neaterbits.ide.component.common.ui.ComponentCompositeContext;
 import com.neaterbits.ide.component.common.ui.ComponentDialogContext;
